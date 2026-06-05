@@ -21,18 +21,20 @@ npm run build:all      # → build/nl/  en  build/en/
 
 ## 2. Naar de server kopiëren
 
-De wiki is statisch — geen Node/PM2 nodig op de server, alleen bestanden. Plaats ze los van de Next.js-app, bv. in `/var/www/yres-wiki/`:
+De wiki is statisch — geen Node/PM2 nodig op de server, alleen bestanden. Dit is
+geautomatiseerd in `scripts/push-to-vps.sh`, en draait automatisch bij een merge
+naar `main` (post-merge hook → build + deploy + `git push origin main`).
 
 ```bash
-# vanuit yres-wiki/, via tar-over-ssh (geen rsync op de VPS)
-tar czf - -C build nl en | ssh root@<server> \
-  'rm -rf /var/www/yres-wiki && mkdir -p /var/www/yres-wiki && tar xzf - -C /var/www/yres-wiki'
+# vanuit yres-wiki/ — bouwt build:all en deployt naar de VPS
+scripts/push-to-vps.sh
 ```
 
-Resultaat op de server:
+De **live** nginx serveert de wiki met `root /var/www/yres-wiki`, dus `/nl/wiki/`
+mapt naar `/var/www/yres-wiki/nl/wiki/`. Het script plaatst elke taalbuild dáár:
 ```
-/var/www/yres-wiki/nl/   (index.html, assets/, concepten/, ...)
-/var/www/yres-wiki/en/
+/var/www/yres-wiki/nl/wiki/   (index.html, assets/, concepten/, ...)
+/var/www/yres-wiki/en/wiki/
 ```
 
 > De marketing-VPS (Greenhost) is `root@185.88.142.48`. **Let op:** `oogopdata.nl` moet met een A-record naar dezelfde host wijzen die deze nginx draait, anders zie je de wiki niet op dat domein. (Zie het projectgeheugen over DNS-status.)
@@ -41,18 +43,17 @@ Resultaat op de server:
 
 Voeg deze blocks toe in de `server { ... }` van de marketingsite, **boven** de bestaande `location / { proxy_pass ... }`. Het `^~`-prefix zorgt dat nginx deze paden zelf afhandelt i.p.v. door te sturen naar Next.js (dat `/nl/*` en `/en/*` anders via de `[locale]`-route zou afvangen).
 
+> **Live config gebruikt `root` (niet `alias`).** De daadwerkelijk draaiende
+> `/etc/nginx/sites-available/yres` gebruikt onderstaande `root`-variant; daarom
+> deployt het script naar `…/nl/wiki/` en `…/en/wiki/` (zie §2). Niet aan deze
+> nginx-config morrelen tenzij nodig — die is handmatig en heeft prod al eens platgelegd.
+
 ```nginx
-# --- Wiki (statische Docusaurus-builds) ---
-location ^~ /nl/wiki/ {
-    alias /var/www/yres-wiki/nl/;
-    try_files $uri $uri/ /nl/wiki/404.html;
-}
+# --- Wiki (statische Docusaurus-builds) — LIVE variant ---
+location ^~ /nl/wiki/ { root /var/www/yres-wiki; try_files $uri $uri/ =404; }
 location = /nl/wiki { return 308 /nl/wiki/; }
 
-location ^~ /en/wiki/ {
-    alias /var/www/yres-wiki/en/;
-    try_files $uri $uri/ /en/wiki/404.html;
-}
+location ^~ /en/wiki/ { root /var/www/yres-wiki; try_files $uri $uri/ =404; }
 location = /en/wiki { return 308 /en/wiki/; }
 
 # --- Marketingsite (Next.js) ---

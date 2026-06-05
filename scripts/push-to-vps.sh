@@ -18,8 +18,12 @@ cd "$(dirname "$0")/.."
 echo "==> Building wiki (build:all)"
 npm run build:all
 
-echo "==> Deploying static build to ${VPS}:${DEST}"
-tar czf - -C build nl en \
-| ssh "$VPS" "rm -rf ${DEST} && mkdir -p ${DEST} && tar xzf - -C ${DEST}"
+# The live nginx serves the wiki with `root /var/www/yres-wiki`, so a request to
+# /nl/wiki/ maps to ${DEST}/nl/wiki/. Deploy each language build INTO that
+# subpath (not ${DEST}/nl) so it lines up with the running config.
+echo "==> Deploying static build to ${VPS}:${DEST}/{nl,en}/wiki (served at /nl/wiki, /en/wiki)"
+ssh "$VPS" "rm -rf ${DEST}; mkdir -p ${DEST}/nl/wiki ${DEST}/en/wiki"
+tar czf - -C build/nl . | ssh "$VPS" "tar xzf - -C ${DEST}/nl/wiki"
+tar czf - -C build/en . | ssh "$VPS" "tar xzf - -C ${DEST}/en/wiki"
 
 echo "==> Wiki deploy complete."
