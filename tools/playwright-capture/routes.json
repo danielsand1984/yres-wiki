@@ -1,0 +1,11 @@
+{
+  "comment": "Echte routes (ontdekt via capture op yres-training.yres.dev). Paden zijn relatief aan het app-subdomein dat na login actief is. Vul aan met schermen die alleen via knoppen bereikbaar zijn.",
+  "routes": [
+    { "label": "admin-panel",            "path": "/admin/panel" },
+    { "label": "admin-powerbi-dashboard","path": "/admin/powerBiDashboard" },
+    { "label": "projects",               "path": "/projects" },
+    { "label": "sources",                "path": "/sources" },
+    { "label": "load-run-pipelines",     "path": "/loadmanagement/runPipelines" },
+    { "label": "data-view-persistence",  "path": "/dataengineering/viewpersistence" }
+  ]
+}

@@ -1,0 +1,60 @@
+/**
+ * Yres huisstijl voor Docusaurus.
+ * Bron: Branding/Figma/final.css — primair oranje #FBAF42 / #FFAF2D, ink-50 #F6F9F9,
+ * koppen = Franie (commercieel, valt terug op systeemfont), body = Open Sans.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+:root {
+  --ifm-color-primary: #e89a1f;
+  --ifm-color-primary-dark: #d18a17;
+  --ifm-color-primary-darker: #c58116;
+  --ifm-color-primary-darkest: #a26a12;
+  --ifm-color-primary-light: #fbaf42;
+  --ifm-color-primary-lighter: #fcb955;
+  --ifm-color-primary-lightest: #fdcd83;
+
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f6f9f9;
+
+  --ifm-font-family-base: 'Open Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ifm-heading-font-family: 'Franie', 'Open Sans', system-ui, sans-serif;
+  --ifm-heading-font-weight: 600;
+  --ifm-code-font-size: 95%;
+  --ifm-navbar-background-color: #ffffff;
+
+  --docusaurus-highlighted-code-line-bg: rgba(251, 175, 66, 0.12);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #fbaf42;
+  --ifm-color-primary-dark: #fba229;
+  --ifm-color-primary-darker: #fa9c1c;
+  --ifm-color-primary-darkest: #e08507;
+  --ifm-color-primary-light: #fcbc5b;
+  --ifm-color-primary-lighter: #fcc268;
+  --ifm-color-primary-lightest: #fdd690;
+
+  --ifm-background-surface-color: #1c1c1e;
+  --docusaurus-highlighted-code-line-bg: rgba(251, 175, 66, 0.2);
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}
+
+.navbar__title {
+  font-weight: 700;
+}
+
+/* Logo: behoud de beeldverhouding (niet uitrekken) */
+.navbar__logo {
+  height: 2rem;
+}
+.navbar__logo img {
+  height: 100%;
+  width: auto;
+}

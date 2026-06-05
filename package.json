@@ -1,0 +1,54 @@
+{
+  "name": "yres-wiki",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Yres kennisbank — product, techniek en interne documentatie (Docusaurus)",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "wiki-index": "node scripts/build-wiki-index.mjs",
+    "prestart": "cross-env WIKI_LANG=nl node scripts/build-wiki-index.mjs",
+    "start": "docusaurus start",
+    "prestart:en": "cross-env WIKI_LANG=en node scripts/build-wiki-index.mjs",
+    "start:en": "cross-env WIKI_LANG=en docusaurus start",
+    "build": "docusaurus build",
+    "prebuild:nl": "cross-env WIKI_LANG=nl node scripts/build-wiki-index.mjs",
+    "build:nl": "cross-env WIKI_LANG=nl docusaurus build --out-dir build/nl",
+    "prebuild:en": "cross-env WIKI_LANG=en node scripts/build-wiki-index.mjs",
+    "build:en": "cross-env WIKI_LANG=en docusaurus build --out-dir build/en",
+    "build:all": "npm run build:nl && npm run build:en",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.6.3",
+    "@docusaurus/preset-classic": "^3.6.3",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.1.1",
+    "cross-env": "^7.0.3",
+    "dompurify": "^3.2.4",
+    "marked": "^15.0.6",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.6.3",
+    "@docusaurus/types": "^3.6.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

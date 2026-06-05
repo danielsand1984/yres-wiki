@@ -1,0 +1,15 @@
+{
+  "name": "yres-wiki-capture",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Playwright crawler: documenteert elk Yres-webapp scherm (screenshots + alle knoppen/opties/teksten) als markdown-basis voor de wiki.",
+  "scripts": {
+    "capture": "node capture.mjs",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0",
+    "dotenv": "^16.4.5"
+  }
+}

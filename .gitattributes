@@ -1,0 +1,4 @@
+# Shell scripts and git hooks must use LF so they run under bash (VPS + git-bash).
+*.sh text eol=lf
+*.mjs text eol=lf
+scripts/git-hooks/* text eol=lf

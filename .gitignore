@@ -1,0 +1,28 @@
+# Dependencies
+/node_modules
+
+# Build output
+/build
+/.docusaurus
+/.cache-loader
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Extracted PDF text (regenerate from WIKI Sources if needed)
+/WIKI Sources/_text
+
+# Auxiliary playwright-capture tooling: deps, scratch output and auth state
+/tools/playwright-capture/node_modules/
+/tools/playwright-capture/output*/
+/tools/playwright-capture/crops/
+/tools/playwright-capture/auth-state.json
+/tools/playwright-capture/auth-origin.txt
+*.log
