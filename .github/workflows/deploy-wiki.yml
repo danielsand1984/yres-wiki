@@ -1,0 +1,41 @@
+name: Deploy wiki
+
+# Builds the Docusaurus wiki and deploys it to the VPS on every push to main.
+# This is the single publish path: both local merges and CMS commits (Sveltia
+# pushing to GitHub) land on main and get deployed here.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two wiki deploys at once (the deploy does a staging swap).
+concurrency:
+  group: deploy-wiki
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Configure SSH for the VPS
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.WIKI_DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H 185.88.142.48 >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Build and deploy
+        run: bash scripts/push-to-vps.sh
+        env:
+          WIKI_BASE_URL: https://oogopdata.nl

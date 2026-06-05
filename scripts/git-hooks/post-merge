@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 #
 # post-merge hook — runs after a successful `git merge` (including `git pull`)
-# into the current branch. When that branch is main, build + deploy the wiki to
-# the VPS, then push main to GitHub (origin) as an off-site backup.
+# into the current branch. When that branch is main, push to GitHub; the
+# `Deploy wiki` GitHub Action then builds + deploys to the VPS.
+#
+# Publishing goes through CI (the Action) as the single deploy path, so local
+# merges and CMS commits behave identically and never race on the deploy. For a
+# manual deploy without CI, run `scripts/push-to-vps.sh`.
 #
 # Enabled via:  git config core.hooksPath scripts/git-hooks
 #
@@ -11,10 +15,5 @@ if [ "$branch" != "main" ]; then
   exit 0
 fi
 
-echo "[post-merge] wiki main updated -> building + deploying to VPS"
-
-root=$(git rev-parse --show-toplevel)
-if "${root}/scripts/push-to-vps.sh"; then
-  echo "[post-merge] deploy ok -> pushing main to GitHub"
-  git push origin main || echo "[post-merge] git push origin main failed (non-fatal)"
-fi
+echo "[post-merge] main updated -> pushing to GitHub (CI deploys the wiki)"
+git push origin main || echo "[post-merge] git push origin main failed (non-fatal)"

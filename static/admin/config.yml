@@ -1,0 +1,75 @@
+# Sveltia/Decap CMS config for the Yres wiki.
+# Edits commit straight to `main` on GitHub; a GitHub Action then builds and
+# deploys the wiki to the VPS. Login is via GitHub OAuth, relayed by the
+# marketing Next app at oogopdata.nl/api/cms-auth.
+
+backend:
+  name: github
+  repo: danielsand1984/yres-wiki
+  branch: main
+  base_url: https://oogopdata.nl
+  auth_endpoint: api/cms-auth
+  commit_messages:
+    create: 'CMS: nieuwe pagina {{slug}}'
+    update: 'CMS: bewerk {{slug}}'
+    delete: 'CMS: verwijder {{slug}}'
+    uploadMedia: 'CMS: upload {{path}}'
+    deleteMedia: 'CMS: verwijder media {{path}}'
+
+# Images are committed to the repo and referenced with an absolute path that
+# Docusaurus rewrites per baseUrl (works for both /nl/wiki and /en/wiki).
+media_folder: 'static/img/uploads'
+public_folder: '/img/uploads'
+
+# Commit directly to main (simplest path to publish). Switch to
+# `editorial_workflow` later if you want draft/PR review before publishing.
+publish_mode: simple
+
+locale: 'nl'
+
+collections:
+  - name: 'docs-nl'
+    label: 'Wiki — Nederlands'
+    label_singular: 'NL-pagina'
+    description: 'Pagina’s onder docs/ (Nederlandstalige wiki).'
+    folder: 'docs'
+    extension: 'md'
+    format: 'frontmatter'
+    create: true
+    slug: '{{slug}}'
+    nested:
+      depth: 8
+      summary: '{{title}}'
+    fields:
+      - { label: 'Titel', name: 'title', widget: 'string', required: false }
+      - { label: 'Sidebar-label', name: 'sidebar_label', widget: 'string', required: false }
+      - { label: 'Sidebar-positie', name: 'sidebar_position', widget: 'number', required: false, value_type: 'int', min: 1 }
+      - { label: 'Inhoud', name: 'body', widget: 'markdown' }
+    meta:
+      path:
+        widget: 'string'
+        label: 'Pad (map/bestand)'
+        index_file: 'index'
+
+  - name: 'docs-en'
+    label: 'Wiki — English'
+    label_singular: 'EN page'
+    description: 'Pages under docs-en/ (English wiki). Keep the same paths/ids as the NL version.'
+    folder: 'docs-en'
+    extension: 'md'
+    format: 'frontmatter'
+    create: true
+    slug: '{{slug}}'
+    nested:
+      depth: 8
+      summary: '{{title}}'
+    fields:
+      - { label: 'Title', name: 'title', widget: 'string', required: false }
+      - { label: 'Sidebar label', name: 'sidebar_label', widget: 'string', required: false }
+      - { label: 'Sidebar position', name: 'sidebar_position', widget: 'number', required: false, value_type: 'int', min: 1 }
+      - { label: 'Content', name: 'body', widget: 'markdown' }
+    meta:
+      path:
+        widget: 'string'
+        label: 'Path (folder/file)'
+        index_file: 'index'

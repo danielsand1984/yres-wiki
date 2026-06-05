@@ -44,6 +44,13 @@ const config = {
           routeBasePath: '/', // docs op de baseUrl-root → schone URL's, bv. /nl/wiki/concepten/load-types
           sidebarPath: './sidebars.js',
           editUrl: undefined,
+          // Extra admonition-keyword `:::accent` (merk-oranje blok), naast de
+          // standaard note/tip/info/warning/danger. Gerenderd via
+          // src/theme/Admonition/Types.js.
+          admonitions: {
+            keywords: ['accent'],
+            extendDefaults: true,
+          },
         },
         blog: false,
         theme: {
@@ -59,7 +66,10 @@ const config = {
       image: 'img/yres-social-card.png',
       colorMode: {
         defaultMode: 'light',
-        respectPrefersColorScheme: true,
+        // false: stabiel light-default met een gewone light↔dark-toggle. true gaf
+        // de OS-voorkeur ("auto") mee in de cyclus en botste bij hydration met
+        // defaultMode → zichtbaar theme-geflikker bij laden/navigeren.
+        respectPrefersColorScheme: false,
       },
       navbar: {
         title: '',
