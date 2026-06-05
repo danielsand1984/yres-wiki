@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 2
 title: Web app screens (routes & fields)
 description: All screens in the Yres web app with their route and key fields.
 ---

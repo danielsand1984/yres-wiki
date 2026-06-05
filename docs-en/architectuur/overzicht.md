@@ -1,12 +1,13 @@
 ---
-sidebar_position: 6
+slug: /architectuur
+sidebar_position: 1
 title: Architecture
 description: How Yres is built technically — Azure, ADF, DTAP and lineage.
 ---
 
 # Architecture (high-level)
 
-> This page describes the architecture at a high level. For the deeper Azure details (resources, access levels, setups, naming, firewall) see [Azure architecture](./referentie/azure-architectuur.md).
+> This page describes the architecture at a high level. For the deeper Azure details (resources, access levels, setups, naming, firewall) see [Azure architecture](./azure-architectuur.md).
 
 ## Stack
 
@@ -36,6 +37,6 @@ Yres supports the use of existing Azure databases. A migration from another plat
 
 ## Further reading
 
-- [Azure architecture](./referentie/azure-architectuur.md) — resources, access levels, setups, naming, firewall, scaling
-- [Installation](./setup/installatie.md) — step-by-step setup
-- [SQL Interaction](./referentie/sql-interaction.md) — stored procedures, functions and views
+- [Azure architecture](./azure-architectuur.md) — resources, access levels, setups, naming, firewall, scaling
+- [Installation](../setup/installatie.md) — step-by-step setup
+- [SQL Interaction](../referentie/sql-interaction.md) — stored procedures, functions and views

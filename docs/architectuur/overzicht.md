@@ -1,12 +1,13 @@
 ---
-sidebar_position: 6
+slug: /architectuur
+sidebar_position: 1
 title: Architectuur
 description: Hoe Yres technisch in elkaar zit — Azure, ADF, DTAP en lineage.
 ---
 
 # Architectuur (high-level)
 
-> Deze pagina beschrijft de architectuur op hoofdlijnen. Voor de diepere Azure-details (resources, toegangsniveaus, setups, naming, firewall) zie [Azure-architectuur](./referentie/azure-architectuur.md).
+> Deze pagina beschrijft de architectuur op hoofdlijnen. Voor de diepere Azure-details (resources, toegangsniveaus, setups, naming, firewall) zie [Azure-architectuur](./azure-architectuur.md).
 
 ## Stack
 
@@ -36,6 +37,6 @@ Yres ondersteunt het gebruik van bestaande Azure-databases. Een migratie van een
 
 ## Verder lezen
 
-- [Azure-architectuur](./referentie/azure-architectuur.md) — resources, toegangsniveaus, setups, naming, firewall, scaling
-- [Installatie](./setup/installatie.md) — stap voor stap inrichten
-- [SQL Interaction](./referentie/sql-interaction.md) — stored procedures, functions en views
+- [Azure-architectuur](./azure-architectuur.md) — resources, toegangsniveaus, setups, naming, firewall, scaling
+- [Installatie](../setup/installatie.md) — stap voor stap inrichten
+- [SQL Interaction](../referentie/sql-interaction.md) — stored procedures, functions en views

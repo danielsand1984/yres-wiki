@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 2
 title: Webapp-schermen (routes & velden)
 description: Alle schermen in de Yres-webapp met hun route en belangrijkste velden.
 ---

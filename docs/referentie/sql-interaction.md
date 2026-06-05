@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 4
 title: SQL Interaction (referentie)
 description: Stored procedures, functions en views — beheer via een SQL-endpoint.
 ---

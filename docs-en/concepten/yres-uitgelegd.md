@@ -1,5 +1,6 @@
 ---
-sidebar_position: 2
+slug: /yres-uitgelegd
+sidebar_position: 1
 title: Yres explained
 description: Yres in plain language — USPs and elevator pitch.
 ---

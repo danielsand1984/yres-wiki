@@ -1,5 +1,6 @@
 ---
-sidebar_position: 4
+slug: /referentie/azure-architectuur
+sidebar_position: 2
 title: Azure-architectuur
 description: Welke Azure-resources Yres gebruikt, toegangsniveaus en setups.
 ---
