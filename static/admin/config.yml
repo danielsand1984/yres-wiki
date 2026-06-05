@@ -39,6 +39,8 @@ collections:
     slug: '{{slug}}'
     nested:
       depth: 8
+      # Flat files in subfolders (docs/product/overzicht.md), not folder/index.md.
+      subfolders: false
       summary: '{{title}}'
     fields:
       - { label: 'Titel', name: 'title', widget: 'string', required: false }
@@ -62,6 +64,8 @@ collections:
     slug: '{{slug}}'
     nested:
       depth: 8
+      # Flat files in subfolders (docs-en/product/overzicht.md), not folder/index.md.
+      subfolders: false
       summary: '{{title}}'
     fields:
       - { label: 'Title', name: 'title', widget: 'string', required: false }
