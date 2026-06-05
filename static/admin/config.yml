@@ -2,6 +2,10 @@
 # Edits commit straight to `main` on GitHub; a GitHub Action then builds and
 # deploys the wiki to the VPS. Login is via GitHub OAuth, relayed by the
 # marketing Next app at oogopdata.nl/api/cms-auth.
+#
+# One folder collection per (sub)folder, for both NL (docs/) and EN (docs-en/).
+# Sveltia's `nested` collections only list files at the folder root, so we map
+# each subfolder explicitly to make every page editable.
 
 backend:
   name: github
@@ -16,64 +20,55 @@ backend:
     uploadMedia: 'CMS: upload {{path}}'
     deleteMedia: 'CMS: verwijder media {{path}}'
 
-# Images are committed to the repo and referenced with an absolute path that
-# Docusaurus rewrites per baseUrl (works for both /nl/wiki and /en/wiki).
 media_folder: 'static/img/uploads'
 public_folder: '/img/uploads'
 
-# Commit directly to main (simplest path to publish). Switch to
-# `editorial_workflow` later if you want draft/PR review before publishing.
 publish_mode: simple
-
 locale: 'nl'
 
 collections:
-  - name: 'docs-nl'
-    label: 'Wiki — Nederlands'
-    label_singular: 'NL-pagina'
-    description: 'Pagina’s onder docs/ (Nederlandstalige wiki).'
+  # ---------------------------------------------------------------- NL (docs/)
+  - name: 'nl-root'
+    label: 'NL · Algemeen'
     folder: 'docs'
     extension: 'md'
     format: 'frontmatter'
     create: true
-    slug: '{{slug}}'
-    nested:
-      depth: 8
-      # Flat files in subfolders (docs/product/overzicht.md), not folder/index.md.
-      subfolders: false
-      summary: '{{title}}'
-    fields:
+    fields: &nl_fields
       - { label: 'Titel', name: 'title', widget: 'string', required: false }
       - { label: 'Sidebar-label', name: 'sidebar_label', widget: 'string', required: false }
       - { label: 'Sidebar-positie', name: 'sidebar_position', widget: 'number', required: false, value_type: 'int', min: 1 }
       - { label: 'Inhoud', name: 'body', widget: 'markdown' }
-    meta:
-      path:
-        widget: 'string'
-        label: 'Pad (map/bestand)'
-        index_file: 'index'
+  - { name: 'nl-product', label: 'NL · Product', folder: 'docs/product', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-concepten', label: 'NL · Concepten', folder: 'docs/concepten', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-frontend', label: 'NL · Gebruik (frontend)', folder: 'docs/frontend', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-setup', label: 'NL · Setup & installatie', folder: 'docs/setup', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-integraties', label: 'NL · Integraties', folder: 'docs/integraties', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-bronnen', label: 'NL · Bronnen', folder: 'docs/integraties/bronnen', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-referentie', label: 'NL · Referentie', folder: 'docs/referentie', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-sql', label: 'NL · Referentie · SQL', folder: 'docs/referentie/sql', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-klanten', label: 'NL · Klanten', folder: 'docs/klanten', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
+  - { name: 'nl-team', label: 'NL · Team & processen', folder: 'docs/team', extension: 'md', format: 'frontmatter', create: true, fields: *nl_fields }
 
-  - name: 'docs-en'
-    label: 'Wiki — English'
-    label_singular: 'EN page'
-    description: 'Pages under docs-en/ (English wiki). Keep the same paths/ids as the NL version.'
+  # ------------------------------------------------------------- EN (docs-en/)
+  - name: 'en-root'
+    label: 'EN · General'
     folder: 'docs-en'
     extension: 'md'
     format: 'frontmatter'
     create: true
-    slug: '{{slug}}'
-    nested:
-      depth: 8
-      # Flat files in subfolders (docs-en/product/overzicht.md), not folder/index.md.
-      subfolders: false
-      summary: '{{title}}'
-    fields:
+    fields: &en_fields
       - { label: 'Title', name: 'title', widget: 'string', required: false }
       - { label: 'Sidebar label', name: 'sidebar_label', widget: 'string', required: false }
       - { label: 'Sidebar position', name: 'sidebar_position', widget: 'number', required: false, value_type: 'int', min: 1 }
       - { label: 'Content', name: 'body', widget: 'markdown' }
-    meta:
-      path:
-        widget: 'string'
-        label: 'Path (folder/file)'
-        index_file: 'index'
+  - { name: 'en-product', label: 'EN · Product', folder: 'docs-en/product', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-concepten', label: 'EN · Concepts', folder: 'docs-en/concepten', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-frontend', label: 'EN · Using the app', folder: 'docs-en/frontend', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-setup', label: 'EN · Setup & installation', folder: 'docs-en/setup', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-integraties', label: 'EN · Integrations', folder: 'docs-en/integraties', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-bronnen', label: 'EN · Sources', folder: 'docs-en/integraties/bronnen', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-referentie', label: 'EN · Reference', folder: 'docs-en/referentie', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-sql', label: 'EN · Reference · SQL', folder: 'docs-en/referentie/sql', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-klanten', label: 'EN · Customers', folder: 'docs-en/klanten', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
+  - { name: 'en-team', label: 'EN · Team & processes', folder: 'docs-en/team', extension: 'md', format: 'frontmatter', create: true, fields: *en_fields }
