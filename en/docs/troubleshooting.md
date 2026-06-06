@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 12
 title: Troubleshooting
 description: Known errors and solutions.
 ---

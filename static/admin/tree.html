@@ -48,7 +48,7 @@
         <p>Klik = openen · rechtsklik = menu. <a href="./" target="_blank" rel="noopener">Volledige editor ↗</a></p>
         <div class="toolbar">
           <button id="newPageBtn">➕ Nieuwe pagina</button>
-          <button id="newSectionBtn" class="secondary" title="Een nieuwe hoofdsectie aanvragen">➕ Sectie</button>
+          <button id="newSectionBtn" class="secondary" title="Nieuwe hoofdsectie aanmaken">➕ Sectie</button>
         </div>
         <input id="search" type="search" placeholder="Zoek pagina…" />
       </header>
@@ -111,14 +111,12 @@
       document.addEventListener('scroll', hideMenu, true);
       window.addEventListener('blur', hideMenu);
 
-      function folderMenu(label, collection, e) {
-        const items = [{ header: label }];
-        if (collection) {
-          items.push({ text: '➕ Nieuwe pagina hier', action: () => openNew(collection) });
-        } else {
-          items.push({ text: '➕ Nieuwe pagina (kies sectie)…', action: () => newPageMenu(e.clientX, e.clientY) });
-        }
-        showMenu(e.clientX, e.clientY, items);
+      function folderMenu(node, e) {
+        showMenu(e.clientX, e.clientY, [
+          { header: node.label },
+          { text: '➕ Nieuwe pagina hier', action: () => openNew(node.collection) },
+          { text: '➕ Nieuwe subsectie hier…', action: () => openNewSection(node.rel) },
+        ]);
       }
       function pageMenu(node, btn, e) {
         showMenu(e.clientX, e.clientY, [
@@ -127,6 +125,20 @@
           { sep: true },
           { text: '➕ Nieuwe pagina (zelfde sectie)', action: () => openNew(node.collection) },
         ]);
+      }
+      // Open the free-path "nieuw" collection to create a page in a new (nested)
+      // folder. Sveltia has no field-prefill via URL, so we copy a suggested path.
+      function openNewSection(parentRel) {
+        const suggestion = parentRel ? parentRel + '/nieuwe-sectie' : 'nieuwe-sectie';
+        try { navigator.clipboard && navigator.clipboard.writeText(suggestion); } catch (e) {}
+        navigate('#/collections/nieuw/new');
+        alert(
+          'Nieuwe (sub)sectie aanmaken:\n\n' +
+          '1) Vul rechts het veld "Map / sectiepad" in — bijvoorbeeld:\n     ' + suggestion + '\n' +
+          '   (dit pad staat al op je klembord — plakken kan)\n' +
+          '2) Geef een titel + inhoud en sla op.\n\n' +
+          'De nieuwe sectie verschijnt na de build automatisch in het menu en in deze boom.'
+        );
       }
       function newPageMenu(x, y) {
         const items = [{ header: 'Nieuwe pagina in…' }];
@@ -141,7 +153,7 @@
             const det = document.createElement('details');
             const sum = document.createElement('summary');
             sum.textContent = node.label;
-            sum.oncontextmenu = (e) => { e.preventDefault(); folderMenu(node.label, node.collection, e); };
+            sum.oncontextmenu = (e) => { e.preventDefault(); folderMenu(node, e); };
             det.appendChild(sum);
             const kids = document.createElement('div');
             kids.className = 'kids';
@@ -192,13 +204,7 @@
         const r = e.target.getBoundingClientRect();
         newPageMenu(r.left, r.bottom + 4);
       });
-      document.getElementById('newSectionBtn').addEventListener('click', () => {
-        alert(
-          'Een nieuwe hoofdsectie (map in het menu) is een structuurwijziging in de configuratie.\n\n' +
-          'Maak gerust pagina’s aan in bestaande secties via "Nieuwe pagina".\n' +
-          'Wil je een nieuwe sectie? Geef de naam door, dan zet ik ’m er snel bij.'
-        );
-      });
+      document.getElementById('newSectionBtn').addEventListener('click', () => openNewSection(''));
 
       document.getElementById('search').addEventListener('input', (e) => {
         const q = e.target.value.trim().toLowerCase();

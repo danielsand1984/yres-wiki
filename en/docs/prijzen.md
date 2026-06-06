@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 9
 title: Pricing
 description: Essentials, Advanced and Ultimate — predictable monthly pricing.
 ---

@@ -1,32 +1,13 @@
 #!/usr/bin/env node
 /**
- * Generate static/admin/wiki-tree.json: the real folder tree of the wiki
- * (from nl/docs), with each page's title + the Sveltia collection/slug so the
- * custom tree page (static/admin/tree.html) can deep-link into the editor.
- * Run as part of build:all.
+ * Generate static/admin/wiki-tree.json: the real folder tree of the wiki (from
+ * nl/docs) with each page's title + the CMS collection/slug, so the custom tree
+ * page (static/admin/tree.html) can deep-link into the editor. Collection names
+ * match scripts/build-cms-config.mjs (one collection per folder). Run in build:all.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const DOCS = path.join(ROOT, 'nl', 'docs');
-
-// folder (relative to nl/docs) -> { collection, label }. Mirrors config.yml.
-const SECTIONS = {
-  '': { collection: 'algemeen', label: 'Algemeen' },
-  product: { collection: 'product', label: 'Product' },
-  concepten: { collection: 'concepten', label: 'Concepten' },
-  architectuur: { collection: 'architectuur', label: 'Architectuur' },
-  frontend: { collection: 'frontend', label: 'Gebruik (frontend)' },
-  setup: { collection: 'setup', label: 'Setup & installatie' },
-  integraties: { collection: 'integraties', label: 'Integraties & databronnen' },
-  'integraties/bronnen': { collection: 'bronnen', label: 'Bronnen' },
-  referentie: { collection: 'referentie', label: 'Referentie' },
-  'referentie/sql': { collection: 'sql', label: 'SQL' },
-  klanten: { collection: 'klanten', label: 'Klanten' },
-  team: { collection: 'team', label: 'Team & processen' },
-};
+import { NL_DOCS, ROOT, collName, folderLabel } from './wiki-sections.mjs';
 
 function readTitle(file, fallback) {
   try {
@@ -64,17 +45,17 @@ function walk(absDir, rel) {
       const node = walk(abs, childRel);
       folders.push({
         type: 'folder',
-        label: SECTIONS[childRel]?.label || entry.name,
+        label: folderLabel(childRel),
         rel: childRel,
-        collection: SECTIONS[childRel]?.collection || null,
+        collection: collName(childRel),
         children: [...node.folders, ...node.files],
       });
-    } else if (entry.name.endsWith('.md')) {
+    } else if (entry.name.endsWith('.md') && entry.name !== '_category_.json') {
       const slug = entry.name.replace(/\.md$/, '');
       files.push({
         type: 'file',
         label: readTitle(abs, slug),
-        collection: SECTIONS[rel]?.collection || 'algemeen',
+        collection: collName(rel),
         slug,
         pos: posOf(abs),
       });
@@ -85,9 +66,9 @@ function walk(absDir, rel) {
   return { folders, files };
 }
 
-const root = walk(DOCS, '');
+const root = walk(NL_DOCS, '');
 const tree = [...root.folders, ...root.files];
 const out = path.join(ROOT, 'static', 'admin', 'wiki-tree.json');
 fs.writeFileSync(out, JSON.stringify(tree, null, 2));
-const count = JSON.stringify(tree).match(/"type":"file"/g)?.length ?? 0;
+const count = (JSON.stringify(tree).match(/"type":"file"/g) || []).length;
 console.log(`wiki-tree.json: ${count} pages`);

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 11
 title: FAQ
 description: Veelgestelde vragen over Yres.
 ---
