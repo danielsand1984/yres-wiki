@@ -6,6 +6,9 @@
 /.docusaurus
 /.cache-loader
 
+# Generated CMS tree manifest (rebuilt by build:all)
+/static/admin/wiki-tree.json
+
 # Misc
 .DS_Store
 .env.local

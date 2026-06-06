@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Yres wiki — structuur</title>
+    <style>
+      :root { --orange: #e89a1f; --orange-light: #fbaf42; --ink: #1f2430; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; font-family: 'Open Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+      body { display: flex; height: 100vh; overflow: hidden; }
+      #sidebar { width: 340px; min-width: 260px; max-width: 50vw; resize: horizontal; overflow: auto; border-right: 1px solid #e5e7eb; background: #fafafa; display: flex; flex-direction: column; }
+      #sidebar header { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; background: #fff; position: sticky; top: 0; z-index: 1; }
+      #sidebar header h1 { margin: 0; font-size: 14px; color: var(--ink); }
+      #sidebar header p { margin: 4px 0 0; font-size: 11px; color: #6b7280; }
+      #sidebar header a { color: var(--orange); font-weight: 600; text-decoration: none; }
+      #search { width: 100%; margin-top: 8px; padding: 6px 8px; font-size: 13px; border: 1px solid #e5e7eb; border-radius: 6px; }
+      #tree { padding: 6px 4px 24px; }
+      details { margin: 1px 0; }
+      summary { cursor: pointer; list-style: none; padding: 4px 6px; border-radius: 6px; font-size: 13px; font-weight: 600; color: var(--ink); user-select: none; }
+      summary::-webkit-details-marker { display: none; }
+      summary::before { content: '▸'; display: inline-block; width: 1em; color: #9ca3af; transition: transform .15s; }
+      details[open] > summary::before { transform: rotate(90deg); }
+      summary:hover { background: #f0f0f0; }
+      .kids { margin-left: 14px; border-left: 1px solid #eee; padding-left: 4px; }
+      button.page { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 4px 6px 4px 22px; font-size: 13px; color: #374151; border-radius: 6px; cursor: pointer; }
+      button.page:hover { background: #fff3e0; color: var(--ink); }
+      button.page.active { background: rgba(251,175,66,.18); color: var(--ink); font-weight: 600; }
+      #main { flex: 1; display: flex; flex-direction: column; }
+      #editor { flex: 1; border: 0; width: 100%; }
+      .hint { padding: 10px 14px; font-size: 12px; color: #6b7280; background: #fff8ec; border-bottom: 1px solid #f0e6d0; }
+    </style>
+  </head>
+  <body>
+    <aside id="sidebar">
+      <header>
+        <h1>Wiki-structuur</h1>
+        <p>Klik een pagina → opent rechts in de editor. <a href="./" target="_blank" rel="noopener">Volledige editor ↗</a></p>
+        <input id="search" type="search" placeholder="Zoek pagina…" />
+      </header>
+      <div id="tree">Laden…</div>
+    </aside>
+    <main id="main">
+      <div class="hint">Eerst inloggen in de editor (rechts) via GitHub; daarna opent elke pagina hier. NL↔EN wissel je rechtsboven in de editor.</div>
+      <iframe id="editor" src="./" title="Yres wiki editor"></iframe>
+    </main>
+
+    <script>
+      const iframe = document.getElementById('editor');
+      let activeBtn = null;
+
+      function openEntry(collection, slug, btn) {
+        const hash = '#/collections/' + collection + '/entries/' + encodeURIComponent(slug);
+        try {
+          const w = iframe.contentWindow;
+          if (w && String(w.location.href).indexOf('/admin/') > -1) {
+            w.location.hash = hash; // SPA route, no full reload
+          } else {
+            iframe.src = './' + hash;
+          }
+        } catch (e) {
+          iframe.src = './' + hash;
+        }
+        if (activeBtn) activeBtn.classList.remove('active');
+        btn.classList.add('active');
+        activeBtn = btn;
+      }
+
+      function renderNodes(nodes, parent) {
+        for (const node of nodes) {
+          if (node.type === 'folder') {
+            const det = document.createElement('details');
+            const sum = document.createElement('summary');
+            sum.textContent = node.label;
+            det.appendChild(sum);
+            const kids = document.createElement('div');
+            kids.className = 'kids';
+            renderNodes(node.children, kids);
+            det.appendChild(kids);
+            parent.appendChild(det);
+          } else {
+            const b = document.createElement('button');
+            b.className = 'page';
+            b.textContent = node.label;
+            b.dataset.label = node.label.toLowerCase();
+            b.onclick = () => openEntry(node.collection, node.slug, b);
+            parent.appendChild(b);
+          }
+        }
+      }
+
+      fetch('wiki-tree.json?v=' + Date.now())
+        .then((r) => r.json())
+        .then((tree) => {
+          const root = document.getElementById('tree');
+          root.textContent = '';
+          renderNodes(tree, root);
+          // open the first level by default
+          root.querySelectorAll(':scope > details').forEach((d) => (d.open = true));
+        })
+        .catch(() => {
+          document.getElementById('tree').textContent = 'Kon de structuur niet laden.';
+        });
+
+      // Simple search: show/hide pages by label; auto-expand matches.
+      document.getElementById('search').addEventListener('input', (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        const pages = document.querySelectorAll('button.page');
+        pages.forEach((b) => {
+          const hit = !q || b.dataset.label.includes(q);
+          b.style.display = hit ? '' : 'none';
+        });
+        // expand folders that contain a visible page; collapse empty ones when searching
+        document.querySelectorAll('#tree details').forEach((d) => {
+          const anyVisible = [...d.querySelectorAll('button.page')].some((b) => b.style.display !== 'none');
+          if (q) d.open = anyVisible;
+          d.style.display = q && !anyVisible ? 'none' : '';
+        });
+      });
+    </script>
+  </body>
+</html>
