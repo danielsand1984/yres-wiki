@@ -40,7 +40,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          path: isEN ? 'docs-en' : 'docs',
+          path: isEN ? 'en/docs' : 'nl/docs',
           routeBasePath: '/', // docs op de baseUrl-root → schone URL's, bv. /nl/wiki/concepten/load-types
           sidebarPath: './sidebars.js',
           editUrl: undefined,

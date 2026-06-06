@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const LANG = process.env.WIKI_LANG === "en" ? "en" : "nl";
-const DOCS_DIR = join(ROOT, LANG === "en" ? "docs-en" : "docs");
+const DOCS_DIR = join(ROOT, LANG === "en" ? "en/docs" : "nl/docs");
 const BASE_URL = `/${LANG}/wiki/`;
 
 async function walk(dir) {

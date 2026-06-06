@@ -12,7 +12,7 @@ import path from 'node:path';
 
 const isEN = process.env.WIKI_LANG === 'en';
 const t = (nl, en) => (isEN ? en : nl);
-const DIR = isEN ? 'docs-en' : 'docs';
+const DIR = isEN ? 'en/docs' : 'nl/docs';
 
 const included = new Set();
 

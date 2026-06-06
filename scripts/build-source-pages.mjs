@@ -144,7 +144,7 @@ ${setup ? `\n## ${l.setup}\n\n${setup}\n` : ""}
 }
 
 for (const lang of ["nl", "en"]) {
-  const dir = join(ROOT, lang === "nl" ? "docs" : "docs-en", "integraties", "bronnen");
+  const dir = join(ROOT, lang === "nl" ? "nl/docs" : "en/docs", "integraties", "bronnen");
   await mkdir(dir, { recursive: true });
   for (const s of SOURCES) {
     await writeFile(join(dir, `${s.slug}.md`), page(s, lang));
