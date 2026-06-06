@@ -46,6 +46,14 @@ h3 {
   letter-spacing: -0.01em;
 }
 
+/* Verberg het "Wiki"-item in het MOBIELE hamburger-menu (de doc-categorieën
+   staan daar al inline; het docSidebar-item leidde naar een verwarrend
+   sub-paneel). Op desktop blijft het gewoon staan. */
+.navbar-sidebar .navbar-item--wiki,
+.navbar-sidebar .menu__list-item:has(> .navbar-item--wiki) {
+  display: none !important;
+}
+
 /* Brand-orange `:::accent` admonition (registered in src/theme/Admonition/Types.js). */
 .theme-admonition-accent {
   border-left: 4px solid var(--ifm-color-primary-light);

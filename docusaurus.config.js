@@ -85,6 +85,9 @@ const config = {
             sidebarId: 'wikiSidebar',
             position: 'left',
             label: 'Wiki',
+            // Verborgen in het mobiele hamburger-menu (de categorieën staan daar
+            // al inline); op desktop + landingspagina blijft het zichtbaar.
+            className: 'navbar-item--wiki',
           },
           {
             // Taalwissel: blijft op dezelfde pagina, zelfde tabblad (custom component).
