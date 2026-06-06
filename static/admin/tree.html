@@ -10,11 +10,14 @@
       * { box-sizing: border-box; }
       html, body { margin: 0; height: 100%; font-family: 'Open Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
       body { display: flex; height: 100vh; overflow: hidden; }
-      #sidebar { width: 340px; min-width: 260px; max-width: 50vw; resize: horizontal; overflow: auto; border-right: 1px solid #e5e7eb; background: #fafafa; display: flex; flex-direction: column; }
+      #sidebar { width: 340px; min-width: 260px; max-width: 50vw; resize: horizontal; overflow: auto; border-right: 1px solid #e5e7eb; background: #fafafa; }
       #sidebar header { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; background: #fff; position: sticky; top: 0; z-index: 1; }
       #sidebar header h1 { margin: 0; font-size: 14px; color: var(--ink); }
       #sidebar header p { margin: 4px 0 0; font-size: 11px; color: #6b7280; }
       #sidebar header a { color: var(--orange); font-weight: 600; text-decoration: none; }
+      .toolbar { display: flex; gap: 6px; margin-top: 8px; }
+      .toolbar button { flex: 1; padding: 6px 8px; font-size: 12px; font-weight: 600; border: 1px solid var(--orange-light); background: var(--orange-light); color: #1f2430; border-radius: 6px; cursor: pointer; }
+      .toolbar button.secondary { background: #fff; color: var(--ink); border-color: #e5e7eb; }
       #search { width: 100%; margin-top: 8px; padding: 6px 8px; font-size: 13px; border: 1px solid #e5e7eb; border-radius: 6px; }
       #tree { padding: 6px 4px 24px; }
       details { margin: 1px 0; }
@@ -30,49 +33,115 @@
       #main { flex: 1; display: flex; flex-direction: column; }
       #editor { flex: 1; border: 0; width: 100%; }
       .hint { padding: 10px 14px; font-size: 12px; color: #6b7280; background: #fff8ec; border-bottom: 1px solid #f0e6d0; }
+      /* context menu / dropdown */
+      .menu { position: fixed; z-index: 9999; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.14); padding: 4px; min-width: 200px; font-size: 13px; display: none; }
+      .menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--ink); }
+      .menu button:hover { background: #fff3e0; }
+      .menu .label { padding: 6px 10px 4px; font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: .04em; }
+      .menu hr { border: 0; border-top: 1px solid #f0f0f0; margin: 4px 0; }
     </style>
   </head>
   <body>
     <aside id="sidebar">
       <header>
         <h1>Wiki-structuur</h1>
-        <p>Klik een pagina → opent rechts in de editor. <a href="./" target="_blank" rel="noopener">Volledige editor ↗</a></p>
+        <p>Klik = openen · rechtsklik = menu. <a href="./" target="_blank" rel="noopener">Volledige editor ↗</a></p>
+        <div class="toolbar">
+          <button id="newPageBtn">➕ Nieuwe pagina</button>
+          <button id="newSectionBtn" class="secondary" title="Een nieuwe hoofdsectie aanvragen">➕ Sectie</button>
+        </div>
         <input id="search" type="search" placeholder="Zoek pagina…" />
       </header>
       <div id="tree">Laden…</div>
     </aside>
     <main id="main">
-      <div class="hint">Eerst inloggen in de editor (rechts) via GitHub; daarna opent elke pagina hier. NL↔EN wissel je rechtsboven in de editor.</div>
+      <div class="hint">Eerst inloggen in de editor (rechts) via GitHub; daarna openen/aanmaken pagina's hier. NL↔EN + AI-vertaling: rechtsboven in de editor.</div>
       <iframe id="editor" src="./" title="Yres wiki editor"></iframe>
     </main>
 
+    <div id="ctxmenu" class="menu"></div>
+
     <script>
       const iframe = document.getElementById('editor');
+      const ctx = document.getElementById('ctxmenu');
       let activeBtn = null;
+      let collections = []; // {label, collection}
 
-      function openEntry(collection, slug, btn) {
-        const hash = '#/collections/' + collection + '/entries/' + encodeURIComponent(slug);
+      function navigate(hash) {
         try {
           const w = iframe.contentWindow;
           if (w && String(w.location.href).indexOf('/admin/') > -1) {
-            w.location.hash = hash; // SPA route, no full reload
-          } else {
-            iframe.src = './' + hash;
+            w.location.hash = hash;
+            return;
           }
-        } catch (e) {
-          iframe.src = './' + hash;
-        }
-        if (activeBtn) activeBtn.classList.remove('active');
-        btn.classList.add('active');
-        activeBtn = btn;
+        } catch (e) {}
+        iframe.src = './' + hash;
       }
 
+      function openEntry(collection, slug, btn) {
+        navigate('#/collections/' + collection + '/entries/' + encodeURIComponent(slug));
+        if (activeBtn) activeBtn.classList.remove('active');
+        if (btn) { btn.classList.add('active'); activeBtn = btn; }
+      }
+
+      function openNew(collection) {
+        navigate('#/collections/' + collection + '/new');
+      }
+
+      /* ---------------- context menu ---------------- */
+      function showMenu(x, y, items) {
+        ctx.innerHTML = '';
+        for (const it of items) {
+          if (it.sep) { ctx.appendChild(document.createElement('hr')); continue; }
+          if (it.header) {
+            const h = document.createElement('div'); h.className = 'label'; h.textContent = it.header; ctx.appendChild(h); continue;
+          }
+          const b = document.createElement('button');
+          b.textContent = it.text;
+          b.onclick = () => { hideMenu(); it.action(); };
+          ctx.appendChild(b);
+        }
+        ctx.style.display = 'block';
+        const w = ctx.offsetWidth, h = ctx.offsetHeight;
+        ctx.style.left = Math.min(x, window.innerWidth - w - 8) + 'px';
+        ctx.style.top = Math.min(y, window.innerHeight - h - 8) + 'px';
+      }
+      function hideMenu() { ctx.style.display = 'none'; }
+      document.addEventListener('click', hideMenu);
+      document.addEventListener('scroll', hideMenu, true);
+      window.addEventListener('blur', hideMenu);
+
+      function folderMenu(label, collection, e) {
+        const items = [{ header: label }];
+        if (collection) {
+          items.push({ text: '➕ Nieuwe pagina hier', action: () => openNew(collection) });
+        } else {
+          items.push({ text: '➕ Nieuwe pagina (kies sectie)…', action: () => newPageMenu(e.clientX, e.clientY) });
+        }
+        showMenu(e.clientX, e.clientY, items);
+      }
+      function pageMenu(node, btn, e) {
+        showMenu(e.clientX, e.clientY, [
+          { header: node.label },
+          { text: '✏️ Bewerken', action: () => openEntry(node.collection, node.slug, btn) },
+          { sep: true },
+          { text: '➕ Nieuwe pagina (zelfde sectie)', action: () => openNew(node.collection) },
+        ]);
+      }
+      function newPageMenu(x, y) {
+        const items = [{ header: 'Nieuwe pagina in…' }];
+        for (const c of collections) items.push({ text: c.label, action: () => openNew(c.collection) });
+        showMenu(x, y, items);
+      }
+
+      /* ---------------- render tree ---------------- */
       function renderNodes(nodes, parent) {
         for (const node of nodes) {
           if (node.type === 'folder') {
             const det = document.createElement('details');
             const sum = document.createElement('summary');
             sum.textContent = node.label;
+            sum.oncontextmenu = (e) => { e.preventDefault(); folderMenu(node.label, node.collection, e); };
             det.appendChild(sum);
             const kids = document.createElement('div');
             kids.className = 'kids';
@@ -85,9 +154,27 @@
             b.textContent = node.label;
             b.dataset.label = node.label.toLowerCase();
             b.onclick = () => openEntry(node.collection, node.slug, b);
+            b.oncontextmenu = (e) => { e.preventDefault(); pageMenu(node, b, e); };
             parent.appendChild(b);
           }
         }
+      }
+
+      function collectCollections(nodes) {
+        // root files -> "algemeen"; folders carry their collection
+        let hasRootFile = false;
+        const seen = new Set();
+        const walk = (arr) => {
+          for (const n of arr) {
+            if (n.type === 'folder') {
+              if (n.collection && !seen.has(n.collection)) { seen.add(n.collection); collections.push({ label: n.label, collection: n.collection }); }
+              walk(n.children);
+            } else if (n.collection === 'algemeen') hasRootFile = true;
+          }
+        };
+        walk(nodes);
+        if (hasRootFile && !seen.has('algemeen')) collections.unshift({ label: 'Algemeen', collection: 'algemeen' });
+        collections.sort((a, b) => a.label.localeCompare(b.label));
       }
 
       fetch('wiki-tree.json?v=' + Date.now())
@@ -96,22 +183,28 @@
           const root = document.getElementById('tree');
           root.textContent = '';
           renderNodes(tree, root);
-          // open the first level by default
+          collectCollections(tree);
           root.querySelectorAll(':scope > details').forEach((d) => (d.open = true));
         })
-        .catch(() => {
-          document.getElementById('tree').textContent = 'Kon de structuur niet laden.';
-        });
+        .catch(() => { document.getElementById('tree').textContent = 'Kon de structuur niet laden.'; });
 
-      // Simple search: show/hide pages by label; auto-expand matches.
+      document.getElementById('newPageBtn').addEventListener('click', (e) => {
+        const r = e.target.getBoundingClientRect();
+        newPageMenu(r.left, r.bottom + 4);
+      });
+      document.getElementById('newSectionBtn').addEventListener('click', () => {
+        alert(
+          'Een nieuwe hoofdsectie (map in het menu) is een structuurwijziging in de configuratie.\n\n' +
+          'Maak gerust pagina’s aan in bestaande secties via "Nieuwe pagina".\n' +
+          'Wil je een nieuwe sectie? Geef de naam door, dan zet ik ’m er snel bij.'
+        );
+      });
+
       document.getElementById('search').addEventListener('input', (e) => {
         const q = e.target.value.trim().toLowerCase();
-        const pages = document.querySelectorAll('button.page');
-        pages.forEach((b) => {
-          const hit = !q || b.dataset.label.includes(q);
-          b.style.display = hit ? '' : 'none';
+        document.querySelectorAll('button.page').forEach((b) => {
+          b.style.display = !q || b.dataset.label.includes(q) ? '' : 'none';
         });
-        // expand folders that contain a visible page; collapse empty ones when searching
         document.querySelectorAll('#tree details').forEach((d) => {
           const anyVisible = [...d.querySelectorAll('button.page')].some((b) => b.style.display !== 'none');
           if (q) d.open = anyVisible;

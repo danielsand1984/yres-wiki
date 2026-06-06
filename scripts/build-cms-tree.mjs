@@ -66,6 +66,7 @@ function walk(absDir, rel) {
         type: 'folder',
         label: SECTIONS[childRel]?.label || entry.name,
         rel: childRel,
+        collection: SECTIONS[childRel]?.collection || null,
         children: [...node.folders, ...node.files],
       });
     } else if (entry.name.endsWith('.md')) {
