@@ -57,6 +57,8 @@ function walk(absDir, rel) {
         label: readTitle(abs, slug),
         collection: collName(rel),
         slug,
+        path: rel ? `${rel}/${slug}` : slug,
+        folder: rel,
         pos: posOf(abs),
       });
     }

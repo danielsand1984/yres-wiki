@@ -1,0 +1,61 @@
+name: Move wiki page
+
+# Triggered from the wiki tree page (Verplaats naar…). Moves a page to another
+# (sub)folder in both locales, keeps its URL (slug) + fixes all relative links,
+# then commits, pushes and deploys.
+
+on:
+  workflow_dispatch:
+    inputs:
+      from:
+        description: 'Source doc path, e.g. concepten/load-types'
+        required: true
+      to:
+        description: "Target folder, e.g. concepten/advanced ('' = root)"
+        required: false
+        default: ''
+
+concurrency:
+  group: deploy-wiki
+  cancel-in-progress: false
+
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Move page (+ fix links, keep URL)
+        run: node scripts/move-page.mjs "${{ inputs.from }}" "${{ inputs.to }}"
+
+      - name: Commit + push
+        run: |
+          git config user.name "Yres CMS"
+          git config user.email "noreply@oogopdata.nl"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes — nothing to commit."
+            exit 0
+          fi
+          git commit -m "CMS: verplaats ${{ inputs.from }} -> ${{ inputs.to }}"
+          git push origin main
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Configure SSH for the VPS
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.WIKI_DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H 185.88.142.48 >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Build and deploy
+        run: bash scripts/push-to-vps.sh
+        env:
+          WIKI_BASE_URL: https://oogopdata.nl

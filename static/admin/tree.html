@@ -34,7 +34,7 @@
       #editor { flex: 1; border: 0; width: 100%; }
       .hint { padding: 10px 14px; font-size: 12px; color: #6b7280; background: #fff8ec; border-bottom: 1px solid #f0e6d0; }
       /* context menu / dropdown */
-      .menu { position: fixed; z-index: 9999; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.14); padding: 4px; min-width: 200px; font-size: 13px; display: none; }
+      .menu { position: fixed; z-index: 9999; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.14); padding: 4px; min-width: 200px; max-height: 75vh; overflow-y: auto; font-size: 13px; display: none; }
       .menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--ink); }
       .menu button:hover { background: #fff3e0; }
       .menu .label { padding: 6px 10px 4px; font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: .04em; }
@@ -122,9 +122,83 @@
         showMenu(e.clientX, e.clientY, [
           { header: node.label },
           { text: '✏️ Bewerken', action: () => openEntry(node.collection, node.slug, btn) },
+          { text: '📦 Verplaats naar…', action: () => moveMenu(node, e.clientX, e.clientY) },
           { sep: true },
           { text: '➕ Nieuwe pagina (zelfde sectie)', action: () => openNew(node.collection) },
         ]);
+      }
+
+      /* ---------------- move a page to another folder ---------------- */
+      let folders = []; // {rel, label}
+
+      function collectFolders(nodes, depth = 0) {
+        for (const n of nodes) {
+          if (n.type === 'folder') {
+            folders.push({ rel: n.rel, label: '— '.repeat(depth) + n.label });
+            collectFolders(n.children, depth + 1);
+          }
+        }
+      }
+
+      function moveMenu(node, x, y) {
+        const cur = node.folder || '';
+        const items = [{ header: 'Verplaats "' + node.label + '" naar:' }];
+        if (cur !== '') items.push({ text: '(root) Algemeen', action: () => doMove(node, '') });
+        for (const f of folders) {
+          if (f.rel === cur) continue; // already there
+          items.push({ text: f.label, action: () => doMove(node, f.rel) });
+        }
+        showMenu(x, y, items);
+      }
+
+      function getWikiToken() {
+        let t = localStorage.getItem('yres-wiki-gh-token');
+        if (t) return t;
+        for (const k of Object.keys(localStorage)) {
+          try {
+            const v = localStorage.getItem(k);
+            const m = v && v.match(/gh[opsu]_[A-Za-z0-9]{20,}/);
+            if (m) { localStorage.setItem('yres-wiki-gh-token', m[0]); return m[0]; }
+            const j = JSON.parse(v);
+            const tok = j && (j.token || (j.user && j.user.token));
+            if (typeof tok === 'string' && tok.length > 20) { localStorage.setItem('yres-wiki-gh-token', tok); return tok; }
+          } catch (e) {}
+        }
+        t = prompt('Plak een GitHub-token (met repo-rechten) om de verplaatsing uit te voeren.\nEenmalig — wordt lokaal bewaard.');
+        if (t) { t = t.trim(); localStorage.setItem('yres-wiki-gh-token', t); }
+        return t || null;
+      }
+
+      async function doMove(node, toFolder) {
+        const dest = toFolder || '(root)';
+        if (!confirm('"' + node.label + '" verplaatsen naar "' + dest + '"?\n\nDe URL blijft gelijk en interne links worden automatisch bijgewerkt. Live na ~2 min.')) return;
+        const token = getWikiToken();
+        if (!token) return;
+        try {
+          const res = await fetch(
+            'https://api.github.com/repos/danielsand1984/yres-wiki/actions/workflows/move-page.yml/dispatches',
+            {
+              method: 'POST',
+              headers: {
+                Authorization: 'Bearer ' + token,
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+              },
+              body: JSON.stringify({ ref: 'main', inputs: { from: node.path, to: toFolder } }),
+            }
+          );
+          if (res.status === 204) {
+            alert('Verplaatsing gestart ✅\n\n"' + node.label + '" → "' + dest + '".\nKlaar over ~2 minuten; ververs daarna deze pagina.');
+          } else if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('yres-wiki-gh-token');
+            alert('Token geweigerd (' + res.status + '). Probeer opnieuw; je wordt om een nieuw token gevraagd.');
+          } else {
+            const txt = await res.text();
+            alert('Verplaatsen mislukt (' + res.status + ').\n' + txt.slice(0, 200));
+          }
+        } catch (e) {
+          alert('Netwerkfout bij verplaatsen: ' + e.message);
+        }
       }
       // Open the free-path "nieuw" collection to create a page in a new (nested)
       // folder. Sveltia has no field-prefill via URL, so we copy a suggested path.
@@ -196,6 +270,7 @@
           root.textContent = '';
           renderNodes(tree, root);
           collectCollections(tree);
+          collectFolders(tree);
           root.querySelectorAll(':scope > details').forEach((d) => (d.open = true));
         })
         .catch(() => { document.getElementById('tree').textContent = 'Kon de structuur niet laden.'; });
