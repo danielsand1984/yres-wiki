@@ -39,27 +39,10 @@ const collections = allFolders().map((rel) => ({
   fields: FIELDS,
 }));
 
-// Free-path collection: create a page anywhere, creating (nested) folders.
-collections.push({
-  name: 'nieuw',
-  label: '➕ Nieuwe sectie / pagina (vrij pad)',
-  folder: 'docs',
-  path: '{{map}}/{{slug}}',
-  extension: 'md',
-  format: 'frontmatter',
-  create: true,
-  i18n: true,
-  fields: [
-    {
-      label: 'Map / sectiepad — bv. concepten of concepten/advanced',
-      name: 'map',
-      widget: 'string',
-      required: true,
-      i18n: 'duplicate',
-    },
-    ...FIELDS,
-  ],
-});
+// NB: no "free path" collection — Sveltia slugifies the path field (so a `/`
+// becomes a dash, no nesting) AND writes it as junk frontmatter. New / nested
+// folders are created instead via the tree page's "Verplaats → Ander pad",
+// where the move workflow keeps slashes verbatim.
 
 const config = {
   backend: {

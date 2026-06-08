@@ -115,7 +115,6 @@
         showMenu(e.clientX, e.clientY, [
           { header: node.label },
           { text: '➕ Nieuwe pagina hier', action: () => openNew(node.collection) },
-          { text: '➕ Nieuwe subsectie hier…', action: () => openNewSection(node.rel) },
         ]);
       }
       function pageMenu(node, btn, e) {
@@ -143,6 +142,18 @@
       function moveMenu(node, x, y) {
         const cur = node.folder || '';
         const items = [{ header: 'Verplaats "' + node.label + '" naar:' }];
+        items.push({
+          text: '✏️ Ander / nieuw pad… (genest met /)',
+          action: () => {
+            const tgt = prompt(
+              'Doelmap (mag genest met /, bv. klanten/casussen).\n' +
+                'Een nieuwe map wordt automatisch aangemaakt. Leeg = root.',
+              cur
+            );
+            if (tgt === null) return;
+            doMove(node, tgt.trim().replace(/^\/+|\/+$/g, ''));
+          },
+        });
         if (cur !== '') items.push({ text: '(root) Algemeen', action: () => doMove(node, '') });
         for (const f of folders) {
           if (f.rel === cur) continue; // already there
@@ -200,18 +211,15 @@
           alert('Netwerkfout bij verplaatsen: ' + e.message);
         }
       }
-      // Open the free-path "nieuw" collection to create a page in a new (nested)
-      // folder. Sveltia has no field-prefill via URL, so we copy a suggested path.
-      function openNewSection(parentRel) {
-        const suggestion = parentRel ? parentRel + '/nieuwe-sectie' : 'nieuwe-sectie';
-        try { navigator.clipboard && navigator.clipboard.writeText(suggestion); } catch (e) {}
-        navigate('#/collections/nieuw/new');
+      // Nieuwe (geneste) sectie = maak een pagina + verplaats 'm naar een nieuw pad.
+      function newSectionHelp() {
         alert(
-          'Nieuwe (sub)sectie aanmaken:\n\n' +
-          '1) Vul rechts het veld "Map / sectiepad" in — bijvoorbeeld:\n     ' + suggestion + '\n' +
-          '   (dit pad staat al op je klembord — plakken kan)\n' +
-          '2) Geef een titel + inhoud en sla op.\n\n' +
-          'De nieuwe sectie verschijnt na de build automatisch in het menu en in deze boom.'
+          'Een nieuwe (sub)sectie maak je zo:\n\n' +
+          '1) Maak een pagina via "➕ Nieuwe pagina" (of rechtsklik een map → Nieuwe pagina hier).\n' +
+          '2) Rechtsklik die pagina → "📦 Verplaats naar… → Ander/nieuw pad…" en typ de map,\n' +
+          '   genest mag (bv. klanten/casussen). De map wordt automatisch aangemaakt,\n' +
+          '   de URL en links blijven kloppen.\n\n' +
+          '(Zo voorkomen we de slug-problemen van een vrij invulveld.)'
         );
       }
       function newPageMenu(x, y) {
@@ -279,7 +287,7 @@
         const r = e.target.getBoundingClientRect();
         newPageMenu(r.left, r.bottom + 4);
       });
-      document.getElementById('newSectionBtn').addEventListener('click', () => openNewSection(''));
+      document.getElementById('newSectionBtn').addEventListener('click', newSectionHelp);
 
       document.getElementById('search').addEventListener('input', (e) => {
         const q = e.target.value.trim().toLowerCase();
