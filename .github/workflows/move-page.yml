@@ -19,6 +19,9 @@ concurrency:
   group: deploy-wiki
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
   move:
     runs-on: ubuntu-latest
