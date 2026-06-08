@@ -20,7 +20,7 @@ description: Yres-terminologie.
 | **ADF** | Azure Data Factory — orkestratielaag waar Yres pipelines naartoe genereert. |
 | **Integration Runtime (IR)** | Compute van ADF; bereikt bronnen in lokale netwerken. Default `AutoResolveIntegrationRuntime`; self-hosted IR's mogelijk. |
 | **Dictionary** | Opgeslagen bron-metadata (tabellen, velden, keys, relaties). Niet voor file- en REST-bronnen. |
-| **Load type** | FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL, Delta Image. Zie [databron-koppelen](../setup/databron-koppelen.md). |
+| **Load type** | FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL, Delta Image. Zie [databron-koppelen](../../setup/databron-koppelen.md). |
 | **HIS** | History-schema (naam via `SchemaHIS`). |
 | **STAGE** | Staging-schema voor delta-loads (naam via `SchemaStage`). |
 | **ODS** | Operational Data Store. |

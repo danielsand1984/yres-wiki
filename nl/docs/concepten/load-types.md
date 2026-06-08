@@ -34,4 +34,4 @@ Een **load type** bepaalt wat er met de bestaande data in de doeltabel gebeurt b
 - **Surrogate keys (`DefaultSurrogate`)** — automatisch gegenereerde sleutels op de natural key (opgeslagen in `[LoadManagement].[SurrogateKeys]`).
 - **Pagination (`UsePagination` / `PageSize`)** — grote datasets (100M+ records) in pagina's verwerken.
 
-Zie ook [Databron koppelen & laden](../setup/databron-koppelen.md) en de [begrippenlijst](./glossary.md).
+Zie ook [Databron koppelen & laden](../setup/databron-koppelen.md) en de [begrippenlijst](./test/glossary.md).

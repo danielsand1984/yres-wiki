@@ -34,4 +34,4 @@ A **load type** determines what happens to the existing data in the target table
 - **Surrogate keys (`DefaultSurrogate`)** — automatically generated keys on the natural key (stored in `[LoadManagement].[SurrogateKeys]`).
 - **Pagination (`UsePagination` / `PageSize`)** — process large datasets (100M+ records) in pages.
 
-See also [Connecting & loading a data source](../setup/databron-koppelen.md) and the [glossary](./glossary.md).
+See also [Connecting & loading a data source](../setup/databron-koppelen.md) and the [glossary](./test/glossary.md).
