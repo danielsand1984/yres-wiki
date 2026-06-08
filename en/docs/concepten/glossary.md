@@ -20,7 +20,7 @@ description: Yres terminology.
 | **ADF** | Azure Data Factory — orchestration layer that Yres generates pipelines to. |
 | **Integration Runtime (IR)** | ADF compute; reaches sources in local networks. Default `AutoResolveIntegrationRuntime`; self-hosted IRs possible. |
 | **Dictionary** | Stored source metadata (tables, fields, keys, relations). Not for file and REST sources. |
-| **Load type** | FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL, Delta Image. See [databron-koppelen](../../setup/databron-koppelen.md). |
+| **Load type** | FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL, Delta Image. See [databron-koppelen](../setup/databron-koppelen.md). |
 | **HIS** | History schema (name via `SchemaHIS`). |
 | **STAGE** | Staging schema for delta loads (name via `SchemaStage`). |
 | **ODS** | Operational Data Store. |
