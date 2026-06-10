@@ -1,6 +1,6 @@
 ---
 title: Pricing
-sidebar_label: ''
+sidebar_label: Pricing
 sidebar_position: 9
 slug: ''
 description: Essentials, Advanced and Ultimate — predictable monthly pricing.
@@ -24,7 +24,7 @@ description: Essentials, Advanced and Ultimate — predictable monthly pricing.
 | **Automatic database scaling** | — | ✅ | ✅ |
 | **Web application firewall** | — | ✅ | ✅ |
 | **Local networks (via IR)** | ✅ | ✅ | ✅ |
-|  |  |
+| --- | --- | --- | --- |
 
 ⭐ Advanced = **most popular**.
 

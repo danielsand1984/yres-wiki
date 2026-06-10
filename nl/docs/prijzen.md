@@ -1,6 +1,6 @@
 ---
 title: Prijzen
-sidebar_label: ''
+sidebar_label: Prijzen
 sidebar_position: 9
 slug: ''
 description: Essentials, Advanced en Ultimate — voorspelbare maandprijzen.
@@ -24,7 +24,7 @@ description: Essentials, Advanced en Ultimate — voorspelbare maandprijzen.
 | **Automatisch schalen databases** | — | ✅ | ✅ |
 | **Web application firewall** | — | ✅ | ✅ |
 | **Lokale netwerken (via IR)** | ✅ | ✅ | ✅ |
-|  |  |
+| --- | --- | --- | --- |
 
 ⭐ Advanced = **meest gekozen**.
 
