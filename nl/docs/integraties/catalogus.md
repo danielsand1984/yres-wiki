@@ -1,6 +1,6 @@
 ---
 title: Integratiecatalogus
-sidebar_label: ''
+sidebar_label: Integratiecatalogus
 sidebar_position: 2
 slug: Integratie/catalogus
 description: Alle ondersteunde databronnen, gecategoriseerd.
