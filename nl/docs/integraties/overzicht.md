@@ -2,7 +2,7 @@
 title: Integraties — overzicht
 sidebar_label: Integraties — overzicht
 sidebar_position: 1
-slug: ''
+slug: Integraties
 description: Yres koppelt databases, ERP-systemen, API's en cloudapplicaties binnen je eigen Azure omgeving.
 ---
 
