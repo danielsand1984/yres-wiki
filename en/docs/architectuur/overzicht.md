@@ -1,6 +1,6 @@
 ---
 title: Architecture
-sidebar_label: ''
+sidebar_label: Architecture
 sidebar_position: 1
 slug: /architectuur
 description: How Yres is built technically — Azure, ADF, DTAP and lineage.
