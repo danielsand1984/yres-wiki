@@ -1,7 +1,8 @@
 ---
-slug: /
-sidebar_position: 1
 title: Wat is Yres?
+sidebar_label: ''
+sidebar_position: 1
+slug: /
 description: Yres is het Azure data platform voor betrouwbare dashboards en reporting.
 ---
 
@@ -9,7 +10,7 @@ description: Yres is het Azure data platform voor betrouwbare dashboards en repo
 
 **Yres ontwerpt, bouwt en beheert je complete datawarehouse in Microsoft Azure**, zodat data­teams sneller kunnen leveren met minder onderhoud en complexiteit.
 
-Yres zit *onder* Power BI — niet ernaast of in plaats ervan. Het zorgt dat de data die je dashboards ophalen betrouwbaar, up-to-date en correct gestructureerd is.
+Yres zit _onder_ Power BI — niet ernaast of in plaats ervan. Het zorgt dat de data die je dashboards ophalen betrouwbaar, up-to-date en correct gestructureerd is.
 
 ## In één zin
 
@@ -19,8 +20,8 @@ Yres zit *onder* Power BI — niet ernaast of in plaats ervan. Het zorgt dat de 
 
 Dataplatformen groeien vaak uit tot complexe maatwerkstructuren die lastig te beheren zijn en afhankelijk worden van één engineer. Met Yres centraliseer en standaardiseer je databronnen, pipelines en beheer binnen **één Azure omgeving**. Zo werk je sneller met betrouwbare data, zonder onnodige complexiteit.
 
-| | Zonder Yres | Met Yres |
-|---|---|---|
+|  | Zonder Yres | Met Yres |
+| --- | --- | --- |
 | **Koppelingen** | Per applicatie anders ingericht, maatwerk | Gestandaardiseerd, off-the-shelf |
 | **Beheer** | Kennis bij één engineer | Transparant en overdraagbaar |
 | **Pipelines** | Fragiele scripts | Vaste structuren, vertaald naar ADF |
@@ -33,12 +34,12 @@ Organisaties die werken met **Microsoft Azure** en **Power BI** en grip willen o
 
 ## Naamswijziging: Iris → Yres
 
-Het product heette vroeger **Iris** en heet nu **Yres**. Je komt in oudere bronnen, Azure-resourcenamen, Confluence-spaces (`spaceKey=IRIS`) en interne URL's nog "Iris" tegen — dat is hetzelfde product.
+Het product heette vroeger **Iris** en heet nu **Yres**. Je komt in oudere Azure-resourcenamen nog "Iris" tegen — dat is hetzelfde product.
 
 ## Domeinen & endpoints
 
 | Doel | URL |
-|---|---|
+| --- | --- |
 | Marketingsite | https://oogopdata.nl |
 | Webapp | https://www.yres.app |
 | Feedback-mailbox | feedback@yres.app |
@@ -55,15 +56,6 @@ Technisch bestaat Yres uit een set **Azure-resources en templates**. Bij install
 
 Kernfeatures: **SSO** (Azure), **Log Management**, **Life Cycle Management** (dev → prod via changes), **flexibiliteit & schaalbaarheid** via Azure-resources.
 
-## Hoe deze wiki is opgebouwd
+## 
 
-| Sectie | Inhoud |
-|---|---|
-| **Product** | Propositie, use-cases, features, hoe het werkt |
-| **Concepten** | Yres uitgelegd, load types, begrippenlijst |
-| **Architectuur** | Azure-resources, toegang, setups |
-| **Gebruik (frontend)** | Wat elk paneel in de webapp doet |
-| **Setup & installatie** | Yres installeren in een Azure-tenant |
-| **Integraties** | Bronnen + verbindingseisen per bron |
-| **Referentie** | SQL-interaction, release notes |
-| **Prijzen · Klanten · FAQ · Troubleshooting · Team** | Overig |
+|  |
