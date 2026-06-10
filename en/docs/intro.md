@@ -1,6 +1,6 @@
 ---
 title: What is Yres?
-sidebar_label: ''
+sidebar_label: What is Yres?
 sidebar_position: 1
 slug: /
 description: Yres is the Azure data platform for reliable dashboards and reporting.
@@ -56,6 +56,4 @@ Technically, Yres consists of a set of **Azure resources and templates**. During
 
 Core features: **SSO** (Azure), **Log Management**, **Life Cycle Management** (dev → prod via changes), **flexibility & scalability** via Azure resources.
 
-## 
-
-|  |
+##
