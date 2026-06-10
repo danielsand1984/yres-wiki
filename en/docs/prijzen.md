@@ -2,7 +2,7 @@
 title: Pricing
 sidebar_label: Pricing
 sidebar_position: 9
-slug: ''
+slug: Prijzen
 description: Essentials, Advanced and Ultimate — predictable monthly pricing.
 ---
 

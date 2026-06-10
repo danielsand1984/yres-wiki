@@ -2,7 +2,7 @@
 title: Prijzen
 sidebar_label: Prijzen
 sidebar_position: 9
-slug: ''
+slug: Prijzen
 description: Essentials, Advanced en Ultimate — voorspelbare maandprijzen.
 ---
 
