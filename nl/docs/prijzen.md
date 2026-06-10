@@ -1,6 +1,8 @@
 ---
-sidebar_position: 9
 title: Prijzen
+sidebar_label: ''
+sidebar_position: 9
+slug: ''
 description: Essentials, Advanced en Ultimate — voorspelbare maandprijzen.
 ---
 
@@ -10,8 +12,8 @@ description: Essentials, Advanced en Ultimate — voorspelbare maandprijzen.
 
 ## Pakketten
 
-| | **Essentials** | **Advanced** ⭐ | **Ultimate** |
-|---|---|---|---|
+|  | **Essentials** | **Advanced** ⭐ | **Ultimate** |
+| --- | --- | --- | --- |
 | **Prijs** | €350/mo | €674/mo | €997/mo |
 | **Voor** | Kleine teams & opstartende omgevingen | De meeste data teams | Grote, complexe omgevingen |
 | **Omgevingen** | Eén | 2 (dev + productie) | Onbeperkt |
@@ -22,7 +24,7 @@ description: Essentials, Advanced en Ultimate — voorspelbare maandprijzen.
 | **Automatisch schalen databases** | — | ✅ | ✅ |
 | **Web application firewall** | — | ✅ | ✅ |
 | **Lokale netwerken (via IR)** | ✅ | ✅ | ✅ |
-| **Site-to-site VPN** | — | — | ✅ |
+|  |  |
 
 ⭐ Advanced = **meest gekozen**.
 

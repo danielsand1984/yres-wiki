@@ -1,6 +1,8 @@
 ---
-sidebar_position: 9
 title: Pricing
+sidebar_label: ''
+sidebar_position: 9
+slug: ''
 description: Essentials, Advanced and Ultimate — predictable monthly pricing.
 ---
 
@@ -10,8 +12,8 @@ description: Essentials, Advanced and Ultimate — predictable monthly pricing.
 
 ## Plans
 
-| | **Essentials** | **Advanced** ⭐ | **Ultimate** |
-|---|---|---|---|
+|  | **Essentials** | **Advanced** ⭐ | **Ultimate** |
+| --- | --- | --- | --- |
 | **Price** | €350/mo | €674/mo | €997/mo |
 | **For** | Small teams & emerging environments | Most data teams | Large, complex environments |
 | **Environments** | One | 2 (dev + production) | Unlimited |
@@ -22,7 +24,7 @@ description: Essentials, Advanced and Ultimate — predictable monthly pricing.
 | **Automatic database scaling** | — | ✅ | ✅ |
 | **Web application firewall** | — | ✅ | ✅ |
 | **Local networks (via IR)** | ✅ | ✅ | ✅ |
-| **Site-to-site VPN** | — | — | ✅ |
+|  |  |
 
 ⭐ Advanced = **most popular**.
 
