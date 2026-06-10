@@ -1,6 +1,8 @@
 ---
-sidebar_position: 1
 title: Integraties — overzicht
+sidebar_label: Integraties — overzicht
+sidebar_position: 1
+slug: ''
 description: Yres koppelt databases, ERP-systemen, API's en cloudapplicaties binnen je eigen Azure omgeving.
 ---
 
@@ -15,7 +17,7 @@ Voeg nieuwe databronnen toe zonder extra handwerk. Yres standaardiseert hoe data
 Bronnen vallen onder één of meer koppeltypes:
 
 | Categorie | Wat het is |
-|---|---|
+| --- | --- |
 | **Directe koppelingen** | Native connectoren naar databases en applicaties |
 | **OData** | Koppeling via het OData-protocol (o.a. SAP, CBS) |
 | **REST** | Koppeling via REST API's |

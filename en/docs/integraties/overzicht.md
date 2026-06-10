@@ -1,6 +1,8 @@
 ---
-sidebar_position: 1
 title: Integrations — overview
+sidebar_label: Integrations — overview
+sidebar_position: 1
+slug: ''
 description: Yres connects databases, ERP systems, APIs and cloud applications within your own Azure environment.
 ---
 
@@ -15,7 +17,7 @@ Add new data sources without extra manual work. Yres standardizes how data is lo
 Sources fall under one or more connection types:
 
 | Category | What it is |
-|---|---|
+| --- | --- |
 | **Direct connections** | Native connectors to databases and applications |
 | **OData** | Connection via the OData protocol (including SAP, CBS) |
 | **REST** | Connection via REST APIs |
