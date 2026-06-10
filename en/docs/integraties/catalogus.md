@@ -2,7 +2,7 @@
 title: Integration catalog
 sidebar_label: ''
 sidebar_position: 2
-slug: Integratiecatalogus
+slug: Integratie/catalogus
 description: All supported data sources, categorized.
 ---
 
