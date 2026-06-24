@@ -1,8 +1,6 @@
 ---
 title: Release notes
-sidebar_label: ''
 sidebar_position: 3
-slug: ''
 description: Version history of Yres DWH (v1.47 through v1.55), with breaking changes and new sources.
 ---
 
