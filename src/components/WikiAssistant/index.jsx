@@ -16,6 +16,10 @@ const MAX_INPUT_CHARS = 600;
 const COOLDOWN_MS = 1500;
 const HISTORY_MESSAGES = 6;
 const COUNT_STORAGE = 'yres-ai-count';
+// Bewaar het gesprek tijdelijk binnen de sessie (per tab, gewist bij sluiten),
+// zodat je je chat-historie niet kwijt bent als je een link in een antwoord volgt.
+const MSGS_STORAGE = 'yres-ai-messages';
+const OPEN_STORAGE = 'yres-ai-open';
 
 const STR = {
   nl: {
@@ -25,7 +29,8 @@ const STR = {
     ask: 'Vraag…',
     send: 'Vraag stellen',
     thinking: 'Aan het zoeken in de wiki…',
-    limitReached: `Je hebt het maximum van ${MAX_QUESTIONS_PER_SESSION} vragen voor deze sessie bereikt. Herlaad de pagina om opnieuw te beginnen.`,
+    limitReached: `Je hebt het maximum van ${MAX_QUESTIONS_PER_SESSION} vragen voor deze sessie bereikt. Begin een nieuw gesprek om opnieuw te beginnen.`,
+    newChat: 'Nieuw gesprek',
     cooldown: 'Even wachten tussen vragen…',
     tooLong: `Houd je vraag onder ${MAX_INPUT_CHARS} tekens.`,
     rate: 'Te veel vragen gesteld. Probeer het later opnieuw.',
@@ -41,7 +46,8 @@ const STR = {
     ask: 'Ask…',
     send: 'Ask',
     thinking: 'Searching the wiki…',
-    limitReached: `You reached the limit of ${MAX_QUESTIONS_PER_SESSION} questions for this session. Reload the page to start over.`,
+    limitReached: `You reached the limit of ${MAX_QUESTIONS_PER_SESSION} questions for this session. Start a new chat to begin again.`,
+    newChat: 'New chat',
     cooldown: 'Please wait between questions…',
     tooLong: `Keep your question under ${MAX_INPUT_CHARS} characters.`,
     rate: 'Too many questions. Try again later.',
@@ -66,15 +72,46 @@ export default function WikiAssistant() {
   const lastSentRef = useRef(0);
   const scrollRef = useRef(null);
 
+  // Hydrateer count + gesprek + open-status uit de sessie (na een navigatie/herlaad).
   useEffect(() => {
     try {
       setCount(Number(sessionStorage.getItem(COUNT_STORAGE) || 0));
+      const saved = sessionStorage.getItem(MSGS_STORAGE);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setMessages(parsed);
+      }
+      if (sessionStorage.getItem(OPEN_STORAGE) === '1') setOpen(true);
     } catch {}
   }, []);
+
+  // Bewaar het gesprek + open-status zodat ze een navigatie overleven.
+  useEffect(() => {
+    try {
+      if (messages.length) sessionStorage.setItem(MSGS_STORAGE, JSON.stringify(messages));
+      else sessionStorage.removeItem(MSGS_STORAGE);
+    } catch {}
+  }, [messages]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(OPEN_STORAGE, open ? '1' : '0');
+    } catch {}
+  }, [open]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, loading]);
+
+  function clearConversation() {
+    setMessages([]);
+    setError('');
+    setCount(0);
+    try {
+      sessionStorage.removeItem(MSGS_STORAGE);
+      sessionStorage.removeItem(COUNT_STORAGE);
+    } catch {}
+  }
 
   function endpoint() {
     try {
@@ -144,6 +181,17 @@ export default function WikiAssistant() {
           <div className={styles.header}>
             <span className={styles.headerTitle}>✨ {t.title}</span>
             <span className={styles.remaining}>{t.remaining(Math.max(0, MAX_QUESTIONS_PER_SESSION - count))}</span>
+            {messages.length > 0 && (
+              <button
+                type="button"
+                onClick={clearConversation}
+                title={t.newChat}
+                aria-label={t.newChat}
+                style={{background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '15px', opacity: 0.85, padding: '0 4px', lineHeight: 1}}
+              >
+                ↻
+              </button>
+            )}
           </div>
 
           <div className={styles.messages} ref={scrollRef}>
