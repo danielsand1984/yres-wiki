@@ -242,7 +242,7 @@ Genereert SQL-scripts voor het archiveren van data op basis van load type en del
 
 | View | Doel |
 |---|---|
-| `[LoadManagement].[vwUsedTables]` | Alle used tables met metadata, row-counts in DWH en STAGE, laatste-load-detail en change- id's. Bevat o.a. `LatestRecord`, `[Lapage Load]`-vrije kolommen `[Rows in DWH]`, `[Rows in Staging]`, en de change-id `ChangeId` (= laatste open change). |
+| `[LoadManagement].[vwUsedTables]` | Alle used tables met metadata, row-counts in DWH en STAGE, laatste-load-detail en change- id's. Bevat o.a. `LatestRecord`, `[LatestLoad]`, `[Rows in DWH]`, `[Rows in Staging]`, en de change-id `ChangeId` (= laatste open change). |
 | `[LoadManagement].[vwUnusedTables]` | Tabellen die in de `Dictionary` staan maar niet actief gebruikt worden (`Source`, `SourceSchema`, `SourceTable`). |
 | `[LoadManagement].[vwUsedColumns]` | Actief gebruikte kolommen (`Source`, `SourceSchema`, `SourceTable`, `SourceColumn`). |
 | `[LoadManagement].[vwUsedODSTablesAndColumns]` | JSON-weergave van ODS-tabellen en hun kolommen incl. target-datatypes (`ODS_Schema`, `Source`, `SourceSchema`, `SourceTable`, `Columns`). |

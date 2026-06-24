@@ -242,7 +242,7 @@ Generates SQL scripts for archiving data based on load type and delta columns. D
 
 | View | Purpose |
 |---|---|
-| `[LoadManagement].[vwUsedTables]` | All used tables with metadata, row counts in DWH and STAGE, last-load detail, and change IDs. Includes, among others, `LatestRecord`, the `[Lapage Load]`-free columns `[Rows in DWH]`, `[Rows in Staging]`, and the change ID `ChangeId` (= last open change). |
+| `[LoadManagement].[vwUsedTables]` | All used tables with metadata, row counts in DWH and STAGE, last-load detail, and change IDs. Includes, among others, `LatestRecord`, `[LatestLoad]`, `[Rows in DWH]`, `[Rows in Staging]`, and the change ID `ChangeId` (= last open change). |
 | `[LoadManagement].[vwUnusedTables]` | Tables that exist in the `Dictionary` but are not actively used (`Source`, `SourceSchema`, `SourceTable`). |
 | `[LoadManagement].[vwUsedColumns]` | Actively used columns (`Source`, `SourceSchema`, `SourceTable`, `SourceColumn`). |
 | `[LoadManagement].[vwUsedODSTablesAndColumns]` | JSON representation of ODS tables and their columns including target data types (`ODS_Schema`, `Source`, `SourceSchema`, `SourceTable`, `Columns`). |
