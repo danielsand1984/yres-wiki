@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+  <!-- top bar -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <text x="180" y="33" font-size="13" fill="#8a9196">Admin / Environment admin / Health checks</text>
+  <!-- env switcher (top-right) -->
+  <rect x="940" y="14" width="170" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="954" y="32" font-size="12" fill="#2b2b2e">Acme B.V. · Productie ▾</text>
+  <circle cx="1140" cy="28" r="14" fill="#FEF1DD"/><text x="1140" y="32" font-size="11" fill="#e89a1f" text-anchor="middle">JD</text>
+  <!-- left icon rail (sections) -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <g font-size="9" text-anchor="middle" fill="#8a9196">
+    <g><rect x="14" y="78" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="103" fill="#8a9196">Home</text></g>
+    <g><rect x="14" y="136" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="161" fill="#8a9196">Sources</text></g>
+    <g><rect x="14" y="194" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="219" fill="#8a9196">Load</text></g>
+    <g><rect x="14" y="252" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="277" fill="#8a9196">Engineer</text></g>
+    <g><rect x="14" y="310" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="335" fill="#8a9196">Projects</text></g>
+    <g><rect x="14" y="368" width="40" height="40" rx="9" fill="#FBAF42"/><text x="34" y="393" fill="#1c1c1e">Admin</text></g>
+  </g>
+  <!-- sub-link sidebar (Admin section) -->
+  <rect x="68" y="56" width="156" height="744" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="84" y="84" font-size="11" font-weight="700" fill="#8a9196" letter-spacing="0.5">ADMIN</text>
+  <g font-size="11.5" fill="#5b6166">
+    <text x="84" y="110">Panel</text>
+    <text x="84" y="134">Update environments</text>
+    <text x="84" y="158">Theme</text>
+    <text x="84" y="182">Audit logs</text>
+    <text x="84" y="206">Databases</text>
+    <text x="84" y="230">Secrets</text>
+    <text x="84" y="254">Firewall</text>
+    <text x="84" y="278">DWH settings</text>
+  </g>
+  <text x="84" y="312" font-size="11" font-weight="700" fill="#8a9196" letter-spacing="0.5">ENVIRONMENT ADMIN</text>
+  <g font-size="11.5" fill="#5b6166">
+    <text x="84" y="338">DWH logs</text>
+    <text x="84" y="386">Azure resources</text>
+  </g>
+  <!-- active sub-link: Health checks -->
+  <rect x="72" y="348" width="148" height="26" rx="6" fill="#FEF1DD"/>
+  <rect x="72" y="348" width="3" height="26" rx="1.5" fill="#FBAF42"/>
+  <text x="84" y="365" font-size="11.5" font-weight="700" fill="#e89a1f">Health checks</text>
+
+  <!-- page title -->
+  <text x="248" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Health checks</text>
+  <text x="248" y="114" font-size="12.5" fill="#8a9196">Issues found in the DWH (Maintenance.vwYresChecks) · org Acme B.V. · v &#8805; 1.51</text>
+
+  <!-- MAIN: health-checks table card -->
+  <rect x="248" y="140" width="600" height="624" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <!-- table title bar -->
+  <text x="268" y="172" font-size="14" font-weight="700" fill="#1c1c1e">Health checks (Productie)</text>
+  <rect x="746" y="156" width="84" height="20" rx="4" fill="#fde8e8"/>
+  <text x="788" y="170" font-size="11" fill="#e03131" text-anchor="middle">5 issues</text>
+
+  <!-- table header band -->
+  <rect x="268" y="190" width="560" height="34" rx="4" fill="#eef3f4"/>
+  <text x="284" y="211" font-size="11.5" font-weight="600" fill="#5b6166">Type</text>
+  <text x="372" y="211" font-size="11.5" font-weight="600" fill="#5b6166">Description</text>
+  <text x="556" y="211" font-size="11.5" font-weight="600" fill="#5b6166">RelatedObject</text>
+  <text x="808" y="211" font-size="11.5" font-weight="600" fill="#5b6166" text-anchor="middle">Info</text>
+
+  <!-- row 1 (selected / drives modal) -->
+  <rect x="268" y="224" width="560" height="40" fill="#FEF1DD"/>
+  <rect x="284" y="234" width="62" height="18" rx="4" fill="#fde8e8"/>
+  <text x="315" y="247" font-size="10.5" fill="#e03131" text-anchor="middle">Error</text>
+  <text x="372" y="241" font-size="11.5" fill="#2b2b2e">Missing index</text>
+  <text x="372" y="255" font-size="10" fill="#8a9196">on history key column</text>
+  <text x="556" y="241" font-size="11" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">HIS.AFAS_Prod.</text>
+  <text x="556" y="254" font-size="11" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">Debtors</text>
+  <text x="808" y="247" font-size="13" fill="#1c7ed6" text-anchor="middle">&#9432;</text>
+  <line x1="268" y1="264" x2="828" y2="264" stroke="#eef3f4"/>
+
+  <!-- row 2 -->
+  <rect x="284" y="276" width="62" height="18" rx="4" fill="#fff3e0"/>
+  <text x="315" y="289" font-size="10.5" fill="#f08c00" text-anchor="middle">Warning</text>
+  <text x="372" y="289" font-size="11.5" fill="#2b2b2e">Stale delta load</text>
+  <text x="556" y="289" font-size="11" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">STAGE.ExactOnline.Invoices</text>
+  <text x="808" y="290" font-size="13" fill="#1c7ed6" text-anchor="middle">&#9432;</text>
+  <line x1="268" y1="306" x2="828" y2="306" stroke="#eef3f4"/>
+
+  <!-- row 3 -->
+  <rect x="284" y="318" width="62" height="18" rx="4" fill="#fde8e8"/>
+  <text x="315" y="331" font-size="10.5" fill="#e03131" text-anchor="middle">Error</text>
+  <text x="372" y="331" font-size="11.5" fill="#2b2b2e">Orphaned HIS records</text>
+  <text x="556" y="331" font-size="11" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">HIS.SQL_CRM.Accounts</text>
+  <text x="808" y="332" font-size="13" fill="#1c7ed6" text-anchor="middle">&#9432;</text>
+  <line x1="268" y1="348" x2="828" y2="348" stroke="#eef3f4"/>
+
+  <!-- row 4 -->
+  <rect x="284" y="360" width="62" height="18" rx="4" fill="#e8f1fb"/>
+  <text x="315" y="373" font-size="10.5" fill="#1c7ed6" text-anchor="middle">Info</text>
+  <text x="372" y="373" font-size="11.5" fill="#2b2b2e">Expose view not refreshed</text>
+  <text x="556" y="373" font-size="11" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">Expose.vwSalesFact</text>
+  <text x="808" y="374" font-size="13" fill="#1c7ed6" text-anchor="middle">&#9432;</text>
+  <line x1="268" y1="390" x2="828" y2="390" stroke="#eef3f4"/>
+
+  <!-- row 5 -->
+  <rect x="284" y="402" width="62" height="18" rx="4" fill="#fff3e0"/>
+  <text x="315" y="415" font-size="10.5" fill="#f08c00" text-anchor="middle">Warning</text>
+  <text x="372" y="415" font-size="11.5" fill="#2b2b2e">Service tier near DTU limit</text>
+  <text x="556" y="415" font-size="11" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">IRIS_DWH (S4)</text>
+  <text x="808" y="416" font-size="13" fill="#1c7ed6" text-anchor="middle">&#9432;</text>
+  <line x1="268" y1="432" x2="828" y2="432" stroke="#eef3f4"/>
+
+  <!-- read-only hint below rows -->
+  <text x="284" y="460" font-size="11" fill="#8a9196">Read-only list — rows come from Maintenance.vwYresChecks. Use the info action to view the fix.</text>
+
+  <!-- INFO MODAL preview (HealthCheckInfo) -->
+  <rect x="430" y="262" width="420" height="430" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <path d="M430 270 a8 8 0 0 1 8 -8 h404 a8 8 0 0 1 8 8 v30 h-420 z" fill="#f6f9f9"/>
+  <text x="450" y="290" font-size="13" font-weight="700" fill="#1c1c1e">Missing index for HIS.AFAS_Prod.Debtors</text>
+  <text x="832" y="290" font-size="14" fill="#8a9196" text-anchor="end">&#10005;</text>
+
+  <text x="450" y="324" font-size="12" font-weight="700" fill="#1c1c1e">Message:</text>
+  <text x="450" y="342" font-size="11.5" fill="#2b2b2e">No clustered index on the SCD2 key. Merge</text>
+  <text x="450" y="358" font-size="11.5" fill="#2b2b2e">into HIS scans the full table on every load.</text>
+
+  <text x="450" y="388" font-size="12" font-weight="700" fill="#1c1c1e">Solution:</text>
+  <text x="450" y="406" font-size="11.5" fill="#2b2b2e">Create a clustered index on the business key</text>
+  <text x="450" y="422" font-size="11.5" fill="#2b2b2e">columns to restore delta-merge performance.</text>
+
+  <text x="450" y="452" font-size="12" font-weight="700" fill="#1c1c1e">Script:</text>
+  <rect x="450" y="460" width="382" height="56" rx="6" fill="#ffffff" stroke="#e3e8ea" stroke-width="2"/>
+  <text x="462" y="482" font-size="10.5" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">CREATE CLUSTERED INDEX IX_Debtors_Key</text>
+  <text x="462" y="500" font-size="10.5" font-family="'Consolas','Courier New',monospace" fill="#2b2b2e">ON [HIS].[AFAS_Prod_Debtors] (DebtorID);</text>
+
+  <!-- execute script button (disabled until checkbox ticked) -->
+  <rect x="450" y="540" width="124" height="30" rx="6" fill="#FBAF42" opacity="0.5"/>
+  <text x="512" y="560" font-size="12.5" font-weight="600" fill="#1c1c1e" text-anchor="middle">Execute script</text>
+  <!-- confirm checkbox -->
+  <rect x="450" y="588" width="16" height="16" rx="4" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="476" y="601" font-size="12" fill="#2b2b2e">I know what I'm doing.</text>
+  <!-- destructive warning chip -->
+  <rect x="450" y="624" width="382" height="48" rx="6" fill="#fde8e8" stroke="#e03131"/>
+  <circle cx="470" cy="648" r="9" fill="#e03131"/>
+  <text x="470" y="652" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">!</text>
+  <text x="490" y="644" font-size="11" font-weight="600" fill="#1c1c1e">Runs DDL against IRIS_DWH (Productie).</text>
+  <text x="490" y="660" font-size="10.5" fill="#5b6166">Tick the box to enable; PUT /healthchecks/{SolutionID}.</text>
+
+  <!-- callout markers -->
+  <circle cx="606" cy="166" r="11" fill="#FBAF42"/><text x="606" y="170" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+  <circle cx="334" cy="244" r="11" fill="#FBAF42"/><text x="334" y="248" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+  <circle cx="808" cy="247" r="11" fill="#FBAF42"/><text x="808" y="251" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+  <circle cx="448" cy="324" r="11" fill="#FBAF42"/><text x="448" y="328" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+  <circle cx="448" cy="452" r="11" fill="#FBAF42"/><text x="448" y="456" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+  <circle cx="448" cy="596" r="11" fill="#FBAF42"/><text x="448" y="600" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+
+  <!-- callout key -->
+  <text x="248" y="784" font-size="10.5" fill="#8a9196">1 Table titled with environment (Productie), backed by Maintenance.vwYresChecks   2 Type / Description / RelatedObject / Message columns   3 Per-row info action opens the check detail</text>
+  <text x="248" y="798" font-size="10.5" fill="#8a9196">4 Detail modal: Message + Solution text   5 Optional fix Script (only when present)   6 "Execute script" gated by the "I know what I'm doing." checkbox</text>
+</svg>

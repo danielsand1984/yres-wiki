@@ -1,28 +1,83 @@
 ---
 title: Microsoft Graph
 sidebar_label: Microsoft Graph
-description: Connect Microsoft Graph to Yres — connection requirements.
+description: Connecting Microsoft Graph to Yres — connection requirements.
 ---
 
 # Microsoft Graph
 
 **Category:** OData · REST
 
-Microsoft 365 data via Microsoft Graph. Connects via OData and REST.
+Microsoft 365 data via Microsoft Graph (`https://graph.microsoft.com/v1.0`). Graph is the
+underlying connection for scenarios such as Teams and Office 365: you register a single
+Microsoft Entra ID app (Azure AD) and authenticate with OAuth2.
 
-## Connection requirements
+## Expected input
 
-_No additional connection details needed in this setup._
+In the **Add source** wizard you fill in the following fields (frontend preset **Graph**,
+form `getFormAddGraph.ts`):
 
-## Where to find these
+| Field | Description |
+|---|---|
+| **URL** | Read-only; fixed at `https://graph.microsoft.com/v1.0`. |
+| **Token URL** | Read-only; automatically assembled from your tenant: `https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token`. |
+| **Tenant ID** | The Directory (tenant) ID of your Microsoft Entra tenant (GUID). |
+| **Client ID** | The Application (client) ID of the registered app (GUID). |
+| **Client Secret** | The app's client secret (treated as a secret). |
+| **Scope** | The OAuth scope, e.g. `https://graph.microsoft.com/.default`. |
+| **Grant Type** | Choice of `Client Credentials` or `Authorization Code`. With **Authorization Code**, an additional **Refresh token** field appears (required). |
 
-Microsoft Graph requires an **app registration in Microsoft Entra ID (Azure AD)**. In the Microsoft Entra admin center, go to Identity → Applications → App registrations and register a new application.
+Hidden, fixed values for this source: `paginationType=BodyUrl`,
+`body_url=@odata.nextLink` and `authenticationType=Anonymous` (the OAuth token is fetched by
+the pipeline and sent along as a header; pagination follows the Graph `@odata.nextLink`).
 
-- **Application (client) ID** and **Directory (tenant) ID**: found on the Overview tab of the app registration.
-- **Client secret**: created under Certificates & secrets. The value is shown **only once** — copy it immediately.
-- **Permissions**: under API permissions, add the required Microsoft Graph permissions (application or delegated, depending on the scenario) and have an administrator grant **admin consent**.
+### Authentication
 
-You then enter these values as connection settings. See the official documentation: [Register an application with the Microsoft identity platform](https://learn.microsoft.com/en-us/graph/auth-register-app-v2).
+**OAuth2 via a Microsoft Entra ID (Azure AD) service principal.** You provide the tenant ID,
+client ID and client secret; depending on the **Grant Type**, Yres uses the
+client-credential flow (client credentials) or the authorization-code flow (with refresh token).
+
+### Integration runtime
+
+By default the cloud runtime **`AutoResolveIntegrationRuntime`** — Microsoft Graph is publicly
+reachable over HTTPS, so this is usually the right choice. A **self-hosted integration
+runtime** is only needed if you have to route the traffic through a shielded or on-prem network.
+
+### Secrets in Key Vault
+
+The frontend does not store any secrets. The values you enter go to the customer's **Azure Key
+Vault** and are referenced from the linked service. The secrets are written under the group
+`adf-{sourcename}-…` (the source name you choose in the wizard becomes the name of the
+linked service as well as the prefix of the Key Vault secrets).
+
+:::info To be confirmed
+The Graph preset is stored in the backend as source type **`OData`**, while the form supplies
+OAuth fields (`client_id`, `token_url`, `grant_type`, `refresh_token`). The corresponding
+ADF templates are `linkedService/ODataoAuth_HTTP.json` and
+`ODataoAuth_REST.json` (both pointing at `https://graph.microsoft.com/v1.0/`). Exactly which
+deploy path processes the OAuth credentials (the OAuth builder versus the general
+OData builder) is handled in the shielded backend and cannot be fully confirmed from the
+data-plane repos.
+:::
+
+## Prerequisites
+
+1. **Register an app in Microsoft Entra ID (Azure AD).** Microsoft Entra admin center →
+   **Identity → Applications → App registrations → New registration**.
+   - **Client ID** — after registration this appears on the **Overview** page as
+     **Application (client) ID**.
+   - **Tenant ID** — also on the **Overview** page as **Directory (tenant) ID**.
+2. **Create a client secret** under the app → **Certificates & secrets** →
+   **New client secret**. Copy the **Value** right away; this value is **only shown
+   once**.
+3. **Add Microsoft Graph permissions** under **API permissions** (application or
+   delegated permissions, depending on your scenario) and have an administrator grant
+   **admin consent**.
+4. **Decide on the Grant Type.** For service-to-service access (background, without a signed-in
+   user) use **Client Credentials**. For access on behalf of a user, use
+   **Authorization Code** and additionally supply a **Refresh token**.
+
+> Official documentation: [Register an application with the Microsoft identity platform](https://learn.microsoft.com/en-us/graph/auth-register-app-v2)
 
 ---
 

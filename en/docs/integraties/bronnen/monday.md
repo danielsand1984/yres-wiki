@@ -1,28 +1,57 @@
 ---
 title: Monday
 sidebar_label: Monday
-description: Connect Monday to Yres — connection requirements.
+description: Connecting Monday to Yres — connection requirements.
 ---
 
 # Monday
 
-**Category:** Direct connection · REST
+**Category:** Direct integration · REST
 
-Work and project management. Connects via multiple protocols.
+monday.com is a work and project management platform. Yres connects to it through the
+monday.com REST API (API v2) and retrieves the data using a personal API token.
 
-## Connection requirements
+## Expected input
 
-- URL
-- API token
+In the **Add source** wizard you first fill in the shared fields (source name, type,
+integration runtime, whether the credentials are the same for all environments, an optional
+expiry date and tags). For the **Monday** type, the following fields are additionally required:
 
-## Setup
+| Field | Explanation |
+|---|---|
+| **url** | The base URL of the monday.com API. Must start with `https://api.monday.com/`; the default value is `https://api.monday.com/v2`. This is **not** the URL of your own account portal, but the fixed API endpoint. |
+| **API token** | Your personal monday.com API v2 token. Yres sends it along as the HTTP `Authorization` header on every call. |
 
-Create an API token (see the Monday documentation).
+**Authentication:** API token as the `Authorization` header. In the generated linked service
+the Monday source is defined as a `RestService` with `authenticationType: Anonymous`; the token
+is added as `authHeaders.Authorization` and points to a Key Vault secret.
 
-## Where to find these
+**Integration runtime:** the default **`AutoResolveIntegrationRuntime`** (cloud). monday.com
+is a publicly reachable SaaS API, so a self-hosted integration runtime is not required.
 
-- **URL** — this is your own monday account URL: `https://<account>.monday.com`. You can see it in the address bar when logged in; `<account>` is your organization's name.
-- **API token** — log in to monday.com and click your avatar (profile picture) in the top right → **Developers** → **My Access Tokens**. Copy your personal API v2 token here (click *Show*). Admins can also find it via **Administration → Connections → Personal API token**. The token inherits your own permissions in monday.
+## Requirements
+
+- **Create an API token in monday.com.** Create a personal API v2 token in monday.com and keep
+  it before you add the source in Yres (see *Retrieving the data* below).
+- **Key Vault secret.** Yres never stores the token in the frontend. It is written to the
+  Azure Key Vault of your own environment, and from there it is retrieved by the linked service
+  as the `Authorization` header. The secret follows the naming convention `adf-{sourcename}-...`
+  (in the supplied template `adf-MONDAY-ClientSecret`).
+
+:::info To be confirmed
+The token inherits the permissions of the user under whom it was created in monday.com. Create
+the token under an account with sufficient read access to the boards you want to expose, and
+take into account any expiry date on the token.
+:::
+
+## Retrieving the data
+
+- **url** — enter the fixed API endpoint: `https://api.monday.com/v2`. The value must start
+  with `https://api.monday.com/`.
+- **API token** — log in to monday.com and click your avatar (profile picture) in the top right →
+  **Developers** → **My Access Tokens**. Copy your personal API v2 token here (click
+  *Show*). Administrators can also find it via **Administration → Connections → Personal API
+  token**. The token inherits your own permissions in monday.
 
 Official documentation: [monday.com API authentication](https://developer.monday.com/api-reference/docs/authentication).
 

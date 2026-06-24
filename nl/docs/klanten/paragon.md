@@ -6,6 +6,10 @@ description: Klantcase Paragon — Technology Director Nick Massa.
 
 # Paragon
 
+:::info Te bevestigen
+Deze klantcase (bedrijfsnaam, contactpersoon, omvangcijfers en citaten) komt uit interviews en marketingmateriaal en staat niet in de officiële Yres-documentatie. Bevestig de inhoud — en de toestemming om deze publiekelijk te tonen — met de klant voordat je deze pagina extern publiceert.
+:::
+
 | | |
 |---|---|
 | **Contact** | Nick Massa — Technology Director |

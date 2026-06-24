@@ -1,49 +1,159 @@
 ---
 sidebar_position: 3
 title: Release notes
-description: Versiehistorie van Yres DWH.
+description: Versiehistorie van Yres DWH (v1.47 t/m v1.55), met breaking changes en nieuwe bronnen.
 ---
 
 # Release notes
 
-Versiehistorie van Yres DWH. Oudere versies kunnen niet meer ondersteund zijn.
+Versiehistorie van Yres DWH. Oudere versies kunnen niet meer ondersteund zijn; ze blijven hier staan voor
+naslag. Per versie staan de nieuwe features, verbeteringen en eventuele breaking changes.
 
-## v1.55 — september 2025
-- **Data & loading:** kolommen kiezen die meetellen bij het vergelijken van rijen (changed records).
-- **Connectivity:** Integration Runtimes nu vanuit de frontend beheerd (beter bij rebuild/upgrade); bestaande IR's importeerbaar.
-- **UI:** actieknoppen in datasource-menu's naar een ⫶-menu; REST-bronnen kiezen default-waarden voor centraal beheerde settings (KeepStage, Row/Column store); REST-bronnen genoemd naar hun target; File/REST vereisen Project + change vooraf in de wizard.
-- **Lifecycle:** **environment comparison** (SQL-definities vergelijken tussen omgevingen), volledige diff-view; setting op org-niveau om specifieke ADF-objecten uit te sluiten bij publiceren.
-- **Pipelines:** main pipelines kopieerbaar naar een nieuwe versie.
-- **Security:** backend-URL's op basis van UUID's; extra property voor subdomeinen per organisatie; client & secrets voor Azure-toegang beheerbaar door admins.
+:::note Datums uit de productdocumentatie
+De datums per versie hieronder komen uit *Yres Documentation 1.55* (release-notes-sectie). Yres-versies
+ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — niet als semver.
+:::
 
-## v1.54 — juli 2025
-- Tabellen deactiveren (tijdelijk uit loads); loads starten vanuit het datasource-menu; persist view direct vanuit het menu.
-- Refresh metadata voor 80+ bronnen; PAT-tokens in OneStream.
-- Monitor: filteroptie, extra tijdselecties (1/4/8 uur), paging, materialized views.
-- **Naming overwrites** tussen dev/test/prod; iteratief proces voor complexe dependencies.
-- Persist View vanuit main pipeline; parallelism voor loads; alternative load volledig beschikbaar; announcements voor org-admins.
+## v1.55 — september 2025 _(datum uit PDF)_
 
-## v1.53 — mei 2025
-- **Delta Image** load mode; uitgebreide paging in REST (RFC 5988, offset, looped, body-result URL); schaalbare verwerking (100M+ records); PowerBI-model refresh in loads.
-- Nieuwe bronnen: **OneStream**, **SAP Business Data Cloud**, **Simplicate**; OpenAPI-support voor REST; **custom database deployment** (eigen Azure-database).
-- Centrale environment-weergave linksboven; nieuw monitoring-dashboard (tabelgrootte in MB, rowcounts); resizable sidebar; deep links werken.
-- **Master Pipeline**-feature (conditionele flows); garbage collection-pipeline; ADF-pipelines triggeren vanuit frontend.
-- Alle timestamps in **UTC**; vereenvoudigde installatie via e-maillink.
+- **Data & loading:** kolommen kiezen die meetellen bij het vergelijken van rijen om gewijzigde records
+  (changed records) te bepalen.
+- **Bronnen & connectiviteit:** Yres beheert Integration Runtimes nu vanuit de frontend (beter bij rebuild
+  en upgrade naar een nieuwere versie); bestaande IR's zijn te "importeren" in de nieuwe opzet.
+- **UI:** actieknoppen in de datasource-menu's verplaatst naar een ⫶-menu om ruimte te besparen;
+  REST-bronnen kiezen voortaan default-waarden voor centraal beheerde settings (zoals `KeepStage` en
+  row-/columnstore); REST-bronnen worden benoemd naar hun target in plaats van het bron-endpoint;
+  File- en REST-bronnen vereisen voortaan Project + change aan het begin van de wizard.
+- **Lifecycle management:** **environment comparison** — SQL-definities vergelijken tussen omgevingen, met
+  volledige diff-view (tussen versies of tussen omgevingen); nieuwe setting op organisatieniveau om
+  specifieke ADF-objecten uit te sluiten bij het publiceren van changes naar ADF.
+- **Automation & pipelines:** main pipelines kunnen worden gekopieerd naar een nieuwe versie.
+- **Security:** backend-URL's op basis van UUID's (geen voorspelbare endpoints); nieuwe installaties
+  vereisen een extra property ter voorbereiding op subdomeinen per organisatie; client & secrets waarmee
+  Yres bij de Azure-tenant van de organisatie komt, zijn beheerbaar door admins.
 
-## v1.52 — januari 2025
-- SSO verplicht per gebruiker; database object viewer (definities, vergelijken over tijd, dependencies); **licensing** toegevoegd (bestaande klanten kregen automatisch volledige licentie).
-- oData: JSON-objecten + gZip-compressie (nodig voor SAP); betere DB-scaling over meerdere workstreams; nieuwe datatypes in table keys (XML, TEXT, NTEXT, IMAGE, GEOGRAPHY, GEOMETRY, HIERARCHYID).
-- ⚠️ **Reminder breaking change:** `[Monitoring].[LoadMonitor]` → `[Monitoring].[Monitor]`.
+## v1.54 — juli 2025 _(datum uit PDF)_
 
-## v1.51 — september 2024
-- ⚠️ **Breaking change:** `[Monitoring].[LoadMonitor]` vervangen door `[Monitoring].[Monitor]` (co-existeren tot v1.52).
-- Nieuwe homepage met monitors; nieuwe datasource-picker; meerdere Azure Blob-bronnen; **generieke REST API's** als bron (elke JSON-API; auth: anonymous/header/basic/oAuth; alleen GET); **Salesforce** en **SAP Analytics Cloud** als bron; oAuth voor oData; rol `[Yres_dbreader]`; twee delta-kolommen voor SQL-bronnen (behalve MySQL).
+- **Data & loading:** tabellen deactiveren zodat ze tijdelijk buiten loads blijven; loads starten direct
+  vanuit het datasource-menu; persist view direct vanuit het Persist View-menu.
+- **Bronnen & connectiviteit:** refresh metadata voor 80+ bronnen; ondersteuning voor PAT-tokens in
+  OneStream.
+- **Monitoring & UI:** filteroptie in de pipeline-monitor; extra tijdselecties (1/4/8 uur); paging in de
+  gemonitorde jobs; materialized views toegevoegd aan de monitor.
+- **Projects & changes:** nieuw iteratief proces voor complexe dependencies; **naming overwrites** tussen
+  dev, test en prod (voor bronnen die per omgeving andere objectnamen hebben, bijv.
+  `ERP_DEV.Customers` / `ERP_TST.Customers` / `ERP.Customers`).
+- **Automation & pipelines:** persist view vanuit de main pipeline; custom bronnen selecteerbaar bij het
+  starten van loads; parallelisme instelbaar voor loads; alternative load volledig beschikbaar.
+- **Communicatie:** announcements nu beschikbaar voor organisatie-admins.
 
-## v1.50 — augustus 2024
-- Standaard support voor **surrogate keys** (systeembreed en per tabel); table settings in de web-frontend (Columnstore, inMemory, loadfilters, delta-offsets, page limits, package sizes); **single environment** (alleen prod); volledige logging in UTC; nieuw data-engineering-menu.
+## v1.53 — mei 2025 _(datum uit PDF)_
 
-## v1.49 — juni 2024
-- Nieuw topmenu; beter inzicht in actieve jobs; push-berichten voor afgeronde jobs; strikt databasebeheer (geen ongevraagde wijzigingen in settings/logs/objecten).
+- **Data & loading:** **Delta Image** load mode (selectief specifieke periodes herladen, bijv. het vorige
+  jaar, met verwijdering van verouderde records én behoud van historie); uitgebreide paging in REST-bronnen
+  (RFC 5988, offset-based, looped page traversal, body-result-URL); schaalbare verwerking via paging
+  (100M+ records); PowerBI Models verversen binnen loads.
+- **Nieuwe bronnen:** **OneStream**, **SAP Business Data Cloud** (`SAP_BDC`) en **Simplicate**;
+  OpenAPI-support voor REST (`openapi.json` / `swagger.json`, endpoints visueel selecteerbaar); **custom
+  database deployment** (deployen op een eigen bestaande Azure-database in plaats van de standaard embedded
+  database).
 
-## v1.48 — april 2024 · v1.47 — januari 2024
-- Zie de originele documentatie voor details.
+  :::info SAP Business Data Cloud ≠ SAP Datasphere
+  De bron die in deze release is toegevoegd is **SAP Business Data Cloud** (backend-brontype `SAP_BDC`).
+  Dit is een ander SAP-product dan **SAP Datasphere**; in de ADF-templates zijn het gescheiden connectoren.
+  Behandel beide als gerelateerd maar afzonderlijk.
+  :::
+
+- **Monitoring & UI:** actieve omgeving (Development/Test/Production) prominent linksboven; nieuw
+  monitoring-dashboard met historie, tabelgroottes in MB en rowcounts; verbeterde upgrade- &
+  rebuild-monitoring; resizable sidebar; refresh-knop in de webapp; deep links werken (een gedeelde link
+  opent voortaan de juiste pagina).
+- **Tabel- & schemabeheer:** vernieuwde table-creation flow (datatypes per veld instelbaar bij aanmaken);
+  tags toevoegen aan bronnen boven de tabellen; column-usage-analyse (ongebruikte kolommen opsporen en hun
+  gebruik traceren).
+- **Projects & changes:** bestaande database-objecten uit de object-tree opnemen in changes; dependencies
+  en/of content meenemen in changes; metadata van Dev standaard meenemen naar Prod; scripted objects
+  zichtbaar in de change-content-overview.
+- **Automation & pipelines:** **Master Pipeline**-feature (acties sequentieel/conditioneel uitvoeren op
+  succes of falen van voorgaande stappen, inclusief conditionele Power BI-refresh); alternative load
+  ("Run full, Image, Overwrite of Reload once" — bijv. door de week delta's en in het weekend een volledige
+  reload); garbage-collection-pipeline in ADF; custom ADF-pipelines triggeren vanuit de frontend.
+- **Communicatie:** admin-messaging naar alle applicatiegebruikers.
+- **Installatie & configuratie:** vereenvoudigde installatie via een e-maillink; Azure-variabelen (ADF-naam,
+  resource group, subscription) opgeslagen in `config.settings`.
+- **Verbeteringen:** alle timestamps in **UTC** (weergave in eigen tijdzone); duidelijkere foutmeldingen;
+  fix voor IMAGE-loads die in de staging-stap konden falen en alle target-records sloten.
+
+## v1.52 — januari 2025 _(datum uit PDF)_
+
+:::warning Breaking change (herinnering)
+De view `[Monitoring].[LoadMonitor]` is in release **1.51** vervangen door `[Monitoring].[Monitor]`. Beide
+views blijven co-existeren tot versie **1.53**, waarna `[Monitoring].[LoadMonitor]` wordt verwijderd.
+
+> Let op: dit betreft de webapp-gerichte monitoring-view. In de huidige `IRIS_DWH`-database loopt
+> load-monitoring via de views `vwLoads` (pipeline-timeline) en `vwMonitor` (breder). Zie
+> [SQL-interactie](sql-interaction.md).
+:::
+
+- **Security & gebruikers:** SSO verplicht per gebruiker (admins kunnen SSO afdwingen, in het Users & Roles-menu).
+- **Database object viewer:** alle database-objecten tonen (ook objecten die níét door of met Yres zijn
+  aangemaakt); definities in SQL bekijken, definities over tijd vergelijken en dependencies inzien.
+- **Licensing:** een licentie wordt nu aan de database toegevoegd zodat Yres het gebruik kan begrenzen waar
+  van toepassing; bestaande klanten kregen automatisch een volledige licentie.
+- **oData / SAP:** ondersteuning voor JSON-objecten in oData-resultaten en gZip-compressie in oData-metadata
+  (specifiek nodig voor SAP-loads).
+- **Database scaling:** DB-scaling beter beheerd over meerdere workstreams (voorkomt dat de ene workstream
+  de server terugschaalt terwijl een andere nog draait).
+- **Nieuwe datatypes in table keys:** `XML`, `TEXT`, `NTEXT`, `IMAGE`, `GEOGRAPHY`, `GEOMETRY`, `HIERARCHYID`.
+- **Verder:** nieuwe health checks; herontworpen Update Tables; nieuw Feedback-formulier (Bug report /
+  Feature request / Feedback); "Panel" hernoemd naar Users & Roles; upgrade van LinkedServices in ADF
+  (MySQL, PostgreSQL, Snowflake, custom dispatcher); bronnen zonder key beter ondersteund.
+
+## v1.51 — september 2024 _(datum uit PDF)_
+
+:::warning Breaking change
+De view `[Monitoring].[LoadMonitor]` is vervangen door `[Monitoring].[Monitor]`. Beide views co-existeren
+tot versie **1.52**, waarna `[Monitoring].[LoadMonitor]` wordt verwijderd. _(De v1.52-herinnering hierboven
+noemt 1.53 als verwijderversie — de productdocumentatie is op dit punt niet helemaal consistent.)_
+:::
+
+- **UI:** nieuwe homepage met monitors voor jobs, errors en loads; nieuwe datasource-picker; resizable en
+  verbeterde modal windows.
+- **Nieuwe bronnen:** meerdere **Azure Blob**-bronnen tegelijk; **generieke REST API's** (elke API die JSON
+  teruggeeft; headers per service; auth: anonymous, header, basic, oAuth; query-parameters ondersteund;
+  alleen GET-endpoints); **Salesforce**; **SAP Analytics Cloud** (SAC).
+- **oData:** oAuth-support (client credential + authorization code); verplichte `OrderBy` verwijderd
+  (voor services die geen OrderBy ondersteunen).
+- **Security:** standaard-publicatie van de rol `[Yres_dbreader]` (lezen uit het ingestelde HIS-schema,
+  STAGE- en systeemtabellen verborgen); Key Vault API-versie 7.4.
+- **Loading:** ondersteuning voor **twee delta-kolommen** voor alle SQL-gebaseerde bronnen **behalve MySQL**
+  (handmatig instelbaar via het `deltaColumn`-veld in `Loadmanagement.UsedTables`, komma-gescheiden, beide
+  kolommen hetzelfde datatype; het systeem neemt de hoogste waarde).
+
+## v1.50 — augustus 2024 _(datum uit PDF)_
+
+- Standaard support voor **surrogate keys** (systeembreed én per tabel).
+- Table settings in de web-frontend: columnstore, inMemory, loadfilters, delta-offsets, page limits en
+  package sizes (voorheen alleen via het SQL-endpoint).
+- **Single environment** (alleen prod) mogelijk.
+- Volledige logging in **UTC**, weergave in elke tijdzone.
+- Nieuw data-engineering-menu; lijsten alfabetisch gesorteerd.
+
+## v1.49 — juni 2024 _(datum uit PDF)_
+
+- Nieuw topmenu; beter inzicht in actieve jobs.
+- Push-berichten voor afgeronde jobs, waar je je ook in de applicatie bevindt.
+- Strikt databasebeheer: geen ongevraagde wijzigingen in settings, logs of objecten.
+
+## v1.48 — april 2024 _(datum uit PDF)_
+
+- Nieuw topmenu en notificaties voor afgeronde jobs.
+- Firewall specifiek voor de web-frontend.
+- Directe links naar bestaande Azure-resources; nieuw rolbeheer.
+- Actieve monitoring op bronwijzigingen die het dataplatform raken.
+
+## v1.47 — januari 2024 _(datum uit PDF)_
+
+- Nieuw audit-log voor webapp-gebruik.
+- PowerBI-dashboard integreerbaar in Yres (voor uitgebreide load-monitoring).
+- Gebruikers kunnen lid zijn van meerdere organisaties.

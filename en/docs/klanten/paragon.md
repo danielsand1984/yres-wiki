@@ -6,6 +6,10 @@ description: Customer case Paragon — Technology Director Nick Massa.
 
 # Paragon
 
+:::info To be confirmed
+This customer case (company name, contact person, scale figures and quotes) comes from interviews and marketing material and is not part of the official Yres documentation. Confirm the content — and permission to show it publicly — with the customer before publishing this page externally.
+:::
+
 | | |
 |---|---|
 | **Contact** | Nick Massa — Technology Director |
@@ -36,9 +40,9 @@ A migration from an **on-premise data warehouse to the cloud (Azure)**. As part 
 
 ## Quotes
 
-> "It not only speeds up our IT process, but also makes data available faster for reporting and invoicing to customers." (*Het versnelt niet alleen ons IT-proces, maar zorgt er ook voor dat data sneller beschikbaar is voor rapportages en facturatie richting klanten.*)
+> "It not only speeds up our IT process, but also makes data available faster for reporting and invoicing to customers."
 
-> "Yres helps us quickly unlock new sources. It gives us more options to extend integrations ourselves." (*Yres helpt ons met het snel ontsluiten van nieuwe bronnen. Het geeft ons meer mogelijkheden om integraties zelf uit te breiden.*)
+> "Yres helps us quickly unlock new sources. It gives us more options to extend integrations ourselves."
 
 ## Themes for the future
 AI, cloud development (Azure/Microsoft stack), BI transformation (possibly Qlik → Power BI) and a future-proof data strategy.

@@ -1,42 +1,162 @@
 ---
 sidebar_position: 2
 title: Getting started
-description: Logging in, organizations, users, roles and environments.
+description: Logging in, registering via invitation, organizations, users, roles and environments in Yres.
 ---
 
 # Getting started
 
+This page describes the first steps in the Yres web app: **logging in** (or creating your account via an
+invitation), the structure of **organizations**, managing **users** and **roles**, and how **environments**
+work.
+
 ## Logging in
-Log in with the password provided by Yres on the web app ([www.yres.app](https://www.yres.app)).
+
+You log in to the Yres web app on the **`/login`** screen. It is a centered login card without a sidebar
+(front scope, unauthenticated). Enter your **email address** and **password** and click **"Sign in"**.
+
+![Yres login screen with email and password fields](/img/screens/auth-login.svg)
+
+*Centered authentication card on `/login`: email, password and a "Sign in" button, with a "Forgot
+password?" link at the bottom.*
+
+1. **Logo / themed background** — shows the Yres logo, or, if the organization has its own theme, the
+   organization theme.
+2. **Email field** — required and must be a valid email address (validated via Yup).
+3. **Password field** — required (`type=password`).
+4. **"Sign in"** — submits the login (`POST /api/v1/login`) and, on success, navigates to the home page (`/`).
+5. **"Forgot password?"** — link to the forgot-password screen (`/forgot-password`).
+6. **Error message** — with incorrect credentials, the message *"Invalid login credentials"* appears.
+
+Lost your password? Then follow the steps on the
+[Account & user settings](../frontend/account.md#forgot-and-recover-password) page.
+
+## Registering via invitation
+
+You don't create a Yres account yourself; you are **invited**. Installing Yres requires an **invitation link
+from Plainwater** that is tied to a single Microsoft account, is **usable only once**, and is configured for
+the purchased Yres version (see [License tiers](#license-tiers-and-environments)). The link opens the
+registration screen on **`/register`**.
+
+![Registration screen via invitation with a single "Account" step](/img/screens/auth-register.svg)
+
+*Centered card with a multi-step form that shows only a single visible step ("Account"). The email address
+is pre-filled from the invitation and is fixed.*
+
+1. **Step progress** — the form is set up as a multi-step form, but only one step ("Account") is visible.
+2. **Invitation note** — shows the organization, the hosting type and the plan as recorded in the
+   invitation.
+3. **Email** — pre-filled from the invitation and read-only (tied to the invitation).
+4. **Name** — your own name (required).
+5. **Password** — at least 12 characters, with uppercase and lowercase letters, a digit and a special
+   character.
+6. **"Continue"** — creates the account and then takes you to creating the organization.
+
+:::info To be confirmed
+The **hosting type** choice in the invitation (in your own Azure tenant versus a Yres-hosted option) is to
+be filled in by the owner: the official product documentation emphasizes that Yres runs **entirely in the
+customer's own Azure tenant**, without vendor lock-in. Confirm the exact hosting wording before publishing
+this.
+:::
 
 ## Organizations
-Organizations are the foundation of Yres: an isolated space with, by default, a **dev** and a **prod** environment, so that development (dev) does not affect the live version (prod).
 
-You create a new organization in the **SuperAdmin panel**:
-1. Enter a name.
-2. Add environments (dev + prod by default).
-3. Generate resource names — manually (mind the `$` convention, e.g. `company-keyvault-$`) or automatically.
-4. Fill in the Azure IDs (Entra ID with permissions **ServiceManagement** and **KeyVault**): tenant ID, subscription ID, application object ID, client ID + secret.
-5. Set up Azure permissions: role groups for dev and prod are generated based on the resource group (by default `rg-Yres-dev` / `rg-Yres-prod`).
+Organizations are the foundation of Yres: a partitioned space with one or more environments, so that
+development (**dev**) stays separated from production (**prod**). Each organization has a **unique, freely
+chosen name**; in addition, a **secondary name** is generated automatically using only the characters
+allowed for naming Azure and DevOps resources. Organization names may **not contain non-alphanumeric
+characters** (enforced by `[dbo].[fxRemoveNonAlphaCharacters]`).
+
+### Creating an organization (SuperAdmin)
+
+You create a new organization in the **SuperAdmin panel** via the 7-step wizard at
+`/adminpanel/organizations/create`:
+
+1. **Organization and project** — name of the organization and the first project.
+2. **Plan and version** — choose the plan (the license tier) and the Yres version you are rolling out.
+3. **UpdateEnvironments** — add the environments. The first environment is **always `dev`**; `prod` is
+   recommended for most organizations (maximum 6 environments).
+4. **Custom Database** — database configuration.
+5. **Resource names** — generate the resource names. Note the `$` convention: enter `$` at the spot where
+   the environment name goes (for example `sqlsrv-xxx-dwh-$` → `sqlsrv-xxx-dwh-dev`). This can be done
+   manually or automatically.
+6. **Setup azure** — an Entra ID (Azure AD) app registration with the **DevOps**, **ServiceManagement** and
+   **KeyVault** permissions: tenant ID, subscription ID, application object ID, client ID + secret.
+7. **Setup azure 2: permissions** — set up Azure permissions via the resource group(s). Role groups for the
+   environments are generated based on the resource group (for example `rg-Yres-dev` / `rg-Yres-prod`).
+
+On completion, the tenant is provisioned and you land on the deployment overview.
 
 ## Managing users
-In the SuperAdmin home panel you add users (organization, name, email, role). Levels:
+
+You add users from two places:
+
+- In the **SuperAdmin panel** (`/adminpanel/general`) — choose organization, name, email and role. Created
+  users also appear in the Admin panel of the relevant organization.
+- In the **Admin panel** of an organization (`/admin/panel`) — for users within your own organization. Here
+  two tables sit side by side: **Users** (visible columns: name, email, role, SSO) and **Roles**.
+
+Users are invited via an email; the invitee creates an account themselves via
+[`/register`](#registering-via-invitation).
+
+### Levels
 
 | Level | Permissions |
 |---|---|
-| **User** | No access to the Admin or SuperAdmin panel. |
+| **User** | No access to the Admin or SuperAdmin panel; only the features granted via roles. |
 | **Organization Admin** | Admin rights within their own organization; access to the Admin panel. |
-| **System Admin** | Admin rights over all organizations; access to the SystemAdmin panel. |
-
-Created users also appear in the organization's Admin panel.
+| **System Admin** | Admin rights over all organizations; access to the SuperAdmin panel. |
 
 ## Managing roles
-In the [Admin panel](../frontend/admin.md) you create roles for fine-grained permissions. Assign them via the green pencil icon next to the user.
+
+In the [Admin panel](../frontend/admin.md#panel--users--roles) you create roles in the **Roles** table for
+fine-grained (CRUD) permissions. You edit them via `MaintainRole`; deleting prompts a confirmation dialog.
+Assign a role to a user via the edit icon next to the user in the **Users** table.
+
+So, in addition to the standard roles, you can define **your own roles**, combined with Azure SSO
+(enforceable per user) for authentication.
 
 ## Environments
-Environments are isolated versions of an organization; changes in one do not affect the others.
 
-- **Update** via the Admin tab *Update environment* (shows DWH version, status, result, last run).
-- **Projects & changes** categorize work and transport content from dev → prod. See [Projects & Changes](../frontend/projecten-changes.md).
+Environments are partitioned versions of an organization; changes in one environment do not affect another.
+The **first environment is always named `dev`** — this name is fixed and recurs in the technical resource
+names (for example `sqlsrv-xxx-dwh-dev`), even if you use a different convention internally.
 
-> For users new to Azure, it is advisable to first review the internal guide *"Setting up Azure for use with Yres"* (formerly IRIS) on Confluence.
+### License tiers and environments
+
+How many environments (and sources) you may set up depends on your license tier. The **structure** of the
+tiers is:
+
+| Tier | Sources (source systems) | Environments |
+|---|---|---|
+| **Essentials** | 2 | **1** |
+| **Advanced** | 5 | 2 |
+| **Ultimate** | Unlimited | Unlimited |
+
+Important implications:
+
+- **Essentials has only one environment** (`dev`). The often-heard rule "at least dev and prod" therefore
+  does **not** apply universally — only from **Advanced** onward are there two or more environments.
+- For organizations on a higher tier, **2 to 4 environments** is a sensible choice (for example
+  dev → test → prod).
+
+The license is tied to a single Microsoft account, usable only once, and is enforced in the database.
+
+:::info To be confirmed
+The **prices** per tier and the **per-tier allocation of individual features** (such as the Changes system,
+automatic scaling, firewall or VPN) are commercial agreements that must be confirmed by the owner; they are
+not in the product documentation. The table above (number of sources and environments per tier) has been
+verified.
+:::
+
+### Updating and managing environments
+
+- **Updating** is done via the Admin tab **Update environments** (`/admin/environments`). For each
+  environment you see a card with the **DWH version** and the status, the result and the date of the last
+  CI/CD run. Click a card to confirm the upgrade; you can only update non-`dev` environments once the
+  preceding environment is up to date. Always test a new version on `dev` first before updating `prod`.
+- **Switching** between environments is done with the **environment switcher** in the top bar. It is only
+  visible if the organization has more than one environment.
+- **Projects & changes** categorize work and transport content from `dev` → `prod`. This feature is **only
+  available for organizations with multiple environments** (so not on Essentials). See
+  [Projects & Changes](../frontend/projecten-changes.md).

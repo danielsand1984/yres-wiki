@@ -1,811 +1,520 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Complete reference of all scalar/table functions in Yres.
+description: Complete reference of all 56 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
 ---
 
-
-> Prefer managing via the web app; these objects are for the SQL endpoint (SSMS / Azure Data Studio).
-
-## Functions
-
-### `[Change].[fxGetChangeIsOpen]`
-
-**Purpose:**
-
-Determines if a specific change, identified by @ChangeId , is currently open.
-
-**Input Parameters:**
-
-- `@ChangeId (int)`: The ID of the change to check.
-
-**Output:**
-
-Returns 1  if the change is open, 0  if it is not open.
-
-**Description:**
-
-This function joins the Change.Changes  and Change.Status  tables to check if the status of the given change ID is marked as open. It also ensures the change originates from the correct server and database.
-
-### `[Change].[fxGetLaspageChangeIdFor]`
-
-**Purpose:**
-
-Retrieves the lapage change ID that includes a specific object type and name.
-
-**Input Parameters:**
-
-- `@objectType (int)`: The type of the object (e.g., table, view).
-
-- `@objectName (nvarchar(1024))`: The name of the object.
-
-**Output:**
-
-Returns the lapage change ID (int) for the specified object.
-
-**Description:**
-
-The function searches the Change.ChangeContent  table for the lapage change entry related to the specified object type and name. It handles specific conditions where table content or definitions are involved and returns the relevant change ID.
-
-### `[Change].[fxGetLapageOpenChange]`
-
-**Purpose:**
-
-Fetches the lapage open change for a specified object type and name.
-
-**Input Parameters:**
-
-- `@ObjectType (nvarchar(10))`: The type of the object.
-
-- `@ObjectName (nvarchar(1024))`: The name of the object.
-
-**Output:**
-
-Returns the lapage open change ID (int).
-
-**Description:**
-
-This function combines the functionalities of [Change].[fxGetLaspageChangeIdFor]  and [Change].[fxGetChangeIsOpen]  to find and return the lapage open change for the given object type and name.
-
-### `[Change].[fxGetReleasedJson]`
-
-**Purpose:**
-
-Retrieves the JSON data associated with a specific change ID.
-
-**Input Parameters:**
-
-- `@ChangeID (int)`: The ID of the change.
-
-**Output:**
-
-Returns the JSON data (nvarchar(max)) related to the change.
-
-**Description:**
-
-The function queries the Change.Changes  table to obtain the JSON data stored for a particular change ID.
-
-### `[Change].[fxGetTableDefinition]`
-
-**Purpose:**
-
-Generates a SQL script to recreate a table definition, including columns, indexes, constraints, and optionally the content as JSON.
-
-**Input Parameters:**
-
-Various parameters to control the script generation, such as @ObjectName ,
-- @UseTransaction , @GenerateFKs , etc.
-
-**Output:**
-
-Returns the generated SQL script (nvarchar(max)).
-
-**Description:**
-
-This comprehensive function creates a detailed SQL script to recreate a table, including its structure and content. The generated script can optionally include foreign keys, identity columns, constraints, and table content as JSON.
-
-### `[Change].[fxGetTableTypeDefinition]`
-
-**Purpose:**
-
-Generates the SQL script to define a table type based on its name.
-
-**Input Parameters:**
-
-- `@ObjectName (nvarchar(1024))`: The name of the table type.
-
-**Output:**
-
-Returns the table type definition script (nvarchar(max)).
-
-**Description:**
-
-The function constructs the SQL script needed to recreate a user-defined table type, including its columns and their properties.
-
-### `[Config].[fxAddTryCatch]`
-
-**Purpose:**
-
-Wraps a given SQL script in a try-catch block for error handling and logging.
-
-**Input Parameters:**
-
-- `@SQL (nvarchar(max))`: The SQL script to be executed.
-
-- `@process (uniqueidentifier)`: The process ID for logging.
-
-- `@spName (nvarchar(max))`: The stored procedure name for logging.
-
-- `@spStep (nvarchar(max))`: The step name within the stored procedure.
-
-- `@spCall (nvarchar(max))`: The stored procedure call information.
-
-- `@appUser (nvarchar(max))`: The application user executing the script.
-
-**Output:**
-
-Returns the wrapped SQL script (nvarchar(max)).
-
-**Description:**
-
-The function adds error handling to a given SQL script by wrapping it in a try-catch block. It logs the process and any errors using predefined stored procedures.
-
-### `[Config].[fxGetSchemaName]`
-
-**Purpose:**
-
-Retrieves the schema name for a specific target and type, considering configuration settings and overrides.
-
-**Input Parameters:**
-
-- `@Target (nvarchar(max))`: The target for which the schema name is required.
-
-- `@Type (nvarchar(max))`: The type of schema (e.g., 'HIS', 'STAGE').
-
-**Output:**
-
-Returns the schema name (nvarchar(max)).
-
-**Description:**
-
-The function determines the schema name based on configuration settings and potential overrides in the loadmanagement.UsedTables  table.
-
-### `[Config].[fxGetSession]`
-
-**Purpose:**
-
-Returns session details for active connections, formatted as JSON.
-
-**Input Parameters:**
-
-None.
-
-**Output:**
-
-Returns session details (nvarchar(max)) as JSON.
-
-**Description:**
-
-This function queries the sys.dm_exec_connections  and sys.dm_exec_sessions  system views to retrieve details of active sessions, formatting the results as JSON.
-
-### `[Config].[fxGetSetting]`
-
-**Purpose:**
-
-Fetches a configuration setting value by name, with special handling for 'GodMode'.
-
-**Input Parameters:**
-
-- `@SettingName (nvarchar(max))`: The name of the setting to retrieve.
-
-**Output:**
-
-Returns the setting value (nvarchar(max)).
-
-**Description:**
-
-The function retrieves the value of a specified setting from the Config.Settings  table. It includes special handling for 'GodMode', which can override certain settings.
-
-### `[dbo].[fxGeneratePassword]`
-
-**Purpose:**
-
-Generates a random password of a specified length.
-
-**Input Parameters:**
-
-- `@Length (int)`: The desired length of the password (default is 16).
-
-**Output:**
-
-Returns the generated password (nvarchar(1024)).
-
-**Description:**
-
-This function generates a random password containing characters between ASCII values 48 and 122, ensuring a mix of alphanumeric characters.
-
-### `[dbo].[fxGetJsonCollection]`
-
-**Purpose:**
-
-Retrieves a JSON collection from a given JSON string.
-
-**Input Parameters:**
-
-- `@Json (nvarchar(max))`: The input JSON string.
-
-**Output:**
-
-Returns the JSON collection (nvarchar(1024)).
-
-**Description:**
-
-The function extracts a JSON collection from an input JSON string by querying the dbo.fxGetJsonCollections  function.
-
-### `[dbo].[fxRemoveNonAlphaCharacters]`
-
-**Purpose:**
-
-Removes non-alphabetic characters from a given string.
-
-**Input Parameters:**
-
-- `@Temp (varchar(1000))`: The input string.
-
-**Output:**
-
-Returns the cleaned string (varchar(1000)) with only alphabetic characters.
-
-**Description:**
-
-The function iterates through the input string and removes any non-alphabetic characters, returning a string that contains only alphabetic characters.
-
-### `[dbo].[fxStripCharacters]`
-
-**Purpose:**
-
-Strips specified characters from a string based on a match expression.
-
-**Input Parameters:**
-
-- `@String (nvarchar(max))`: The input string.
-
-- `@MatchExpression (varchar(255))`: The match expression defining characters to be stripped.
-
-**Output:**
-
-Returns the cleaned string (nvarchar(max)) with specified characters removed.
-
-**Description:**
-
-The function removes characters from the input string that match the provided match expression, useful for cleaning up strings based on custom criteriFunction: [dbo].[fxToDecimal]
-
-### `[dbo].[fxToDecimal]`
-
-**Purpose:**
-
-Converts a string to a decimal, handling various formats and potential negative values.
-
-**Input Parameters:**
-
-- `@string (nvarchar(1024))`: The input string to be converted.
-
-- `@decimals (int, default 0)`: The number of decimal places.
-
-- `@findNegative (bit, default 1)`: Indicates whether to check for negative values.
-
-**Output:**
-
-Returns the converted decimal value (decimal(25,8)).
-
-**Description:**
-
-This function attempts to convert a string to a decimal, handling different formats and considering negative values if specified.
-
-### `[dbo].[fxToProper]`
-
-**Purpose:**
-
-Converts a string to proper case (first letter uppercase, rest lowercase).
-
-**Input Parameters:**
-
-- `@string (nvarchar(4000))`: The input string.
-
-**Output:**
-
-Returns the converted string (nvarchar(4000)).
-
-**Description:**
-
-The function converts the input string to proper case, making the first letter uppercase and the rest of the letters lowercase.
-
-### `[dbo].[fxUNIXtoDateTime]`
-
-**Purpose:**
-
-Converts a UNIX timestamp (epoch) to a datetime value.
-
-**Input Parameters:**
-
-- `@epochStringDate (nvarchar(50))`: The input UNIX timestamp as a string.
-
-**Output:**
-
-Returns the converted datetime value (datetime2(0)).
-
-**Description:**
-
-The function converts a UNIX timestamp (epoch) into a SQL Server datetime value, making it easier to work with in SQL queries.
-
-### `[dbo].[fxUTC2`
-
-CET]
-
-**Purpose:**
-
-Converts a UTC datetime value to Central European Time (CET).
-
-**Input Parameters:**
-
-- `@UTC_DateTime (datetime)`: The input UTC datetime value.
-
-**Output:**
-
-Returns the converted CET datetime value (datetime).
-
-**Description:**
-
-The function converts a given UTC datetime value to the corresponding Central European Time (CET) datetime value. These functions provide a variety of utility operations, from checking the status of changes, generating SQL scripts, handling configurations, to manipulating and converting data types.
+> Management is best done through the webapp; these objects are for the SQL endpoint (SSMS / Azure Data Studio).
+
+This page describes all **56 functions** in the data-plane database `IRIS_DWH`, grouped by schema.
+For each function you'll find the fully qualified name, the signature (as it appears in the `CREATE FUNCTION`
+header) and its purpose. The names and types are taken directly from the source code — the code is authoritative.
+
+:::note Schemas
+The functions are spread across seven schemas: **`LoadManagement`** (the load engine), **`Config`**
+(settings, license, logging), **`Change`** (DTAP change management), **`Metadata`** (lineage),
+**`dbo`** (text and conversion utilities), **`oData`** (OData endpoint) and **`Expose`** (reporting RBAC).
+:::
+
+See also: [Stored procedures](stored-procedures.md) and [Logs & views](logs-views.md).
+
+---
+
+## LoadManagement (load engine)
+
+The heart of the load engine. These functions determine *what* gets loaded and how `STAGE` is merged into
+`HIS` (SCD2).
+
+### `[LoadManagement].[fxExtractor]` — table-valued
+
+**Signature:**
+
+```sql
+(@LoadFilter NVARCHAR(MAX) = NULL, @LoadType NVARCHAR(MAX) = NULL) RETURNS TABLE
+```
+
+**Purpose:** the heart of "what needs to be loaded". For each active source table, this function builds the
+source-specific extract command (the `DeltaScript` / OData `$select…$filter` / AFAS query string), the
+target schema and table names, file and delimiter metadata, package size and the archiving script.
+It is the TVF behind the view `[LoadManagement].[vwExtractor]` (which does nothing more than
+`SELECT * FROM [LoadManagement].[fxExtractor](NULL,NULL)`). ADF reads that view to learn which tables
+need to be loaded. Each returned row = one table to load.
+
+**Output:** ~40 columns, including `sourceType`, `isFile`, `Source`, `SourceSchema`, `SourceTable`,
+`TechSchema`, `TechTable`, `DataPlatform`, `LoadType`, `DeltaColumn`, `LatestRecord`, `DeltaScript`,
+`loadFilter`, `Pipeline`, `Trigger`, `fileLocation`, `fileName`, `TargetSource`, `TargetSchema`,
+`TargetTable`, `Target`, `keepStage`, `TargetSchemaHIS`, `TargetSchemaSTAGE`, `CellRange`, `Sheet`,
+`FileType`, `ColumnDelimiter`, `RowDelimiter`, `QuoteCharacter`, `FirstRowHeader`, `EscapeCharacter`,
+`CompressionType`, `LatestRuntime`, `noKey`, `deltaOverlap`, `deltaOverlapUnit`, `PackageSize`,
+`ArchivingScript`, `paginationType`, `paginationDetails`, `LoadStatus`.
+
+:::caution Two parameters, no `@PackageSize`
+`fxExtractor` has **exactly two parameters**: `@LoadFilter` and `@LoadType`. There is **no** third parameter
+`@PackageSize`. `PackageSize` is an **output column** (`COALESCE(u.PackageSize, st.MaxPackageSize, 25000)`),
+not an input parameter. Likewise: the output columns are named `LatestRecord` and `LatestRuntime` (not
+"LapageRecord" / "LapageRuntime").
+:::
 
 ### `[LoadManagement].[fxGetActualTablename]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
 
-Fetches the actual table name for a given source, schema, and table.
-
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the actual table name (nvarchar(4000)).
-
-**Description:**
-
-This function queries the LoadManagement.UsedTables  table to find the actual table name corresponding to the given source, schema, and table. If not found, it looks up in the CustomYres.Extractor  table.
+**Purpose:** returns `UsedTables.ActualTableName` for the source/schema/table combination. If nothing is
+found, the function falls back to `CustomYres.Extractor.[TARGET]`.
 
 ### `[LoadManagement].[fxGetDataType]`
 
-**Purpose:**
+**Signature:**
 
-Determines the full target column data type based on various input parameters.
+```sql
+(@source NVARCHAR(256), @dataType NVARCHAR(256), @sourceLength INT, @sourcePrecision INT,
+ @sourceScale INT, @schema NVARCHAR(256)='N/A', @table NVARCHAR(256)='N/A',
+ @column NVARCHAR(256)='N/A') RETURNS NVARCHAR(256)
+```
 
-**Input Parameters:**
+**Purpose:** maps the source data type to the full target column type via `LoadManagement.TypeMapping` and
+`LoadManagement.GlobalTypeMapping`. Takes length, precision and scale into account, and applies any
+overrides.
 
-- `@source (nvarchar(256))`: The source system name.
+### `[LoadManagement].[fxGetInitialDataType]`
 
-- `@dataType (nvarchar(256))`: The source data type.
+**Signature:** the same parameter set as `fxGetDataType` (`@source, @dataType, @sourceLength,
+@sourcePrecision, @sourceScale, @schema, @table, @column`) `RETURNS NVARCHAR(256)`.
 
-- `@sourceLength (int)`: The length of the source data type.
-
-- `@sourcePrecision (int)`: The precision of the source data type.
-
-- `@sourceScale (int)`: The scale of the source data type.
-
-- `@schema (nvarchar(256), default 'N/A')`: The schema name.
-
-- `@table (nvarchar(256), default 'N/A')`: The table name.
-
-- `@column (nvarchar(256), default 'N/A')`: The column name.
-
-**Output:**
-
-Returns the full target data type (nvarchar(256)).
-
-**Description:**
-
-This function maps the source data type to a target data type using the LoadManagement.TypeMapping  and LoadManagement.GlobalTypeMapping  tables. It considers length, precision, and scale attributes, and includes any necessary overrides.
+**Purpose:** like `fxGetDataType`, but determines the full target column type **without** applying column
+overrides (the "initial" mapping).
 
 ### `[LoadManagement].[fxGetKeyColumns]`
 
-**Purpose:**
+**Signature:**
 
-Retrieves key columns for a specified table, including options for additional formatting.
+```sql
+(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024), @withType BIT=0,
+ @enclosureChar NVARCHAR(1)='"', @seperatorChar NVARCHAR(1)=',') RETURNS NVARCHAR(MAX)
+```
 
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-- `@withType (bit, default 0)`: Flag to include data type.
-
-- `@enclosureChar (nvarchar(1), default '"')`: Character to enclose column names.
-
-- `@seperatorChar (nvarchar(1), default ',')`: Character to separate columns.
-
-**Output:**
-
-Returns the key columns (nvarchar(max)).
-
-**Description:**
-
-This function fetches the key columns for the specified table from LoadManagement.vwDictionary . If no key columns are found, it defaults to using all columns.
-
-### `[LoadManagement].[fxGetKeyHashColumns]`
-
-**Purpose:**
-
-Generates a hash of key columns for a specified table.
-
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the key hash columns (nvarchar(max)).
-
-**Description:**
-
-This function constructs a concatenation of key columns to generate a hash value for the specified table. If no key columns are found, it defaults to using all columns.
-
-### `[LoadManagement].[fxGetOptimized]`
-
-**Purpose:**
-
-Determines if a table is memory-optimized based on settings or actual status.
-
-**Input Parameters:**
-
-- `@Type (nvarchar(50))`: The type of optimization ('STAGE' or 'HIS').
-
-- `@Table (nvarchar(250))`: The table name.
-
-- `@Status (nvarchar(50), default 'Intended')`: Specifies whether to check intended or actual status.
-
-**Output:**
-
-Returns the optimization status (nvarchar(20)).
-
-**Description:**
-
-This function checks if a table is memory-optimized based on its settings in LoadManagement.UsedTables  or Config.Settings . It can return either the intended or actual status.
+**Purpose:** retrieves the key columns of the table from `LoadManagement.vwDictionary`. If none are marked,
+all columns fall back as the key. With `@withType=1` the data type is also included;
+`@enclosureChar`/`@seperatorChar` control the formatting of the returned list.
 
 ### `[LoadManagement].[fxGetRowColumns]`
 
-**Purpose:**
+**Signature:** identical to `fxGetKeyColumns` (`@Source, @Schema, @Table, @withType BIT=0,
+@enclosureChar NVARCHAR(1)='"', @seperatorChar NVARCHAR(1)=','`) `RETURNS NVARCHAR(MAX)`.
 
-Retrieves the row columns for a specified table, with options for additional formatting.
+**Purpose:** retrieves the row columns (the columns that participate in change detection) from
+`LoadManagement.vwDictionary`, with the same formatting options as above.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGetKeyHashColumns]`
 
-- `@Source (nvarchar(1024))`: The source system name.
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
 
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-- `@withType (bit, default 0)`: Flag to include data type.
-
-- `@enclosureChar (nvarchar(1), default '"')`: Character to enclose column names.
-
-- `@seperatorChar (nvarchar(1), default ',')`: Character to separate columns.
-
-**Output:**
-
-Returns the row columns (nvarchar(max)).
-
-**Description:**
-
-This function fetches the row columns for the specified table from LoadManagement.vwDictionary , including optional data type and formatting based on input parameters.
+**Purpose:** builds the concatenation of key columns from which the `KeyHash` (`HASHBYTES('SHA2_512', …)`) is
+computed. If there are no key columns, all columns are used.
 
 ### `[LoadManagement].[fxGetRowHashColumns]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
 
-Generates a hash of row columns for a specified table.
+**Purpose:** builds the concatenation of row columns from which the `RowHash` is computed. Columns with
+`RowHash=0` are excluded from change detection.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGetOptimized]`
 
-- `@Source (nvarchar(1024))`: The source system name.
+**Signature:** `(@Type NVARCHAR(50), @Table NVARCHAR(250), @Status NVARCHAR(50)='Intended') RETURNS NVARCHAR(20)`
 
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the row hash columns (nvarchar(max)).
-
-**Description:**
-
-This function constructs a concatenation of row columns to generate a hash value for the specified table.
+**Purpose:** determines whether a table is memory-optimized, based on `LoadManagement.UsedTables` or
+`Config.Settings`. `@Type` is `'STAGE'` or `'HIS'`. `@Status` accepts the literal values
+**`'Intended'`** (the configured wish) or **`'Real'`** (the actual status); `spHIS_InsertAndUpdate`
+calls the function with `'Real'`.
 
 ### `[LoadManagement].[fxGetStoreType]`
 
-**Purpose:**
+**Signature:** `(@Table NVARCHAR(250), @Status NVARCHAR(50)='Intended') RETURNS NVARCHAR(20)`
 
-Determines the storage type (row or column) for a table based on settings or actual status.
-
-**Input Parameters:**
-
-- `@Table (nvarchar(250))`: The table name.
-
-- `@Status (nvarchar(50), default 'Intended')`: Specifies whether to check intended or actual status.
-
-**Output:**
-
-Returns the storage type (nvarchar(20)).
-
-**Description:**
-
-This function checks if a table uses row or column storage based on its settings in LoadManagement.UsedTables  or Config.Settings . It can return either the intended or actual status.
+**Purpose:** determines whether a table uses row- or column-store, based on `LoadManagement.UsedTables` or
+`Config.Settings`. The same `'Intended'`/`'Real'` logic as `fxGetOptimized`.
 
 ### `[LoadManagement].[fxGetSurrogate]`
 
-**Purpose:**
+**Signature:** `(@Table NVARCHAR(4000)) RETURNS INT`
 
-Retrieves the surrogate key setting for a specified table.
+**Purpose:** returns the table's surrogate-key setting from `LoadManagement.UsedTables` (for the
+`ActualTableName` with `Active=1`). If that is empty/NULL, the function falls back to the
+**`DefaultSurrogate`** setting in `Config.Settings`.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGetOptimalPageSize]`
 
-- `@Table (nvarchar(4000))`: The table name.
+**Signature:** `(@object NVARCHAR(4000)) RETURNS INT`
 
-**Output:**
+**Purpose:** computes an optimal page size for paging `STAGE` → `HIS`, based on the measured KB-per-row of
+the object and the available tempdb space. Used when the `PageSize` setting has the value `OPTIMAL`.
 
-Returns the surrogate key setting (int).
+### `[LoadManagement].[fxGetDeltaValue]`
 
-**Description:**
+**Signature:** `(@target NVARCHAR(4000), @addCorrectQuotation BIT) RETURNS NVARCHAR(100)`
 
-This function checks the surrogate key setting for the specified table in LoadManagement.UsedTables . If not found, it defaults to a global setting from Config.Settings .
+**Purpose:** supplies the current delta watermark value for a target table (the highest processed delta
+value), optionally with correct quoting for use in dynamic SQL.
 
 ### `[LoadManagement].[fxPredictKeyColumns]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
 
-Predicts key columns for a new table based on existing metadata.
-
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the predicted key columns (nvarchar(max)).
-
-**Description:**
-
-This function predicts the key columns for a new table based on existing metadata in LoadManagement.Dictionary . If no key columns are found, it defaults to using all non-nullable columns.
+**Purpose:** predicts the key columns for a new table based on existing metadata in
+`LoadManagement.Dictionary`. If none are found, all non-nullable columns fall back as the predicted key.
+Used by the "Add table" wizard as a suggestion.
 
 ### `[LoadManagement].[fxPredictTableName]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
 
-Predicts the table name based on source, schema, and table parameters.
+**Purpose:** predicts the target table name based on source/schema/table, taking into account any overrides
+in `LoadManagement.UsedTables`.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGenerateAdfUrl]`
 
-- `@Source (nvarchar(1024))`: The source system name.
+**Signature:** `(@runId NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
 
-- `@Schema (nvarchar(1024))`: The schema name.
+**Purpose:** builds the full URL to view a specific pipeline run in the Azure Data Factory portal.
+Used by the monitoring views to show deep links to ADF runs.
 
-- `@Table (nvarchar(1024))`: The table name.
+### `[LoadManagement].[fxCreateNetsuiteAuthHeader]`
 
-**Output:**
+**Signature:**
 
-Returns the predicted table name (nvarchar(4000)).
+```sql
+(@consumer_key VARCHAR(8000), @Consumer_secret VARCHAR(8000), @oAuth_Token VARCHAR(8000),
+ @Token_secret VARCHAR(8000), @URL VARCHAR(8000), @Method VARCHAR(50)) RETURNS VARCHAR(8000)
+```
 
-**Description:**
+**Purpose:** builds the OAuth 1.0 `Authorization` header (with HMAC-SHA256 signature, nonce and timestamp) for
+NetSuite API calls.
 
-This function constructs a predicted table name using the source, schema, and table parameters, considering any overrides specified in LoadManagement.UsedTables .
+---
+
+## Config (settings, license, logging)
+
+### `[Config].[fxGetSetting]`
+
+**Signature:** `(@SettingName NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)`
+
+**Purpose:** retrieves the value of a setting from `Config.Settings`. Contains special GodMode logic: a
+second lookup reads the `GodMode` row with a time-rotating `id`; if the requested setting name starts with
+`Allow%` **and** GodMode resolves to `'1'`, the function returns `'1'` (force-allow).
+
+### `[Config].[fxGetSchemaName]`
+
+**Signature:** `(@Target NVARCHAR(MAX), @Type NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)`
+
+**Purpose:** determines the schema name for a target and type. The base schema is `fxGetSetting('SchemaHIS')`
+or `fxGetSetting('SchemaSTAGE')` (otherwise `'ERROR'`). If the corresponding `UsedTables` row has a non-empty
+`OverwriteSettingSchema`, the result becomes `CONCAT_WS('_', baseSchema, OverwriteSettingSchema)`
+(for example `ODS_Finance`).
+
+### `[Config].[fxAddTryCatch]`
+
+**Signature:**
+
+```sql
+(@SQL NVARCHAR(MAX), @process UNIQUEIDENTIFIER, @spName NVARCHAR(MAX), @spStep NVARCHAR(MAX),
+ @spCall NVARCHAR(MAX), @appUser NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)
+```
+
+**Purpose:** wraps a SQL script between two `EXECUTE [Config].[spWriteMessage]` calls ("Preparing for
+step" / after the step) for breadcrumb logging. Used by `spHIS_InsertAndUpdate` just before the
+generated load SQL is executed.
+
+### `[Config].[fxCheckLicense]`
+
+**Signature:**
+
+```sql
+(@feature NVARCHAR(1024), @value NVARCHAR(1024), @check NVARCHAR(50)='SYSTEM',
+ @checkvalue NVARCHAR(1024)) RETURNS NVARCHAR(4000)
+```
+
+**Purpose:** validates the license key (`Config.Settings.LicenseKey`) against a feature/limit. Checks
+installation binding, end date and type, and returns an issue string (e.g. *"The provided license key is
+not valid anymore"*) or an empty/OK status. This is the technical enforcement behind the license tiers; this
+is how over-quota tables/databases in `fxExtractor` return no rows.
+
+### `[Config].[fxCheckSystem]`
+
+**Signature:** `(@value NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
+
+**Purpose:** checks system/installation restrictions (tied to `@@SERVERNAME`) as a supplement to the
+license check.
+
+### `[Config].[fxViewLicense]` — table-valued
+
+**Signature:** `() RETURNS TABLE`
+
+**Purpose:** decrypts the stored `LicenseKey` (via `DECRYPTBYPASSPHRASE` with a server-name salt) and returns
+the license contents as `[key]`/`[value]` pairs — handy for inspecting the active license.
+
+### `[Config].[fxGetSession]`
+
+**Signature:** `() RETURNS NVARCHAR(MAX)`
+
+**Purpose:** queries `sys.dm_exec_connections` and `sys.dm_exec_sessions` and returns the details of active
+sessions as JSON.
+
+### `[Config].[fxGetHmacSha256]`
+
+**Signature:** `(@Key VARCHAR(MAX), @baseString VARCHAR(MAX)) RETURNS VARCHAR(MAX)`
+
+**Purpose:** computes an HMAC-SHA256 signature in pure T-SQL (including the inner/outer padding). Used for
+signing outgoing API calls.
+
+### `[Config].[fxUrlEncode]`
+
+**Signature:** `(@Input NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)`
+
+**Purpose:** URL-encodes a string (replaces spaces and special characters with their `%XX` equivalent) for
+use in API URLs and OAuth signatures.
+
+---
+
+## Change (DTAP change management)
+
+Functions that support change management (Projects → Changes → Release/Install).
+
+### `[Change].[fxGetChangeIsOpen]`
+
+**Signature:** `(@ChangeId INT) RETURNS INT`
+
+**Purpose:** determines whether a change (identified by `@ChangeId`) is currently open. Joins
+`Change.Changes` with `Change.Status` and verifies that the change originates from the correct server/database.
+Returns `1` (open) or `0` (not open).
+
+### `[Change].[fxGetLastestChangeIdFor]`
+
+**Signature:** `(@objectType INT, @objectName NVARCHAR(1024)) RETURNS INT`
+
+**Purpose:** retrieves the **latest** change ID that contains a specific object type and name, by searching
+`Change.ChangeContent`.
+
+:::note Naming
+In the code, the function is literally named `fxGetLastestChangeIdFor` — with the typo "Lastest" (the spelling
+is deliberately kept verbatim). The earlier wiki spelling "fxGetLaspageChangeIdFor" is wrong on two counts:
+it is *Latest*, not "Lapage", and the code itself spells it "Lastest".
+:::
+
+### `[Change].[fxGetLatestOpenChange]`
+
+**Signature:** `(@ObjectType NVARCHAR(10), @ObjectName NVARCHAR(1024)) RETURNS INT`
+
+**Purpose:** combines `fxGetLastestChangeIdFor` and `fxGetChangeIsOpen` to find and return the latest **open**
+change for an object type/name.
+
+### `[Change].[fxPossibleChanges]` — table-valued
+
+**Signature:** `(@ObjectType NVARCHAR(10), @ObjectName NVARCHAR(1024)) RETURNS TABLE`
+
+**Purpose:** returns the possible change actions for an object, taking into account whether an open change
+already exists (via `fxGetLastestChangeIdFor`/`fxGetChangeIsOpen`).
+
+### `[Change].[fxMockDelete]` — table-valued
+
+**Signature:** `(@ObjectName NVARCHAR(4000)) RETURNS TABLE`
+
+**Purpose:** simulates what happens when an object is deleted: determines which dependent objects use the
+object (and the corresponding open change ID), so the impact is visible before the delete is carried out.
+
+### `[Change].[fxGetReleasedJson]`
+
+**Signature:** `(@ChangeID INT) RETURNS NVARCHAR(MAX)`
+
+**Purpose:** retrieves the JSON data stored with a specific change ID in `Change.Changes`.
+
+### `[Change].[fxGetTableDefinition]`
+
+**Signature:**
+
+```sql
+(@ObjectName NVARCHAR(1024), @UseTransaction BIT=0, @GenerateFKs BIT=1, @GenerateIdentity BIT=1,
+ @GenerateCollation BIT=0, @GenerateCreateTable BIT=1, @GenerateIndexes BIT=1, …) RETURNS NVARCHAR(MAX)
+```
+
+**Purpose:** generates a complete SQL script to rebuild a table definition — columns, indexes, constraints
+and optionally the contents as JSON. The flag parameters control whether foreign keys, identity columns,
+collation, the `CREATE TABLE` statement itself and indexes are included.
+
+### `[Change].[fxGetTableTypeDefinition]`
+
+**Signature:** `(@ObjectName NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
+
+**Purpose:** generates the `CREATE TYPE … AS TABLE(...)` script to rebuild a user-defined table type,
+including the columns and their properties.
+
+---
+
+## Metadata (lineage and dependencies)
+
+### `[Metadata].[fxGetViewSources]` — table-valued
+
+**Signature:** `(@VIEW NVARCHAR(256)) RETURNS TABLE`
+
+**Purpose:** determines the source objects (tables or views) that a given view directly uses, by parsing the
+view definition and querying system tables.
+
+### `[Metadata].[fxGetViewSourcesRecursive]` — table-valued
+
+**Signature:** `(@VIEW NVARCHAR(256)) RETURNS TABLE`
+
+**Purpose:** like `fxGetViewSources`, but **recursive**: the sources of the found views are expanded as well,
+so you see the complete lineage chain.
+
+### `[Metadata].[fxGetDependencies]` — table-valued
+
+**Signature:** `(@ObjectName VARCHAR(500)) RETURNS TABLE`
+
+**Purpose:** uses a recursive CTE to retrieve all dependent objects (and the objects below those) of a
+stored procedure, view, function or table.
+
+### `[Metadata].[fxGetReferencedObjects]` — table-valued
+
+**Signature:** `(@sql NVARCHAR(MAX)) RETURNS TABLE`
+
+**Purpose:** a best-effort T-SQL parser that extracts object names following `FROM`, `JOIN`, `APPLY`, `UPDATE`,
+`INTO`, `MERGE` and `DELETE FROM` from ad-hoc SQL text. Keep its limitations in mind: objects in dynamic SQL,
+synonyms and complex nested subqueries/CTEs are not always recognized (requires SQL Server 2022+).
+
+### `[Metadata].[fxGetObjectTree]`
+
+**Signature:** `() RETURNS NVARCHAR(MAX)`
+
+**Purpose:** builds an overview tree of all database objects (name, type, schema) and marks for each object
+whether it originates from `Yres` or is `custom`.
+
+### `[Metadata].[fxColumnUsage]` — table-valued
+
+**Signature:** `(@SchemaName SYSNAME, @TableName SYSNAME) RETURNS TABLE`
+
+**Purpose:** returns the column usage for a given schema/table (which columns are used where) — useful for
+impact analysis.
+
+---
+
+## dbo (text and conversion utilities)
+
+General helper functions for string manipulation and type conversion.
+
+### `[dbo].[fxGeneratePassword]`
+
+**Signature:** `(@Length INT = 16) RETURNS NVARCHAR(1024)`
+
+**Purpose:** generates a random password of the given length (characters from ASCII 48–122).
+
+### `[dbo].[fxStripCharacters]`
+
+**Signature:** `(@String NVARCHAR(MAX), @MatchExpression VARCHAR(255)) RETURNS NVARCHAR(MAX)`
+
+**Purpose:** removes from the input string all characters that match the given match expression.
+
+### `[dbo].[fxRemoveNonAlphaCharacters]`
+
+**Signature:** `(@Temp VARCHAR(1000)) RETURNS VARCHAR(1000)`
+
+**Purpose:** removes all non-alphabetic characters from the input string (keeps only `a–z`). There is a
+second, identical definition (`fxRemoveNonAlphaCharacters_1.sql`) of the same function in the repo — both
+contain the same logic.
+
+### `[dbo].[fxToProper]`
+
+**Signature:** `(@string NVARCHAR(4000)) RETURNS NVARCHAR(4000)`
+
+**Purpose:** converts a string to proper case (first letter uppercase, the rest lowercase).
+
+### `[dbo].[fxToDecimal]`
+
+**Signature:** `(@string NVARCHAR(1024), @decimals INT=0, @findNegative BIT=1) RETURNS DECIMAL(25,8)`
+
+**Purpose:** converts a string to a decimal and handles various formats; with `@findNegative=1` negative
+values are recognized.
+
+### `[dbo].[fxToReadableSize]`
+
+**Signature:** `(@kb DECIMAL(38,10)) RETURNS NVARCHAR(50)`
+
+**Purpose:** formats a size in kilobytes into a readable string (`KB`, `MB` or `GB`).
+
+### `[dbo].[fxUNIXtoDateTime]`
+
+**Signature:** `(@epochStringDate NVARCHAR(50)) RETURNS DATETIME2(0)`
+
+**Purpose:** converts a UNIX timestamp (epoch, as a string) to a SQL Server datetime value.
+
+### `[dbo].[fxUTC2CET]`
+
+**Signature:** `(@UTC_DateTime DATETIME) RETURNS DATETIME`
+
+**Purpose:** converts a UTC datetime to Central European Time (CET). Used among other things by the
+monitoring views to show times in local time.
+
+### `[dbo].[fxGetJsonCollection]`
+
+**Signature:** `(@Json NVARCHAR(MAX)) RETURNS NVARCHAR(1024)`
+
+**Purpose:** determines the (first/relevant) JSON collection within a JSON string by querying
+`dbo.fxGetJsonCollections`.
+
+### `[dbo].[fxGetJsonCollections]` — table-valued
+
+**Signature:** `(@Json NVARCHAR(MAX)) RETURNS TABLE`
+
+**Purpose:** returns all collections (arrays) within a JSON string, with a ranking that prioritizes known
+keys such as `RESULT`, `RESULTS`, `DATA` and `VALUE`. Used when reading REST/OData responses.
+
+### `[dbo].[UNQUOTENAME]`
+
+**Signature:** `(@input SYSNAME, @quotechar NCHAR(1)=N'[') RETURNS NVARCHAR(4000)`
+
+**Purpose:** the counterpart of `QUOTENAME`: removes the surrounding quote characters (default `[ ]`) from an
+identifier.
+
+---
+
+## oData (OData endpoint)
+
+Functions that feed the database's OData reporting endpoint.
 
 ### `[oData].[fxBaseResponse]`
 
-**Purpose:**
+**Signature:** `(@BaseUrl NVARCHAR(3000)) RETURNS NVARCHAR(MAX)`
 
-Generates a base oData response URL for metadata.
-
-**Input Parameters:**
-
-- `@BaseUrl (nvarchar(3000))`: The base URL.
-
-**Output:**
-
-Returns the oData base response (nvarchar(max)).
-
-**Description:**
-
-This function constructs a base oData response URL, appending the metadata endpoint and listing all tables and views available in the database.
+**Purpose:** builds the base OData response URL: adds the metadata endpoint and lists all available tables
+and views in the database.
 
 ### `[oData].[fxMetadataResponse]`
 
-**Purpose:**
+**Signature:** `(@BaseUrl NVARCHAR(3000)) RETURNS NVARCHAR(MAX)`
 
-Generates oData metadata response.
+**Purpose:** generates the OData `$metadata` response, including entity types and entity sets, and maps SQL
+types to the corresponding OData EDM types according to the OData standard.
 
-**Input Parameters:**
+---
 
-- `@BaseUrl (nvarchar(3000))`: The base URL.
+## Expose (reporting RBAC)
 
-**Output:**
+### `[Expose].[fxGenerateDefinitions]`
 
-Returns the oData metadata response (nvarchar(max)).
+**Signature:**
 
-**Description:**
+```sql
+(@Schema NVARCHAR(1024), @Name NVARCHAR(1024), @DataType NVARCHAR(256), …) RETURNS NVARCHAR(MAX)
+```
 
-This function generates an oData metadata response, including details about entity types and sets. It
+**Purpose:** generates the definitions for reporting objects in the `Exposed` schema. `@DataType` indicates
+the reporting role of the column (`[None]`, `[FACT]`, `[DIM1]`, `[DIM2]`, `[DIM4]`); based on the
+linked Yres source/table and surrogate key, the function builds the object definition.
 
-maps SQL types to corresponding oData EDM types and ensures the response adheres to oData standards.
+---
 
-### `[Metadata].[fxGetViewSources]`
-
-**Purpose:**
-
-Retrieves the source objects (tables or views) for a specified view.
-
-**Input Parameters:**
-
-- `@VIEW (nvarchar(256))`: The name of the view.
-
-**Output:**
-
-Returns a table with the source objects and their details.
-
-**Description:**
-
-This function identifies the source objects used by a specified view by parsing the view definition and querying system tables to find the related tables or views.
-
-### `[Metadata].[fxGetViewSourcesRecursive]`
-
-**Purpose:**
-
-Recursively retrieves the source objects (tables or views) for a specified view.
-
-**Input Parameters:**
-
-- `@VIEW (nvarchar(256))`: The name of the view.
-
-**Output:**
-
-Returns a table with the source objects and their details, including recursive sources.
-
-**Description:**
-
-This function recursively identifies the source objects used by a specified view and any views that those source objects depend on, providing a comprehensive list of all related tables or views. These functions offer a variety of utility operations, from retrieving and predicting table names, generating metadata responses, to recursively identifying dependencies in views.
-
-### `[Monitoring].[fxGetTableLoads]`
-
-**Purpose:**
-
-This function retrieves a paginated list of load records for a specific source and target, showing the ETL date and status. It is useful for monitoring and tracking the loading processes of different tables.
-
-**Inputs:**
-
-- `@offset (int)`: The number of rows to skip before starting to return rows.
-
-- `@top (int)`: The number of rows to return.
-
-- `@source (nvarchar(1024))`: The source system name.
-
-- `@target (nvarchar(1024))`: The target table name.
-
-**Outputs:**
-
-[Source system]  (nvarchar(1024)): The source system name.
-
-[Target]  (nvarchar(1024)): The target table name.
-
-[ETL Date]  (datetime): The ETL date of the load.
-
-[Status]  (nvarchar(50)): The status of the load.
-
-### `[LoadManagement].[fxExtractor]`
-
-**Purpose:**
-
-This function generates a dynamic dataset of tables and their metadata for extraction. It includes source type, delta scripts, and load filters based on the provided parameters. This function is essential for preparing and managing data extraction processes in a data warehouse environment.
-
-**Inputs:**
-
-- `@LoadFilter (nvarchar(max), default NULL)`: The filter to apply on the load.
-
-- `@LoadType (nvarchar(max), default NULL)`: The type of load (e.g., FULL, DELTA).
-
-- `@PackageSize (int, default NULL)`: The size of the package for loading.
-
-**Outputs:**
-
-sourceType  (nvarchar(50)): The type of the source system.
-
-isFile  (bit): Indicates if the source is a file.
-
-Source  (nvarchar(1024)): The source system name.
-
-SourceSchema  (nvarchar(1024)): The source schema name.
-
-SourceTable  (nvarchar(1024)): The source table name.
-
-TechSchema  (nvarchar(1024)): The technical schema name.
-
-TechTable  (nvarchar(1024)): The technical table name.
-
-DataPlatform  (nvarchar(1024)): The name of the data platform.
-
-LoadType  (nvarchar(50)): The type of load (FULL, DELTA, etc.).
-
-DeltaColumn  (nvarchar(1024)): The delta column name used for incremental loads.
-
-LapageRecord  (nvarchar(1024)): The lapage record identifier.
-
-DeltaScript  (nvarchar(max)): The generated SQL script for extracting delta changes.
-
-loadFilter  (nvarchar(max)): The load filter applied to the extraction.
-
-Pipeline  (nvarchar(1024)): The associated pipeline for the load.
-
-Trigger  (nvarchar(1024)): The trigger information.
-
-fileLocation  (nvarchar(1024)): The location of the file source.
-
-fileName  (nvarchar(1024)): The name of the file source.
-
-TargetSource  (nvarchar(1024)): The target source system name.
-
-TargetSchema  (nvarchar(1024)): The target schema name.
-
-TargetTable  (nvarchar(1024)): The target table name.
-
-Target  (nvarchar(1024)): The formatted target table name.
-
-keepStage  (bit): Indicates if the staging data should be kept.
-
-TargetSchemaHIS  (nvarchar(1024)): The target historical schema name.
-
-TargetSchemaSTAGE  (nvarchar(1024)): The target staging schema name.
-
-CellRange  (nvarchar(1024)): The cell range in the source.
-
-Sheet  (nvarchar(1024)): The sheet name in the source.
-
-FileType  (nvarchar(1024)): The type of the file.
-
-ColumnDelimiter  (nvarchar(1)): The column delimiter in the source file.
-
-RowDelimiter  (nvarchar(1)): The row delimiter in the source file.
-
-QuoteCharacter  (nvarchar(1)): The quote character in the source file.
-
-FirstRowHeader  (bit): Indicates if the first row is a header.
-
-EscapeCharacter  (nvarchar(1)): The escape character in the source file.
-
-CompressionType  (nvarchar(50)): The compression type.
-
-LapageRuntime  (int): The lapage runtime for the pipeline in seconds.
-
-noKey  (bit): Indicates if there is no key column.
-
-deltaOverlap  (int): The delta overlap value.
-
-deltaOverlapUnit  (nvarchar(50)): The unit for delta overlap.
-
-PackageSize  (int): The size of the package for loading.
-
-ArchivingScript  (nvarchar(max)): The generated SQL script for archiving data.
+:::info Lapage → Latest
+Older documentation contained the token **"Lapage"** (for example `LapageRecord` or
+`fxGetLapageOpenChange`). That is an OCR error: the correct word is **"Latest"**. In the live database
+"Lapage" appears nowhere. The correct names are `LatestRecord`, `LatestRuntime`, `fxGetLastestChangeIdFor`
+(with the "Lastest" typo from the code) and `fxGetLatestOpenChange`.
+:::

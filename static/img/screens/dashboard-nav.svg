@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+
+  <!-- ===================== TOP BAR ===================== -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <!-- logo -->
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <!-- title = organization name -->
+  <text x="180" y="33" font-size="13.5" font-weight="600" fill="#5b6166">Acme B.V.</text>
+  <text x="263" y="33" font-size="13.5" font-weight="700" fill="#FBAF42">·</text>
+  <!-- env switcher (org scope, &gt;1 env) -->
+  <rect x="278" y="14" width="148" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="292" y="32" font-size="12" fill="#2b2b2e">Productie</text>
+  <path d="M408 26l5 0-2.5 4z" fill="#8a9196"/>
+
+  <!-- right-side actions: Refresh, help ?, monitored-jobs, notifications, user -->
+  <!-- refresh -->
+  <circle cx="1004" cy="28" r="14" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <path d="M998 28a6 6 0 1 1 1.8 4.3" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+  <path d="M998 23.5l0 4.5 4.5 0" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+  <!-- help ? -->
+  <circle cx="1040" cy="28" r="14" fill="#FEF1DD" stroke="#e89a1f"/>
+  <text x="1040" y="33" font-size="15" font-weight="700" fill="#e89a1f" text-anchor="middle">?</text>
+  <!-- monitored jobs (heart-rate monitor) -->
+  <circle cx="1076" cy="28" r="14" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <path d="M1069 28h3l1.5-4 2 8 1.5-4h3" fill="none" stroke="#8a9196" stroke-width="1.6" stroke-linejoin="round"/>
+  <!-- notifications (bell) -->
+  <circle cx="1112" cy="28" r="14" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <path d="M1108 31c0-5 1.5-6.5 4-6.5s4 1.5 4 6.5z" fill="none" stroke="#8a9196" stroke-width="1.5"/>
+  <path d="M1106.5 31h11" stroke="#8a9196" stroke-width="1.5"/>
+  <path d="M1110.5 33a1.5 1.5 0 0 0 3 0" fill="none" stroke="#8a9196" stroke-width="1.5"/>
+  <circle cx="1117" cy="22" r="3" fill="#e03131"/>
+  <!-- user menu -->
+  <circle cx="1150" cy="28" r="14" fill="#FEF1DD"/><text x="1150" y="32" font-size="11" font-weight="600" fill="#e89a1f" text-anchor="middle">JD</text>
+
+  <!-- ===================== LEFT ICON RAIL (sections) ===================== -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <!-- Real org main-link order (useSubLinks.jsx): Home, Admin, Projects, Data sources, Load management, Data engineering -->
+  <g font-size="8.5" text-anchor="middle">
+    <!-- Home (ACTIVE) -->
+    <g>
+      <rect x="14" y="78" width="40" height="40" rx="9" fill="#FBAF42"/>
+      <path d="M26 95l8-7 8 7" fill="none" stroke="#1c1c1e" stroke-width="1.8" stroke-linejoin="round"/>
+      <rect x="29" y="95" width="10" height="8" fill="none" stroke="#1c1c1e" stroke-width="1.8"/>
+      <text x="34" y="112" fill="#1c1c1e" font-weight="600">Home</text>
+    </g>
+    <!-- Admin -->
+    <g>
+      <rect x="14" y="124" width="40" height="40" rx="9" fill="#f6f9f9"/>
+      <rect x="28" y="135" width="12" height="14" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <path d="M31 139h0M35 139h0M31 143h0M35 143h0" stroke="#8a9196" stroke-width="2"/>
+      <text x="34" y="158" fill="#8a9196">Admin</text>
+    </g>
+    <!-- Projects -->
+    <g>
+      <rect x="14" y="170" width="40" height="40" rx="9" fill="#f6f9f9"/>
+      <circle cx="29" cy="182" r="2.4" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <circle cx="39" cy="192" r="2.4" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <path d="M31 184c3 0 4 6 6 6" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <text x="34" y="204" fill="#8a9196">Projects</text>
+    </g>
+    <!-- Data sources -->
+    <g>
+      <rect x="14" y="216" width="40" height="40" rx="9" fill="#f6f9f9"/>
+      <ellipse cx="34" cy="226" rx="7" ry="2.6" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <path d="M27 226v8c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-8" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <path d="M27 230c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <text x="34" y="250" fill="#8a9196">Sources</text>
+    </g>
+    <!-- Load management -->
+    <g>
+      <rect x="14" y="262" width="40" height="40" rx="9" fill="#f6f9f9"/>
+      <path d="M27 280a7 7 0 0 1 14 0" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <path d="M34 280l4-4" stroke="#8a9196" stroke-width="1.6"/>
+      <text x="34" y="296" fill="#8a9196">Load</text>
+    </g>
+    <!-- Data engineering -->
+    <g>
+      <rect x="14" y="308" width="40" height="40" rx="9" fill="#f6f9f9"/>
+      <rect x="27" y="320" width="14" height="11" fill="none" stroke="#8a9196" stroke-width="1.6"/>
+      <path d="M27 324h14M32 320v11" stroke="#8a9196" stroke-width="1.3"/>
+      <text x="34" y="344" fill="#8a9196">Engineer</text>
+    </g>
+  </g>
+
+  <!-- ===================== SUB-LINK SIDEBAR (resizable navbar) ===================== -->
+  <rect x="68" y="56" width="206" height="744" fill="#ffffff" stroke="#e3e8ea"/>
+  <!-- section heading -->
+  <text x="86" y="90" font-size="13" font-weight="700" fill="#1c1c1e">Home</text>
+  <!-- Home sub-links: Dashboard (/), Power BI dashboard (/admin/powerBiDashboard) -->
+  <rect x="80" y="104" width="182" height="34" rx="6" fill="#FEF1DD"/>
+  <rect x="80" y="104" width="3" height="34" rx="1.5" fill="#FBAF42"/>
+  <text x="96" y="125" font-size="12.5" font-weight="600" fill="#e89a1f">Dashboard</text>
+  <text x="96" y="160" font-size="12.5" fill="#2b2b2e">Power BI dashboard</text>
+
+  <!-- divider -->
+  <line x1="80" y1="184" x2="262" y2="184" stroke="#eef3f4"/>
+  <text x="86" y="204" font-size="10" font-weight="600" fill="#8a9196" letter-spacing="0.5">SUB-LINKS SWITCH</text>
+  <text x="86" y="220" font-size="10" font-weight="600" fill="#8a9196" letter-spacing="0.5">WITH THE ICON RAIL</text>
+
+  <!-- resize drag handle (minWidth 240 / maxWidth 400) -->
+  <rect x="270" y="380" width="4" height="48" rx="2" fill="#e3e8ea"/>
+  <circle cx="272" cy="396" r="1.1" fill="#8a9196"/><circle cx="272" cy="404" r="1.1" fill="#8a9196"/><circle cx="272" cy="412" r="1.1" fill="#8a9196"/>
+
+  <!-- ===================== PAGE TITLE + MAIN ===================== -->
+  <text x="298" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Shared chrome</text>
+  <text x="298" y="114" font-size="12.5" fill="#8a9196">Top bar + icon rail + sub-link sidebar — present on every authenticated screen</text>
+
+  <!-- main content placeholder: Outlet/<main> -->
+  <rect x="298" y="140" width="908" height="630" rx="8" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="322" y="172" font-size="13" font-weight="700" fill="#5b6166">&lt;main&gt; Outlet</text>
+  <text x="322" y="192" font-size="12" fill="#8a9196">Each page renders here. The chrome around it (header, rail, sidebar) stays fixed.</text>
+
+  <!-- schematic page-swap chips -->
+  <rect x="322" y="214" width="120" height="26" rx="4" fill="#FEF1DD"/><text x="382" y="231" font-size="11.5" font-weight="600" fill="#e89a1f" text-anchor="middle">Dashboard</text>
+  <rect x="452" y="214" width="120" height="26" rx="4" fill="#ffffff" stroke="#e3e8ea"/><text x="512" y="231" font-size="11.5" fill="#8a9196" text-anchor="middle">Data sources</text>
+  <rect x="582" y="214" width="130" height="26" rx="4" fill="#ffffff" stroke="#e3e8ea"/><text x="647" y="231" font-size="11.5" fill="#8a9196" text-anchor="middle">Load management</text>
+  <rect x="722" y="214" width="120" height="26" rx="4" fill="#ffffff" stroke="#e3e8ea"/><text x="782" y="231" font-size="11.5" fill="#8a9196" text-anchor="middle">Monitoring</text>
+
+  <!-- faint mock of a generic page body -->
+  <rect x="322" y="262" width="860" height="34" rx="6" fill="#eef3f4"/>
+  <text x="338" y="284" font-size="11.5" font-weight="600" fill="#5b6166">Schema</text>
+  <text x="470" y="284" font-size="11.5" font-weight="600" fill="#5b6166">Source</text>
+  <text x="640" y="284" font-size="11.5" font-weight="600" fill="#5b6166">Target</text>
+  <text x="900" y="284" font-size="11.5" font-weight="600" fill="#5b6166">Status</text>
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="338" y="318">STAGE</text><text x="470" y="318">AFAS_Prod</text><text x="640" y="318">HIS.dbo.Klant</text>
+    <rect x="900" y="307" width="58" height="16" rx="4" fill="#e6f4ea"/><text x="929" y="319" fill="#2f9e44" text-anchor="middle">OK</text>
+    <line x1="322" y1="332" x2="1182" y2="332" stroke="#eef3f4"/>
+    <text x="338" y="352">HIS</text><text x="470" y="352">ExactOnline</text><text x="640" y="352">Expose.vwOmzet</text>
+    <rect x="900" y="341" width="58" height="16" rx="4" fill="#e6f4ea"/><text x="929" y="353" fill="#2f9e44" text-anchor="middle">OK</text>
+    <line x1="322" y1="366" x2="1182" y2="366" stroke="#eef3f4"/>
+    <text x="338" y="386">Expose</text><text x="470" y="386">SQL_CRM</text><text x="640" y="386">STAGE.crm.Lead</text>
+    <rect x="900" y="375" width="78" height="16" rx="4" fill="#fff3e0"/><text x="939" y="387" fill="#f08c00" text-anchor="middle">Running</text>
+  </g>
+  <text x="322" y="420" font-size="11" fill="#8a9196">(page body is illustrative — this screen documents the chrome, not one page)</text>
+
+  <!-- ===================== CALLOUT MARKERS ===================== -->
+  <!-- 1: logo + title + env switcher -->
+  <circle cx="234" cy="28" r="11" fill="#FBAF42"/><text x="234" y="32" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+  <!-- 2: action icons (help ? cluster) -->
+  <circle cx="1040" cy="50" r="11" fill="#FBAF42"/><text x="1040" y="54" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+  <!-- 3: icon rail (active Home) -->
+  <circle cx="34" cy="98" r="11" fill="#FBAF42"/><text x="34" y="102" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+  <!-- 4: sub-link sidebar -->
+  <circle cx="240" cy="121" r="11" fill="#FBAF42"/><text x="240" y="125" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+  <!-- 5: resize handle -->
+  <circle cx="272" cy="356" r="11" fill="#FBAF42"/><text x="272" y="360" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+  <!-- 6: main Outlet -->
+  <circle cx="318" cy="160" r="11" fill="#FBAF42"/><text x="318" y="164" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <rect x="322" y="446" width="860" height="306" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="342" y="476" font-size="13" font-weight="700" fill="#1c1c1e">Annotated regions</text>
+  <g font-size="12" fill="#2b2b2e">
+    <circle cx="350" cy="500" r="9" fill="#FBAF42"/><text x="350" y="504" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+    <text x="370" y="504"><tspan font-weight="600">Logo + Title + Env switcher.</tspan> Org name "Acme B.V.", themed middot, then the Environment dropdown ("Productie") — shown only when the org has more than 1 environment.</text>
+
+    <circle cx="350" cy="532" r="9" fill="#FBAF42"/><text x="350" y="536" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+    <text x="370" y="536"><tspan font-weight="600">Top-bar actions.</tspan> Refresh, help "?" (opens wiki.yres-dwh.app), monitored-jobs, notifications (red badge), and the user menu (initials).</text>
+
+    <circle cx="350" cy="564" r="9" fill="#FBAF42"/><text x="350" y="568" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+    <text x="370" y="568"><tspan font-weight="600">Left icon rail (sections).</tspan> Home, Admin, Projects, Data sources, Load management, Data engineering. Active = orange chip + ink label; here Home is active.</text>
+
+    <circle cx="350" cy="596" r="9" fill="#FBAF42"/><text x="350" y="600" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+    <text x="370" y="600"><tspan font-weight="600">Sub-link sidebar.</tspan> Links for the selected section. Home shows Dashboard (/) and Power BI dashboard (/admin/powerBiDashboard).</text>
+
+    <circle cx="350" cy="628" r="9" fill="#FBAF42"/><text x="350" y="632" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+    <text x="370" y="632"><tspan font-weight="600">Resize handle.</tspan> The navbar is drag-resizable (minWidth 240 / maxWidth 400 px).</text>
+
+    <circle cx="350" cy="660" r="9" fill="#FBAF42"/><text x="350" y="664" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+    <text x="370" y="664"><tspan font-weight="600">&lt;main&gt; Outlet.</tspan> The routed page content. Only this swaps between routes; the header, rail and sidebar persist on every authenticated screen.</text>
+  </g>
+  <text x="342" y="704" font-size="11" fill="#8a9196">Mantine AppShell: fixed header + an "aside" prop that renders as the left navbar + a routed &lt;main&gt; Outlet. Auth screens (front scope) drop the rail.</text>
+  <text x="342" y="724" font-size="11" fill="#8a9196">Sample data: org Acme B.V., env Productie; sources AFAS_Prod / ExactOnline / SQL_CRM; schemas STAGE / HIS / Expose.</text>
+</svg>

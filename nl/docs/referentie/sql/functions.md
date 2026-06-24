@@ -1,811 +1,523 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Volledige referentie van alle scalar/table functions in Yres.
+description: Volledige referentie van alle 56 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
 ---
-
 
 > Beheer doe je bij voorkeur via de webapp; deze objecten zijn voor het SQL-endpoint (SSMS / Azure Data Studio).
 
-## Functions
-
-### `[Change].[fxGetChangeIsOpen]`
-
-**Purpose:**
-
-Determines if a specific change, identified by @ChangeId , is currently open.
-
-**Input Parameters:**
-
-- `@ChangeId (int)`: The ID of the change to check.
-
-**Output:**
-
-Returns 1  if the change is open, 0  if it is not open.
-
-**Description:**
-
-This function joins the Change.Changes  and Change.Status  tables to check if the status of the given change ID is marked as open. It also ensures the change originates from the correct server and database.
-
-### `[Change].[fxGetLaspageChangeIdFor]`
-
-**Purpose:**
-
-Retrieves the lapage change ID that includes a specific object type and name.
-
-**Input Parameters:**
-
-- `@objectType (int)`: The type of the object (e.g., table, view).
-
-- `@objectName (nvarchar(1024))`: The name of the object.
-
-**Output:**
-
-Returns the lapage change ID (int) for the specified object.
-
-**Description:**
-
-The function searches the Change.ChangeContent  table for the lapage change entry related to the specified object type and name. It handles specific conditions where table content or definitions are involved and returns the relevant change ID.
-
-### `[Change].[fxGetLapageOpenChange]`
-
-**Purpose:**
-
-Fetches the lapage open change for a specified object type and name.
-
-**Input Parameters:**
-
-- `@ObjectType (nvarchar(10))`: The type of the object.
-
-- `@ObjectName (nvarchar(1024))`: The name of the object.
-
-**Output:**
-
-Returns the lapage open change ID (int).
-
-**Description:**
-
-This function combines the functionalities of [Change].[fxGetLaspageChangeIdFor]  and [Change].[fxGetChangeIsOpen]  to find and return the lapage open change for the given object type and name.
-
-### `[Change].[fxGetReleasedJson]`
-
-**Purpose:**
-
-Retrieves the JSON data associated with a specific change ID.
-
-**Input Parameters:**
-
-- `@ChangeID (int)`: The ID of the change.
-
-**Output:**
-
-Returns the JSON data (nvarchar(max)) related to the change.
-
-**Description:**
-
-The function queries the Change.Changes  table to obtain the JSON data stored for a particular change ID.
-
-### `[Change].[fxGetTableDefinition]`
-
-**Purpose:**
-
-Generates a SQL script to recreate a table definition, including columns, indexes, constraints, and optionally the content as JSON.
-
-**Input Parameters:**
-
-Various parameters to control the script generation, such as @ObjectName ,
-- @UseTransaction , @GenerateFKs , etc.
-
-**Output:**
-
-Returns the generated SQL script (nvarchar(max)).
-
-**Description:**
-
-This comprehensive function creates a detailed SQL script to recreate a table, including its structure and content. The generated script can optionally include foreign keys, identity columns, constraints, and table content as JSON.
-
-### `[Change].[fxGetTableTypeDefinition]`
-
-**Purpose:**
-
-Generates the SQL script to define a table type based on its name.
-
-**Input Parameters:**
-
-- `@ObjectName (nvarchar(1024))`: The name of the table type.
-
-**Output:**
-
-Returns the table type definition script (nvarchar(max)).
-
-**Description:**
-
-The function constructs the SQL script needed to recreate a user-defined table type, including its columns and their properties.
-
-### `[Config].[fxAddTryCatch]`
-
-**Purpose:**
-
-Wraps a given SQL script in a try-catch block for error handling and logging.
-
-**Input Parameters:**
-
-- `@SQL (nvarchar(max))`: The SQL script to be executed.
-
-- `@process (uniqueidentifier)`: The process ID for logging.
-
-- `@spName (nvarchar(max))`: The stored procedure name for logging.
-
-- `@spStep (nvarchar(max))`: The step name within the stored procedure.
-
-- `@spCall (nvarchar(max))`: The stored procedure call information.
-
-- `@appUser (nvarchar(max))`: The application user executing the script.
-
-**Output:**
-
-Returns the wrapped SQL script (nvarchar(max)).
-
-**Description:**
-
-The function adds error handling to a given SQL script by wrapping it in a try-catch block. It logs the process and any errors using predefined stored procedures.
-
-### `[Config].[fxGetSchemaName]`
-
-**Purpose:**
-
-Retrieves the schema name for a specific target and type, considering configuration settings and overrides.
-
-**Input Parameters:**
-
-- `@Target (nvarchar(max))`: The target for which the schema name is required.
-
-- `@Type (nvarchar(max))`: The type of schema (e.g., 'HIS', 'STAGE').
-
-**Output:**
-
-Returns the schema name (nvarchar(max)).
-
-**Description:**
-
-The function determines the schema name based on configuration settings and potential overrides in the loadmanagement.UsedTables  table.
-
-### `[Config].[fxGetSession]`
-
-**Purpose:**
-
-Returns session details for active connections, formatted as JSON.
-
-**Input Parameters:**
-
-None.
-
-**Output:**
-
-Returns session details (nvarchar(max)) as JSON.
-
-**Description:**
-
-This function queries the sys.dm_exec_connections  and sys.dm_exec_sessions  system views to retrieve details of active sessions, formatting the results as JSON.
-
-### `[Config].[fxGetSetting]`
-
-**Purpose:**
-
-Fetches a configuration setting value by name, with special handling for 'GodMode'.
-
-**Input Parameters:**
-
-- `@SettingName (nvarchar(max))`: The name of the setting to retrieve.
-
-**Output:**
-
-Returns the setting value (nvarchar(max)).
-
-**Description:**
-
-The function retrieves the value of a specified setting from the Config.Settings  table. It includes special handling for 'GodMode', which can override certain settings.
-
-### `[dbo].[fxGeneratePassword]`
-
-**Purpose:**
-
-Generates a random password of a specified length.
-
-**Input Parameters:**
-
-- `@Length (int)`: The desired length of the password (default is 16).
-
-**Output:**
-
-Returns the generated password (nvarchar(1024)).
-
-**Description:**
-
-This function generates a random password containing characters between ASCII values 48 and 122, ensuring a mix of alphanumeric characters.
-
-### `[dbo].[fxGetJsonCollection]`
-
-**Purpose:**
-
-Retrieves a JSON collection from a given JSON string.
-
-**Input Parameters:**
-
-- `@Json (nvarchar(max))`: The input JSON string.
-
-**Output:**
-
-Returns the JSON collection (nvarchar(1024)).
-
-**Description:**
-
-The function extracts a JSON collection from an input JSON string by querying the dbo.fxGetJsonCollections  function.
-
-### `[dbo].[fxRemoveNonAlphaCharacters]`
-
-**Purpose:**
-
-Removes non-alphabetic characters from a given string.
-
-**Input Parameters:**
-
-- `@Temp (varchar(1000))`: The input string.
-
-**Output:**
-
-Returns the cleaned string (varchar(1000)) with only alphabetic characters.
-
-**Description:**
-
-The function iterates through the input string and removes any non-alphabetic characters, returning a string that contains only alphabetic characters.
-
-### `[dbo].[fxStripCharacters]`
-
-**Purpose:**
-
-Strips specified characters from a string based on a match expression.
-
-**Input Parameters:**
-
-- `@String (nvarchar(max))`: The input string.
-
-- `@MatchExpression (varchar(255))`: The match expression defining characters to be stripped.
-
-**Output:**
-
-Returns the cleaned string (nvarchar(max)) with specified characters removed.
-
-**Description:**
-
-The function removes characters from the input string that match the provided match expression, useful for cleaning up strings based on custom criteriFunction: [dbo].[fxToDecimal]
-
-### `[dbo].[fxToDecimal]`
-
-**Purpose:**
-
-Converts a string to a decimal, handling various formats and potential negative values.
-
-**Input Parameters:**
-
-- `@string (nvarchar(1024))`: The input string to be converted.
-
-- `@decimals (int, default 0)`: The number of decimal places.
-
-- `@findNegative (bit, default 1)`: Indicates whether to check for negative values.
-
-**Output:**
-
-Returns the converted decimal value (decimal(25,8)).
-
-**Description:**
-
-This function attempts to convert a string to a decimal, handling different formats and considering negative values if specified.
-
-### `[dbo].[fxToProper]`
-
-**Purpose:**
-
-Converts a string to proper case (first letter uppercase, rest lowercase).
-
-**Input Parameters:**
-
-- `@string (nvarchar(4000))`: The input string.
-
-**Output:**
-
-Returns the converted string (nvarchar(4000)).
-
-**Description:**
-
-The function converts the input string to proper case, making the first letter uppercase and the rest of the letters lowercase.
-
-### `[dbo].[fxUNIXtoDateTime]`
-
-**Purpose:**
-
-Converts a UNIX timestamp (epoch) to a datetime value.
-
-**Input Parameters:**
-
-- `@epochStringDate (nvarchar(50))`: The input UNIX timestamp as a string.
-
-**Output:**
-
-Returns the converted datetime value (datetime2(0)).
-
-**Description:**
-
-The function converts a UNIX timestamp (epoch) into a SQL Server datetime value, making it easier to work with in SQL queries.
-
-### `[dbo].[fxUTC2`
-
-CET]
-
-**Purpose:**
-
-Converts a UTC datetime value to Central European Time (CET).
-
-**Input Parameters:**
-
-- `@UTC_DateTime (datetime)`: The input UTC datetime value.
-
-**Output:**
-
-Returns the converted CET datetime value (datetime).
-
-**Description:**
-
-The function converts a given UTC datetime value to the corresponding Central European Time (CET) datetime value. These functions provide a variety of utility operations, from checking the status of changes, generating SQL scripts, handling configurations, to manipulating and converting data types.
+Deze pagina beschrijft alle **56 functions** in de data-plane database `IRIS_DWH`, gegroepeerd per schema.
+Per function vind je de volledig gekwalificeerde naam, de signature (zoals in de `CREATE FUNCTION`-header
+staat) en het doel. De namen en types zijn rechtstreeks overgenomen uit de broncode — code is leidend.
+
+:::note Schema's
+De functions verdelen zich over zeven schema's: **`LoadManagement`** (de laadmotor), **`Config`**
+(instellingen, licentie, logging), **`Change`** (DTAP-changebeheer), **`Metadata`** (lineage),
+**`dbo`** (tekst- en conversie-utilities), **`oData`** (OData-endpoint) en **`Expose`** (rapportage-RBAC).
+:::
+
+Zie ook: [Stored procedures](stored-procedures.md) en [Logs & views](logs-views.md).
+
+---
+
+## LoadManagement (laadmotor)
+
+Het hart van de laadmotor. Deze functions bepalen *wat* er geladen wordt en hoe `STAGE` naar `HIS`
+(SCD2) gemergd wordt.
+
+### `[LoadManagement].[fxExtractor]` — table-valued
+
+**Signature:**
+
+```sql
+(@LoadFilter NVARCHAR(MAX) = NULL, @LoadType NVARCHAR(MAX) = NULL) RETURNS TABLE
+```
+
+**Doel:** het hart van "wat moet er geladen worden". Per actieve brontabel bouwt deze function het
+bronspecifieke extract-commando (de `DeltaScript` / OData `$select…$filter` / AFAS-query-string), de
+doel-schema- en tabelnamen, bestands- en delimiter-metadata, package size en het archiveringsscript.
+Het is de TVF achter de view `[LoadManagement].[vwExtractor]` (die niets anders doet dan
+`SELECT * FROM [LoadManagement].[fxExtractor](NULL,NULL)`). ADF leest die view om te leren welke tabellen
+geladen moeten worden. Elke geretourneerde rij = één te laden tabel.
+
+**Output:** ~40 kolommen, waaronder `sourceType`, `isFile`, `Source`, `SourceSchema`, `SourceTable`,
+`TechSchema`, `TechTable`, `DataPlatform`, `LoadType`, `DeltaColumn`, `LatestRecord`, `DeltaScript`,
+`loadFilter`, `Pipeline`, `Trigger`, `fileLocation`, `fileName`, `TargetSource`, `TargetSchema`,
+`TargetTable`, `Target`, `keepStage`, `TargetSchemaHIS`, `TargetSchemaSTAGE`, `CellRange`, `Sheet`,
+`FileType`, `ColumnDelimiter`, `RowDelimiter`, `QuoteCharacter`, `FirstRowHeader`, `EscapeCharacter`,
+`CompressionType`, `LatestRuntime`, `noKey`, `deltaOverlap`, `deltaOverlapUnit`, `PackageSize`,
+`ArchivingScript`, `paginationType`, `paginationDetails`, `LoadStatus`.
+
+:::caution Twee parameters, geen `@PackageSize`
+`fxExtractor` heeft **exact twee parameters**: `@LoadFilter` en `@LoadType`. Er is **géén** derde parameter
+`@PackageSize`. `PackageSize` is een **output-kolom** (`COALESCE(u.PackageSize, st.MaxPackageSize, 25000)`),
+geen invoerparameter. Eveneens: de output-kolommen heten `LatestRecord` en `LatestRuntime` (niet
+"LapageRecord" / "LapageRuntime").
+:::
 
 ### `[LoadManagement].[fxGetActualTablename]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
 
-Fetches the actual table name for a given source, schema, and table.
-
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the actual table name (nvarchar(4000)).
-
-**Description:**
-
-This function queries the LoadManagement.UsedTables  table to find the actual table name corresponding to the given source, schema, and table. If not found, it looks up in the CustomYres.Extractor  table.
+**Doel:** geeft `UsedTables.ActualTableName` terug voor de combinatie source/schema/table. Wordt niets
+gevonden, dan valt de function terug op `CustomYres.Extractor.[TARGET]`.
 
 ### `[LoadManagement].[fxGetDataType]`
 
-**Purpose:**
+**Signature:**
 
-Determines the full target column data type based on various input parameters.
+```sql
+(@source NVARCHAR(256), @dataType NVARCHAR(256), @sourceLength INT, @sourcePrecision INT,
+ @sourceScale INT, @schema NVARCHAR(256)='N/A', @table NVARCHAR(256)='N/A',
+ @column NVARCHAR(256)='N/A') RETURNS NVARCHAR(256)
+```
 
-**Input Parameters:**
+**Doel:** mapt het bron-datatype naar het volledige doel-kolomtype via `LoadManagement.TypeMapping` en
+`LoadManagement.GlobalTypeMapping`. Houdt rekening met lengte, precisie en scale, en past eventuele
+overrides toe.
 
-- `@source (nvarchar(256))`: The source system name.
+### `[LoadManagement].[fxGetInitialDataType]`
 
-- `@dataType (nvarchar(256))`: The source data type.
+**Signature:** dezelfde parameterset als `fxGetDataType` (`@source, @dataType, @sourceLength,
+@sourcePrecision, @sourceScale, @schema, @table, @column`) `RETURNS NVARCHAR(256)`.
 
-- `@sourceLength (int)`: The length of the source data type.
-
-- `@sourcePrecision (int)`: The precision of the source data type.
-
-- `@sourceScale (int)`: The scale of the source data type.
-
-- `@schema (nvarchar(256), default 'N/A')`: The schema name.
-
-- `@table (nvarchar(256), default 'N/A')`: The table name.
-
-- `@column (nvarchar(256), default 'N/A')`: The column name.
-
-**Output:**
-
-Returns the full target data type (nvarchar(256)).
-
-**Description:**
-
-This function maps the source data type to a target data type using the LoadManagement.TypeMapping  and LoadManagement.GlobalTypeMapping  tables. It considers length, precision, and scale attributes, and includes any necessary overrides.
+**Doel:** als `fxGetDataType`, maar bepaalt het volledige doel-kolomtype **zonder** kolom-overrides toe te
+passen (de "initiële" mapping).
 
 ### `[LoadManagement].[fxGetKeyColumns]`
 
-**Purpose:**
+**Signature:**
 
-Retrieves key columns for a specified table, including options for additional formatting.
+```sql
+(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024), @withType BIT=0,
+ @enclosureChar NVARCHAR(1)='"', @seperatorChar NVARCHAR(1)=',') RETURNS NVARCHAR(MAX)
+```
 
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-- `@withType (bit, default 0)`: Flag to include data type.
-
-- `@enclosureChar (nvarchar(1), default '"')`: Character to enclose column names.
-
-- `@seperatorChar (nvarchar(1), default ',')`: Character to separate columns.
-
-**Output:**
-
-Returns the key columns (nvarchar(max)).
-
-**Description:**
-
-This function fetches the key columns for the specified table from LoadManagement.vwDictionary . If no key columns are found, it defaults to using all columns.
-
-### `[LoadManagement].[fxGetKeyHashColumns]`
-
-**Purpose:**
-
-Generates a hash of key columns for a specified table.
-
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the key hash columns (nvarchar(max)).
-
-**Description:**
-
-This function constructs a concatenation of key columns to generate a hash value for the specified table. If no key columns are found, it defaults to using all columns.
-
-### `[LoadManagement].[fxGetOptimized]`
-
-**Purpose:**
-
-Determines if a table is memory-optimized based on settings or actual status.
-
-**Input Parameters:**
-
-- `@Type (nvarchar(50))`: The type of optimization ('STAGE' or 'HIS').
-
-- `@Table (nvarchar(250))`: The table name.
-
-- `@Status (nvarchar(50), default 'Intended')`: Specifies whether to check intended or actual status.
-
-**Output:**
-
-Returns the optimization status (nvarchar(20)).
-
-**Description:**
-
-This function checks if a table is memory-optimized based on its settings in LoadManagement.UsedTables  or Config.Settings . It can return either the intended or actual status.
+**Doel:** haalt de sleutelkolommen (key columns) van de tabel op uit `LoadManagement.vwDictionary`. Zijn er
+geen gemarkeerd, dan vallen alle kolommen terug als sleutel. Met `@withType=1` wordt ook het datatype
+meegegeven; `@enclosureChar`/`@seperatorChar` bepalen de opmaak van de geretourneerde lijst.
 
 ### `[LoadManagement].[fxGetRowColumns]`
 
-**Purpose:**
+**Signature:** identiek aan `fxGetKeyColumns` (`@Source, @Schema, @Table, @withType BIT=0,
+@enclosureChar NVARCHAR(1)='"', @seperatorChar NVARCHAR(1)=','`) `RETURNS NVARCHAR(MAX)`.
 
-Retrieves the row columns for a specified table, with options for additional formatting.
+**Doel:** haalt de row-kolommen (de kolommen die meedoen in change-detection) op uit
+`LoadManagement.vwDictionary`, met dezelfde opmaakopties als hierboven.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGetKeyHashColumns]`
 
-- `@Source (nvarchar(1024))`: The source system name.
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
 
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-- `@withType (bit, default 0)`: Flag to include data type.
-
-- `@enclosureChar (nvarchar(1), default '"')`: Character to enclose column names.
-
-- `@seperatorChar (nvarchar(1), default ',')`: Character to separate columns.
-
-**Output:**
-
-Returns the row columns (nvarchar(max)).
-
-**Description:**
-
-This function fetches the row columns for the specified table from LoadManagement.vwDictionary , including optional data type and formatting based on input parameters.
+**Doel:** bouwt de concatenatie van sleutelkolommen waaruit de `KeyHash` (`HASHBYTES('SHA2_512', …)`) wordt
+berekend. Zijn er geen sleutelkolommen, dan worden alle kolommen gebruikt.
 
 ### `[LoadManagement].[fxGetRowHashColumns]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
 
-Generates a hash of row columns for a specified table.
+**Doel:** bouwt de concatenatie van row-kolommen waaruit de `RowHash` wordt berekend. Kolommen met
+`RowHash=0` worden uitgesloten van change-detection.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGetOptimized]`
 
-- `@Source (nvarchar(1024))`: The source system name.
+**Signature:** `(@Type NVARCHAR(50), @Table NVARCHAR(250), @Status NVARCHAR(50)='Intended') RETURNS NVARCHAR(20)`
 
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the row hash columns (nvarchar(max)).
-
-**Description:**
-
-This function constructs a concatenation of row columns to generate a hash value for the specified table.
+**Doel:** bepaalt of een tabel memory-optimized is, op basis van `LoadManagement.UsedTables` of
+`Config.Settings`. `@Type` is `'STAGE'` of `'HIS'`. `@Status` accepteert de letterlijke waarden
+**`'Intended'`** (de geconfigureerde wens) of **`'Real'`** (de werkelijke status); `spHIS_InsertAndUpdate`
+roept de function aan met `'Real'`.
 
 ### `[LoadManagement].[fxGetStoreType]`
 
-**Purpose:**
+**Signature:** `(@Table NVARCHAR(250), @Status NVARCHAR(50)='Intended') RETURNS NVARCHAR(20)`
 
-Determines the storage type (row or column) for a table based on settings or actual status.
-
-**Input Parameters:**
-
-- `@Table (nvarchar(250))`: The table name.
-
-- `@Status (nvarchar(50), default 'Intended')`: Specifies whether to check intended or actual status.
-
-**Output:**
-
-Returns the storage type (nvarchar(20)).
-
-**Description:**
-
-This function checks if a table uses row or column storage based on its settings in LoadManagement.UsedTables  or Config.Settings . It can return either the intended or actual status.
+**Doel:** bepaalt of een tabel row- of column-store gebruikt, op basis van `LoadManagement.UsedTables` of
+`Config.Settings`. Dezelfde `'Intended'`/`'Real'`-logica als `fxGetOptimized`.
 
 ### `[LoadManagement].[fxGetSurrogate]`
 
-**Purpose:**
+**Signature:** `(@Table NVARCHAR(4000)) RETURNS INT`
 
-Retrieves the surrogate key setting for a specified table.
+**Doel:** geeft de surrogate-key-instelling van de tabel terug uit `LoadManagement.UsedTables` (voor de
+`ActualTableName` met `Active=1`). Is die leeg/NULL, dan valt de function terug op de instelling
+**`DefaultSurrogate`** in `Config.Settings`.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGetOptimalPageSize]`
 
-- `@Table (nvarchar(4000))`: The table name.
+**Signature:** `(@object NVARCHAR(4000)) RETURNS INT`
 
-**Output:**
+**Doel:** berekent een optimale page size voor het pagineren van `STAGE` → `HIS`, op basis van de gemeten
+KB-per-rij van het object en de beschikbare tempdb-ruimte. Wordt gebruikt wanneer de instelling `PageSize`
+de waarde `OPTIMAL` heeft.
 
-Returns the surrogate key setting (int).
+### `[LoadManagement].[fxGetDeltaValue]`
 
-**Description:**
+**Signature:** `(@target NVARCHAR(4000), @addCorrectQuotation BIT) RETURNS NVARCHAR(100)`
 
-This function checks the surrogate key setting for the specified table in LoadManagement.UsedTables . If not found, it defaults to a global setting from Config.Settings .
+**Doel:** levert de huidige delta-watermark-waarde voor een doeltabel (de hoogste verwerkte delta-waarde),
+optioneel met juiste quoting voor gebruik in dynamische SQL.
 
 ### `[LoadManagement].[fxPredictKeyColumns]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
 
-Predicts key columns for a new table based on existing metadata.
-
-**Input Parameters:**
-
-- `@Source (nvarchar(1024))`: The source system name.
-
-- `@Schema (nvarchar(1024))`: The schema name.
-
-- `@Table (nvarchar(1024))`: The table name.
-
-**Output:**
-
-Returns the predicted key columns (nvarchar(max)).
-
-**Description:**
-
-This function predicts the key columns for a new table based on existing metadata in LoadManagement.Dictionary . If no key columns are found, it defaults to using all non-nullable columns.
+**Doel:** voorspelt de sleutelkolommen voor een nieuwe tabel op basis van bestaande metadata in
+`LoadManagement.Dictionary`. Worden er geen gevonden, dan vallen alle non-nullable kolommen terug als
+voorspelde sleutel. Wordt gebruikt door de wizard "Tabel toevoegen" als suggestie.
 
 ### `[LoadManagement].[fxPredictTableName]`
 
-**Purpose:**
+**Signature:** `(@Source NVARCHAR(1024), @Schema NVARCHAR(1024), @Table NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
 
-Predicts the table name based on source, schema, and table parameters.
+**Doel:** voorspelt de doel-tabelnaam op basis van source/schema/table, met inachtneming van eventuele
+overrides in `LoadManagement.UsedTables`.
 
-**Input Parameters:**
+### `[LoadManagement].[fxGenerateAdfUrl]`
 
-- `@Source (nvarchar(1024))`: The source system name.
+**Signature:** `(@runId NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
 
-- `@Schema (nvarchar(1024))`: The schema name.
+**Doel:** bouwt de volledige URL om een specifieke pipeline-run in de Azure Data Factory-portal te bekijken.
+Wordt gebruikt door de monitoring-views om deep-links naar ADF-runs te tonen.
 
-- `@Table (nvarchar(1024))`: The table name.
+### `[LoadManagement].[fxCreateNetsuiteAuthHeader]`
 
-**Output:**
+**Signature:**
 
-Returns the predicted table name (nvarchar(4000)).
+```sql
+(@consumer_key VARCHAR(8000), @Consumer_secret VARCHAR(8000), @oAuth_Token VARCHAR(8000),
+ @Token_secret VARCHAR(8000), @URL VARCHAR(8000), @Method VARCHAR(50)) RETURNS VARCHAR(8000)
+```
 
-**Description:**
+**Doel:** bouwt de OAuth-1.0-`Authorization`-header (met HMAC-SHA256-signature, nonce en timestamp) voor
+NetSuite-API-aanroepen.
 
-This function constructs a predicted table name using the source, schema, and table parameters, considering any overrides specified in LoadManagement.UsedTables .
+---
+
+## Config (instellingen, licentie, logging)
+
+### `[Config].[fxGetSetting]`
+
+**Signature:** `(@SettingName NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)`
+
+**Doel:** haalt de waarde van een instelling op uit `Config.Settings`. Bevat speciale GodMode-logica: een
+tweede lookup leest de `GodMode`-rij met een tijd-roterende `id`; begint de gevraagde instellingsnaam met
+`Allow%` **en** resolvet GodMode naar `'1'`, dan geeft de function `'1'` terug (force-allow).
+
+### `[Config].[fxGetSchemaName]`
+
+**Signature:** `(@Target NVARCHAR(MAX), @Type NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)`
+
+**Doel:** bepaalt de schemanaam voor een doel en type. Basisschema is `fxGetSetting('SchemaHIS')` of
+`fxGetSetting('SchemaSTAGE')` (anders `'ERROR'`). Heeft de bijbehorende `UsedTables`-rij een niet-lege
+`OverwriteSettingSchema`, dan wordt het resultaat `CONCAT_WS('_', basisSchema, OverwriteSettingSchema)`
+(bijvoorbeeld `ODS_Finance`).
+
+### `[Config].[fxAddTryCatch]`
+
+**Signature:**
+
+```sql
+(@SQL NVARCHAR(MAX), @process UNIQUEIDENTIFIER, @spName NVARCHAR(MAX), @spStep NVARCHAR(MAX),
+ @spCall NVARCHAR(MAX), @appUser NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)
+```
+
+**Doel:** wikkelt een SQL-script tussen twee `EXECUTE [Config].[spWriteMessage]`-aanroepen ("Preparing for
+step" / na de stap) voor breadcrumb-logging. Wordt door `spHIS_InsertAndUpdate` gebruikt vlak voordat het
+gegenereerde laad-SQL wordt uitgevoerd.
+
+### `[Config].[fxCheckLicense]`
+
+**Signature:**
+
+```sql
+(@feature NVARCHAR(1024), @value NVARCHAR(1024), @check NVARCHAR(50)='SYSTEM',
+ @checkvalue NVARCHAR(1024)) RETURNS NVARCHAR(4000)
+```
+
+**Doel:** valideert de licentiesleutel (`Config.Settings.LicenseKey`) tegen een feature/limiet. Controleert
+installatie-binding, einddatum en type, en geeft een issue-string terug (bijv. *"The provided license key is
+not valid anymore"*) of een lege/oké-status. Dit is de technische afdwinging achter de licentie-tiers; zo
+geven over-quota tabellen/databases in `fxExtractor` geen rijen terug.
+
+### `[Config].[fxCheckSystem]`
+
+**Signature:** `(@value NVARCHAR(1024)) RETURNS NVARCHAR(4000)`
+
+**Doel:** controleert systeem-/installatiebeperkingen (gekoppeld aan `@@SERVERNAME`) als aanvulling op de
+licentiecontrole.
+
+### `[Config].[fxViewLicense]` — table-valued
+
+**Signature:** `() RETURNS TABLE`
+
+**Doel:** ontsleutelt de opgeslagen `LicenseKey` (via `DECRYPTBYPASSPHRASE` met servernaam-salt) en geeft de
+licentie-inhoud terug als `[key]`/`[value]`-paren — handig om de actieve licentie te inspecteren.
+
+### `[Config].[fxGetSession]`
+
+**Signature:** `() RETURNS NVARCHAR(MAX)`
+
+**Doel:** bevraagt `sys.dm_exec_connections` en `sys.dm_exec_sessions` en geeft de details van actieve
+sessies terug als JSON.
+
+### `[Config].[fxGetHmacSha256]`
+
+**Signature:** `(@Key VARCHAR(MAX), @baseString VARCHAR(MAX)) RETURNS VARCHAR(MAX)`
+
+**Doel:** berekent een HMAC-SHA256-signature in pure T-SQL (inclusief de inner/outer-padding). Gebruikt voor
+het ondertekenen van uitgaande API-aanroepen.
+
+### `[Config].[fxUrlEncode]`
+
+**Signature:** `(@Input NVARCHAR(MAX)) RETURNS NVARCHAR(MAX)`
+
+**Doel:** URL-encodeert een string (vervangt spaties en speciale tekens door hun `%XX`-equivalent) voor
+gebruik in API-URL's en OAuth-signatures.
+
+---
+
+## Change (DTAP-changebeheer)
+
+Functions die het changebeheer (Projects → Changes → Release/Install) ondersteunen.
+
+### `[Change].[fxGetChangeIsOpen]`
+
+**Signature:** `(@ChangeId INT) RETURNS INT`
+
+**Doel:** bepaalt of een change (geïdentificeerd door `@ChangeId`) momenteel open is. Joint
+`Change.Changes` met `Change.Status` en controleert dat de change van de juiste server/database afkomstig is.
+Geeft `1` (open) of `0` (niet open) terug.
+
+### `[Change].[fxGetLastestChangeIdFor]`
+
+**Signature:** `(@objectType INT, @objectName NVARCHAR(1024)) RETURNS INT`
+
+**Doel:** haalt de **laatste** change-ID op die een specifiek objecttype en -naam bevat, door
+`Change.ChangeContent` te doorzoeken.
+
+:::note Naamgeving
+De function heet in de code letterlijk `fxGetLastestChangeIdFor` — met de typefout "Lastest" (de schrijfwijze
+is bewust verbatim overgenomen). De eerdere wiki-spelling "fxGetLaspageChangeIdFor" is fout op twee punten:
+het is *Latest*, niet "Lapage", en de code spelt het zelf als "Lastest".
+:::
+
+### `[Change].[fxGetLatestOpenChange]`
+
+**Signature:** `(@ObjectType NVARCHAR(10), @ObjectName NVARCHAR(1024)) RETURNS INT`
+
+**Doel:** combineert `fxGetLastestChangeIdFor` en `fxGetChangeIsOpen` om de laatste **open** change voor een
+objecttype/-naam te vinden en terug te geven.
+
+### `[Change].[fxPossibleChanges]` — table-valued
+
+**Signature:** `(@ObjectType NVARCHAR(10), @ObjectName NVARCHAR(1024)) RETURNS TABLE`
+
+**Doel:** geeft de mogelijke change-acties voor een object terug, rekening houdend met of er al een open
+change bestaat (via `fxGetLastestChangeIdFor`/`fxGetChangeIsOpen`).
+
+### `[Change].[fxMockDelete]` — table-valued
+
+**Signature:** `(@ObjectName NVARCHAR(4000)) RETURNS TABLE`
+
+**Doel:** simuleert wat er gebeurt bij het verwijderen van een object: bepaalt welke afhankelijke objecten
+het object gebruiken (en de bijbehorende open change-ID), zodat de impact zichtbaar is vóór de delete wordt
+doorgevoerd.
+
+### `[Change].[fxGetReleasedJson]`
+
+**Signature:** `(@ChangeID INT) RETURNS NVARCHAR(MAX)`
+
+**Doel:** haalt de JSON-data op die bij een specifieke change-ID is opgeslagen in `Change.Changes`.
+
+### `[Change].[fxGetTableDefinition]`
+
+**Signature:**
+
+```sql
+(@ObjectName NVARCHAR(1024), @UseTransaction BIT=0, @GenerateFKs BIT=1, @GenerateIdentity BIT=1,
+ @GenerateCollation BIT=0, @GenerateCreateTable BIT=1, @GenerateIndexes BIT=1, …) RETURNS NVARCHAR(MAX)
+```
+
+**Doel:** genereert een volledig SQL-script om een tabeldefinitie te herbouwen — kolommen, indexen,
+constraints en optioneel de inhoud als JSON. De vlag-parameters bepalen of foreign keys, identity-kolommen,
+collation, het `CREATE TABLE`-statement zelf en indexen worden meegenomen.
+
+### `[Change].[fxGetTableTypeDefinition]`
+
+**Signature:** `(@ObjectName NVARCHAR(1024)) RETURNS NVARCHAR(MAX)`
+
+**Doel:** genereert het `CREATE TYPE … AS TABLE(...)`-script om een user-defined table type te herbouwen,
+inclusief de kolommen en hun eigenschappen.
+
+---
+
+## Metadata (lineage en afhankelijkheden)
+
+### `[Metadata].[fxGetViewSources]` — table-valued
+
+**Signature:** `(@VIEW NVARCHAR(256)) RETURNS TABLE`
+
+**Doel:** bepaalt de bronobjecten (tabellen of views) die een opgegeven view direct gebruikt, door de
+view-definitie te parsen en systeemtabellen te bevragen.
+
+### `[Metadata].[fxGetViewSourcesRecursive]` — table-valued
+
+**Signature:** `(@VIEW NVARCHAR(256)) RETURNS TABLE`
+
+**Doel:** als `fxGetViewSources`, maar **recursief**: ook de bronnen van de gevonden views worden uitgevouwen,
+zodat je de complete lineage-keten ziet.
+
+### `[Metadata].[fxGetDependencies]` — table-valued
+
+**Signature:** `(@ObjectName VARCHAR(500)) RETURNS TABLE`
+
+**Doel:** gebruikt een recursieve CTE om alle afhankelijke objecten (en de objecten daar weer onder) van een
+stored procedure, view, function of tabel op te halen.
+
+### `[Metadata].[fxGetReferencedObjects]` — table-valued
+
+**Signature:** `(@sql NVARCHAR(MAX)) RETURNS TABLE`
+
+**Doel:** een best-effort T-SQL-parser die objectnamen na `FROM`, `JOIN`, `APPLY`, `UPDATE`, `INTO`, `MERGE`
+en `DELETE FROM` uit ad-hoc SQL-tekst haalt. Houd rekening met de beperkingen: objecten in dynamische SQL,
+synoniemen en complexe geneste subqueries/CTE's worden niet altijd herkend (vereist SQL Server 2022+).
+
+### `[Metadata].[fxGetObjectTree]`
+
+**Signature:** `() RETURNS NVARCHAR(MAX)`
+
+**Doel:** bouwt een overzichtsboom van alle database-objecten (naam, type, schema) en markeert per object of
+het van oorsprong `Yres` of `custom` is.
+
+### `[Metadata].[fxColumnUsage]` — table-valued
+
+**Signature:** `(@SchemaName SYSNAME, @TableName SYSNAME) RETURNS TABLE`
+
+**Doel:** geeft het kolomgebruik voor een opgegeven schema/tabel terug (welke kolommen waar gebruikt worden) —
+nuttig voor impact-analyse.
+
+---
+
+## dbo (tekst- en conversie-utilities)
+
+Algemene hulpfuncties voor string-manipulatie en type-conversie.
+
+### `[dbo].[fxGeneratePassword]`
+
+**Signature:** `(@Length INT = 16) RETURNS NVARCHAR(1024)`
+
+**Doel:** genereert een willekeurig wachtwoord van de opgegeven lengte (tekens uit ASCII 48–122).
+
+### `[dbo].[fxStripCharacters]`
+
+**Signature:** `(@String NVARCHAR(MAX), @MatchExpression VARCHAR(255)) RETURNS NVARCHAR(MAX)`
+
+**Doel:** verwijdert uit de invoerstring alle tekens die voldoen aan de opgegeven match-expressie.
+
+### `[dbo].[fxRemoveNonAlphaCharacters]`
+
+**Signature:** `(@Temp VARCHAR(1000)) RETURNS VARCHAR(1000)`
+
+**Doel:** verwijdert alle niet-alfabetische tekens uit de invoerstring (houdt alleen `a–z` over). Er bestaat
+in de repo een tweede, identieke definitie (`fxRemoveNonAlphaCharacters_1.sql`) van dezelfde function — beide
+bevatten dezelfde logica.
+
+### `[dbo].[fxToProper]`
+
+**Signature:** `(@string NVARCHAR(4000)) RETURNS NVARCHAR(4000)`
+
+**Doel:** zet een string om naar proper case (eerste letter hoofdletter, rest kleine letters).
+
+### `[dbo].[fxToDecimal]`
+
+**Signature:** `(@string NVARCHAR(1024), @decimals INT=0, @findNegative BIT=1) RETURNS DECIMAL(25,8)`
+
+**Doel:** converteert een string naar een decimal en verwerkt verschillende formaten; met `@findNegative=1`
+worden negatieve waarden herkend.
+
+### `[dbo].[fxToReadableSize]`
+
+**Signature:** `(@kb DECIMAL(38,10)) RETURNS NVARCHAR(50)`
+
+**Doel:** formatteert een grootte in kilobytes naar een leesbare string (`KB`, `MB` of `GB`).
+
+### `[dbo].[fxUNIXtoDateTime]`
+
+**Signature:** `(@epochStringDate NVARCHAR(50)) RETURNS DATETIME2(0)`
+
+**Doel:** converteert een UNIX-timestamp (epoch, als string) naar een SQL Server datetime-waarde.
+
+### `[dbo].[fxUTC2CET]`
+
+**Signature:** `(@UTC_DateTime DATETIME) RETURNS DATETIME`
+
+**Doel:** converteert een UTC-datetime naar Central European Time (CET). Wordt onder meer door de
+monitoring-views gebruikt om tijden in lokale tijd te tonen.
+
+### `[dbo].[fxGetJsonCollection]`
+
+**Signature:** `(@Json NVARCHAR(MAX)) RETURNS NVARCHAR(1024)`
+
+**Doel:** bepaalt de (eerste/relevante) JSON-collectie binnen een JSON-string door
+`dbo.fxGetJsonCollections` te bevragen.
+
+### `[dbo].[fxGetJsonCollections]` — table-valued
+
+**Signature:** `(@Json NVARCHAR(MAX)) RETURNS TABLE`
+
+**Doel:** geeft alle collecties (arrays) binnen een JSON-string terug, met een rangschikking die bekende
+sleutels als `RESULT`, `RESULTS`, `DATA` en `VALUE` prioriteert. Gebruikt bij het inlezen van REST-/OData-
+responses.
+
+### `[dbo].[UNQUOTENAME]`
+
+**Signature:** `(@input SYSNAME, @quotechar NCHAR(1)=N'[') RETURNS NVARCHAR(4000)`
+
+**Doel:** de tegenhanger van `QUOTENAME`: verwijdert de omsluitende quote-tekens (standaard `[ ]`) van een
+identifier.
+
+---
+
+## oData (OData-endpoint)
+
+Functions die het OData-rapportage-endpoint van de database voeden.
 
 ### `[oData].[fxBaseResponse]`
 
-**Purpose:**
+**Signature:** `(@BaseUrl NVARCHAR(3000)) RETURNS NVARCHAR(MAX)`
 
-Generates a base oData response URL for metadata.
-
-**Input Parameters:**
-
-- `@BaseUrl (nvarchar(3000))`: The base URL.
-
-**Output:**
-
-Returns the oData base response (nvarchar(max)).
-
-**Description:**
-
-This function constructs a base oData response URL, appending the metadata endpoint and listing all tables and views available in the database.
+**Doel:** bouwt de basis-OData-respons-URL: voegt het metadata-endpoint toe en somt alle beschikbare tabellen
+en views in de database op.
 
 ### `[oData].[fxMetadataResponse]`
 
-**Purpose:**
+**Signature:** `(@BaseUrl NVARCHAR(3000)) RETURNS NVARCHAR(MAX)`
 
-Generates oData metadata response.
+**Doel:** genereert de OData-`$metadata`-respons, inclusief entity types en entity sets, en mapt SQL-types
+naar de bijbehorende OData-EDM-types volgens de OData-standaard.
 
-**Input Parameters:**
+---
 
-- `@BaseUrl (nvarchar(3000))`: The base URL.
+## Expose (rapportage-RBAC)
 
-**Output:**
+### `[Expose].[fxGenerateDefinitions]`
 
-Returns the oData metadata response (nvarchar(max)).
+**Signature:**
 
-**Description:**
+```sql
+(@Schema NVARCHAR(1024), @Name NVARCHAR(1024), @DataType NVARCHAR(256), …) RETURNS NVARCHAR(MAX)
+```
 
-This function generates an oData metadata response, including details about entity types and sets. It
+**Doel:** genereert de definities voor rapportage-objecten in het `Exposed`-schema. `@DataType` duidt de
+rapportage-rol van de kolom aan (`[None]`, `[FACT]`, `[DIM1]`, `[DIM2]`, `[DIM4]`); op basis van de
+gekoppelde Yres-bron/-tabel en surrogate-key bouwt de function de objectdefinitie.
 
-maps SQL types to corresponding oData EDM types and ensures the response adheres to oData standards.
+---
 
-### `[Metadata].[fxGetViewSources]`
-
-**Purpose:**
-
-Retrieves the source objects (tables or views) for a specified view.
-
-**Input Parameters:**
-
-- `@VIEW (nvarchar(256))`: The name of the view.
-
-**Output:**
-
-Returns a table with the source objects and their details.
-
-**Description:**
-
-This function identifies the source objects used by a specified view by parsing the view definition and querying system tables to find the related tables or views.
-
-### `[Metadata].[fxGetViewSourcesRecursive]`
-
-**Purpose:**
-
-Recursively retrieves the source objects (tables or views) for a specified view.
-
-**Input Parameters:**
-
-- `@VIEW (nvarchar(256))`: The name of the view.
-
-**Output:**
-
-Returns a table with the source objects and their details, including recursive sources.
-
-**Description:**
-
-This function recursively identifies the source objects used by a specified view and any views that those source objects depend on, providing a comprehensive list of all related tables or views. These functions offer a variety of utility operations, from retrieving and predicting table names, generating metadata responses, to recursively identifying dependencies in views.
-
-### `[Monitoring].[fxGetTableLoads]`
-
-**Purpose:**
-
-This function retrieves a paginated list of load records for a specific source and target, showing the ETL date and status. It is useful for monitoring and tracking the loading processes of different tables.
-
-**Inputs:**
-
-- `@offset (int)`: The number of rows to skip before starting to return rows.
-
-- `@top (int)`: The number of rows to return.
-
-- `@source (nvarchar(1024))`: The source system name.
-
-- `@target (nvarchar(1024))`: The target table name.
-
-**Outputs:**
-
-[Source system]  (nvarchar(1024)): The source system name.
-
-[Target]  (nvarchar(1024)): The target table name.
-
-[ETL Date]  (datetime): The ETL date of the load.
-
-[Status]  (nvarchar(50)): The status of the load.
-
-### `[LoadManagement].[fxExtractor]`
-
-**Purpose:**
-
-This function generates a dynamic dataset of tables and their metadata for extraction. It includes source type, delta scripts, and load filters based on the provided parameters. This function is essential for preparing and managing data extraction processes in a data warehouse environment.
-
-**Inputs:**
-
-- `@LoadFilter (nvarchar(max), default NULL)`: The filter to apply on the load.
-
-- `@LoadType (nvarchar(max), default NULL)`: The type of load (e.g., FULL, DELTA).
-
-- `@PackageSize (int, default NULL)`: The size of the package for loading.
-
-**Outputs:**
-
-sourceType  (nvarchar(50)): The type of the source system.
-
-isFile  (bit): Indicates if the source is a file.
-
-Source  (nvarchar(1024)): The source system name.
-
-SourceSchema  (nvarchar(1024)): The source schema name.
-
-SourceTable  (nvarchar(1024)): The source table name.
-
-TechSchema  (nvarchar(1024)): The technical schema name.
-
-TechTable  (nvarchar(1024)): The technical table name.
-
-DataPlatform  (nvarchar(1024)): The name of the data platform.
-
-LoadType  (nvarchar(50)): The type of load (FULL, DELTA, etc.).
-
-DeltaColumn  (nvarchar(1024)): The delta column name used for incremental loads.
-
-LapageRecord  (nvarchar(1024)): The lapage record identifier.
-
-DeltaScript  (nvarchar(max)): The generated SQL script for extracting delta changes.
-
-loadFilter  (nvarchar(max)): The load filter applied to the extraction.
-
-Pipeline  (nvarchar(1024)): The associated pipeline for the load.
-
-Trigger  (nvarchar(1024)): The trigger information.
-
-fileLocation  (nvarchar(1024)): The location of the file source.
-
-fileName  (nvarchar(1024)): The name of the file source.
-
-TargetSource  (nvarchar(1024)): The target source system name.
-
-TargetSchema  (nvarchar(1024)): The target schema name.
-
-TargetTable  (nvarchar(1024)): The target table name.
-
-Target  (nvarchar(1024)): The formatted target table name.
-
-keepStage  (bit): Indicates if the staging data should be kept.
-
-TargetSchemaHIS  (nvarchar(1024)): The target historical schema name.
-
-TargetSchemaSTAGE  (nvarchar(1024)): The target staging schema name.
-
-CellRange  (nvarchar(1024)): The cell range in the source.
-
-Sheet  (nvarchar(1024)): The sheet name in the source.
-
-FileType  (nvarchar(1024)): The type of the file.
-
-ColumnDelimiter  (nvarchar(1)): The column delimiter in the source file.
-
-RowDelimiter  (nvarchar(1)): The row delimiter in the source file.
-
-QuoteCharacter  (nvarchar(1)): The quote character in the source file.
-
-FirstRowHeader  (bit): Indicates if the first row is a header.
-
-EscapeCharacter  (nvarchar(1)): The escape character in the source file.
-
-CompressionType  (nvarchar(50)): The compression type.
-
-LapageRuntime  (int): The lapage runtime for the pipeline in seconds.
-
-noKey  (bit): Indicates if there is no key column.
-
-deltaOverlap  (int): The delta overlap value.
-
-deltaOverlapUnit  (nvarchar(50)): The unit for delta overlap.
-
-PackageSize  (int): The size of the package for loading.
-
-ArchivingScript  (nvarchar(max)): The generated SQL script for archiving data.
+:::info Lapage → Latest
+In oudere documentatie kwam het token **"Lapage"** voor (bijvoorbeeld `LapageRecord` of
+`fxGetLapageOpenChange`). Dat is een OCR-fout: het juiste woord is **"Latest"**. In de live database komt
+"Lapage" nergens voor. De correcte namen zijn `LatestRecord`, `LatestRuntime`, `fxGetLastestChangeIdFor`
+(met de "Lastest"-typefout uit de code) en `fxGetLatestOpenChange`.
+:::

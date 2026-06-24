@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 title: FAQ
-description: Veelgestelde vragen over Yres.
+description: Veelgestelde vragen over Yres — positionering, techniek, koppelingen, security en implementatie.
 ---
 
 # Veelgestelde vragen
@@ -9,24 +9,31 @@ description: Veelgestelde vragen over Yres.
 ## Over Yres
 
 **Is Yres ook geschikt als we al Power BI gebruiken?**
-Ja. Yres zit *onder* Power BI, niet naast of in plaats ervan. Het zorgt dat de data die Power BI ophaalt betrouwbaar, up-to-date en correct gestructureerd is.
+Ja. Yres zit *onder* Power BI, niet naast of in plaats ervan. Het zorgt dat de data die Power BI ophaalt betrouwbaar, up-to-date en correct gestructureerd is. Yres beheert de PowerBI-modellen per omgeving en kan ze meenemen in de master pipeline-refresh.
 
-**Kunnen we Yres uitproberen voor we beslissen?**
+**Kunnen we Yres uitproberen voordat we beslissen?**
 We bieden geen zelfbediening-trial, maar wel een persoonlijke demo waarin we jouw situatie als vertrekpunt nemen.
 
 **Wat is het verschil met TimeXtender of AnalyticsCreator?**
-Yres onderscheidt zich door native Nederlandse ERP-koppelingen (Exact, AFAS), preset NL databronnen, visueel pipeline design dat naar ADF vertaalt, automated health checks en transparante vaste pricing. Elke tool heeft eigen sterktes — neem contact op voor een eerlijke vergelijking.
+Yres onderscheidt zich door native Nederlandse ERP-koppelingen (Exact, AFAS), preset NL databronnen (zoals CBS, Tweede Kamer en Simplicate), een wizard-gestuurde no-code aanpak die automatisch ADF-pipelines genereert, en geautomatiseerde health checks. Elke tool heeft eigen sterktes — neem contact op voor een eerlijke vergelijking.
+
+:::info Te bevestigen
+De claim "transparante vaste pricing" en de directe vergelijking met specifieke concurrenten zijn commerciële uitspraken die door het team bevestigd moeten worden voordat ze extern gepubliceerd worden. De technische onderscheidende punten hierboven zijn wel geverifieerd.
+:::
 
 ## Technisch
 
+**Hoe ontwerp ik mijn data-pipelines in Yres?**
+Je *ontwerpt* geen pipelines met de hand. Je configureert je bronnen, tabellen en laadtypes in wizards (de "Create source"- en used-table-wizards), en Yres **genereert** op basis van die metadata automatisch de bijbehorende ADF-pipelines en linked services. Er is dus geen drag-and-drop pipeline-designer — de kracht zit in de metadata-gedreven generatie.
+
 **Kan ik Yres combineren met bestaande ADF-pipelines?**
-Ja. Yres genereert en beheert ADF-pipelines volledig. Bestaande handmatige ADF-pipelines kunnen naast Yres blijven draaien in dezelfde Azure-omgeving.
+Ja. Yres genereert en beheert zijn eigen ADF-pipelines en linked services volledig. Bestaande handmatige ADF-pipelines kunnen naast Yres blijven draaien in dezelfde Azure-omgeving.
 
 **Ondersteunen jullie CI/CD?**
-Ja, volledige CI/CD-integratie via Azure DevOps met environment management (DTAP).
+Ja. Yres gebruikt **Azure DevOps** voor versiebeheer en uitrol over **DTAP** (Development → Test → Acceptance → Production). Er zijn twee deploymentsporen: het datawarehouse (`IRIS_DWH`, Azure SQL) wordt uitgerold met **SSDT/DACPAC**, en de ADF-factory via een Git-geïntegreerde publish naar de `adf_publish`-branch en daarna naar de doelfactory. Structuurwijzigingen tussen al draaiende omgevingen lopen via het runtime-changemanagement (de schermen **Changes › Release › Install**). Zie [CI/CD & DTAP](./architectuur/cicd-dtap.md) voor het volledige model.
 
 **Bieden jullie column-level lineage?**
-Yres biedt visuele lineage op objectniveau met impact analysis. Column-level lineage is momenteel niet beschikbaar.
+Yres biedt lineage op **objectniveau** (tabellen, views, procedures, functies en gematerialiseerde views) met impactanalyse. **Column-level lineage is momenteel niet beschikbaar.**
 
 **Wat als ik wil overstappen van een ander platform?**
 Yres ondersteunt het gebruik van bestaande Azure-databases. Een migratie bespreken we in een architectuursessie.
@@ -37,15 +44,19 @@ Yres ondersteunt het gebruik van bestaande Azure-databases. Een migratie besprek
 Databases, ERP-systemen (Exact, AFAS, SAP, Dynamics 365), API's en cloudapplicaties. Zie de [integratiecatalogus](./integraties/catalogus.md).
 
 **Staat onze bron er niet bij?**
-Via database-, OData- en REST-integraties ondersteunen we veel meer dan we tonen. Neem contact op.
+Via database-, OData- en REST-integraties ondersteunen we veel meer dan we tonen. Staat jouw applicatie er nog niet bij en is het een standaardapplicatie? Dan helpen we je doorgaans kosteloos met het koppelen en voegen we de applicatie toe aan een volgende release. Neem contact op.
 
 ## Security & Compliance
 
 **Draaien onze data en pipelines op jullie infrastructuur?**
-Standaard niet — Yres draait binnen jouw eigen Azure tenant en je data verlaat jouw omgeving niet. Hosting door Yres is optioneel.
+Nee. Yres draait **volledig binnen jouw eigen Azure tenant**; je data verlaat jouw omgeving niet. Yres heeft nooit directe toegang tot je bronnen, en alle processen blijven werken — ook als je Yres niet langer gebruikt (geen vendor lock-in).
+
+:::info Te bevestigen
+De optie "hosting door Yres" wordt op de marketingsite genoemd, maar staat niet in de officiële productdocumentatie en staat op gespannen voet met de herhaalde belofte "100% in je eigen Azure tenant". Laat het team de exacte formulering van een eventueel Yres-gehoste variant bevestigen.
+:::
 
 **Hoe zit het met toegang?**
-Azure SSO en rolgebaseerde rechten (RBAC), aansluitend op je bestaande security-omgeving.
+Azure SSO en rolgebaseerde rechten (RBAC), aansluitend op je bestaande security-omgeving. SSO kan per gebruiker worden afgedwongen.
 
 :::info In te vullen
 ISO 27001 / certificeringen, data residency-details en een verwerkersovereenkomst zijn nog niet bevestigd. Deze antwoorden moeten door het team worden aangevuld (zie intern → security).
@@ -54,7 +65,15 @@ ISO 27001 / certificeringen, data residency-details en een verwerkersovereenkoms
 ## Implementatie
 
 **Hoe snel zijn we live?**
-Een complete Yres omgeving is binnen een uur operationeel; een nieuwe bron sluit je doorgaans aan in ~5 minuten.
+Een complete Yres-omgeving is doorgaans snel operationeel: een typische installatie duurt ongeveer 20 minuten, afhankelijk van het aantal omgevingen.
+
+:::info Te bevestigen
+De claim "een nieuwe bron sluit je aan in ~5 minuten" komt uit de marketingteksten en staat niet in de officiële documentatie. Laat het team deze doorlooptijd bevestigen.
+:::
 
 **Kunnen we later opschalen?**
-Ja, op elk moment, zonder dat je omgeving offline gaat.
+Ja, op elk moment, zonder dat je omgeving offline gaat. Het toevoegen van bronnen, tabellen of omgevingen gebeurt binnen je bestaande licentiegrenzen.
+
+:::info Te bevestigen
+De exacte schaalbaarheid per licentietier (aantal bronnen en omgevingen) en eventuele commerciële voorwaarden zijn owner-input; zie [Prijzen](./prijzen.md).
+:::

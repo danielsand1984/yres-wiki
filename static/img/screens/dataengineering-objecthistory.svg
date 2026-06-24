@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+  <!-- top bar -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <text x="180" y="33" font-size="13" fill="#8a9196">Data engineering · Object history</text>
+  <!-- env switcher (top-right) -->
+  <rect x="940" y="14" width="170" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="954" y="32" font-size="12" fill="#2b2b2e">Acme B.V. · Productie ▾</text>
+  <circle cx="1140" cy="28" r="14" fill="#FEF1DD"/><text x="1140" y="32" font-size="11" fill="#e89a1f" text-anchor="middle">JD</text>
+
+  <!-- left icon rail (sections) -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <g font-size="9" text-anchor="middle" fill="#8a9196">
+    <g><rect x="14" y="78" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="103" fill="#8a9196">Home</text></g>
+    <g><rect x="14" y="136" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="161" fill="#8a9196">Sources</text></g>
+    <g><rect x="14" y="194" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="219" fill="#8a9196">Load</text></g>
+    <g><rect x="14" y="252" width="40" height="40" rx="9" fill="#FBAF42"/><text x="34" y="277" fill="#1c1c1e">Engineer</text></g>
+    <g><rect x="14" y="310" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="335" fill="#8a9196">Projects</text></g>
+    <g><rect x="14" y="368" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="393" fill="#8a9196">Admin</text></g>
+  </g>
+
+  <!-- page title -->
+  <text x="92" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Object history</text>
+  <text x="92" y="114" font-size="12.5" fill="#8a9196">Browse the DWH object tree, compare versions, and inspect dependencies · requires DWH version 1.52+</text>
+
+  <!-- ============ MAIN: bordered container, tree (1/4) + compare pane (3/4) ============ -->
+  <rect x="92" y="140" width="1108" height="630" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+
+  <!-- LEFT: object tree (1/4) -->
+  <rect x="92" y="140" width="300" height="630" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <!-- tree header: object name + dependency icon -->
+  <rect x="92" y="140" width="300" height="44" fill="#ffffff"/>
+  <text x="106" y="167" font-size="12.5" font-weight="700" fill="#1c1c1e">vwSalesOrders</text>
+  <rect x="356" y="150" width="24" height="24" rx="6" fill="#FBAF42"/>
+  <circle cx="363" cy="162" r="3.4" fill="none" stroke="#1c1c1e" stroke-width="1.4"/><circle cx="373" cy="162" r="3.4" fill="none" stroke="#1c1c1e" stroke-width="1.4"/><line x1="366" y1="162" x2="370" y2="162" stroke="#1c1c1e" stroke-width="1.4"/>
+  <line x1="92" y1="184" x2="392" y2="184" stroke="#FBAF42" stroke-width="2"/>
+
+  <!-- comparison combobox + split/inline toggle -->
+  <rect x="92" y="184" width="300" height="40" fill="#eef3f4"/>
+  <rect x="104" y="192" width="148" height="24" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="114" y="208" font-size="11" fill="#2b2b2e">Compare versions ▾</text>
+  <!-- inline / split toggle pill -->
+  <rect x="318" y="192" width="62" height="24" rx="12" fill="#e3e8ea"/>
+  <circle cx="368" cy="204" r="9" fill="#ffffff"/>
+  <text x="332" y="208" font-size="10" fill="#5b6166">⇆</text>
+  <text x="356" y="208" font-size="10" fill="#1c1c1e">↔</text>
+
+  <!-- tree body -->
+  <!-- root: AFAS_Prod source folder -->
+  <text x="116" y="245" font-size="11.5" fill="#e89a1f">📁 AFAS_Prod</text>
+  <!--   schema STAGE -->
+  <text x="138" y="266" font-size="11.5" fill="#2b2b2e">📁 STAGE</text>
+  <text x="160" y="287" font-size="11.5" fill="#2b2b2e">▦ SalesOrders</text>
+  <!--   schema HIS -->
+  <text x="138" y="308" font-size="11.5" fill="#2b2b2e">📁 HIS</text>
+  <text x="160" y="329" font-size="11.5" fill="#2b2b2e">▦ SalesOrders</text>
+
+  <!-- ExactOnline source folder -->
+  <text x="116" y="354" font-size="11.5" fill="#e89a1f">📁 ExactOnline</text>
+  <text x="138" y="375" font-size="11.5" fill="#2b2b2e">📁 STAGE</text>
+  <text x="160" y="396" font-size="11.5" fill="#2b2b2e">▦ Invoices</text>
+
+  <!-- SQL_CRM source folder -->
+  <text x="116" y="421" font-size="11.5" fill="#e89a1f">📁 SQL_CRM</text>
+  <text x="138" y="442" font-size="11.5" fill="#2b2b2e">📁 HIS</text>
+  <text x="160" y="463" font-size="11.5" fill="#2b2b2e">▦ Accounts</text>
+
+  <!-- Expose schema (open, contains the selected object) -->
+  <text x="116" y="488" font-size="11.5" fill="#e89a1f">📂 Expose</text>
+  <!-- selected: vwSalesOrders VIEW (search icon) -->
+  <rect x="150" y="495" width="172" height="20" rx="5" fill="#FBAF42"/>
+  <text x="158" y="510" font-size="11.5" fill="#1c1c1e">🔍 vwSalesOrders</text>
+  <text x="158" y="535" font-size="11.5" fill="#F9B233">🗄 spLoadDWH</text>
+  <text x="158" y="558" font-size="11.5" fill="#2b2b2e">⨏ fnGetExchangeRate</text>
+  <text x="158" y="581" font-size="11.5" fill="#2b2b2e">🔍 vwCustomerDim</text>
+  <text x="158" y="604" font-size="11.5" fill="#2b2b2e">▤ udtSalesLine</text>
+
+  <text x="106" y="640" font-size="10" fill="#8a9196">USER_TABLE · VIEW · SQL_STORED_PROCEDURE ·</text>
+  <text x="106" y="654" font-size="10" fill="#8a9196">SQL_SCALAR_FUNCTION · TYPE_TABLE</text>
+  <text x="106" y="678" font-size="10" fill="#F9B233">▌ amber = Yres/iris-owned object</text>
+  <text x="106" y="692" font-size="10" fill="#8a9196">right-click a leaf → Add to change /</text>
+  <text x="106" y="705" font-size="10" fill="#8a9196">Add with dependencies / Open dependency view</text>
+
+  <!-- RIGHT: compare pane (3/4) -->
+  <!-- two version-history accordions (left / right) -->
+  <rect x="392" y="140" width="808" height="56" fill="#ffffff"/>
+  <line x1="796" y1="140" x2="796" y2="196" stroke="#e3e8ea"/>
+  <line x1="392" y1="196" x2="1200" y2="196" stroke="#FBAF42" stroke-width="1.5"/>
+  <!-- left accordion control -->
+  <text x="410" y="165" font-size="12" font-weight="600" fill="#1c1c1e">ALTER @ 09:14:02 - 12-06-2026</text>
+  <text x="410" y="184" font-size="10.5" fill="#8a9196">Version history ▾  (left)</text>
+  <!-- right accordion control -->
+  <text x="814" y="165" font-size="12" font-weight="600" fill="#1c1c1e">CURRENT VERSION</text>
+  <text x="814" y="184" font-size="10.5" fill="#8a9196">Version history ▾  (right)</text>
+
+  <!-- version-history list popover (left, open) -->
+  <rect x="392" y="196" width="240" height="150" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="392" y="196" width="240" height="26" fill="#FBAF42"/>
+  <text x="404" y="213" font-size="10.5" fill="#1c1c1e">CURRENT VERSION</text>
+  <text x="404" y="240" font-size="10.5" fill="#2b2b2e">09:14:02 - 12-06 | ALTER by m.devries</text>
+  <text x="404" y="263" font-size="10.5" fill="#2b2b2e">16:48:31 - 09-06 | ALTER by j.bakker</text>
+  <text x="404" y="286" font-size="10.5" fill="#2b2b2e">11:02:10 - 02-06 | CREATE by m.devries</text>
+  <text x="404" y="309" font-size="10.5" fill="#8a9196">08:30:55 - 21-05 | ALTER by s.jansen</text>
+  <text x="404" y="332" font-size="10.5" fill="#8a9196">14:55:09 - 14-05 | CREATE by j.bakker</text>
+
+  <!-- git-style side-by-side diff (split view) -->
+  <rect x="392" y="346" width="808" height="424" fill="#eef0f2"/>
+  <line x1="796" y1="346" x2="796" y2="770" stroke="#cfd6d9"/>
+  <!-- diff gutters -->
+  <rect x="392" y="346" width="30" height="424" fill="#e3e8ea"/>
+  <rect x="796" y="346" width="30" height="424" fill="#e3e8ea"/>
+  <!-- LEFT (old) -->
+  <g font-family="'Cascadia Code', Consolas, monospace" font-size="10.5">
+    <text x="405" y="372" fill="#8a9196">1</text><text x="432" y="372" fill="#07a">CREATE VIEW</text><text x="510" y="372" fill="#905">[Expose].[vwSalesOrders]</text>
+    <text x="405" y="392" fill="#8a9196">2</text><text x="432" y="392" fill="#07a">AS SELECT</text>
+    <text x="405" y="412" fill="#8a9196">3</text><text x="445" y="412" fill="#999">o.OrderId, o.CustomerId,</text>
+    <rect x="422" y="420" width="368" height="16" fill="#fbdcdc"/>
+    <text x="405" y="432" fill="#8a9196">4</text><text x="445" y="432" fill="#999">o.Amount</text>
+    <text x="405" y="452" fill="#8a9196">5</text><text x="432" y="452" fill="#07a">FROM</text><text x="468" y="452" fill="#905">[HIS].[SalesOrders] o</text>
+    <text x="405" y="472" fill="#8a9196">6</text><text x="432" y="472" fill="#07a">WHERE</text><text x="478" y="472" fill="#999">o.IsCurrent = 1;</text>
+  </g>
+  <!-- RIGHT (new) -->
+  <g font-family="'Cascadia Code', Consolas, monospace" font-size="10.5">
+    <text x="809" y="372" fill="#8a9196">1</text><text x="836" y="372" fill="#07a">CREATE VIEW</text><text x="914" y="372" fill="#905">[Expose].[vwSalesOrders]</text>
+    <text x="809" y="392" fill="#8a9196">2</text><text x="836" y="392" fill="#07a">AS SELECT</text>
+    <text x="809" y="412" fill="#8a9196">3</text><text x="849" y="412" fill="#999">o.OrderId, o.CustomerId,</text>
+    <rect x="826" y="420" width="368" height="16" fill="#d6f0dd"/>
+    <text x="809" y="432" fill="#8a9196">4</text><text x="849" y="432" fill="#999">o.Amount * f.Rate AS AmountEUR</text>
+    <text x="809" y="452" fill="#8a9196">5</text><text x="836" y="452" fill="#07a">FROM</text><text x="872" y="452" fill="#905">[HIS].[SalesOrders] o</text>
+    <text x="809" y="472" fill="#8a9196">6</text><text x="836" y="472" fill="#07a">CROSS APPLY</text><text x="918" y="472" fill="#dd4a68">fnGetExchangeRate</text>
+    <text x="836" y="492" fill="#999">(o.Currency) f</text>
+    <text x="809" y="512" fill="#8a9196">7</text><text x="836" y="512" fill="#07a">WHERE</text><text x="882" y="512" fill="#999">o.IsCurrent = 1;</text>
+  </g>
+
+  <!-- ============ Dependency view (ObjDependencyModal) — floating panel ============ -->
+  <rect x="540" y="430" width="612" height="312" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="540" y="430" width="612" height="34" rx="8" fill="#f6f9f9"/>
+  <rect x="540" y="448" width="612" height="16" fill="#f6f9f9"/>
+  <text x="556" y="452" font-size="12" font-weight="700" fill="#1c1c1e">Dependencies for  Expose / VIEW / vwSalesOrders</text>
+  <text x="1136" y="452" font-size="14" fill="#8a9196" text-anchor="end">✕</text>
+
+  <!-- dependency dag: nodes with type chip + label, arrows LR -->
+  <!-- edges with arrowheads (drawn first, under nodes) -->
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 z" fill="#b1b1b7"/>
+    </marker>
+  </defs>
+  <g stroke="#b1b1b7" stroke-width="1.6" fill="none">
+    <path d="M720 518 C 760 530, 770 560, 798 572" marker-end="url(#arr)"/>
+    <path d="M720 634 C 760 622, 770 600, 798 584" marker-end="url(#arr)"/>
+    <path d="M950 572 C 975 560, 980 545, 998 540" marker-end="url(#arr)"/>
+    <path d="M950 580 C 975 596, 980 608, 998 614" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- level 0 (center, themed border) -->
+  <rect x="800" y="558" width="150" height="36" rx="6" fill="#ffffff" stroke="#FBAF42" stroke-width="3"/>
+  <circle cx="818" cy="576" r="11" fill="#eef3f4"/><text x="818" y="580" font-size="10" font-weight="700" fill="#1c1c1e" text-anchor="middle">V</text>
+  <text x="836" y="580" font-size="11" font-weight="600" fill="#1c1c1e">vwSalesOrders</text>
+
+  <!-- upstream (used objects, left) -->
+  <rect x="570" y="500" width="150" height="36" rx="6" fill="#ffffff" stroke="#cfd6d9" stroke-width="2"/>
+  <circle cx="588" cy="518" r="11" fill="#eef3f4"/><text x="588" y="522" font-size="10" font-weight="700" fill="#1c1c1e" text-anchor="middle">U</text>
+  <text x="606" y="522" font-size="11" font-weight="600" fill="#1c1c1e">HIS.SalesOrders</text>
+
+  <rect x="570" y="616" width="150" height="36" rx="6" fill="#ffffff" stroke="#cfd6d9" stroke-width="2"/>
+  <circle cx="588" cy="634" r="11" fill="#eef3f4"/><text x="588" y="638" font-size="10" font-weight="700" fill="#1c1c1e" text-anchor="middle">IF</text>
+  <text x="606" y="638" font-size="11" font-weight="600" fill="#1c1c1e">fnGetExchangeRate</text>
+
+  <!-- downstream (dependent objects, right) -->
+  <rect x="1000" y="520" width="138" height="36" rx="6" fill="#ffffff" stroke="#cfd6d9" stroke-width="2"/>
+  <circle cx="1018" cy="538" r="11" fill="#eef3f4"/><text x="1018" y="542" font-size="10" font-weight="700" fill="#1c1c1e" text-anchor="middle">P</text>
+  <text x="1036" y="542" font-size="11" font-weight="600" fill="#1c1c1e">spLoadDWH</text>
+
+  <rect x="1000" y="596" width="138" height="36" rx="6" fill="#ffffff" stroke="#cfd6d9" stroke-width="2"/>
+  <circle cx="1018" cy="614" r="11" fill="#eef3f4"/><text x="1018" y="618" font-size="10" font-weight="700" fill="#1c1c1e" text-anchor="middle">V</text>
+  <text x="1036" y="618" font-size="11" font-weight="600" fill="#1c1c1e">vwSalesKPI</text>
+
+  <!-- minimap + controls (ReactFlow) -->
+  <rect x="556" y="688" width="70" height="44" rx="4" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <rect x="586" y="700" width="14" height="9" rx="2" fill="#FBAF42"/>
+  <rect x="566" y="694" width="10" height="6" rx="1" fill="#cfd6d9"/><rect x="606" y="716" width="10" height="6" rx="1" fill="#cfd6d9"/>
+  <rect x="1118" y="612" width="24" height="68" rx="5" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="1130" y="630" font-size="12" fill="#5b6166" text-anchor="middle">+</text>
+  <text x="1130" y="650" font-size="12" fill="#5b6166" text-anchor="middle">−</text>
+  <text x="1130" y="670" font-size="11" fill="#5b6166" text-anchor="middle">⤢</text>
+
+  <!-- ============ callout markers ============ -->
+  <circle cx="372" cy="284" r="11" fill="#FBAF42"/><text x="372" y="288" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+  <circle cx="178" cy="204" r="11" fill="#FBAF42"/><text x="178" y="208" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+  <circle cx="368" cy="162" r="11" fill="#FBAF42"/><text x="368" y="166" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+  <circle cx="630" cy="170" r="11" fill="#FBAF42"/><text x="630" y="174" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+  <circle cx="610" cy="430" r="11" fill="#FBAF42"/><text x="610" y="434" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+  <circle cx="950" cy="558" r="11" fill="#FBAF42"/><text x="950" y="562" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+
+  <!-- callout legend -->
+  <text x="92" y="792" font-size="10.5" fill="#5b6166"><tspan font-weight="700" fill="#1c1c1e">1</tspan> Object tree (Source &#8594; schema &#8594; object; Yres-owned amber)   <tspan font-weight="700" fill="#1c1c1e">2</tspan> Comparison: No comparison / Compare versions / Compare environments   <tspan font-weight="700" fill="#1c1c1e">3</tspan> View object dependencies   <tspan font-weight="700" fill="#1c1c1e">4</tspan> Left/right version pickers   <tspan font-weight="700" fill="#1c1c1e">5</tspan> Side-by-side SQL diff (split/inline)   <tspan font-weight="700" fill="#1c1c1e">6</tspan> Dependency graph</text>
+</svg>

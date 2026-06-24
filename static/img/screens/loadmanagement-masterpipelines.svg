@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+  <!-- top bar -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <text x="180" y="33" font-size="13" fill="#8a9196">Load management · Design master pipeline · Nightly DWH Load</text>
+  <!-- env switcher (top-right) -->
+  <rect x="940" y="14" width="170" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="954" y="32" font-size="12" fill="#2b2b2e">Acme B.V. · Productie ▾</text>
+  <circle cx="1140" cy="28" r="14" fill="#FEF1DD"/><text x="1140" y="32" font-size="11" fill="#e89a1f" text-anchor="middle">JD</text>
+
+  <!-- left icon rail (sections) -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <g font-size="9" text-anchor="middle" fill="#8a9196">
+    <g><rect x="14" y="78" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="103" fill="#8a9196">Home</text></g>
+    <g><rect x="14" y="136" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="161" fill="#8a9196">Sources</text></g>
+    <g><rect x="14" y="194" width="40" height="40" rx="9" fill="#FBAF42"/><text x="34" y="219" fill="#1c1c1e">Load</text></g>
+    <g><rect x="14" y="252" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="277" fill="#8a9196">Engineer</text></g>
+    <g><rect x="14" y="310" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="335" fill="#8a9196">Projects</text></g>
+    <g><rect x="14" y="368" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="393" fill="#8a9196">Admin</text></g>
+  </g>
+
+  <!-- page title -->
+  <text x="92" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Design master pipeline</text>
+  <text x="92" y="114" font-size="12.5" fill="#8a9196">Visual node designer — orchestrate the nightly load, then publish to Azure Data Factory (requires DWH 1.53+)</text>
+
+  <!-- =================== MAIN =================== -->
+
+  <!-- node palette (left column) -->
+  <rect x="92" y="140" width="208" height="620" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="92" y="140" width="208" height="34" rx="8" fill="#eef3f4"/>
+  <rect x="92" y="158" width="208" height="16" fill="#eef3f4"/>
+  <text x="106" y="162" font-size="12.5" font-weight="700" fill="#1c1c1e">Nightly DWH Load</text>
+
+  <!-- palette node buttons -->
+  <g font-size="12" fill="#2b2b2e">
+    <!-- Load sources -->
+    <rect x="100" y="184" width="192" height="40" rx="6" fill="#FEF1DD" stroke="#e3e8ea"/>
+    <rect x="110" y="196" width="16" height="16" rx="3" fill="#FBAF42"/>
+    <text x="136" y="208" font-weight="600">Load sources</text>
+    <!-- Alternative load -->
+    <rect x="100" y="232" width="192" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+    <rect x="110" y="244" width="16" height="16" rx="3" fill="#8a9196"/>
+    <text x="136" y="256">Alternative load</text>
+    <!-- Wait -->
+    <rect x="100" y="280" width="192" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+    <rect x="110" y="292" width="16" height="16" rx="3" fill="#8a9196"/>
+    <text x="136" y="304">Wait</text>
+    <!-- Change service tier -->
+    <rect x="100" y="328" width="192" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+    <rect x="110" y="340" width="16" height="16" rx="3" fill="#8a9196"/>
+    <text x="136" y="352">Change service tier</text>
+    <!-- Run pipeline -->
+    <rect x="100" y="376" width="192" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+    <rect x="110" y="388" width="16" height="16" rx="3" fill="#8a9196"/>
+    <text x="136" y="400">Run pipeline</text>
+    <!-- Persist view -->
+    <rect x="100" y="424" width="192" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+    <rect x="110" y="436" width="16" height="16" rx="3" fill="#8a9196"/>
+    <text x="136" y="448">Persist view</text>
+    <!-- Refresh PowerBI -->
+    <rect x="100" y="472" width="192" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+    <rect x="110" y="484" width="16" height="16" rx="3" fill="#FBAF42"/>
+    <text x="136" y="496">Refresh PowerBI</text>
+  </g>
+  <text x="106" y="540" font-size="10.5" fill="#8a9196">Drag a node onto the canvas →</text>
+
+  <!-- Save + Publish-to-ADF buttons (bottom-left of palette) -->
+  <rect x="108" y="704" width="44" height="44" rx="8" fill="#FBAF42"/>
+  <path d="M120 716h18v18h-18z M120 716v6h14v-6 M126 726h6v8h-6z" fill="none" stroke="#1c1c1e" stroke-width="1.6"/>
+  <text x="130" y="744" font-size="8.5" fill="#1c1c1e" text-anchor="middle" font-weight="700">Save</text>
+  <rect x="160" y="704" width="44" height="44" rx="8" fill="#FBAF42"/>
+  <path d="M182 712v22 M174 724l8-10 8 10" fill="none" stroke="#1c1c1e" stroke-width="1.8"/>
+  <text x="182" y="744" font-size="8" fill="#1c1c1e" text-anchor="middle" font-weight="700">Publish</text>
+
+  <!-- canvas (ReactFlow) -->
+  <rect x="312" y="140" width="888" height="620" rx="8" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <!-- dot grid background -->
+  <g fill="#dde4e6">
+    <circle cx="340" cy="168" r="1.3"/><circle cx="380" cy="168" r="1.3"/><circle cx="420" cy="168" r="1.3"/><circle cx="460" cy="168" r="1.3"/><circle cx="500" cy="168" r="1.3"/><circle cx="540" cy="168" r="1.3"/><circle cx="580" cy="168" r="1.3"/><circle cx="620" cy="168" r="1.3"/><circle cx="660" cy="168" r="1.3"/><circle cx="700" cy="168" r="1.3"/><circle cx="740" cy="168" r="1.3"/><circle cx="780" cy="168" r="1.3"/><circle cx="820" cy="168" r="1.3"/><circle cx="860" cy="168" r="1.3"/><circle cx="900" cy="168" r="1.3"/><circle cx="940" cy="168" r="1.3"/><circle cx="980" cy="168" r="1.3"/><circle cx="1020" cy="168" r="1.3"/><circle cx="1060" cy="168" r="1.3"/><circle cx="1100" cy="168" r="1.3"/><circle cx="1140" cy="168" r="1.3"/><circle cx="1180" cy="168" r="1.3"/>
+    <circle cx="340" cy="248" r="1.3"/><circle cx="420" cy="248" r="1.3"/><circle cx="500" cy="248" r="1.3"/><circle cx="580" cy="248" r="1.3"/><circle cx="660" cy="248" r="1.3"/><circle cx="740" cy="248" r="1.3"/><circle cx="820" cy="248" r="1.3"/><circle cx="900" cy="248" r="1.3"/><circle cx="980" cy="248" r="1.3"/><circle cx="1060" cy="248" r="1.3"/><circle cx="1140" cy="248" r="1.3"/>
+    <circle cx="340" cy="448" r="1.3"/><circle cx="420" cy="448" r="1.3"/><circle cx="500" cy="448" r="1.3"/><circle cx="580" cy="448" r="1.3"/><circle cx="660" cy="448" r="1.3"/><circle cx="740" cy="448" r="1.3"/><circle cx="820" cy="448" r="1.3"/><circle cx="900" cy="448" r="1.3"/><circle cx="980" cy="448" r="1.3"/><circle cx="1060" cy="448" r="1.3"/><circle cx="1140" cy="448" r="1.3"/>
+  </g>
+
+  <!-- ===== edges (step type, colored by handle) ===== -->
+  <!-- LoadSources(success) -> ServiceTier  (green) -->
+  <path d="M547 252 H580 V218 H636" fill="none" stroke="#16A34A" stroke-width="2.5"/>
+  <!-- ServiceTier(complete) -> Wait (blue) -->
+  <path d="M791 244 H812 V330 H846" fill="none" stroke="#2B7FFF" stroke-width="2.5"/>
+  <!-- LoadSources(fail) -> AltLoad (red) -->
+  <path d="M547 268 H564 V452 H636" fill="none" stroke="#DC2626" stroke-width="2.5"/>
+  <!-- AltLoad(success) -> RunPipeline (green) -->
+  <path d="M791 442 H846" fill="none" stroke="#16A34A" stroke-width="2.5"/>
+  <!-- Wait(success) -> PersistView (green) -->
+  <path d="M997 330 H1018 V218 H1060" fill="none" stroke="#16A34A" stroke-width="2.5"/>
+  <!-- RunPipeline(complete) -> RefreshPowerBI (blue) -->
+  <path d="M997 458 H1030 V452 H1060" fill="none" stroke="#2B7FFF" stroke-width="2.5"/>
+
+  <!-- ===== NODES ===== -->
+  <!-- 1) Load Source Table (selected) -->
+  <rect x="384" y="220" width="160" height="64" rx="8" fill="#ffffff" stroke="#FBAF42" stroke-width="2.5"/>
+  <rect x="396" y="232" width="14" height="14" rx="3" fill="#1c1c1e"/>
+  <text x="416" y="243" font-size="12" font-weight="600" fill="#1c1c1e">Load Source Table</text>
+  <text x="396" y="266" font-size="10.5" fill="#2b2b2e">AFAS_Prod / STAGE / Debiteuren</text>
+  <!-- target handle (left) -->
+  <rect x="377" y="245" width="13" height="13" rx="3" fill="#4F4F4F"/>
+  <!-- source handles (right): success/fail/complete -->
+  <rect x="538" y="246" width="13" height="13" rx="3" fill="#16A34A"/>
+  <rect x="538" y="262" width="13" height="13" rx="3" fill="#DC2626"/>
+  <rect x="538" y="278" width="13" height="13" rx="3" fill="#2B7FFF"/>
+
+  <!-- 2) Set service tier -->
+  <rect x="636" y="186" width="148" height="64" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="648" y="198" width="14" height="14" rx="3" fill="#1c1c1e"/>
+  <text x="668" y="209" font-size="12" font-weight="600" fill="#1c1c1e">Set service tier</text>
+  <text x="648" y="232" font-size="10.5" fill="#2b2b2e">HIGH (P2)</text>
+  <rect x="629" y="211" width="13" height="13" rx="3" fill="#4F4F4F"/>
+  <rect x="778" y="211" width="13" height="13" rx="3" fill="#16A34A"/>
+  <rect x="778" y="227" width="13" height="13" rx="3" fill="#DC2626"/>
+  <rect x="778" y="237" width="13" height="13" rx="3" fill="#2B7FFF"/>
+
+  <!-- 3) AlternativeLoad -->
+  <rect x="636" y="420" width="148" height="64" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="648" y="432" width="14" height="14" rx="3" fill="#1c1c1e"/>
+  <text x="668" y="443" font-size="12" font-weight="600" fill="#1c1c1e">AlternativeLoad</text>
+  <text x="648" y="466" font-size="10" fill="#2b2b2e">SQL_CRM / dbo / Orders → RELOAD</text>
+  <rect x="629" y="445" width="13" height="13" rx="3" fill="#4F4F4F"/>
+  <rect x="778" y="436" width="13" height="13" rx="3" fill="#16A34A"/>
+  <rect x="778" y="452" width="13" height="13" rx="3" fill="#DC2626"/>
+  <rect x="778" y="468" width="13" height="13" rx="3" fill="#2B7FFF"/>
+
+  <!-- 4) Wait... -->
+  <rect x="846" y="298" width="151" height="64" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="858" y="310" width="14" height="14" rx="3" fill="#1c1c1e"/>
+  <text x="878" y="321" font-size="12" font-weight="600" fill="#1c1c1e">Wait...</text>
+  <text x="858" y="344" font-size="10" fill="#2b2b2e">until 02:30 (Europe/Amsterdam)</text>
+  <rect x="839" y="323" width="13" height="13" rx="3" fill="#8a9196"/>
+  <rect x="991" y="323" width="13" height="13" rx="3" fill="#16A34A"/>
+  <rect x="991" y="339" width="13" height="13" rx="3" fill="#DC2626"/>
+  <rect x="991" y="355" width="13" height="13" rx="3" fill="#2B7FFF"/>
+
+  <!-- 5) Run pipeline -->
+  <rect x="846" y="420" width="151" height="64" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="858" y="432" width="14" height="14" rx="3" fill="#1c1c1e"/>
+  <text x="878" y="443" font-size="12" font-weight="600" fill="#1c1c1e">Run pipeline</text>
+  <text x="858" y="466" font-size="10.5" fill="#2b2b2e">Refresh All Metadata</text>
+  <rect x="839" y="445" width="13" height="13" rx="3" fill="#8a9196"/>
+  <rect x="991" y="436" width="13" height="13" rx="3" fill="#16A34A"/>
+  <rect x="991" y="452" width="13" height="13" rx="3" fill="#DC2626"/>
+  <rect x="991" y="468" width="13" height="13" rx="3" fill="#2B7FFF"/>
+
+  <!-- 6) Persist View -->
+  <rect x="1060" y="186" width="128" height="64" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="1072" y="198" width="14" height="14" rx="3" fill="#1c1c1e"/>
+  <text x="1092" y="209" font-size="12" font-weight="600" fill="#1c1c1e">Persist View</text>
+  <text x="1072" y="232" font-size="10.5" fill="#2b2b2e">Expose / vwSales</text>
+  <rect x="1053" y="211" width="13" height="13" rx="3" fill="#8a9196"/>
+
+  <!-- 7) Refresh PowerBI -->
+  <rect x="1060" y="420" width="128" height="64" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="1072" y="432" width="14" height="14" rx="3" fill="#FBAF42"/>
+  <text x="1092" y="443" font-size="12" font-weight="600" fill="#1c1c1e">Refresh PowerBI</text>
+  <text x="1072" y="466" font-size="10.5" fill="#2b2b2e">Sales Productie</text>
+  <rect x="1053" y="445" width="13" height="13" rx="3" fill="#8a9196"/>
+
+  <!-- handle legend -->
+  <rect x="328" y="708" width="232" height="40" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="340" y="722" width="11" height="11" rx="3" fill="#16A34A"/><text x="356" y="731" font-size="10.5" fill="#2b2b2e">success</text>
+  <rect x="412" y="722" width="11" height="11" rx="3" fill="#DC2626"/><text x="428" y="731" font-size="10.5" fill="#2b2b2e">fail</text>
+  <rect x="464" y="722" width="11" height="11" rx="3" fill="#2B7FFF"/><text x="480" y="731" font-size="10.5" fill="#2b2b2e">complete</text>
+
+  <!-- ReactFlow controls (bottom-right) -->
+  <rect x="1150" y="612" width="30" height="120" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="1165" y="636" font-size="15" fill="#5b6166" text-anchor="middle">+</text>
+  <line x1="1152" y1="642" x2="1178" y2="642" stroke="#e3e8ea"/>
+  <text x="1165" y="664" font-size="15" fill="#5b6166" text-anchor="middle">−</text>
+  <line x1="1152" y1="672" x2="1178" y2="672" stroke="#e3e8ea"/>
+  <text x="1165" y="696" font-size="13" fill="#5b6166" text-anchor="middle">⤢</text>
+  <line x1="1152" y1="702" x2="1178" y2="702" stroke="#e3e8ea"/>
+  <text x="1165" y="725" font-size="12" fill="#5b6166" text-anchor="middle">🔒</text>
+
+  <!-- MiniMap (top-right of canvas) -->
+  <rect x="1078" y="556" width="106" height="66" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="1090" y="572" width="18" height="9" rx="2" fill="#cfd6d9"/>
+  <rect x="1120" y="566" width="16" height="9" rx="2" fill="#cfd6d9"/>
+  <rect x="1120" y="596" width="16" height="9" rx="2" fill="#cfd6d9"/>
+  <rect x="1146" y="572" width="14" height="9" rx="2" fill="#cfd6d9"/>
+  <rect x="1146" y="596" width="14" height="9" rx="2" fill="#FBAF42"/>
+
+  <!-- ===== numbered orange callout markers ===== -->
+  <g font-size="12" font-weight="700" text-anchor="middle">
+    <!-- 1: palette -->
+    <circle cx="280" cy="204" r="11" fill="#FBAF42"/><text x="280" y="208" fill="#1c1c1e">1</text>
+    <!-- 2: selected Load Source Table node -->
+    <circle cx="384" cy="220" r="11" fill="#FBAF42"/><text x="384" y="224" fill="#1c1c1e">2</text>
+    <!-- 3: colored success/fail/complete handles -->
+    <circle cx="544" cy="291" r="11" fill="#FBAF42"/><text x="544" y="295" fill="#1c1c1e">3</text>
+    <!-- 4: Refresh PowerBI terminal node -->
+    <circle cx="1188" cy="420" r="11" fill="#FBAF42"/><text x="1188" y="424" fill="#1c1c1e">4</text>
+    <!-- 5: Save / Publish-to-ADF -->
+    <circle cx="130" cy="698" r="11" fill="#FBAF42"/><text x="130" y="702" fill="#1c1c1e">5</text>
+    <!-- 6: controls + minimap -->
+    <circle cx="1165" cy="600" r="11" fill="#FBAF42"/><text x="1165" y="604" fill="#1c1c1e">6</text>
+  </g>
+
+  <!-- callout legend (footer) -->
+  <text x="92" y="784" font-size="11" fill="#5b6166">
+    <tspan font-weight="700">1</tspan> Node palette (drag onto canvas)   ·   <tspan font-weight="700">2</tspan> Selected node opens Node properties   ·   <tspan font-weight="700">3</tspan> success / fail / complete handles   ·   <tspan font-weight="700">4</tspan> Refresh PowerBI node   ·   <tspan font-weight="700">5</tspan> Save + Publish to ADF   ·   <tspan font-weight="700">6</tspan> Zoom controls + minimap
+  </text>
+</svg>

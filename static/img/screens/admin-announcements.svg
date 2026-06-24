@@ -1,0 +1,212 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+  <!-- top bar -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <text x="180" y="33" font-size="13" fill="#8a9196">Admin / Announcements</text>
+  <!-- env switcher (top-right) -->
+  <rect x="940" y="14" width="170" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="954" y="32" font-size="12" fill="#2b2b2e">Acme B.V. · Productie ▾</text>
+  <circle cx="1140" cy="28" r="14" fill="#FEF1DD"/><text x="1140" y="32" font-size="11" fill="#e89a1f" text-anchor="middle">JD</text>
+
+  <!-- left icon rail (sections) -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <g font-size="9" text-anchor="middle" fill="#8a9196">
+    <g><rect x="14" y="78" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="103" fill="#8a9196">Home</text></g>
+    <g><rect x="14" y="136" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="161" fill="#8a9196">Sources</text></g>
+    <g><rect x="14" y="194" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="219" fill="#8a9196">Load</text></g>
+    <g><rect x="14" y="252" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="277" fill="#8a9196">Engineer</text></g>
+    <g><rect x="14" y="310" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="335" fill="#8a9196">Projects</text></g>
+    <g><rect x="14" y="368" width="40" height="40" rx="9" fill="#FBAF42"/><text x="34" y="393" fill="#1c1c1e">Admin</text></g>
+  </g>
+
+  <!-- sub-link sidebar (Admin) -->
+  <rect x="68" y="56" width="150" height="744" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="84" y="84" font-size="11" font-weight="700" fill="#8a9196" letter-spacing="0.5">ADMIN</text>
+  <g font-size="11.5" fill="#5b6166">
+    <text x="84" y="112">Panel</text>
+    <rect x="76" y="124" width="134" height="22" rx="6" fill="#FEF1DD"/>
+    <text x="84" y="140" font-weight="700" fill="#e89a1f">Announcements</text>
+    <text x="84" y="166">Update environments</text>
+    <text x="84" y="192">Rebuild</text>
+    <text x="84" y="218">Theme</text>
+    <text x="84" y="244">Audit logs</text>
+    <text x="84" y="270">Databases</text>
+    <text x="84" y="296">Secrets</text>
+    <text x="84" y="322">Power BI credentials</text>
+    <text x="84" y="348">Firewall</text>
+    <text x="84" y="374">Settings</text>
+  </g>
+  <line x1="84" y1="392" x2="202" y2="392" stroke="#e3e8ea"/>
+  <text x="84" y="412" font-size="10" font-weight="700" fill="#8a9196" letter-spacing="0.4">ENVIRONMENT ADMIN</text>
+  <g font-size="11.5" fill="#5b6166">
+    <text x="84" y="436">DWH logs</text>
+    <text x="84" y="462">Health checks</text>
+    <text x="84" y="488">Azure resources</text>
+    <text x="84" y="514">DWH settings</text>
+  </g>
+
+  <!-- page title -->
+  <text x="244" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Announcements</text>
+  <text x="244" y="114" font-size="12.5" fill="#8a9196">Org-wide notices shown on the dashboard, scheduled by period and priority</text>
+
+  <!-- ===================== MAIN ===================== -->
+  <!-- toolbar: title + Create button -->
+  <text x="244" y="158" font-size="15" font-weight="700" fill="#1c1c1e">Announcements</text>
+  <rect x="1090" y="142" width="92" height="30" rx="6" fill="#FBAF42"/>
+  <text x="1136" y="161" font-size="12.5" font-weight="600" fill="#1c1c1e" text-anchor="middle">Create</text>
+
+  <!-- table card -->
+  <rect x="244" y="182" width="938" height="304" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+
+  <!-- table header band -->
+  <rect x="244" y="182" width="938" height="34" rx="8" fill="#eef3f4"/>
+  <rect x="244" y="206" width="938" height="10" fill="#eef3f4"/>
+  <g font-size="11.5" font-weight="600" fill="#5b6166">
+    <text x="264" y="204">Title</text>
+    <text x="560" y="204">Priority</text>
+    <text x="690" y="204">Notify users</text>
+    <text x="828" y="204">Start date</text>
+    <text x="980" y="204">End date</text>
+    <text x="1120" y="204" text-anchor="middle">Actions</text>
+  </g>
+
+  <!-- row 1 -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="264" y="238">Maintenance window — Productie DWH</text>
+    <rect x="560" y="227" width="58" height="16" rx="4" fill="#fde8e8"/>
+    <text x="589" y="239" font-size="10.5" fill="#e03131" text-anchor="middle">high</text>
+    <text x="690" y="238">Yes</text>
+    <text x="828" y="238" fill="#5b6166">2026-06-25</text>
+    <text x="980" y="238" fill="#5b6166">2026-06-26</text>
+    <text x="1100" y="242" font-size="13" fill="#8a9196">✎</text>
+    <text x="1132" y="242" font-size="13" fill="#8a9196">🗑</text>
+  </g>
+  <line x1="244" y1="252" x2="1182" y2="252" stroke="#eef3f4"/>
+
+  <!-- row 2 -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="264" y="272">New source onboarded: ExactOnline</text>
+    <rect x="560" y="261" width="64" height="16" rx="4" fill="#fff3e0"/>
+    <text x="592" y="273" font-size="10.5" fill="#f08c00" text-anchor="middle">medium</text>
+    <text x="690" y="272">No</text>
+    <text x="828" y="272" fill="#5b6166">2026-06-20</text>
+    <text x="980" y="272" fill="#5b6166">2026-07-01</text>
+    <text x="1100" y="276" font-size="13" fill="#8a9196">✎</text>
+    <text x="1132" y="276" font-size="13" fill="#8a9196">🗑</text>
+  </g>
+  <line x1="244" y1="286" x2="1182" y2="286" stroke="#eef3f4"/>
+
+  <!-- row 3 -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="264" y="306">HIS reload scheduled for SQL_CRM</text>
+    <rect x="560" y="295" width="64" height="16" rx="4" fill="#fff3e0"/>
+    <text x="592" y="307" font-size="10.5" fill="#f08c00" text-anchor="middle">medium</text>
+    <text x="690" y="306">Yes</text>
+    <text x="828" y="306" fill="#5b6166">2026-06-18</text>
+    <text x="980" y="306" fill="#5b6166">2026-06-19</text>
+    <text x="1100" y="310" font-size="13" fill="#8a9196">✎</text>
+    <text x="1132" y="310" font-size="13" fill="#8a9196">🗑</text>
+  </g>
+  <line x1="244" y1="320" x2="1182" y2="320" stroke="#eef3f4"/>
+
+  <!-- row 4 -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="264" y="340">STAGE schema cleanup completed</text>
+    <rect x="560" y="329" width="48" height="16" rx="4" fill="#eef3f4"/>
+    <text x="584" y="341" font-size="10.5" fill="#5b6166" text-anchor="middle">low</text>
+    <text x="690" y="340">No</text>
+    <text x="828" y="340" fill="#5b6166">2026-06-10</text>
+    <text x="980" y="340" fill="#5b6166">2026-06-12</text>
+    <text x="1100" y="344" font-size="13" fill="#8a9196">✎</text>
+    <text x="1132" y="344" font-size="13" fill="#8a9196">🗑</text>
+  </g>
+  <line x1="244" y1="354" x2="1182" y2="354" stroke="#eef3f4"/>
+
+  <!-- row 5 -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="264" y="374">Expose layer refreshed nightly from 01:00</text>
+    <rect x="560" y="363" width="48" height="16" rx="4" fill="#eef3f4"/>
+    <text x="584" y="375" font-size="10.5" fill="#5b6166" text-anchor="middle">low</text>
+    <text x="690" y="374">No</text>
+    <text x="828" y="374" fill="#5b6166">2026-06-05</text>
+    <text x="980" y="374" fill="#5b6166">2026-08-31</text>
+    <text x="1100" y="378" font-size="13" fill="#8a9196">✎</text>
+    <text x="1132" y="378" font-size="13" fill="#8a9196">🗑</text>
+  </g>
+
+  <!-- create / edit modal preview (CrudModal: CreateAnnouncement) -->
+  <rect x="704" y="404" width="462" height="372" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="704" y="404" width="462" height="40" rx="8" fill="#FEF1DD"/>
+  <rect x="704" y="430" width="462" height="14" fill="#FEF1DD"/>
+  <text x="724" y="430" font-size="13" font-weight="700" fill="#1c1c1e">Create announcement</text>
+  <text x="1146" y="430" font-size="14" fill="#8a9196" text-anchor="end">×</text>
+
+  <!-- Title field -->
+  <text x="724" y="464" font-size="11" fill="#8a9196">Title</text>
+  <rect x="724" y="470" width="422" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="734" y="490" font-size="11.5" fill="#8a9196">Maintenance window — Productie DWH</text>
+
+  <!-- Start date / Start time (half size) -->
+  <text x="724" y="522" font-size="11" fill="#8a9196">Start date</text>
+  <rect x="724" y="528" width="202" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="734" y="548" font-size="11.5" fill="#2b2b2e">2026-06-25</text>
+  <text x="944" y="522" font-size="11" fill="#8a9196">Start time</text>
+  <rect x="944" y="528" width="202" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="954" y="548" font-size="11.5" fill="#2b2b2e">22:00</text>
+
+  <!-- End date / End time (half size) -->
+  <text x="724" y="580" font-size="11" fill="#8a9196">End date</text>
+  <rect x="724" y="586" width="202" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="734" y="606" font-size="11.5" fill="#2b2b2e">2026-06-26</text>
+  <text x="944" y="580" font-size="11" fill="#8a9196">End time</text>
+  <rect x="944" y="586" width="202" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="954" y="606" font-size="11.5" fill="#2b2b2e">06:00</text>
+
+  <!-- Notify users (select) / Priority (select) -->
+  <text x="724" y="638" font-size="11" fill="#8a9196">Notify users</text>
+  <rect x="724" y="644" width="202" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="734" y="664" font-size="11.5" fill="#2b2b2e">Yes</text>
+  <text x="911" y="666" font-size="11" fill="#8a9196">▾</text>
+  <text x="944" y="638" font-size="11" fill="#8a9196">Priority</text>
+  <rect x="944" y="644" width="202" height="32" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="954" y="664" font-size="11.5" fill="#2b2b2e">high</text>
+  <text x="1131" y="666" font-size="11" fill="#8a9196">▾</text>
+
+  <!-- Announcement (markdown body) -->
+  <text x="724" y="696" font-size="11" fill="#8a9196">Announcement (markdown, max 1024)</text>
+  <rect x="724" y="702" width="422" height="40" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="734" y="720" font-size="11" fill="#8a9196">**Productie** is in onderhoud — geen pipeline-runs</text>
+  <text x="734" y="734" font-size="11" fill="#8a9196">tijdens dit venster.</text>
+
+  <!-- modal actions -->
+  <rect x="1054" y="750" width="92" height="20" rx="6" fill="#FBAF42"/>
+  <text x="1100" y="764" font-size="11.5" font-weight="600" fill="#1c1c1e" text-anchor="middle">Create</text>
+  <rect x="954" y="750" width="88" height="20" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="998" y="764" font-size="11.5" fill="#2b2b2e" text-anchor="middle">Cancel</text>
+
+  <!-- ===================== CALLOUTS ===================== -->
+  <!-- 1: Admin sub-link -->
+  <circle cx="200" cy="135" r="11" fill="#FBAF42"/><text x="200" y="139" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+  <!-- 2: Create button -->
+  <circle cx="1075" cy="157" r="11" fill="#FBAF42"/><text x="1075" y="161" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+  <!-- 3: Title + period columns -->
+  <circle cx="922" cy="199" r="11" fill="#FBAF42"/><text x="922" y="203" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+  <!-- 4: Priority chip -->
+  <circle cx="540" cy="235" r="11" fill="#FBAF42"/><text x="540" y="239" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+  <!-- 5: row edit/delete actions -->
+  <circle cx="1163" cy="238" r="11" fill="#FBAF42"/><text x="1163" y="242" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+  <!-- 6: create/edit modal form -->
+  <circle cx="690" cy="424" r="11" fill="#FBAF42"/><text x="690" y="428" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+
+  <!-- callout legend -->
+  <g font-size="11" fill="#5b6166">
+    <text x="244" y="512"><tspan font-weight="700" fill="#1c1c1e">1</tspan>  Admin → Announcements sub-link (active section highlighted).</text>
+    <text x="244" y="532"><tspan font-weight="700" fill="#1c1c1e">2</tspan>  "Create" opens the CreateAnnouncement modal (CrudModal).</text>
+    <text x="244" y="552"><tspan font-weight="700" fill="#1c1c1e">3</tspan>  Columns: Title, Priority, Notify users, Start date, End date (the display period).</text>
+    <text x="244" y="572"><tspan font-weight="700" fill="#1c1c1e">4</tspan>  Priority chip — low (grey) / medium (orange) / high (red).</text>
+    <text x="244" y="592"><tspan font-weight="700" fill="#1c1c1e">5</tspan>  Per-row edit and delete (update / delete announcement).</text>
+    <text x="244" y="612"><tspan font-weight="700" fill="#1c1c1e">6</tspan>  Modal fields: Title, Start/End date + time, Notify users, Priority, Announcement (markdown body).</text>
+  </g>
+</svg>

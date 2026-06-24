@@ -1,97 +1,290 @@
 ---
 sidebar_position: 2
 title: Admin
-description: The Admin panel — users, roles, environments and settings.
+description: The Admin panel — users, roles, environments, DWH settings, health checks and logs.
 ---
 
 # Admin
 
-The Admin panel manages users and environments: role management, data warehouse logs and announcements.
+The Admin panel is where organization administrators run Yres: users and roles, announcements,
+security (firewall, secrets), updating environments and — per environment — the DWH settings,
+health checks and data warehouse logs.
 
-:::tip All screens & routes
-The full list of app screens with their route and fields is in [Web app screens](../referentie/webapp-schermen.md).
+The Admin section has two levels:
+
+- **Application-wide** — applies to the entire organization and all of its environments (e.g. users, roles,
+  announcements, firewall, application settings).
+- **Environment admin** — settings and overviews that differ per environment (dev / test / acc / prod)
+  (e.g. DWH settings, health checks, DWH logs, Azure resources). Switch environments with the
+  environment switcher in the top right.
+
+:::note Permissions
+Not every user sees all Admin screens. Visibility depends on the role permissions (see
+[Users & Roles](#panel--users--roles)). Organization admins always work within their own organization.
 :::
 
+:::tip All screens & routes
+The full list of app screens with their route and fields is in
+[Webapp screens](../referentie/webapp-schermen.md).
+:::
+
+## Panel — Users & Roles
+
+Route: `/admin/panel`. The central management screen with a **Users** table on the left and a **Roles** table on the right.
+
+![Admin panel with a Users table (name, email, role, SSO) on the left and a Roles table on the right.](/img/screens/admin-panel.svg)
+
+The screen consists of:
+
+1. **Users table** — shows `name`, `email`, `role` per user and whether SSO is active (`sso`).
+2. **Add user** — create a user with an email, role and the choice of whether Microsoft Azure single sign-on (SSO)
+   is required. New users receive an email with a default password, which they (together with their
+   name) change themselves in [Account settings](../frontend/account.md).
+3. **Roles table** — alongside the default roles you can create your own roles.
+4. **Permissions** — roles usually follow a CRUD structure (Create / Read / Update / Delete) per
+   permission type. Permissions that don't fit CRUD (such as building ADF code) live under **"Other"**.
+   You link a role you created to a user via the role dropdown.
+
+### Users
+- Create with an **email**, **role** and whether **SSO** is required.
+- The new user receives an email with a default password.
+
+### Roles
+- Default roles plus your own roles, typically **CRUD per permission type**.
+- Permissions outside CRUD live under **"Other"**.
+
 ## Announcements
-Send messages to all users or only to those of a specific organization (organization admins can only reach their own organization). Appears on the homepage.
 
-![Announcements: list with title, priority, period and the Create button.](/img/screens/admin-announcements.png)
+Route: `/admin/announcements`. Send messages to all users or only to those of a specific
+organization (organization admins reach only their own organization). Announcements appear on the
+homepage and are handy for, for example, scheduled maintenance or an upcoming release.
 
-- **Start and end date** are optional; empty = visible immediately until removed.
-- **Notify Users** also shows the message in the notification tab at the top.
-- **Priority** places an announcement at the top.
-- The body supports **Markdown** (headers, lists, links).
+![Announcements: list with title, priority and period, plus a Create form with a Markdown body.](/img/screens/admin-announcements.svg)
+
+1. **Create** — open the form to compose a new announcement.
+2. **Body (Markdown)** — the text supports Markdown (headers, lists, links).
+3. **Start and end date** — both optional. Left empty = immediately visible until the announcement is
+   deleted.
+4. **Notify Users** — also shows the announcement in the notification tab at the top of the topbar.
+5. **Priority** — puts the announcement at the top of the list on the homepage.
+
+:::info Reach
+Announcements are also reachable via the Superadmin panel. A Yres superadmin can send an announcement to
+all organizations; an organization admin only to their own organization.
+:::
 
 ## Audit Logs
-Monitor actions by organization users: user agent, client IP and additional properties per log type. Filterable by date range, severity or user.
+
+Route: `/admin/auditlogs`. Monitor actions of organization users: user-agent, client IP and extra
+properties per log type. Filterable by date range, severity or user.
 
 ## Database overview
-View all databases the organization uses. A custom database can be updated directly here.
+
+Route: `/admin/databases`. View all databases that the organization uses. If you have added a custom
+database, you update it here directly.
 
 ## Firewall
-Grant or deny access per IP address, so admins can control where Yres may be accessed from.
 
-![Firewall: manage IP rules with Create.](/img/screens/admin-firewall.png)
+Route: `/admin/firewall`. Allow or deny access per IP address, so admins decide from where Yres
+may be accessed. This improves security by restricting network access.
+
+![Firewall: table with IP rules (label, IP/CIDR, Allow or Deny) and a Create form.](/img/screens/admin-firewall.svg)
+
+1. **Create** — add an IP rule.
+2. **IP address / CIDR + label** — record the range and give it a recognizable name.
+3. **Allow or Deny** — decide whether the range gets access or is blocked.
 
 ## PowerBI Models
-Manage unified models per environment, so the correct models are called (e.g. on refresh via the master pipeline). **Setup:** first add a data source of type **PowerBI** (see [data source requirements](../referentie/databron-vereisten.md)); the tenant then appears and you can retrieve workspaces/models.
+
+Route: `/admin/powerBiCredentials` (and the models view). Manage unified models per environment, so the
+right models are called — for example during a refresh via the master pipeline.
+
+**Setup:** first add a data source of type **PowerBI** (see
+[data source requirements](../referentie/databron-vereisten.md)). After that the tenant appears in the
+tenants section and you can retrieve the associated workspaces and models. The expiry date is shown
+per credential set.
 
 ## Rebuild
-Reset data to factory settings — for the whole organization or only the Azure Data Factory.
+
+Route: `/admin/rebuild`. Reset data to factory settings — for the entire organization or only the Azure
+Data Factory.
+
+:::warning Irreversible
+Rebuild **overwrites all configuration that was not done via the Yres frontend**. Use this with great
+care.
+:::
 
 ## Settings (entire application)
-Applies to all environments. Includes, among other things, the number of **parallel processes** used to load sources into the database/data lake (integer 1–50). The **Danger Zone** lets you cancel the subscription by deleting the organization (does not affect your Azure environment, only removes the organization from the Yres portal).
+
+Route: `/admin/settings`. Applies to **all environments** of the organization. Includes, among other things, the number of
+**parallel processes** with which sources are loaded into the database and/or the Data Lake (an integer
+between **1 and 50**).
+
+Below the settings is the **Danger Zone**. Here you cancel the subscription by deleting the organization.
+This does not affect your Azure environment — it only removes the organization from the Yres portal.
+
+:::caution Difference from DWH settings
+"Settings" here is application-wide. The per-environment DWH settings (service tier, schema names, pagination)
+live under [Environment Settings](#environment-settings) and apply only to the selected environment.
+:::
 
 ## Secrets
-View secrets in the associated key vault, with scope and any expiry date. With the right permission you can update a value.
+
+Route: `/admin/secrets`. View the secrets in the associated Azure Key Vault, with their scope and any
+expiry date. With the right permission you can update a value. Yres never stores credentials in the
+frontend; they always live in the customer's Key Vault.
 
 ## Shared integration runtimes
-Manage self-hosted integration runtimes for ADF. An IR requires a name + description; after creation you download the Microsoft IR tool via the info icon and register it with the keys shown. **Cannot be undone.**
+
+Route: `/admin/shared-integration-runtimes` (available from version **1.55**). Manage self-hosted
+integration runtimes for ADF. An IR requires a **name** and **description**. After creating it, you download
+the Microsoft IR tool via the info icon and register the runtime with the keys shown.
+
+:::warning Irreversible
+Creating a shared integration runtime cannot be undone.
+:::
 
 ## Update Environment
-Update an environment to the latest Yres version. **Advice:** test a new version on `dev` first before updating `prod`. See [release notes](../referentie/release-notes.md).
 
-## Users & Roles
-- **Users** — create with email, role and whether SSO is required. New users receive an email with a default password (changeable in account settings).
-- **Roles** — standard roles plus custom roles, usually following CRUD per permission type. Permissions outside CRUD (such as building ADF code) are listed under "Other".
+Route: `/admin/environments`. Update each environment to the latest Yres version. This starts a deployment
+(CI/CD pipeline) for the selected environment.
+
+![Update environments: one card per environment (dev/test/prod) with version, last CI/CD result and a deploy confirmation.](/img/screens/admin-environments.svg)
+
+1. **Card per environment** — each environment (Development, Test, Production) has its own card.
+2. **Version + last CI/CD** — shows the current DWH version and the State / Result / Ran date of the last
+   deployment.
+3. **Ordering** — update in order: a non-dev environment shows "update the previous environment first"
+   until the earlier environments are up to date.
+4. **Deploy confirmation** — when updating, Yres temporarily resets the database service tier to the
+   default tier; after confirmation the deployment status screen follows.
+
+:::tip Recommendation
+Test a new version first on `dev` (and possibly `test`) before updating `prod`. See the
+[release notes](../referentie/release-notes.md) for the contents of an update.
+:::
 
 ## Environment admin (environment-specific)
 
-### Azure Resources
-Overview of linked Azure resources: name, type, location and direct hyperlink.
+The following screens apply per environment. Switch environments with the environment switcher in the top right before
+you change anything.
 
-### Change deployment rules
-Translate object names between environments, e.g. `ERP_DEV.Product` (dev) → `ERP_TST.Product` (test) → `ERP.Product` (prod). Apply **before** importing a change; often combined with Source/Schema/Table overwrite so the table name stays stable across all environments.
+### Azure Resources
+
+Route: `/admin/azure/resources`. Overview of the linked Azure resources: name, type, location and a
+direct hyperlink to the resource.
+
+### Change deployment rules (Change overwrites)
+
+Route: `/admin/changeoverwrites` (only for organizations with multiple environments). Translate object names
+between environments, for example `ERP_DEV.Product` (dev) → `ERP_TST.Product` (test) → `ERP.Product` (prod).
+
+Apply these rules **before** importing a change into the target environment. Often combined with
+Source/Schema/Table overwrite so the table name stays stable across all environments.
 
 ### Data Warehouse Logs
-View and filter logs with step-by-step actions of executed stored procedures (by date, type of sproc, severity). **Not available on Development.**
+
+Route: `/admin/dwhlogs`. View and filter the logs with step-by-step actions of executed stored
+procedures, by date range, stored procedure type and severity. The log lines come from `[Config].[ProcessLog]`
+in the data warehouse.
+
+![DWH logs: filter row (date, procedure, log level), a log table and a steps modal with the failed step and an ADF link.](/img/screens/admin-dwhlogs.svg)
+
+1. **Date filter** — limit the log lines to a period.
+2. **Procedure and log-level filters** — filter on a specific stored procedure and on severity
+   (Information / Warning / Error / System Error / Dump), with an operator `equal` or `equal and worse`.
+3. **Clear error count** — clears the red error-counter badge that appears next to "DWH logs" in the sidebar
+   as soon as there are DWH errors.
+4. **Info icon** — opens a steps modal with the step-by-step execution of the procedure.
+5. **Failed step** — the modal shows the status and the error message per step, with a link to the associated
+   run in Azure Data Factory.
+
+:::note Not on Development
+Data Warehouse Logs are **not available on the Development environment**. On dev, use the logs under
+[Monitoring](../frontend/load-management.md) and the DWH processes.
+:::
 
 ### Environment Settings
-DWH settings configurable per environment. **Configure these before the first source is added**, for consistency. The **Stage and HIS schema settings must be the same (in sync) between environments**. Most important:
 
-| Setting | Meaning |
-|---|---|
-| `DefaultStore` | Row- (default) or column-oriented storage. Row = reading/writing, column = queries. |
-| `DefaultKeepStage` | Truncate the staging table after a delta load (NO) or keep records (YES). |
-| `DefaultODSMemOptimized` / `DefaultStageMemOptimized` | Store ODS/STAGE tables memory-optimized. |
-| `DefaultServiceTier` / `HighServiceTier` | Azure database service tier (and what to scale up to under high load). |
-| `AutomaticDatabaseScaling` | Automatically scale the database for managed loads. |
-| `DefaultSurrogate` | Automatically create surrogate keys (stored in `[LoadManagement].[SurrogateKeys]`; overridable per table). |
-| `UsePagination` / `PageSize` | Process large datasets in pages (overrides `DefaultKeepStage`). |
-| `RetryCount` | Number of retries per request. |
-| `SchemaHIS` / `SchemaStage` | Names of the HIS and STAGE schema. |
-| `StorageSize` | Storage in GB (depends on the service tier). |
-| `BIDashboardUrl` / `BIDashboardHeight` | Embed URL and height of the Power BI dashboard. |
-| `AllowUpdatesInYresSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | Whether users may directly modify/delete/configure/edit logs in the database. |
+Route: `/admin/dbsettings`. DWH settings configurable per environment.
+
+![DWH settings: table with setting name and value per environment, with an edit modal with a field per setting.](/img/screens/admin-dwhsettings.svg)
+
+1. **Settings table** — shows the name and a readable value per setting for the selected environment.
+2. **Edit modal** — the right input field per setting (combobox for tiers, free text for schema names,
+   number for storage, read-only for versions).
+3. **Tier + storage** — the min/max storage (GiB) depends on the selected service tier (S0–P15).
+4. **UsePagination warning** — the screen warns on pagination-related settings.
+
+:::caution Configure before the first source
+Set these settings **before you add the first source**, for consistency. The **Stage and
+HIS schema settings must be in sync between environments** — otherwise changes won't line up with each other.
+:::
+
+The most important settings. The names in the table are the actual names as stored in
+`[Config].[Settings]` (the Yres documentation locally uses a different capitalization; that
+is noted in parentheses).
+
+| Setting (stored name) | Default | Meaning |
+|---|---|---|
+| `DefaultStore` | `ROW` | Row- (default) or column-oriented storage for STAGE. Row = efficient reading/writing, column = queries. |
+| `DefaultKeepStage` | `0` | Truncate the staging table after a delta load (`0` = No) or keep the records (`1` = Yes). The load engine reads the column `keepStage` per table; this setting mainly determines the default when adding a table. |
+| `DefaultOdsMemOptimized` _(doc: DefaultODSMemOptimized)_ | `0` | Intended to store ODS/HIS tables memory-optimized. See the warning below the table. |
+| `DefaultStageMemOptimized` _(doc: DefaultStageMemOptimize)_ | `0` | Store STAGE tables memory-optimized. |
+| `DefaultServiceTier` / `HighServiceTier` | `Standard_S0` / `standard_S1` | Base Azure SQL service tier and the tier scaled up to under high load. |
+| `AutomaticDatabaseScaling` | `1` | Automatically scale the database for managed loads. At `0`, scaling up is skipped. |
+| `DefaultSurrogate` | `0` | Automatically create surrogate keys for the natural key (stored in `[LoadManagement].[SurrogateKeys]`; overridable per table). |
+| `UsePagination` / `PageSize` | `1` / `10000` | Process large STAGE→HIS merges in pages. With `PageSize = OPTIMAL`, Yres determines the page size itself. |
+| `retryCount` _(doc: RetryCount)_ | `1` | Number of times a failed page is retried (in the proc an empty value falls back to 3). |
+| `SchemaHIS` / `SchemaStage` | `ODS` / `STAGE` | Names of the HIS and STAGE schema. `SchemaHIS` defaults to `ODS`, not to `HIS`. |
+| `storageSize` _(doc: StorageSize)_ | `5` | Maximum storage in GiB (depending on the service tier). |
+| `BiDashboardUrl` / `BiDashboardHeight` _(doc: BIDashboardUrl/Height)_ | `NULL` / `400` | Embed URL and height of the PowerBI dashboard. |
+| `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Whether users may directly change / delete / configure / edit logs in the database. |
+| `EnvironmentType` | — | DTAP type of this environment (DEV / TST / ACC / SND / PRE / PRD). |
+
+:::info To be confirmed — two code discrepancies
+Two settings behave differently in the current DWH code than the documentation suggests; verify this
+with a Yres admin before you rely on it:
+
+- **`DefaultOdsMemOptimized`** is effectively not read by the fallback function `fxGetOptimized` (both
+  branches reference the STAGE setting). The per-table column `odsMemOptimized` does work. Whether this is a bug
+  or intentionally disabled cannot be derived from the repository.
+- The setting is seeded as **`AllowUpdatesInIrisSchemas`** (with "Iris"), while the health check expects the name
+  **`AllowUpdatesInYresSchemas`** (with "Yres"). As long as the names are not aligned, the
+  health check can mark this setting both as *missing* (9.03) and *unknown* (9.04).
+:::
 
 ### Health Checks
-Status of the DWH side of Yres. Based on `[Maintenance].[vwYresChecks]`; shows common issues, often with an error message and sometimes a SQL script to fix them. **Be careful with scripts — consult a Yres admin if in doubt.**
 
-![Health checks: detected issues with description, type and actions.](/img/screens/admin-healthchecks.png)
+Route: `/admin/healthchecks` (available from version **1.51**). Shows the status of the DWH side of Yres
+from the webapp. The checks are based on the view **`[Maintenance].[vwYresChecks]`** (the source file
+is still called `vwIrisChecks.sql`). The view contains the expected list of objects and settings and flags
+common issues, often with an error message and sometimes with a SQL script to fix it.
+
+![Health checks: overview with passed, warning and error checks, plus an expanded error with a SQL fix script.](/img/screens/admin-healthchecks.svg)
+
+1. **Status per check** — each check is OK, Warning or Error.
+2. **Error message** — on a deviation the check shows a description of the problem.
+3. **SQL fix script** — some checks offer a ready-made script to resolve the issue.
+4. **Run with care** — only run a script if you understand it.
+
+:::warning Be careful with scripts
+A generated fix script changes the database directly. Only run it if you are sure what it
+does and **consult a Yres admin if in doubt**.
+:::
 
 ### PowerBI Dashboard
-Shows a Power BI report in the web app via an embed URL.
+
+Route: `/admin/powerBiDashboard`. Shows a PowerBI report within the webapp via an embed URL (set
+with the setting `BiDashboardUrl`).
 
 ## More admin screens
 
-Besides the above, the app also has: **Azure resources** (`/admin/azure/resources`), **Change overwrites** (`/admin/changeoverwrites`), **Database settings** (`/admin/dbsettings`), **Theme** (`/admin/theme`: upload icon/background, blur, primary_color) and **Power BI credentials** (`/admin/powerBiCredentials`). See [Web app screens](../referentie/webapp-schermen.md) for all routes.
+Besides the above, the Admin section also contains:
+
+- **Global type mapping** (`/admin/globaltypemapping`) — the org-wide default data type mapping
+  (`LoadManagement.GlobalTypeMapping`).
+- **Theme** (`/admin/theme`) — upload logo and background, blur, primary color and the default light/dark mode.
+- **Power BI credentials** (`/admin/powerBiCredentials`) — manage the PowerBI tenant credentials.
+
+See [Webapp screens](../referentie/webapp-schermen.md) for the full list of routes and fields.

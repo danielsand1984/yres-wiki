@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+  <!-- top bar -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <text x="180" y="33" font-size="13" fill="#8a9196">Projects / Release &#183; Install change</text>
+  <!-- env switcher (top-right) -->
+  <rect x="940" y="14" width="170" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="954" y="32" font-size="12" fill="#2b2b2e">Acme B.V. &#183; Productie &#9662;</text>
+  <circle cx="1140" cy="28" r="14" fill="#FEF1DD"/><text x="1140" y="32" font-size="11" fill="#e89a1f" text-anchor="middle">JD</text>
+
+  <!-- left icon rail (sections) -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <g font-size="9" text-anchor="middle" fill="#8a9196">
+    <g><rect x="14" y="78" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="103" fill="#8a9196">Home</text></g>
+    <g><rect x="14" y="136" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="161" fill="#8a9196">Admin</text></g>
+    <g><rect x="14" y="194" width="40" height="40" rx="9" fill="#FBAF42"/><text x="34" y="219" fill="#1c1c1e">Projects</text></g>
+    <g><rect x="14" y="252" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="277" fill="#8a9196">Sources</text></g>
+    <g><rect x="14" y="310" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="335" fill="#8a9196">Load</text></g>
+    <g><rect x="14" y="368" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="393" fill="#8a9196">Engineer</text></g>
+  </g>
+
+  <!-- sub-sidebar: Projects section links -->
+  <rect x="68" y="56" width="150" height="744" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="84" y="84" font-size="11" font-weight="700" fill="#5b6166">PROJECTS</text>
+  <text x="90" y="115" font-size="11.5" fill="#2b2b2e">Projects</text>
+  <text x="90" y="143" font-size="11.5" fill="#2b2b2e">Changes</text>
+  <text x="90" y="171" font-size="11.5" fill="#2b2b2e">Scripted objects</text>
+  <!-- active link highlighted -->
+  <rect x="74" y="186" width="138" height="26" rx="6" fill="#FEF1DD"/>
+  <rect x="74" y="186" width="3" height="26" rx="1.5" fill="#FBAF42"/>
+  <text x="90" y="203" font-size="11.5" font-weight="600" fill="#e89a1f">Release change</text>
+  <text x="90" y="231" font-size="11.5" fill="#2b2b2e">Install change</text>
+
+  <!-- page title -->
+  <text x="234" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Release &amp; Install change</text>
+  <text x="234" y="114" font-size="12.5" fill="#8a9196">Bevries een change in dev en promoveer hem dev &#8594; test &#8594; productie, met impact-analyse</text>
+
+  <!-- ===================== PANEL A: RELEASE CHANGE (left) ===================== -->
+  <rect x="234" y="134" width="468" height="270" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="234" y="134" width="468" height="36" rx="8" fill="#f6f9f9"/>
+  <rect x="234" y="158" width="468" height="12" fill="#f6f9f9"/>
+  <text x="252" y="157" font-size="13" font-weight="700" fill="#1c1c1e">Release change &#8212; /changes/release</text>
+  <text x="690" y="157" font-size="10.5" fill="#8a9196" text-anchor="end">in dev</text>
+
+  <!-- project / change selection -->
+  <text x="252" y="192" font-size="11" fill="#8a9196">Project</text>
+  <rect x="252" y="198" width="200" height="26" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="264" y="215" font-size="11.5" fill="#2b2b2e">CRM Q2</text>
+  <text x="436" y="215" font-size="11" fill="#8a9196">&#9662;</text>
+  <text x="468" y="192" font-size="11" fill="#8a9196">Change (filter: onlyOpen)</text>
+  <rect x="468" y="198" width="216" height="26" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="480" y="215" font-size="11.5" fill="#2b2b2e">CHG-241 &#183; Add table Debtors</text>
+  <text x="668" y="215" font-size="11" fill="#8a9196">&#9662;</text>
+
+  <!-- release button -->
+  <rect x="252" y="240" width="160" height="34" rx="6" fill="#FBAF42"/>
+  <text x="276" y="262" font-size="12.5" font-weight="600" fill="#1c1c1e">&#128229; Release change</text>
+  <text x="430" y="260" font-size="10.5" fill="#8a9196">verschijnt alleen zonder open</text>
+  <text x="430" y="274" font-size="10.5" fill="#8a9196">afhankelijke changes</text>
+
+  <!-- dependency warning -->
+  <rect x="252" y="296" width="432" height="44" rx="6" fill="#fff3e0" stroke="#f08c00"/>
+  <text x="266" y="314" font-size="11" font-weight="700" fill="#f08c00">&#9888; Afhankelijkheid gevonden</text>
+  <text x="266" y="330" font-size="10.5" fill="#2b2b2e">Project: Finance H2, Change: CHG-239 hangt van deze inhoud af.</text>
+
+  <!-- release confirm modal hint -->
+  <text x="252" y="362" font-size="10.5" fill="#8a9196">Bevestigingsmodal &#8220;Release change CHG-241&#8221; &#8594; POST /changes/release</text>
+  <rect x="252" y="372" width="92" height="24" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="298" y="388" font-size="11" fill="#5b6166" text-anchor="middle">Annuleren</text>
+  <rect x="352" y="372" width="92" height="24" rx="6" fill="#FBAF42"/>
+  <text x="398" y="388" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">Release</text>
+
+  <!-- ===================== PANEL B: INSTALL CHANGE (right) ===================== -->
+  <rect x="718" y="134" width="482" height="270" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <rect x="718" y="134" width="482" height="36" rx="8" fill="#f6f9f9"/>
+  <rect x="718" y="158" width="482" height="12" fill="#f6f9f9"/>
+  <text x="736" y="157" font-size="13" font-weight="700" fill="#1c1c1e">Install change &#8212; /changes/install</text>
+  <text x="1188" y="157" font-size="10.5" fill="#8a9196" text-anchor="end">dev &#8594; non-dev</text>
+
+  <!-- install change combobox -->
+  <text x="736" y="192" font-size="11" fill="#8a9196">Install change</text>
+  <rect x="736" y="198" width="216" height="26" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="748" y="215" font-size="11.5" fill="#2b2b2e">CHG-241 &#183; Add table Debtors</text>
+  <text x="936" y="215" font-size="11" fill="#8a9196">&#9662;</text>
+  <!-- to environment combobox -->
+  <text x="968" y="192" font-size="11" fill="#8a9196">to environment</text>
+  <rect x="968" y="198" width="120" height="26" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="980" y="215" font-size="11.5" fill="#2b2b2e">Productie</text>
+  <text x="1072" y="215" font-size="11" fill="#8a9196">&#9662;</text>
+  <!-- install button -->
+  <rect x="1100" y="198" width="86" height="26" rx="6" fill="#FBAF42"/>
+  <text x="1143" y="215" font-size="11.5" font-weight="700" fill="#1c1c1e" text-anchor="middle">Install</text>
+
+  <!-- dev released-changes table (mini) -->
+  <text x="736" y="248" font-size="11" font-weight="700" fill="#5b6166">Released changes (dev)</text>
+  <rect x="736" y="256" width="210" height="24" fill="#eef3f4"/>
+  <g font-size="10" font-weight="600" fill="#5b6166">
+    <text x="744" y="272">Id</text><text x="784" y="272">Name</text><text x="888" y="272">ReleasedBy</text>
+  </g>
+  <text x="744" y="297" font-size="10.5" fill="#2b2b2e">241</text><text x="784" y="297" font-size="10.5" fill="#2b2b2e">Add Debtors</text><text x="888" y="297" font-size="10.5" fill="#2b2b2e">J. de Vries</text>
+  <line x1="736" y1="306" x2="946" y2="306" stroke="#eef3f4"/>
+  <text x="744" y="322" font-size="10.5" fill="#2b2b2e">238</text><text x="784" y="322" font-size="10.5" fill="#2b2b2e">spRefreshKPI</text><text x="888" y="322" font-size="10.5" fill="#2b2b2e">M. Bakker</text>
+
+  <!-- prod installed-changes table (mini, with Reinstall) -->
+  <text x="966" y="248" font-size="11" font-weight="700" fill="#5b6166">Productie: Installed changes</text>
+  <rect x="966" y="256" width="222" height="24" fill="#eef3f4"/>
+  <g font-size="10" font-weight="600" fill="#5b6166">
+    <text x="974" y="272">Id</text><text x="1008" y="272">Name</text><text x="1098" y="272">Reinstall</text>
+  </g>
+  <text x="974" y="297" font-size="10.5" fill="#2b2b2e">238</text><text x="1008" y="297" font-size="10.5" fill="#2b2b2e">spRefreshKPI</text>
+  <text x="1112" y="297" font-size="12" fill="#e03131">&#8634;</text><text x="1134" y="297" font-size="12" fill="#e03131">&#8681;</text>
+  <line x1="966" y1="306" x2="1188" y2="306" stroke="#eef3f4"/>
+  <text x="974" y="322" font-size="10.5" fill="#2b2b2e">230</text><text x="1008" y="322" font-size="10.5" fill="#2b2b2e">Add SQL_CRM</text>
+  <text x="1112" y="322" font-size="12" fill="#e03131">&#8634;</text><text x="1134" y="322" font-size="12" fill="#e03131">&#8681;</text>
+
+  <text x="736" y="352" font-size="10.5" fill="#8a9196">Install &#8594; POST /changes/install-and-import (monitored job).</text>
+  <text x="736" y="368" font-size="10.5" fill="#8a9196">Per geinstalleerde change: Reinstall (/changes/install) en Reimport</text>
+  <text x="736" y="384" font-size="10.5" fill="#8a9196">(/changes/import) row-acties, met bevestigingsmodal.</text>
+
+  <!-- ===================== IMPACT ANALYSIS (ChangeOverview, full width) ===================== -->
+  <rect x="234" y="416" width="966" height="200" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="252" y="442" font-size="14" font-weight="700" fill="#1c1c1e">Change: CHG-241 &#8212; impact-analyse (ChangeOverview)</text>
+  <!-- tabs -->
+  <text x="252" y="468" font-size="12" font-weight="700" fill="#1c1c1e">Diagram</text>
+  <rect x="250" y="474" width="56" height="2.5" fill="#FBAF42"/>
+  <text x="320" y="468" font-size="12" fill="#8a9196">Table</text>
+
+  <!-- diagram: source -> schema nodes -->
+  <rect x="252" y="488" width="150" height="40" rx="6" fill="#FEF1DD" stroke="#e89a1f"/>
+  <text x="327" y="504" font-size="11" font-weight="600" fill="#1c1c1e" text-anchor="middle">AFAS_Prod</text>
+  <text x="327" y="519" font-size="10" fill="#8a9196" text-anchor="middle">Debtors (LoadType: Delta)</text>
+
+  <line x1="402" y1="508" x2="452" y2="508" stroke="#8a9196"/>
+  <rect x="452" y="488" width="120" height="40" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="512" y="504" font-size="11" font-weight="600" fill="#1c1c1e" text-anchor="middle">STAGE</text>
+  <text x="512" y="519" font-size="10" fill="#8a9196" text-anchor="middle">stg.Debtors</text>
+
+  <line x1="572" y1="508" x2="622" y2="508" stroke="#8a9196"/>
+  <rect x="622" y="488" width="120" height="40" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="682" y="504" font-size="11" font-weight="600" fill="#1c1c1e" text-anchor="middle">HIS</text>
+  <text x="682" y="519" font-size="10" fill="#8a9196" text-anchor="middle">his.Debtors (SCD2)</text>
+
+  <line x1="742" y1="508" x2="792" y2="508" stroke="#8a9196"/>
+  <rect x="792" y="488" width="120" height="40" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="852" y="504" font-size="11" font-weight="600" fill="#1c1c1e" text-anchor="middle">Expose</text>
+  <text x="852" y="519" font-size="10" fill="#8a9196" text-anchor="middle">vw_Debtors</text>
+
+  <!-- selected table detail (right side of diagram) -->
+  <rect x="952" y="488" width="232" height="108" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="966" y="504" font-size="11" font-weight="700" fill="#1c1c1e">Columns &#8212; AFAS_Prod.Debtors</text>
+  <line x1="952" y1="512" x2="1184" y2="512" stroke="#eef3f4"/>
+  <g font-size="10" fill="#5b6166" font-weight="600"><text x="966" y="528">SouceColumn</text><text x="1110" y="528">Active</text></g>
+  <text x="966" y="546" font-size="10.5" fill="#2b2b2e">DebtorId</text><text x="1118" y="546" font-size="10.5" fill="#2f9e44">&#10003;</text>
+  <text x="966" y="562" font-size="10.5" fill="#2b2b2e">Name</text><text x="1118" y="562" font-size="10.5" fill="#2f9e44">&#10003;</text>
+  <text x="966" y="578" font-size="10.5" fill="#2b2b2e">Iban</text><text x="1118" y="578" font-size="10.5" fill="#2f9e44">&#10003;</text>
+
+  <text x="252" y="552" font-size="10.5" fill="#8a9196">Klik een tabelnode voor Table-detail + Columns (vwChangeUsedTables).</text>
+  <text x="252" y="572" font-size="10.5" fill="#8a9196">Bronnen in deze change: AFAS_Prod, ExactOnline, SQL_CRM.</text>
+  <text x="252" y="592" font-size="10.5" fill="#8a9196">Schema's: STAGE / HIS / Expose.</text>
+
+  <!-- ===================== CALLOUT MARKERS ===================== -->
+  <!-- 1: release project/change selection -->
+  <circle cx="468" cy="198" r="11" fill="#FBAF42"/><text x="468" y="202" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+  <!-- 2: release button + dependency guard -->
+  <circle cx="252" cy="296" r="11" fill="#FBAF42"/><text x="252" y="300" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+  <!-- 3: install env target combobox -->
+  <circle cx="968" cy="198" r="11" fill="#FBAF42"/><text x="968" y="202" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+  <!-- 4: installed-changes Reinstall column -->
+  <circle cx="1098" cy="262" r="11" fill="#FBAF42"/><text x="1098" y="266" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+  <!-- 5: impact diagram/table tabs -->
+  <circle cx="252" cy="460" r="11" fill="#FBAF42"/><text x="252" y="464" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+  <!-- 6: selected-table columns detail -->
+  <circle cx="952" cy="488" r="11" fill="#FBAF42"/><text x="952" y="492" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <g font-size="11" fill="#2b2b2e">
+    <text x="234" y="648" font-size="11.5" font-weight="700" fill="#1c1c1e">Annotaties</text>
+    <circle cx="244" cy="666" r="9" fill="#FBAF42"/><text x="244" y="670" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+    <text x="262" y="670">Release: kies Project + Change (ProjectSelection, filter onlyOpen).</text>
+    <circle cx="244" cy="690" r="9" fill="#FBAF42"/><text x="244" y="694" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+    <text x="262" y="694">&#8220;Release change&#8221; (POST /changes/release) &#8212; geblokkeerd bij open afhankelijke changes.</text>
+    <circle cx="244" cy="714" r="9" fill="#FBAF42"/><text x="244" y="718" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+    <text x="262" y="718">Install: kies change + doel-omgeving &#8594; POST /changes/install-and-import.</text>
+    <circle cx="710" cy="666" r="9" fill="#FBAF42"/><text x="710" y="670" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+    <text x="728" y="670">Reinstall / Reimport row-acties per geinstalleerde change (non-dev).</text>
+    <circle cx="710" cy="690" r="9" fill="#FBAF42"/><text x="710" y="694" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+    <text x="728" y="694">Impact-analyse (ChangeOverview): Diagram / Table tabs.</text>
+    <circle cx="710" cy="714" r="9" fill="#FBAF42"/><text x="710" y="718" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">6</text>
+    <text x="728" y="718">Geselecteerde tabel toont Table-detail + Columns (vwChangeUsedTables).</text>
+  </g>
+</svg>

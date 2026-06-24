@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" font-family="'Segoe UI', system-ui, sans-serif">
+  <rect width="1240" height="800" fill="#ffffff"/>
+  <!-- top bar -->
+  <rect x="0" y="0" width="1240" height="56" fill="#ffffff" stroke="#e3e8ea"/>
+  <circle cx="92" cy="28" r="13" fill="#FBAF42"/><path d="M85 22l7 8 7-8h-4.5l-2.5 3-2.5-3z" fill="#1c1c1e"/><rect x="89.5" y="30" width="5" height="8" rx="2" fill="#1c1c1e"/>
+  <text x="116" y="33" font-size="15" font-weight="700" fill="#1c1c1e">Yres</text>
+  <text x="180" y="33" font-size="13" fill="#8a9196">Projects / Changes</text>
+  <!-- env switcher (top-right) -->
+  <rect x="940" y="14" width="170" height="28" rx="6" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="954" y="32" font-size="12" fill="#2b2b2e">Acme B.V. · Productie ▾</text>
+  <circle cx="1140" cy="28" r="14" fill="#FEF1DD"/><text x="1140" y="32" font-size="11" fill="#e89a1f" text-anchor="middle">JD</text>
+  <!-- left icon rail (sections) -->
+  <rect x="0" y="56" width="68" height="744" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <g font-size="9" text-anchor="middle" fill="#8a9196">
+    <g><rect x="14" y="78" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="103" fill="#8a9196">Home</text></g>
+    <g><rect x="14" y="136" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="161" fill="#8a9196">Sources</text></g>
+    <g><rect x="14" y="194" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="219" fill="#8a9196">Load</text></g>
+    <g><rect x="14" y="252" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="277" fill="#8a9196">Engineer</text></g>
+    <g><rect x="14" y="310" width="40" height="40" rx="9" fill="#FBAF42"/><text x="34" y="335" fill="#1c1c1e">Projects</text></g>
+    <g><rect x="14" y="368" width="40" height="40" rx="9" fill="#f6f9f9"/><text x="34" y="393" fill="#8a9196">Admin</text></g>
+  </g>
+
+  <!-- sub-link sidebar (Projects section) -->
+  <rect x="68" y="56" width="118" height="744" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="84" y="86" font-size="11" font-weight="700" fill="#8a9196" letter-spacing="0.5">PROJECTS</text>
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="84" y="116">Projects</text>
+    <rect x="74" y="128" width="106" height="24" rx="6" fill="#FEF1DD"/>
+    <text x="84" y="144" font-weight="600" fill="#e89a1f">Changes</text>
+    <text x="84" y="174">Scripted objects</text>
+    <text x="84" y="202">Release change</text>
+    <text x="84" y="230">Install change</text>
+  </g>
+
+  <!-- page title -->
+  <text x="206" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Changes</text>
+  <text x="206" y="114" font-size="12.5" fill="#8a9196">Pending DWH changes within a project — type, status and release state.</text>
+
+  <!-- MAIN -->
+  <!-- ProjectSelection bar (project / change comboboxes) -->
+  <rect x="206" y="138" width="994" height="64" rx="8" fill="#f6f9f9" stroke="#e3e8ea"/>
+  <text x="230" y="164" font-size="11" fill="#8a9196">Projects:</text>
+  <rect x="230" y="170" width="220" height="24" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="242" y="186" font-size="12" fill="#2b2b2e">Q3 Finance datamart ▾</text>
+  <text x="486" y="164" font-size="11" fill="#8a9196">Changes:</text>
+  <rect x="486" y="170" width="220" height="24" rx="6" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="498" y="186" font-size="12" fill="#8a9196">Select a change… ▾</text>
+
+  <!-- changes table card -->
+  <rect x="206" y="218" width="994" height="540" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <!-- card title + create button -->
+  <text x="230" y="250" font-size="14" font-weight="700" fill="#1c1c1e">Changes: Q3 Finance datamart</text>
+  <rect x="1062" y="232" width="118" height="30" rx="6" fill="#FBAF42"/>
+  <text x="1121" y="251" font-size="12.5" font-weight="600" fill="#1c1c1e" text-anchor="middle">+ Create change</text>
+
+  <!-- table header band -->
+  <rect x="222" y="276" width="962" height="34" fill="#eef3f4"/>
+  <g font-size="11.5" font-weight="600" fill="#5b6166">
+    <text x="234" y="298">Name</text>
+    <text x="360" y="298">Description</text>
+    <text x="612" y="298">DueDate</text>
+    <text x="704" y="298">Creator</text>
+    <text x="824" y="298">Status</text>
+    <text x="918" y="298">ReleasedDate</text>
+    <text x="1040" y="298">ReleasedBy</text>
+    <text x="1150" y="298" text-anchor="middle">⋮</text>
+  </g>
+
+  <!-- rows -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <!-- row 1: Open -->
+    <text x="234" y="334">Add AFAS_Prod ledger</text>
+    <text x="360" y="334" fill="#5b6166">New STAGE→HIS load for GL accounts</text>
+    <text x="612" y="334">2026-07-04</text>
+    <text x="704" y="334">J. Dekker</text>
+    <rect x="824" y="322" width="62" height="18" rx="4" fill="#fff3e0"/>
+    <text x="855" y="335" font-size="10.5" fill="#f08c00" text-anchor="middle">Open</text>
+    <text x="918" y="334" fill="#8a9196">—</text>
+    <text x="1040" y="334" fill="#8a9196">—</text>
+    <text x="1150" y="334" text-anchor="middle" fill="#8a9196">⋮</text>
+    <line x1="222" y1="346" x2="1184" y2="346" stroke="#eef3f4"/>
+
+    <!-- row 2: Open -->
+    <text x="234" y="372">ExactOnline invoices</text>
+    <text x="360" y="372" fill="#5b6166">Expose view vw_Invoices + delta col</text>
+    <text x="612" y="372">2026-07-11</text>
+    <text x="704" y="372">M. Visser</text>
+    <rect x="824" y="360" width="62" height="18" rx="4" fill="#fff3e0"/>
+    <text x="855" y="373" font-size="10.5" fill="#f08c00" text-anchor="middle">Open</text>
+    <text x="918" y="372" fill="#8a9196">—</text>
+    <text x="1040" y="372" fill="#8a9196">—</text>
+    <text x="1150" y="372" text-anchor="middle" fill="#8a9196">⋮</text>
+    <line x1="222" y1="384" x2="1184" y2="384" stroke="#eef3f4"/>
+
+    <!-- row 3: released (actions stripped) -->
+    <text x="234" y="410">SQL_CRM contacts SCD2</text>
+    <text x="360" y="410" fill="#5b6166">HIS surrogate keys + LoadType Full</text>
+    <text x="612" y="410">2026-06-18</text>
+    <text x="704" y="410">J. Dekker</text>
+    <rect x="824" y="398" width="62" height="18" rx="4" fill="#e6f4ea"/>
+    <text x="855" y="411" font-size="10.5" fill="#2f9e44" text-anchor="middle">released</text>
+    <text x="918" y="410">2026-06-19</text>
+    <text x="1040" y="410">A. Bakker</text>
+    <text x="1150" y="410" text-anchor="middle" fill="#cdd5d8">⋮</text>
+    <line x1="222" y1="422" x2="1184" y2="422" stroke="#eef3f4"/>
+
+    <!-- row 4: released -->
+    <text x="234" y="448">Rename STAGE columns</text>
+    <text x="360" y="448" fill="#5b6166">Align AFAS_Prod naming convention</text>
+    <text x="612" y="448">2026-06-10</text>
+    <text x="704" y="448">M. Visser</text>
+    <rect x="824" y="436" width="62" height="18" rx="4" fill="#e6f4ea"/>
+    <text x="855" y="449" font-size="10.5" fill="#2f9e44" text-anchor="middle">released</text>
+    <text x="918" y="448">2026-06-12</text>
+    <text x="1040" y="448">A. Bakker</text>
+    <text x="1150" y="448" text-anchor="middle" fill="#cdd5d8">⋮</text>
+    <line x1="222" y1="460" x2="1184" y2="460" stroke="#eef3f4"/>
+
+    <!-- row 5: Closed -->
+    <text x="234" y="486">Drop legacy Expose view</text>
+    <text x="360" y="486" fill="#5b6166">Remove vw_OldSales from Expose</text>
+    <text x="612" y="486">2026-05-30</text>
+    <text x="704" y="486">J. Dekker</text>
+    <rect x="824" y="474" width="62" height="18" rx="4" fill="#eef3f4"/>
+    <text x="855" y="487" font-size="10.5" fill="#5b6166" text-anchor="middle">Closed</text>
+    <text x="918" y="486" fill="#8a9196">—</text>
+    <text x="1040" y="486" fill="#8a9196">—</text>
+    <text x="1150" y="486" text-anchor="middle" fill="#8a9196">⋮</text>
+    <line x1="222" y1="498" x2="1184" y2="498" stroke="#eef3f4"/>
+  </g>
+
+  <!-- row-action menu popover (illustrating Release on an Open change) -->
+  <rect x="1064" y="338" width="132" height="74" rx="8" fill="#ffffff" stroke="#e3e8ea"/>
+  <text x="1080" y="360" font-size="11.5" fill="#2b2b2e">Edit</text>
+  <text x="1080" y="382" font-size="11.5" fill="#2b2b2e">Release change</text>
+  <text x="1080" y="404" font-size="11.5" fill="#e03131">Delete</text>
+
+  <!-- footer legend -->
+  <text x="230" y="730" font-size="11" fill="#8a9196">Status: Open · Closed · released · Deleted · Discontinued. Released changes flow to Release change → Install change.</text>
+
+  <!-- callouts -->
+  <g>
+    <circle cx="240" cy="180" r="11" fill="#FBAF42"/><text x="240" y="184" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
+    <circle cx="1062" cy="247" r="11" fill="#FBAF42"/><text x="1062" y="251" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
+    <circle cx="855" cy="328" r="11" fill="#FBAF42"/><text x="855" y="332" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>
+    <circle cx="1130" cy="382" r="11" fill="#FBAF42"/><text x="1130" y="386" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">4</text>
+    <circle cx="855" cy="404" r="11" fill="#FBAF42"/><text x="855" y="408" font-size="12" font-weight="700" fill="#1c1c1e" text-anchor="middle">5</text>
+  </g>
+
+  <!-- callout legend -->
+  <g font-size="11.5" fill="#2b2b2e">
+    <text x="230" y="558" font-weight="700" fill="#1c1c1e">Annotations</text>
+    <text x="230" y="582"><tspan font-weight="700" fill="#e89a1f">1</tspan>  Project / Change selection bar — pick a project to scope the table (hidden for single-env orgs).</text>
+    <text x="230" y="604"><tspan font-weight="700" fill="#e89a1f">2</tspan>  "Create change" — shown only when the selected project Status is Open.</text>
+    <text x="230" y="626"><tspan font-weight="700" fill="#e89a1f">3</tspan>  Status column, mapped: 1 Open · 2 Closed · 3 released · 9 Deleted · 99 Discontinued.</text>
+    <text x="230" y="648"><tspan font-weight="700" fill="#e89a1f">4</tspan>  Row actions menu — Edit / Release change / Delete on Open changes.</text>
+    <text x="230" y="670"><tspan font-weight="700" fill="#e89a1f">5</tspan>  Released rows show ReleasedDate / ReleasedBy and have their row-action buttons stripped.</text>
+  </g>
+</svg>

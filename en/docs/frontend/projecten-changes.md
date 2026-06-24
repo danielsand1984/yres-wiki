@@ -1,50 +1,153 @@
 ---
 sidebar_position: 3
 title: Projects & Changes
-description: Lifecycle management — categorize work and transport it between environments.
+description: Lifecycle management in Yres — bundle work into projects and changes and transport it safely from dev through test to prod.
 ---
 
 # Projects & Changes
 
-Projects and changes form the **lifecycle management** of Yres: categorize work and move changes safely from dev to prod.
+**Projects** and **Changes** form the **lifecycle management** of Yres: you bundle all work on the data warehouse (adding or updating tables, scripted objects, view persistence) into manageable units and then transport those changes in a controlled way from **dev** through **test** to **prod**. This keeps your environments in sync and ensures you never push half-finished work to production.
+
+:::warning Only with multiple environments
+The entire **Projects** section (and therefore Changes) is **hidden and blocked for organizations with a single environment**. The icon bar then does not show *Projects*, and the backend refuses to create a project or change with the message *"is not allowed for organizations with a single environment"*. With a single environment there is no dev → prod transport needed: changes are applied directly and the wizard internally uses `ChangeId 1` automatically.
+:::
 
 :::tip All screens & routes
 The full list of app screens with their route and fields is in [Web app screens](../referentie/webapp-schermen.md).
 :::
 
+## The lifecycle in brief
+
+The five steps a change goes through:
+
+| Step | What | Environment | Behind the scenes |
+|---|---|---|---|
+| 1 | **Create a change** under a project and book work into it | dev | — |
+| 2 | **Release** — lock the change and make it available to install | dev | `[Change].[spRelease]` |
+| 3 | **Import** — fetch the change JSON in the target environment (DWH only) | test/prod | `[Change].[spImport]` |
+| 4 | **Install** — install the change and publish the ADF factory | test/prod | `[Change].[spInstall]` + `publish-datafactory` |
+| 5 | **publish-datafactory** — new pipelines land in the target factory | test/prod | Azure DevOps pipeline |
+
+## Projects
+
+A **project** groups changes within an environment and gives the work a name, a description and a due date.
+
+![The Projects screen: a table of projects with their status, the button to create a project, and the warning that the section is only available with multiple environments.](/img/screens/projects.svg)
+
+The numbers (1)–(6) in the screenshot refer to:
+
+1. **Sub-links** of the section — *Projects*, *Changes*, *Scripted objects*, *Release change* and *Install change*.
+2. **Create project** — opens the create form with the fields **Name**, **Description** and **DueDate**.
+3. **Projects table** — columns **Name**, **Description**, **DueDate**, **Creator** and **Status**.
+4. **Status** — the status code is translated into text: *1 Open · 2 Closed · 3 released · 9 Deleted · 99 Discontinued*.
+5. **Row actions** — edit and delete.
+6. **Single-environment warning** — the section is hidden and blocked with a single environment.
+
+### Creating a project
+
+1. In the **Projects** section, open the **Projects** sub-link.
+2. Click **Create project**.
+3. Fill in **Name**, **Description** and **DueDate** and confirm.
+
+:::note Rules for projects
+- A project **cannot be deleted** as long as it contains **open changes**.
+- The **DueDate** of every change under the project must be **on or before** the DueDate of the project.
+:::
+
 ## Changes
-A **change** categorizes modifications to the data warehouse (updating tables, adding scripted objects). Changes are **released** and then **installed** on other environments, so environments stay in sync.
 
-![Changes overview within a project.](/img/screens/changes.png)
+A **change** categorizes modifications to the data warehouse and is the unit you later release and install. Changes always belong to a project. All data-plane edits in dev are booked under a change (see adding tables in [Data sources](./data-sources.md)), so they travel through the environments together.
 
-- A change has a **due date**, which must be on or before the due date of the parent project.
+![The Changes screen: the project and change selection at the top, the changes table with statuses, the button to create a change and the confirmation dialog for releasing.](/img/screens/changes.svg)
 
-## Project Overview
-A **project** groups changes within an environment. It has a name, description and due date.
+The numbers (1)–(6) in the screenshot:
 
-![Creating a project: Name, Description and DueDate.](/img/screens/projects.png)
+1. **Project/Change selection (ProjectSelection)** — first choose a **project**; the second dropdown optionally filters on a specific change.
+2. **Create change** — appears **only when the selected project has status Open**.
+3. **Changes table** — columns **Name**, **Description**, **Project**, **DueDate**, **Creator**, **Status**, **ReleasedDate** and **ReleasedBy**.
+4. **Status** — *Open* or *released* (same status translation as for projects).
+5. **Released change** — loses its row actions; a released change can no longer be edited.
+6. **Release confirmation** — calls `[Change].[spRelease]`.
 
-- A project **cannot be deleted** while it still contains open changes.
+### Creating a change
 
-The project create form asks for: **Name**, **Description** and **DueDate**.
+1. Open the **Changes** sub-link and choose a **project** at the top.
+2. Click **Create change** (only visible with an Open project and the right permissions).
+3. Give the change a **Name**, **Description** and **DueDate** and confirm.
+
+:::note Rule for the due date
+The **DueDate** of a change must be **on or before** the DueDate of the parent project.
+:::
 
 ## Scripted Objects
-Manage custom SQL objects not generated by Yres (your own tables, stored procedures, functions). They are added under a change and can therefore be released/installed along with it. For a custom table you choose with **"With table content?"** whether the content is included.
 
-## Install Changes
-Install changes to an environment (e.g. test → prod) via the dropdowns at the top.
+Under **Scripted objects** you manage custom SQL objects that were not generated by Yres — your own tables, stored procedures and functions. They are added under a change and therefore travel along when releasing and installing to test and prod.
 
-- **Reimport** → calls `[Change].[spImport]`: re-fetches the change/project data, including dependencies and content.
-- **Reinstall** → calls `[Change].[spInstall]`: installs the change on the environment.
+- Add an object via the **Scripted objects** sub-link, or include existing database objects directly from the object tree into a change.
+- For a **custom table** you choose with the **"With table content?"** option whether the table's content travels along (behind the scenes: `[Change].[spCopyTableContent]`).
 
 ## Release Changes
-Makes a change available for installation.
 
-1. After releasing, a change **can no longer be edited**.
-2. Yres blocks releasing if the change contains content that another change depends on (the error message names the dependent change(s)).
+Releasing makes a change available to be installed on another environment. You do this on the **Release change** screen (route `/changes/release`).
 
-**Change content** can be viewed as a **diagram** (tree structure source → schema → table per source; handy with many objects) or as a **table** (per object: load type, delta column for delta load, behavior if the object already exists).
+**How to release a change:**
 
-:::tip Including dependencies
-Since v1.53 you can choose to include **dependencies and/or content** when adding to a change, and include existing database objects directly from the object tree into a change.
+1. In the **Projects** section, open the **Release change** sub-link.
+2. Select the **project** and the **change** you want to release.
+3. Review the content (see *Viewing change content* below) and confirm the release.
+
+What happens:
+
+- After releasing, the change **can no longer be edited** — the change is locked.
+- Yres **blocks** releasing if the change contains content that **another change** depends on; the error message names the dependent change(s).
+- Behind the scenes, Yres runs `[Change].[spRelease]` for the relevant `ChangeId`.
+
+### Viewing change content
+
+You can view the content of a change in two ways:
+
+- **As a diagram** — a tree structure per source (**source → schema → table**) that you can expand per node; handy with many objects.
+- **As a table** — per object the details: the **load type**, the **delta column** for a delta load, and the behavior when the object already exists.
+
+:::tip Including dependencies (since v1.53)
+Since **v1.53** you can choose to include **dependencies and/or content** when adding to a change, and you can include existing database objects directly from the object tree into a change.
+:::
+
+## Install Changes
+
+Installing brings a **released** change to the next environment (e.g. dev → test, or test → prod). This happens on the **Install change** screen (route `/changes/install`).
+
+![The Install change screen: the DTAP flow from change to publish-datafactory, the list of released changes, the environment hop and the Import change and Install change buttons.](/img/screens/changes-release-install.svg)
+
+The numbers (1)–(6) in the screenshot:
+
+1. **DTAP flow** — Change (dev) → Release → Import → Install → `publish-datafactory`.
+2. **Released changes** — only released changes can be installed.
+3. **Environment hop** — choose the **from** (source) and **to** (target) environment; the combinations are consecutive environments.
+4. **Import change** — DWH only; does not publish the ADF factory.
+5. **Install change** — DWH and ADF; also publishes the factory.
+6. **Progress** — a monitor toast shows the status; `publish-datafactory` runs in Azure DevOps and can take a while.
+
+**How to install a change:**
+
+1. In the **Projects** section, open the **Install change** sub-link.
+2. Choose the **released** change and the **environment hop** (from → to) at the top.
+3. Choose one of the two actions:
+   - **Import change** → calls `[Change].[spImport]`: re-fetches the change and project data (including dependencies and content) in the target environment. This is **DWH only** and does **not** publish the ADF factory.
+   - **Install change** → imports and **installs** the change with `[Change].[spInstall]` (via the `InstallChange` pipeline where present) **and publishes the ADF factory** by running the Azure DevOps pipeline `publish-datafactory`, so that new data-source pipelines land in the target factory as well.
+4. Follow the progress in the monitor toast.
+
+:::note Versions must match
+Importing and installing first check whether the **DWH versions** of the source and target environment match. If they differ, you get *"Environment versions do not match, please update"* and you must first update the environment via [Update environments](./admin.md).
+:::
+
+### Reimporting and reinstalling
+
+You can reprocess an already installed change:
+
+- **Reimport** → calls `[Change].[spImport]` and re-fetches the change/project data (including dependencies and content).
+- **Reinstall** → calls `[Change].[spInstall]` and installs the change again on the environment.
+
+:::info One live install screen
+In the current app, installing runs via **Release change** (`/changes/release`) and **Install change** (`/changes/install`). An older, combined *Publish change* screen still exists in the code, but is **no longer reachable** (legacy) and is replaced by these two screens.
 :::

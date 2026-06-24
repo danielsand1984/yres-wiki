@@ -6,18 +6,22 @@ description: Customer case Woonstichting 'thuis — IT Manager Toin Pijnenburg.
 
 # Woonstichting 'thuis
 
+:::info To be confirmed
+This customer case — company name, contact person, size, quotes and the point for improvement — comes from interviews/marketing and is **not** part of the official Yres product documentation. Confirm the content and obtain **the customer's consent** (privacy/GDPR) before publishing this page externally.
+:::
+
 | | |
 |---|---|
 | **Contact** | Toin Pijnenburg — IT Manager |
 | **Company** | Woonstichting 'thuis (social housing landlord) |
 | **Size** | 190 employees, 11,000 homes |
-| **Customer since** | ±6 months (interview 25-02-2025) |
+| **Customer since** | ±6 months |
 
 ## About 'thuis
 A social housing landlord that provides affordable, sustainable living space in, among others, Eindhoven, Veldhoven, Best, Son & Breugel, Waalre and Oirschot. Rents out and manages homes, builds new sustainable homes and strongly invests in Lean management.
 
 ## The trigger
-The desire to reduce maintenance time on reports, develop more custom reports and respond faster to changing KPI and process needs. Existing reports did not work well and had a long **"time to repair"**.
+The desire to reduce maintenance time on reports, develop more custom reports and respond faster to changing KPI and process needs. The existing reports did not work well and had a long **"time to repair"**.
 
 ## Alternatives considered
 Blue Mountain and ZIG — both perceived as too expensive for too little added value and with forced standard reports.
@@ -38,7 +42,7 @@ Blue Mountain and ZIG — both perceived as too expensive for too little added v
 
 ## Quote
 
-> "Yres is truly worth its weight in gold. It reduces complexity toward Power BI reports and makes data a lot more accessible." (*Yres is echt wel goud waard. Het reduceert de complexiteit richting Power BI-rapportages en maakt data een stuk toegankelijker.*)
+> "Yres is truly worth its weight in gold. It reduces complexity toward Power BI reports and makes data a lot more accessible."
 
 ## Point for improvement (honest)
 According to Toin, the weakest part is **marketing and visibility** — Plainwater/Yres is too modest and insufficiently visible in the sector. Advice: more demonstrations, presence at events and publications in trade journals.

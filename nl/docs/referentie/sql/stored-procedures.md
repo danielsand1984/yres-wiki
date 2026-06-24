@@ -1,1455 +1,499 @@
 ---
 sidebar_position: 1
 title: Stored procedures
-description: Volledige referentie van alle door Yres beheerde stored procedures (purpose, inputs, outputs).
+description: Referentie van de stored procedures in de IRIS_DWH-database, per schema, met parameters en doel.
 ---
 
+> Beheer voer je bij voorkeur uit via de Yres-webapp. Deze objecten zijn de SQL-laag eronder; je raadpleegt of roept ze rechtstreeks aan via het SQL-endpoint (SSMS / Azure Data Studio).
 
-> Beheer doe je bij voorkeur via de webapp; deze objecten zijn voor het SQL-endpoint (SSMS / Azure Data Studio).
+Deze pagina beschrijft de stored procedures in de data-plane database **`IRIS_DWH`**. De namen zijn letterlijk uit de live repository overgenomen; in code heet het product nog op veel plaatsen **IRIS**. De inhoud is geregenereerd uit de broncode (de code is leidend boven oudere documentatie).
 
-## StoredProcedures
+De live database telt **102 stored procedures, 56 functions en 41 views**. Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
 
-### `[Change].[spAddScriptedObject]`
+:::note Schema-overzicht
+De procedures zijn verdeeld over de schema's `LoadManagement` (de laadmachine), `Config` (instellingen, logging, DB-tuning), `Change` (DTAP-wijzigingsbeheer), `Monitoring` (laadstatus-logging), `Maintenance` (onderhoud, health checks), `Expose` (rapportage-RBAC) en `dbo` (hulpprocedures).
+:::
 
-**Purpose:**
+---
 
-This stored procedure is designed to add a scripted object (such as a stored procedure, function, trigger, view, or table) to a change within the change management system. It ensures that the object and its dependencies are properly tracked and managed within the specified change.
+## LoadManagement — de laadmachine
 
-**Inputs:**
-
-- `@ChangeID (INT)`: The ID of the change to which the object should be added.
-
-- `@ObjectType (NVARCHAR(5))`: The type of the object (e.g., 'P' for stored procedure, 'FN' for scalar function).
-
-- `@ObjectName (NVARCHAR(4000))`: The name of the object to be added.
-
-- `@Delete (BIT, default 0)`: Indicates whether the object should be marked for deletion.
-
-- `@AddDependencies (BIT, default 1)`: Indicates whether to automatically add dependencies of the object.
-
-- `@IgnoreYresObjects (BIT, default 1)`: Indicates whether to ignore Yres-generated objects.
-
-- `@appuser (NVARCHAR(512))`: The username of the person executing the procedure.
-
-- `@OverwriteProcessID (UNIQUEIDENTIFIER, default NULL)`: Optional parameter to overwrite an existing process ID.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the addition of the scripted object and updates the change management tables accordingly.
-
-### `[Change].[spAddTable]`
-
-**Purpose:**
-
-This stored procedure adds a table and its related metadata (such as columns, keys, and data types)
-
-to an existing change within the change management system. It also manages dependencies and ensures that no active change conflicts exist.
-
-**Inputs:**
-
-- `@ChangeID (INT)`: The ID of the change to which the table should be added.
-
-- `@Source (NVARCHAR(1024))`: The source system name.
-
-- `@Schema (NVARCHAR(1024))`: The schema name of the table.
-
-- `@Table (NVARCHAR(1024))`: The table name.
-
-- `@appUser (NVARCHAR(MAX), default 'Unknown')`: The username of the person executing the procedure.
-
-- `@OverwriteProcessID (UNIQUEIDENTIFIER, default NULL)`: Optional parameter to overwrite an existing process ID.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the addition of the table and updates the change management tables accordingly.
-
-### `[Change].[spCopyTableContent]`
-
-**Purpose:**
-
-This stored procedure copies data from a source table to a target table, with the ability to map and cast columns as necessary. It is useful for transferring data between tables with similar but not identical structures.
-
-**Inputs:**
-
-- `@SourceTable (NVARCHAR(256))`: The name of the source table (including schema) from which data will be copied.
-
-- `@TargetTable (NVARCHAR(256))`: The name of the target table (including schema) where data will be inserted.
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the copy operation or just generate the SQL command.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It either executes the data transfer or logs the generated SQL command.
-
-### `[Change].[spImport]`
-
-**Purpose:**
-
-This stored procedure imports changes described in a JSON format into the change management
-
-system. It handles the addition or updating of changes, projects, content, and dependencies based on the provided JSON data.
-
-**Inputs:**
-
-- `@JSON (NVARCHAR(MAX))`: A JSON string containing the change details to be imported.
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person performing the import.
-
-**Outputs:**
-
-This procedure logs the results of the import process and updates the change management tables with the imported data.
-
-### `[Change].[spInstall]`
-
-**Purpose:**
-
-This stored procedure is designed to import a change into the target system, allowing for execution, printing of SQL, or impact analysis. It processes the changes specified by @ChangeID  and handles various object types within the change.
-
-**Inputs:**
-
-- `@ChangeID (NVARCHAR(1024))`: The ID of the change to be installed.
-
-- `@Execute (INT, default 2)`: Execution mode—1 for execution, 0 for printing SQL, 2 for impact analysis.
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person executing the procedure.
-
-- `@CommitPartial (BIT, default 0)`: Indicates whether to commit partial results in case of failure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the installation process and updates the relevant change management tables.
-
-### `[Change].[spMaintain]`
-
-**Purpose:**
-
-This stored procedure is designed to maintain a change by adding, updating, or deleting records in the change management system. It ensures that changes are properly recorded and managed.
-
-**Inputs:**
-
-- `@Action (NVARCHAR(256), default 'ADD')`: The action to perform (ADD, UPDATE, DELETE).
-
-- `@Name (NVARCHAR(1024), default '')`: The name of the change.
-
-- `@Description (NVARCHAR(MAX), default 'No description')`: A description of the change.
-
-- `@Project (INT, default NULL)`: The project ID associated with the change.
-
-- `@DueDate (DATE, default NULL)`: The due date for the change.
-
-- `@Status (INT, default 1)`: The status of the change.
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person executing the procedure.
-
-- `@Id (INT, default -1)`: The ID of the change for update or delete actions.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the maintenance process and updates the relevant change management tables.
-
-### `[Change].[spMaintainProject]`
-
-**Purpose:**
-
-This stored procedure is designed to maintain a project by adding, updating, or deleting records in the project management system. It ensures that projects are properly recorded and managed.
-
-**Inputs:**
-
-- `@Action (NVARCHAR(256), default 'ADD')`: The action to perform (ADD, UPDATE, DELETE).
-
-- `@Name (NVARCHAR(1024), default '')`: The name of the project.
-
-- `@Description (NVARCHAR(MAX), default 'No description')`: A description of the project.
-
-- `@DueDate (DATE, default NULL)`: The due date for the project.
-
-- `@Status (INT, default 1)`: The status of the project.
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person executing the procedure.
-
-- `@Id (INT, default -1)`: The ID of the project for update or delete actions.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the maintenance process and updates the relevant project management tables.
-
-### `[Change].[spRelease]`
-
-**Purpose:**
-
-This stored procedure is designed to release a change in the change management system. It validates dependencies, updates the status of the change, and logs the release process.
-
-**Inputs:**
-
-- `@ChangeId (INT)`: The ID of the change to be released.
-
-- `@UseLapageVersion (BIT, default 1)`: Indicates whether to use the lapage version of objects in the change.
-
-- `@AppUser (NVARCHAR(1024))`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the release process and updates the relevant change management tables.
-
-### `[Config].[spAddFrameWorkColumns]`
-
-**Purpose:**
-
-This stored procedure adds framework columns to a stage table in the data warehouse. It includes the addition of ETL metadata such as ETL date, key hash, and row hash columns.
-
-**Inputs:**
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the changes or just print the SQL script.
-
-- `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`: The table to which the framework columns should be added.
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the addition of framework columns and updates the relevant data warehouse tables.
-
-### `[Config].[spCompareMetadata]`
-
-**Purpose:**
-
-This stored procedure refreshes the stored metadata comparison by comparing the current metadata with the stored metadata in the data warehouse. It identifies mismatches such as missing columns, deleted columns, or type mismatches.
-
-**Inputs:**
-
-This procedure does not require any inputs.
-
-**Outputs:**
-
-This procedure updates the Config.MetadataComparison  table with the results of the metadata comparison.
-
-### `[Config].`
-
-[spCreateExternalTablesFromDictionary]
-
-**Purpose:**
-
-This stored procedure creates external tables in the data warehouse based on the dictionary metadata. It is used for generating external table definitions for data integration purposes.
-
-**Inputs:**
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the changes or just print the SQL script.
-
-- `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`: The table for which the external table should be created.
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the creation of external tables and updates the relevant metadata tables.
-
-### `[Config].[spCreateTablesFromDictionary]`
-
-**Purpose:**
-
-This stored procedure creates tables in the database based on the metadata from a dictionary view. It is used to automate the creation of tables for data integration and management purposes.
-
-**Inputs:**
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the changes or just print the SQL script.
-
-- `@SelectedSource (NVARCHAR(MAX), default 'NoneSelected')`: The source system for which tables should be created.
-
-- `@SelectedSchema (NVARCHAR(MAX), default 'NoneSelected')`: The schema for which tables should be created.
-
-- `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`: The specific table to be created.
-
-- `@AppUser (NVARCHAR(MAX), default 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the creation of tables and updates the relevant metadata tables.
-
-### `[Config].[spDeleteTablesFromDB]`
-
-**Purpose:**
-
-This stored procedure deletes tables from the database based on specified source, schema, and table names. It is used to remove tables that are no longer active or required.
-
-**Inputs:**
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the deletion or just print the SQL script.
-
-- `@SelectedSource (NVARCHAR(MAX), default 'NoneSelected')`: The source system for which tables should be deleted.
-
-- `@SelectedSchema (NVARCHAR(MAX), default 'NoneSelected')`: The schema for which tables should be deleted.
-
-- `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`: The specific table to be deleted.
-
-- `@AppUser (NVARCHAR(MAX), default 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the deletion of tables and updates the relevant metadata tables.
-
-### `[Config].[spEnableColumnstore]`
-
-**Purpose:**
-
-This stored procedure enables a ColumnStore index on existing tables in the database. It is used to improve the performance of analytical queries by converting tables to ColumnStore indexes.
-
-**Inputs:**
-
-- `@Execute (BIT)`: Indicates whether to execute the changes or just print the SQL script.
-
-- `@Schema (NVARCHAR(50), default 'BOTH')`: Specifies the schema (HIS or STAGE) where the ColumnStore index should be enabled.
-
-- `@Table (NVARCHAR(1024))`: The name of the table for which the ColumnStore index should be enabled.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the enabling of ColumnStore indexes and updates the relevant metadata tables.
-
-### `[Config].[spEnableMemoryOptimization]`
-
-**Purpose:**
-
-This stored procedure enables memory optimization in the current database by adding a MEMORY_OPTIMIZED_DATA filegroup and configuring necessary database settings. It is used to improve transaction performance by using in-memory OLTP features.
-
-**Inputs:**
-
-- `@Execute (BIT, default 1)`: Indicates whether to execute the changes or just print the SQL script.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to enabling memory optimization and updates the relevant metadata tables.
-
-### `[Config].[spFillServices_SAC]`
-
-**Purpose:**
-
-This stored procedure imports SAC (SAP Analytics Cloud) providers into the configuration services table. It is used to populate the services table with SAC providers' metadata.
-
-**Inputs:**
-
-- `@input (ttServices_SAC READONLY)`: A table type containing SAC providers' metadata.
-
-- `@source (NVARCHAR(1024))`: The source system from which the providers are imported.
-
-- `@Execute (BIT, default 1)`: Indicates whether to execute the insertion or just print the SQL script.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to the insertion of SAC providers and updates the relevant metadata tables.
-
-### `[Config].[spGetDependenciesSQL]`
-
-**Purpose:**
-
-This stored procedure analyzes a SQL SELECT statement to determine its dependencies within the database. It is used to identify the tables, views, and other objects that a SQL query depends on.
-
-**Inputs:**
-
-- `@SQL (NVARCHAR(MAX))`: The SQL SELECT statement to be analyzed.
-
-**Outputs:**
-
-This procedure returns the dependencies found within the provided SQL statement. It also logs messages and errors related to the dependency analysis.
-
-### `[Config].[spSetDatabaseParameter]`
-
-**Purpose:**
-
-This stored procedure sets a specified database parameter to a given value. It is used to modify database settings dynamically.
-
-**Inputs:**
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the change or just print the SQL script.
-
-- `@Parameter (NVARCHAR(256))`: The database parameter to be set.
-
-- `@Setting (NVARCHAR(256))`: The value to which the database parameter should be set.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to setting the database parameter.
-
-### `[Config].[spSetDatabaseServiceTier]`
-
-**Purpose:**
-
-This stored procedure changes the service tier of the database to a specified tier. It is used to scale the database's performance and resources by altering its service tier.
-
-**Inputs:**
-
-- `@toTier (NVARCHAR(250), default 'Default')`: The target service tier to which the database should be set.
-
-- `@Execute (BIT, default 1)`: Indicates whether to execute the change or just print the SQL script.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to changing the service tier and updates the relevant metadata tables.
-
-### `[Config].[spUpdateRefreshToken]`
-
-**Purpose:**
-
-This stored procedure updates the refresh and access tokens in the configuration tokens table. It is used to maintain the validity of tokens used for API authentication.
-
-**Inputs:**
-
-- `@Source (NVARCHAR(4000))`: The source system for which the tokens are being updated.
-
-- `@RefreshToken (NVARCHAR(4000))`: The new refresh token.
-
-- `@AccessToken (NVARCHAR(4000))`: The new access token.
-
-- `@ExpirationTime (INT, default 10)`: The expiration time in minutes for the access token.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to updating the tokens and updates the relevant metadata tables.
-
-### `[Config].[spUpdateTablesFromDictionary]`
-
-**Purpose:**
-
-This stored procedure updates existing tables in the database based on metadata from a dictionary view. It is used to modify table structures (add, remove, update columns) for data management purposes.
-
-**Inputs:**
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the changes or just print the SQL script.
-
-- `@SelectedSource (NVARCHAR(MAX), default 'NoneSelected')`: The source system for which tables should be updated.
-
-- `@SelectedSchema (NVARCHAR(MAX), default 'NoneSelected')`: The schema for which tables should be updated.
-
-- `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`: The specific table to be updated.
-
-- `@Methods (NVARCHAR(MAX))`: Specifies the actions to be taken (ADD, REMOVE, UPDATE).
-
-- `@Stage (BIT, default 0)`: Indicates whether to apply changes to the staging tables.
-
-- `@HIS (BIT, default 0)`: Indicates whether to apply changes to the history tables.
-
-- `@AppUser (NVARCHAR(MAX), default 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages and errors related to updating tables and updates the relevant metadata tables.
-
-### `[Config].[spWriteCrash]`
-
-**Purpose:**
-
-This stored procedure logs crash information to the Config.ProcessLog  table. It is used to capture detailed error information when a procedure fails.
-
-**Inputs:**
-
-- `@ProcessID (UNIQUEIDENTIFIER)`: The unique identifier for the process that encountered an error.
-
-- `@SpName (NVARCHAR(4000))`: The name of the stored procedure that encountered the error.
-
-- `@SpStep (NVARCHAR(4000))`: The step in the stored procedure where the error occurred.
-
-- `@SpCall (NVARCHAR(MAX))`: The SQL call that was being executed when the error occurred.
-
-- `@AppUser (NVARCHAR(4000))`: The username of the person executing the procedure.
-
-- `@DbRequest (NVARCHAR(MAX), optional)`: The database request that led to the error.
-
-- `@ErrorLine (INT)`: The line number in the SQL script where the error occurred.
-
-- `@ErrorMessage (NVARCHAR(4000))`: The error message generated by SQL Server.
-
-- `@ErrorNumber (INT)`: The error number generated by SQL Server.
-
-- `@ErrorProcedure (NVARCHAR(4000))`: The name of the stored procedure where the error occurred.
-
-- `@ErrorSeverity (INT)`: The severity of the error.
-
-- `@ErrorState (INT)`: The state of the error.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs detailed error information to the Config.ProcessLog  table.
-
-### `[Config].[spWriteDump]`
-
-**Purpose:**
-
-This stored procedure logs detailed dump information to the Config.ProcessLog  table. It is used for logging system errors that require more detailed analysis.
-
-**Inputs:**
-
-- `@ProcessID (UNIQUEIDENTIFIER)`: The unique identifier for the process that encountered an error.
-
-- `@SpName (NVARCHAR(4000))`: The name of the stored procedure that encountered the error.
-
-- `@SpStep (NVARCHAR(4000))`: The step in the stored procedure where the error occurred.
-
-- `@SpCall (NVARCHAR(MAX))`: The SQL call that was being executed when the error occurred.
-
-- `@AppUser (NVARCHAR(4000))`: The username of the person executing the procedure.
-
-- `@DbRequest (NVARCHAR(MAX), optional)`: The database request that led to the error.
-
-- `@ErrorLine (INT)`: The line number in the SQL script where the error occurred.
-
-- `@ErrorMessage (NVARCHAR(4000))`: The error message generated by SQL Server.
-
-- `@ErrorNumber (INT)`: The error number generated by SQL Server.
-
-- `@ErrorProcedure (NVARCHAR(4000))`: The name of the stored procedure where the error occurred.
-
-- `@ErrorSeverity (INT)`: The severity of the error.
-
-- `@ErrorState (INT)`: The state of the error.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs detailed dump information to the Config.ProcessLog  table.
-
-### `[Config].[spWriteError]`
-
-**Purpose:**
-
-This stored procedure logs error information to the Config.ProcessLog  table. It is used to capture detailed error information when a procedure encounters a problem.
-
-**Inputs:**
-
-- `@ProcessID (UNIQUEIDENTIFIER)`: The unique identifier for the process that encountered an error.
-
-- `@SpName (NVARCHAR(4000))`: The name of the stored procedure that encountered the error.
-
-- `@SpStep (NVARCHAR(4000))`: The step in the stored procedure where the error occurred.
-
-- `@SpCall (NVARCHAR(MAX))`: The SQL call that was being executed when the error occurred.
-
-- `@AppUser (NVARCHAR(4000))`: The username of the person executing the procedure.
-
-- `@Message1 (NVARCHAR(4000))`: The primary error message.
-
-- `@Message2 (NVARCHAR(4000), optional)`: Additional error message information.
-
-- `@Message3 (NVARCHAR(4000), optional)`: Additional error message information.
-
-- `@Message4 (NVARCHAR(4000), optional)`: Additional error message information.
-
-- `@DbRequest (NVARCHAR(MAX), optional)`: The database request that led to the error.
-
-- `@ErrorLine (INT, optional)`: The line number in the SQL script where the error occurred.
-
-- `@ErrorMessage (NVARCHAR(4000), optional)`: The error message generated by SQL Server.
-
-- `@ErrorNumber (INT, optional)`: The error number generated by SQL Server.
-
-- `@ErrorProcedure (NVARCHAR(4000), optional)`: The name of the stored procedure where the error occurred.
-
-- `@ErrorSeverity (INT, optional)`: The severity of the error.
-
-- `@ErrorState (INT, optional)`: The state of the error.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs error information to the Config.ProcessLog  table.
-
-### `[Config].[spWriteFullLog]`
-
-**Purpose:**
-
-This stored procedure writes full log entries to the Config.ProcessLog  table. It is used for logging various levels of information, including process steps, messages, and errors.
-
-**Inputs:**
-
-- `@ProcessID (UNIQUEIDENTIFIER)`: The unique identifier for the process being logged.
-
-- `@CallSource (NVARCHAR(4000))`: The source system or hostname making the call.
-
-- `@CallSourceType (NVARCHAR(4000))`: The type of application making the call.
-
-- `@AppUser (NVARCHAR(4000))`: The username of the person executing the procedure.
-
-- `@SpName (NVARCHAR(4000))`: The name of the stored procedure being logged.
-
-- `@SpCall (NVARCHAR(MAX))`: The SQL call being executed.
-
-- `@SpStep (NVARCHAR(4000))`: The step in the process being logged.
-
-- `@ReturnCode (INT)`: The return code of the stored procedure.
-
-- `@Message1 (NVARCHAR(4000))`: The primary message to be logged.
-
-- `@Message2 (NVARCHAR(4000))`: Additional message information.
-
-- `@Message3 (NVARCHAR(4000))`: Additional message information.
-
-- `@Message4 (NVARCHAR(4000))`: Additional message information.
-
-- `@DbUser (NVARCHAR(4000))`: The database user executing the procedure.
-
-- `@DbServer (NVARCHAR(4000))`: The database server name.
-
-- `@DbName (NVARCHAR(4000))`: The database name.
-
-- `@DbRequest (NVARCHAR(MAX))`: The database request or query being logged.
-
-- `@ErrorLine (INT)`: The line number in the SQL script where the error occurred.
-
-- `@ErrorMessage (NVARCHAR(4000))`: The error message generated by SQL Server.
-
-- `@ErrorNumber (INT)`: The error number generated by SQL Server.
-
-- `@ErrorProcedure (NVARCHAR(4000))`: The name of the stored procedure where the error occurred.
-
-- `@ErrorSeverity (INT)`: The severity of the error.
-
-- `@ErrorState (INT)`: The state of the error.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs detailed process information to the Config.ProcessLog  table.
-
-### `[Config].[spWriteLog]`
-
-**Purpose:**
-
-This stored procedure writes log entries to the Config.ProcessLog  table. It is used for logging messages, warnings, and errors during the execution of other stored procedures.
-
-**Inputs:**
-
-- `@ProcessID (UNIQUEIDENTIFIER)`: The unique identifier for the process being logged.
-
-- `@SpName (NVARCHAR(4000))`: The name of the stored procedure being logged.
-
-- `@SpStep (NVARCHAR(4000))`: The step in the process being logged.
-
-- `@SpCall (NVARCHAR(MAX))`: The SQL call being executed.
-
-- `@AppUser (NVARCHAR(4000))`: The username of the person executing the procedure.
-
-- `@ReturnCode (INT)`: The return code of the stored procedure.
-
-- `@Message1 (NVARCHAR(4000))`: The primary message to be logged.
-
-- `@Message2 (NVARCHAR(4000), optional)`: Additional message information.
-
-- `@Message3 (NVARCHAR(4000), optional)`: Additional message information.
-
-- `@Message4 (NVARCHAR(4000), optional)`: Additional message information.
-
-- `@DbRequest (NVARCHAR(MAX), optional)`: The database request or query being logged.
-
-- `@ErrorLine (INT, optional)`: The line number in the SQL script where the error occurred.
-
-- `@ErrorMessage (NVARCHAR(4000), optional)`: The error message generated by SQL Server.
-
-- `@ErrorNumber (INT, optional)`: The error number generated by SQL Server.
-
-- `@ErrorProcedure (NVARCHAR(4000), optional)`: The name of the stored procedure where the error occurred.
-
-- `@ErrorSeverity (INT, optional)`: The severity of the error.
-
-- `@ErrorState (INT, optional)`: The state of the error.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages, warnings, and errors to the Config.ProcessLog  table.
-
-### `[Config].[spWriteMessage]`
-
-**Purpose:**
-
-This stored procedure logs informational messages to the Config.ProcessLog  table. It is used to record process steps and actions without errors.
-
-**Inputs:**
-
-- `@ProcessID (UNIQUEIDENTIFIER)`: The unique identifier for the process being logged.
-
-- `@SpName (NVARCHAR(4000))`: The name of the stored procedure being logged.
-
-- `@SpStep (NVARCHAR(4000))`: The step in the process being logged.
-
-- `@SpCall (NVARCHAR(MAX))`: The SQL call being executed.
-
-- `@AppUser (NVARCHAR(4000))`: The username of the person executing the procedure.
-
-- `@Message1 (NVARCHAR(4000))`: The primary message to be logged.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs informational messages to the Config.ProcessLog  table.
-
-### `[Config].[spWriteMessage]`
-
-**Purpose:**
-
-This stored procedure writes a log message to the Config.ProcessLog  table, including all relevant fields for tracking and debugging purposes.
-
-**Inputs:**
-
-- `@processID (uniqueidentifier)`: The unique identifier for the process being logged.
-
-- `@spName (nvarchar(4000))`: The name of the stored procedure generating the log.
-
-- `@spStep (nvarchar(4000))`: The step within the stored procedure being executed.
-
-- `@spCall (nvarchar(max))`: The SQL call being executed.
-
-- `@appUser (nvarchar(4000))`: The username of the person executing the procedure.
-
-- `@message1 (nvarchar(4000))`: The primary log message.
-
-- `@message2 (nvarchar(4000), optional)`: Additional log message information.
-
-- `@message3 (nvarchar(4000), optional)`: Additional log message information.
-
-- `@message4 (nvarchar(4000), optional)`: Additional log message information.
-
-- `@dbRequest (nvarchar(max), optional)`: The database request or query being logged.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs detailed information to the Config.ProcessLog  table.
-
-### `[Config].[spWriteWarning]`
-
-**Purpose:**
-
-This stored procedure writes a warning log to the Config.ProcessLog  table, capturing all relevant fields for monitoring and debugging purposes.
-
-**Inputs:**
-
-- `@processID (uniqueidentifier)`: The unique identifier for the process being logged.
-
-- `@spName (nvarchar(4000))`: The name of the stored procedure generating the log.
-
-- `@spStep (nvarchar(4000))`: The step within the stored procedure where the warning occurred.
-
-- `@spCall (nvarchar(max))`: The SQL call being executed.
-
-- `@appUser (nvarchar(4000))`: The username of the person executing the procedure.
-
-- `@message1 (nvarchar(4000))`: The primary warning message.
-
-- `@message2 (nvarchar(4000), optional)`: Additional warning message information.
-
-- `@message3 (nvarchar(4000), optional)`: Additional warning message information.
-
-- `@message4 (nvarchar(4000), optional)`: Additional warning message information.
-
-- `@dbRequest (nvarchar(max), optional)`: The database request or query being logged.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs detailed warning information to the Config.ProcessLog  table.
-
-### `[dbo].`
-
-[spAdaptiveIndexDefrag_CurrentExecStats]
-
-**Purpose:**
-
-This stored procedure provides a report on the current execution status of index defragmentation tasks. It monitors what has been completed and what is still pending.
-
-**Inputs:**
-
-- `@dbname (NVARCHAR(255), optional)`: Specifies the database to monitor. If not provided, all databases are monitored.
-
-**Outputs:**
-
-This procedure returns a set of results that detail the progress of index and statistics defragmentation, showing both completed and pending tasks.
-
-### `[dbo].[spAdaptiveIndexDefrag_Exceptions]`
-
-**Purpose:**
-
-This stored procedure manages exceptions for index defragmentation, allowing the exclusion of specific databases, days, tables, or indexes from the defragmentation process.
-
-**Inputs:**
-
-- `@exceptionMask_DB (NVARCHAR(255), optional)`: The database to be excluded from defragmentation.
-
-- `@exceptionMask_days (NVARCHAR(27), optional)`: Days of the week to exclude from defragmentation, provided in short form (e.g., 'Mon,Wed').
-
-- `@exceptionMask_tables (NVARCHAR(500), optional)`: Tables to be excluded from defragmentation.
-
-- `@exceptionMask_indexes (NVARCHAR(500), optional)`: Indexes to be excluded from defragmentation.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs actions and results related to the management of defragmentation exceptions.
-
-### `[dbo].[spAdaptiveIndexDefrag_PurgeLogs]`
-
-**Purpose:**
-
-This stored procedure purges old logs related to index defragmentation to prevent indefinite growth of the log tables.
-
-**Inputs:**
-
-- `@daystokeep (smallint, default 90)`: The number of days of logs to retain. Logs older than this will be deleted.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It deletes old log entries from the maintenance tables.
-
-### `[dbo].[spCopyDB]`
-
-**Purpose:**
-
-This stored procedure creates a copy of an existing database, with options to drop the target database if it exists and to specify the service tier of the new database.
-
-**Inputs:**
-
-- `@sourceDB (NVARCHAR(1024))`: The name of the source database to be copied.
-
-- `@targetDB (NVARCHAR(1024))`: The name of the target database to be created.
-
-- `@targetTier (NVARCHAR(256), default 'GP_Gen5_2')`: The service tier for the new database.
-
-- `@dropIfExists (BIT, default 0)`: Indicates whether to drop the target database if it already exists.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It logs messages indicating success or failure in creating the database copy.
-
-### `[dbo].[spJsonToTable]`
-
-**Purpose:**
-
-This stored procedure converts JSON data into a relational table structure in SQL Server, allowing for easier data manipulation and querying.
-
-**Inputs:**
-
-- `@Collection (NVARCHAR(1024), optional)`: Specifies the JSON collection to be processed.
-
-- `@json (NVARCHAR(max), default '{}')`: The JSON data to be converted.
-
-- `@targetSchema (NVARCHAR(1024), optional)`: The schema where the table will be created.
-
-- `@targetTable (NVARCHAR(1024), optional)`: The name of the target table to be created.
-
-**Outputs:**
-
-This procedure dynamically generates and executes a SQL script to convert the provided JSON data into a table. The resulting table structure is based on the JSON keys and values.
-
-### `[dbo].[spLongPrint]`
-
-**Purpose:**
-
-This stored procedure prints long strings of text in chunks, allowing for better handling of large messages that exceed the default length limits in SQL Server.
-
-**Inputs:**
-
-- `@String (NVARCHAR(MAX))`: The long string of text to be printed.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It prints the provided string in manageable chunks to the console or log.
-
-### `[dbo].[spMSForEachTable]`
-
-**Purpose:**
-
-This stored procedure executes a specified command against each table in the database, allowing for batch operations across multiple tables.
-
-**Inputs:**
-
-- `@command1 (NVARCHAR(2000))`: The primary command to be executed against each table.
-
-- `@replacechar (NCHAR(1), default '?')`: The character in @command1 that will be replaced with the table name.
-
-- `@command2 (NVARCHAR(2000), optional)`: An additional command to be executed.
-
-- `@command3 (NVARCHAR(2000), optional)`: Another additional command to be executed.
-
-- `@whereand (NVARCHAR(2000), optional)`: Additional conditions to apply to the table selection.
-
-- `@precommand (NVARCHAR(2000), optional)`: A command to be executed before the main commands.
-
-- `@postcommand (NVARCHAR(2000), optional)`: A command to be executed after the main commands.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It executes the specified commands against all relevant tables in the database.
-
-### `[dbo].[spMSForEachWorker]`
-
-**Purpose:**
-
-This stored procedure is a worker procedure that assists [dbo].[spMSForEachTable]  in executing commands against each table in the database.
-
-**Inputs:**
-
-- `@command1 (NVARCHAR(2000))`: The primary command to be executed.
-
-- `@replacechar (NCHAR(1), default '?')`: The character in @command1 that will be replaced.
-
-- `@command2 (NVARCHAR(2000), optional)`: An additional command to be executed.
-
-- `@command3 (NVARCHAR(2000), optional)`: Another additional command to be executed.
-
-- `@worker_type (INT, default 1)`: Indicates the type of worker process.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It assists in executing commands against tables as part of the batch process initiated by [dbo].[spMSForEachTable] .
-
-### `[dbo].[spRunSQL]`
-
-**Purpose:**
-
-This stored procedure runs any SQL statement provided as input, allowing for dynamic execution of SQL commands.
-
-**Inputs:**
-
-- `@SQL (NVARCHAR(max))`: The SQL statement to be executed.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It executes the provided SQL statement.
-
-### `[LoadManagement].[spCheckKeyAndRowHash]`
-
-**Purpose:**
-
-This stored procedure checks the integrity of key and row hashes for specified tables, verifying the consistency of data between staging and history tables.
-
-**Inputs:**
-
-- `@EXECUTE (BIT, default 0)`: Indicates whether to execute the checks or just generate the SQL script.
-
-- `@Source (NVARCHAR(MAX))`: The source system of the tables to be checked.
-
-- `@Schema (NVARCHAR(MAX))`: The schema of the tables to be checked.
-
-- `@Table (NVARCHAR(MAX))`: The name of the table to be checked.
-
-- `@sampleSize (NVARCHAR(MAX), default 10)`: The sample size of rows to check.
-
-**Outputs:**
-
-This procedure returns a report on the integrity of key and row hashes, indicating whether the data is consistent.
-
-### `[LoadManagement].[spFillDictionary_AFAS]`
-
-**Purpose:**
-
-This stored procedure imports metadata from an AFAS data source into a SQL Server dictionary table, mapping columns and data types.
-
-**Inputs:**
-
-- `@input (ttDictionary_AFAS READONLY)`: The table type containing AFAS dictionary data.
-
-- `@source (NVARCHAR(1024))`: The source name of the data.
-
-- `@EXECUTE (BIT, default 1)`: Indicates whether to execute the import or just generate the SQL script.
-
-**Outputs:**
-
-This procedure imports metadata into the LoadManagement.Dictionary  table or generates an SQL script for review.
-
-### `[LoadManagement].[spFillDictionary_oDATA]`
-
-**Purpose:**
-
-This stored procedure imports metadata from an oData data source into a SQL Server dictionary table, mapping columns and data types.
-
-**Inputs:**
-
-- `@input (ttDictionary_oDataADF READONLY)`: The table type containing oData dictionary data.
-
-- `@source (NVARCHAR(1024))`: The source name of the data.
-
-- `@schema (NVARCHAR(1024), default 'API')`: The schema for the data.
-
-- `@EXECUTE (BIT, default 1)`: Indicates whether to execute the import or just generate the SQL script.
-
-**Outputs:**
-
-This procedure imports metadata into the LoadManagement.Dictionary  table or generates an SQL script for review.
-
-### `[LoadManagement].[spFillTable_Json]`
-
-**Purpose:**
-
-This stored procedure populates a table with data from a JSON file, converting the JSON structure into a tabular format.
-
-**Inputs:**
-
-- `@Collection (NVARCHAR(1024), optional)`: Specifies the JSON collection to be processed.
-
-- `@jsonTable (ttTable_JsonAdf READONLY)`: The table type containing JSON data.
-
-- `@targetSchema (NVARCHAR(1024), optional)`: The schema where the target table will be created.
-
-- `@targetTable (NVARCHAR(1024), optional)`: The name of the target table to be created.
-
-**Outputs:**
-
-This procedure dynamically creates a table based on the JSON structure and populates it with the data.
-
-### `[LoadManagement].[spFillTable_Monday]`
-
-**Purpose:**
-
-This stored procedure processes and maps data from http://Monday.com , transposing columns as necessary and inserting the data into a specified target table.
-
-**Inputs:**
-
-- `@Table (ttTable_Monday READONLY)`: The table type containing http://Monday.com data.
-
-**Outputs:**
-
-This procedure transposes the http://Monday.com data and inserts it into the specified target table.
-
-### `[LoadManagement].[spFindTablesBehindSQL]`
-
-**Purpose:**
-
-This stored procedure identifies all tables referenced by a given SQL query, useful for dependency analysis.
-
-**Inputs:**
-
-- `@SQL (NVARCHAR(MAX))`: The SQL query to analyze.
-
-**Outputs:**
-
-This procedure returns a list of tables that are referenced by the given SQL query.
-
-### `[LoadManagement].[spGenerateTypeMapping]`
-
-**Purpose:**
-
-This stored procedure generates type mappings for source systems, adding them to the LoadManagement.TypeMapping  table if they do not already exist.
-
-**Inputs:**
-
-- `@AppUser (NVARCHAR(4000), default 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure does not return any direct outputs. It updates the LoadManagement.TypeMapping table with any new type mappings found.
-
-### `[LoadManagement].[spGetColumnMapping]`
-
-**Purpose:**
-
-This stored procedure generates a JSON object representing the column mappings between a source and target system, useful for ETL processes.
-
-**Inputs:**
-
-- `@tablename (VARCHAR(256), optional)`: The name of the source table.
-
-- `@schemaname (VARCHAR(256), optional)`: The schema name of the source table.
-
-- `@source (VARCHAR(256), optional)`: The name of the source system.
-
-- `@Target (NVARCHAR(MAX), optional)`: The target system for the mapping.
-
-- `@Pipeline_ID (NVARCHAR(MAX), default 1)`: The ID of the ETL pipeline.
-
-**Outputs:**
-
-This procedure returns a JSON object representing the field mappings for the specified source and target systems.
-
-### `[LoadManagement].[spGetRowCount]`
-
-**Purpose:**
-
-This stored procedure returns the row count of a specified table, with options to get an exact count or a simple check for non-empty status.
-
-**Inputs:**
-
-- `@table (NVARCHAR(1024))`: The name of the table to count rows in.
-
-- `@Exact (BIT)`: Indicates whether to get an exact row count (1) or just check for non-empty status (0).
-
-- `@Active (NCHAR(1), default 0)`: Indicates whether to count only records where isCurrent = 1 .
-
-**Outputs:**
-
-This procedure returns the row count of the specified table.
-
-### `[LoadManagement].[spHIS_InsertAndUpdate]`
-
-**Purpose:**
-
-This stored procedure inserts new records and updates existing records in a History (HIS) table, managing delta loads and maintaining data integrity.
-
-**Inputs:**
-
-- `@Target (NVARCHAR(MAX), optional)`: The target table for the operation.
-
-- `@Pipeline_ID (NVARCHAR(MAX), default 1)`: The ID of the ETL pipeline.
-
-- `@Execute (BIT, default 0)`: Indicates whether to execute the operation or just generate the SQL script.
-
-- `@DeltaColumn (NVARCHAR(MAX), optional)`: The column used to identify delta changes.
-
-- `@TableLoadType (NVARCHAR(MAX), optional)`: The type of table load operation (e.g., DELTA , OVERWRITE , RELOAD ).
-
-**Outputs:**
-
-This procedure updates the target HIS table with new or updated records and logs the operation's status.
-
-### `[LoadManagement].[spHIS_TruncateTable]`
-
-**Purpose:**
-
-This stored procedure truncates or deletes all records from a history table ( HIS ) in a SQL Server database. The specific action depends on whether the table is memory optimized.
-
-**Inputs:**
-
-- `@Target (NVARCHAR(MAX))`: The name of the target table to truncate.
-
-- `@EXECUTE (BIT, default = 1)`: Indicates whether to execute the truncation ( 1 ) or just print the SQL script ( 0 ).
-
-**Outputs:**
-
-This procedure either truncates or deletes records from the specified history table or prints the corresponding SQL script.
+Het schema `LoadManagement` bevat de kern van Yres: de procedures die `STAGE` naar `HIS` mergen (SCD2), de werklast voorbereiden en de metadata onderhouden.
 
 ### `[LoadManagement].[spLoadDWH]`
 
-**Purpose:**
+**Doel:** Het instappunt dat ADF aanroept zodra `STAGE` gevuld is. Het is een **dunne pass-through**: de procedure roept uitsluitend `[LoadManagement].[spHIS_InsertAndUpdate]` aan en geeft de vijf parameters één-op-één door.
 
-This stored procedure triggers the data warehouse loading process by invoking specific procedures for inserting and updating data and updating the ETL end date.
+**Parameters:**
 
-**Inputs:**
+- `@Target (NVARCHAR(MAX), default NULL)`: De doeltabel.
+- `@Pipeline_ID (NVARCHAR(MAX), default 1)`: ID van de ADF-pipeline.
+- `@Execute (BIT, default 0)`: `1` = uitvoeren, `0` = de gegenereerde SQL alleen printen.
+- `@DeltaColumn (NVARCHAR(MAX), default '')`: De kolom voor delta-detectie (lege string als default, niet NULL).
+- `@TableLoadType (NVARCHAR(MAX), default NULL)`: Het laadtype (bijv. `FULL`, `DELTA`).
 
-- `@Target (NVARCHAR(MAX), optional)`: The target table for the data load.
+:::warning Geen aparte end-dating meer
+In oudere documentatie staat dat `spLoadDWH` óók `[LoadManagement].[spUpdateETL_EndDate]` aanroept. Die tweede aanroep is **uitgecommentarieerd** ("Update ETL Enddate not required anymore"). Het end-daten van rijen gebeurt nu binnen `spHIS_InsertAndUpdate` zelf, in het `@LatestRecord`-UPDATE-blok. `spLoadDWH` doet dus niets anders dan doorgeven aan `spHIS_InsertAndUpdate`.
+:::
 
-- `@Pipeline_ID (NVARCHAR(MAX), default = '1')`: The ID of the ETL pipeline.
+### `[LoadManagement].[spHIS_InsertAndUpdate]`
 
-- `@Execute (BIT, default = 0)`: Indicates whether to execute the operations or just generate the SQL script.
+**Doel:** De SCD2-merge-engine — het hart van de laadlogica. Voor één doel resolveert de procedure bron/schema/tabel uit `UsedTables` (met fallback naar `CustomYres.Extractor`), leest `vwDictionary` voor de lees-/schrijf-/verwijderkolommen, berekent de KeyHash/RowHash-kolommen en **bouwt een grote dynamische SQL-string** die — afhankelijk van het laadtype — nieuwe rijen invoegt, gewijzigde/verdwenen rijen afsluit (`isCurrent=0`, `ETL_EndDate`), dedupliceert en in pagina's door `STAGE` heen werkt. Bij `@Execute=1` voert hij die SQL uit (omhuld door `Config.fxAddTryCatch`); anders print hij de SQL via `dbo.spLongPrint`.
 
-- `@DeltaColumn (NVARCHAR(MAX), optional)`: The column used for delta changes.
+**Parameters:** identiek aan `spLoadDWH` (`@Target`, `@Pipeline_ID`, `@Execute`, `@DeltaColumn` (default lege string), `@TableLoadType`).
 
-- `@TableLoadType (NVARCHAR(MAX), optional)`: The type of table load operation (e.g., DELTA , FULL ).
+**Laadtypes (zoals afgeleid uit de code, leidend):** de procedure vertakt expliciet op zes waarden van `@TableLoadType` — **`DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL`** — plus `FULL` als impliciet standaardpad (het niet-speciale pad).
 
-**Outputs:**
+| Laadtype | Gedrag in `spHIS_InsertAndUpdate` | Historie |
+|---|---|---|
+| `FULL` | Standaardpad: insert nieuw, versioneer gewijzigde rijen (sluit oud af), laat de rest open | **bewaard (SCD2)** |
+| `DELTA` | Als FULL maar alleen gewijzigde records; werkt `UsedTables.LatestRecord = MAX(deltaColumn)` bij | bewaard |
+| `DELTAIMAGE` | DELTA + sluit ontbrekende keys binnen het deltavenster | bewaard |
+| `IMAGE` | Volledige snapshot: upsert + sluit **alle** ontbrekende keys (soft-delete) | bewaard |
+| `OVERWRITE` | Truncate HIS eerst via `spHIS_TruncateTable`, daarna alle STAGE-rijen invoegen | **GEEN (truncate)** |
+| `RELOAD` | Sluit eerst alle huidige rijen af, daarna alle STAGE-rijen invoegen | **bewaard (oude generatie afgesloten)** |
+| `ADDITIONAL` | Puur toevoegen (append); werkt ook `LatestRecord` bij | bewaard |
 
-This procedure calls the [LoadManagement].[spHIS_InsertAndUpdate]  and [LoadManagement].[spUpdateETL_EndDate]  procedures, executing or printing their results based on the input parameters.
+:::danger OVERWRITE en RELOAD niet verwisselen
+Alleen **`OVERWRITE` verwijdert historie** (truncate, RowId herstart). **`RELOAD` bewaart historie** (close-then-insert: de oude generatie wordt afgesloten, daarna komen de nieuwe rijen erbij). **`FULL` bewaart óók de volledige SCD2-historie** — alleen `OVERWRITE` truncate't. Oudere documentatie heeft OVERWRITE en RELOAD verwisseld; dat is onjuist.
+:::
 
-### `[LoadManagement].[spMaintainFiles]`
+Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — met literal `OPTIMAL` → `fxGetOptimalPageSize` — en `'retryCount'`, default 3 in de proc). Bij `fxGetSurrogate(@Target)=1` worden surrogate keys in `LoadManagement.SurrogateKeys` ingevoegd. Bij een memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`) draait eerst `spUpdateKeyAndRowHash`. Elke micro-stap schrijft een rij naar `[Monitoring].[LS_Trans]` (bijv. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
 
-**Purpose:**
+### `[LoadManagement].[spPrepareWorkload]`
 
-This stored procedure manages files for import into the data warehouse, supporting actions such as adding, updating, deleting, or deactivating file entries.
+**Doel:** Bereidt de werklast voor één tabel voor door een regel in `[LoadManagement].[LoadLog]` te schrijven (de duurzame status per tabel-load). Door de master-pipeline aangeroepen voordat `vwExtractor` wordt gelezen.
 
-**Inputs:**
-
-- `@action (NVARCHAR(256), default = 'ADD')`: The action to perform (ADD, UPDATE, DELETE, DEACTIVATE).
-
-- `@source (NVARCHAR(256))`: The source of the file data.
-
-- `@schema (NVARCHAR(256))`: The schema name of the file data.
-
-- `@table (NVARCHAR(256))`: The table name associated with the file data. Additional parameters such as @DataPlatform , @loadType , @deltaColumn , etc., define the specific configuration of the file import process.
-
-**Outputs:**
-
-This procedure modifies entries in the LoadManagement.UsedTables  and LoadManagement.UsedColumns  tables based on the specified action.
-
-### `[LoadManagement].`
-
-[spMaintainFilesInDictionary]
-
-**Purpose:**
-
-This stored procedure manages metadata for files in the SQL Server dictionary, including actions to add, update, or delete entries.
-
-**Inputs:**
-
-- `@EXECUTE (BIT, default = 0)`: Indicates whether to execute the SQL script or just print it.
-
-- `@action (NVARCHAR(256))`: The action to perform (ADD, UPDATE, DELETE).
-
-- `@source (NVARCHAR(4000), default = 'FILE')`: The source of the data.
-
-- `@category (NVARCHAR(4000))`: The category of the file data.
-
-- `@table (NVARCHAR(4000))`: The table name associated with the file data.
-
-**Outputs:**
-
-This procedure adds, updates, or deletes entries in the LoadManagement.Dictionary  and LoadManagement.UsedColumns  tables based on the specified action.
-
-### `[LoadManagement].[spMaintainPersistView]`
-
-**Purpose:**
-
-This stored procedure manages the persistence of views in the data warehouse, including actions to add, update, or delete view persistence settings.
-
-**Inputs:**
-
-- `@action (NVARCHAR(256), default = 'ADD')`: The action to perform (ADD, UPDATE, DELETE).
-
-- `@SourceDeltaObjectDB (NVARCHAR(128), optional)`: The database of the source delta object.
-
-- `@SourceDeltaObjectSchemaName (NVARCHAR(128), optional)`: The schema name of the source delta object.
-
-- `@SourceDeltaObjectName (NVARCHAR(128), optional)`: The name of the source delta object.
-
-- `@SourceDeltaObjectType (NVARCHAR(1), optional)`: The type of the source delta object (V = View, T = Table). Additional parameters define the view and table configurations for persistence.
-
-**Outputs:**
-
-This procedure modifies entries in the LoadManagement.ViewPersistence  table based on the specified action.
-
-### `[LoadManagement].[spMaintainRestService]`
-
-**Purpose:**
-
-This stored procedure manages REST services for import into the data warehouse, supporting actions such as adding, updating, deleting, or deactivating service entries.
-
-**Inputs:**
-
-- `@action (NVARCHAR(256), default = 'ADD')`: The action to perform (ADD, UPDATE, DELETE, DEACTIVATE).
-
-- `@source (NVARCHAR(256))`: The source of the REST service.
-
-- `@service (NVARCHAR(256))`: The name of the REST service.
-
-- `@endpoint (NVARCHAR(256))`: The endpoint of the REST service. Additional parameters such as @DataPlatform , @loadType , @keepStage , etc., define the specific configuration of the REST service import process.
-
-**Outputs:**
-
-This procedure modifies entries in the LoadManagement.UsedTables  and LoadManagement.UsedColumns  tables based on the specified action.
-
-### `[LoadManagement].[spMaintainSource]`
-
-**Purpose:**
-
-This stored procedure manages data sources in the data warehouse, supporting actions such as adding, updating, deleting, or deactivating source entries.
-
-**Inputs:**
-
-- `@action (NVARCHAR(256), default = 'ADD')`: The action to perform (ADD, UPDATE, DELETE, DEACTIVATE).
-
-- `@source (NVARCHAR(256))`: The name of the data source.
-
-- `@sourceType (NVARCHAR(256), optional)`: The type of the data source (e.g., database, API).
-
-- `@AppUser (NVARCHAR(4000), default = 'Unknown')`: The username of the person executing the procedure.
-
-**Outputs:**
-
-This procedure modifies entries in the LoadManagement.SourceSystems  table based on the specified action.
-
-### `[LoadManagement].[spMaintainTable]`
-
-**Purpose:**
-
-This stored procedure manages tables in the data warehouse, supporting actions such as adding, updating, or deleting table entries.
-
-**Inputs:**
-
-- `@action (NVARCHAR(256), default = 'ADD')`: The action to perform (ADD, UPDATE, DELETE).
-
-- `@source (NVARCHAR(256))`: The source of the table data.
-
-- `@schema (NVARCHAR(256))`: The schema name of the table data.
-
-- `@table (NVARCHAR(256))`: The table name associated with the data. Additional parameters such as @DataPlatform , @fieldList , @loadType , etc., define the specific configuration of the table management process.
-
-**Outputs:**
-
-This procedure modifies entries in the LoadManagement.UsedTables , LoadManagement.UsedColumns , and other related tables based on the specified action.
-
-### `[LoadManagement].[spMaintainTrigger]`
-
-**Purpose:**
-
-The specific purpose of this stored procedure is not provided, but typically a spMaintainTrigger procedure would be used to manage database triggers (adding, updating, or deleting them) based on specific requirements.
-
-**Inputs:**
-
-The inputs for this procedure are not provided in the script.
-
-**Outputs:**
-
-The outputs for this procedure are not provided in the script.
-
-### `[LoadManagement].[spMaintainTrigger]`
-
-**Purpose:**
-
-To manage triggers for tables within the LoadManagement  schema. This includes adding new triggers or deleting existing ones based on the provided parameters.
-
-**Inputs:**
-
-- @action : The action to perform ( ADD or DELETE ).
-
-- @source : The source name (can specify "all" for all sources).
-
-- @schema : The schema name (can specify "all" for all schemas).
-
-- @Table : The table name (can specify "all" for all tables).
-
-- @Trigger : The trigger name (used with DELETE action; "ALL" can be used to delete all triggers for a specific table).
-
-- @AppUser : The user performing the action.
-
-**Outputs:**
-
-No explicit outputs, but the procedure logs actions and errors using [Config]. [spWriteMessage] , [Config].[spWriteError] , and [Config]. [spWriteWarning] .
-
-### `[LoadManagement].[spMaterializeViews]`
-
-**Purpose:**
-
-To load or materialize views into tables according to the trigger mapping defined in [LoadManagement].[TriggerMapping] . The procedure automates the data loading process based on the triggers defined.
-
-**Inputs:**
-
-- @WorkFlow : Identifier for the workflow.
-
-- @PipelineName : Name of the pipeline.
-
-- @Trigger : Name of the trigger that initiates the load.
-
-- @ISource : Source name (can be 'AUTO' to auto-detect or 'ALL').
-
-- @ISchema : Schema name (can be 'ALL').
-
-- @IView : View name (can be 'ALL').
-
-- @EXECUTE : Flag (1 or 0) indicating whether to execute the load or just print the SQL commands.
-
-**Outputs:**
-
-No direct outputs. The procedure logs the status and progress of the load using [Monitoring].[spWriteLoadStatus] .
-
-### `[LoadManagement].`
-
-[spMaterializeViewToTable]
-
-**Purpose:**
-
-To materialize a specific view into a corresponding table. It handles the transfer of data from the view to the table and supports both full and delta loads.
-
-**Inputs:**
-
-- @SourceSchemaName : The schema of the source view.
-
-- @SourceViewName : The name of the source view.
-
-- @execute : Flag (1 or 0) indicating whether to execute the materialization.
-
-- @rows : Output parameter to capture the number of rows affected.
-
-**Outputs:**
-
-Outputs the number of rows affected by the materialization process.
+**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (alle `NVARCHAR(1024)`), `@execute (INT, default 1)`.
 
 ### `[LoadManagement].[spPrepareCopy]`
 
-**Purpose:**
+**Doel:** Bereidt het kopiëren/laden voor: truncate't stagingtabellen, doet mapping-lookups en start het laadproces. Logt status en fouten via `[Monitoring].[spWriteLoadStatus]`.
 
-To prepare for the copying or loading of data by truncating staging tables, looking up mappings, and initiating the load process.
+**Parameters:** `@PipelineID`, `@Process`, `@Step`, `@Status`, `@Rows (BIGINT)`, `@WorkflowID`, `@PipelineName`, `@Started_by`, `@Target`, `@Source_system`, `@Table`, `@Schema`, `@LoadType`, **`@LatestRecord`**, `@ETL_Date (DATETIME)` (de tekstparameters zijn `NVARCHAR(255)`).
 
-**Inputs:**
+### `[LoadManagement].[spMaterializeViews]`
 
-Various parameters for pipeline identification, process steps, and target tables such as
-- @PipelineID , @Process , @Step , @Status , @Rows , @WorkflowID ,
-- @PipelineName , @Started_by , @Target , @Source_system , @Table , @Schema ,
-- @LoadType , @LapageRecord , and @ETL_Date .
+**Doel:** Materialiseert views naar tabellen op basis van de trigger-mapping in `[LoadManagement].[TriggerMapping]`. Logt voortgang via `[Monitoring].[spWriteLoadStatus]`.
 
-**Outputs:**
+**Parameters:** `@WorkFlow`, `@PipelineName`, `@Trigger`, `@ISource` ('AUTO' of 'ALL'), `@ISchema` ('ALL' mogelijk), `@IView` ('ALL' mogelijk) (alle `NVARCHAR(255)`), `@EXECUTE (BIT, default 1)`.
 
-No direct outputs. Logs load status and any errors encountered during the preparation process using [Monitoring].[spWriteLoadStatus] .
+### `[LoadManagement].[spMaterializeViewToTable]`
 
-### `[LoadManagement].`
+**Doel:** Materialiseert één specifieke view naar de bijbehorende tabel; ondersteunt full- en delta-loads. Geeft het aantal verwerkte rijen terug.
 
-[spRegenerateSurrogateKeys]
+**Parameters:** `@SourceSchemaName (SYSNAME)`, `@SourceViewName (SYSNAME)`, `@execute (BIT)`, `@rows` (output, aantal verwerkte rijen).
 
-**Purpose:**
+### `[LoadManagement].[spHIS_TruncateTable]`
 
-To regenerate surrogate keys for a specified source table. This procedure is typically used when there
+**Doel:** Truncate't of verwijdert alle records uit een history-tabel (`HIS`). Of er getruncate't of gedelete't wordt, hangt af van of de tabel memory-optimized is. Aangeroepen door `OVERWRITE`-loads.
 
-are changes in the source data that require re-generating the unique identifiers (surrogate keys) for historical tables.
+**Parameters:** `@Target (NVARCHAR(MAX))`, `@EXECUTE (BIT, default 1)`.
 
-**Inputs:**
+### `[LoadManagement].[spSTAGE_TruncateTable]`
 
-- @Source : The name of the data source.
+**Doel:** Leegt één stagingtabel na een load (tenzij `keepStage=1`).
 
-- @SourceSchema : The schema of the source table.
+**Parameters:** `@Target (NVARCHAR(MAX), default NULL)`, `@Pipeline_ID (NVARCHAR(MAX), default 1)`, `@EXECUTE (BIT, default 1)`.
 
-- @SourceTable : The name of the source table.
+### `[LoadManagement].[spSTAGE_TruncateAll]`
 
-- @Execute : Flag (1 or 0) indicating whether to execute the regeneration.
+**Doel:** Leegt alle stagingtabellen ineens.
 
-- @AppUser : The user initiating the procedure.
+**Parameters:** `@execute (BIT, default 0)`.
 
-**Outputs:**
+### `[LoadManagement].[spTruncate]`
 
-No direct outputs. The procedure generates and logs messages related to the regeneration process.
+**Doel:** Verwijdert (binnen een transactie) alle data uit een opgegeven doeltabel.
+
+**Parameters:** `@Execute (BIT, default 1)`, `@Target (NVARCHAR(4000))`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
+
+### `[LoadManagement].[spRollback]`
+
+**Doel:** Rolt de delta van een HIS-tabel terug naar een specifiek tijdstip. Onderdeel van de "rollback per load"-functionaliteit.
+
+**Parameters:** `@Execute (BIT, default 0)`, `@HIS_TABLE (NVARCHAR(1024))`, `@DateTime (DATETIME2)`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
+
+### `[LoadManagement].[spReset]`
+
+**Doel:** Reset een HIS-tabel (of alle tabellen) naar de beginstaat van de delta-administratie.
+
+**Parameters:** `@Execute (BIT, default 0)`, `@HIS_TABLE (NVARCHAR(1024), default NULL)`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
+
+### `[LoadManagement].[spUpdateETL_EndDate]`
+
+**Doel:** Werkt de `ETL_EndDate` van afgesloten rijen bij. Bestaat nog als zelfstandige procedure maar wordt **niet langer aangeroepen door `spLoadDWH`** (zie de waarschuwing daar); het end-daten zit nu in `spHIS_InsertAndUpdate`.
+
+### `[LoadManagement].[spUpdateLatestDelta]`
+
+**Doel:** Werkt het "Latest record" (de delta-watermark) bij in alle deltatabellen, of in één opgegeven ODS-tabel.
+
+**Parameters:** `@Execute (BIT, default 0)`, `@ODS_TABLE (NVARCHAR(1024), default NULL)`.
+
+### `[LoadManagement].[spUpdateKeyAndRowHash]` / `[spUpdateKeyAndRowHash_ODS]`
+
+**Doel:** (Her)berekent de `KeyHash`- en `RowHash`-kolommen voor STAGE (of de ODS-variant). Wordt vóór de merge gedraaid wanneer STAGE memory-optimized is.
+
+**Parameters (`spUpdateKeyAndRowHash`):** `@Execute (BIT, default 0)`, `@Source (NVARCHAR(MAX))`, `@Schema (NVARCHAR(MAX))`, `@Table (NVARCHAR(MAX))`.
+
+### `[LoadManagement].[spGetRowCount]`
+
+**Doel:** Geeft het aantal rijen van een tabel terug, met de keuze tussen een exact aantal en een geschatte waarde.
+
+**Parameters:**
+
+- `@table (NVARCHAR(1024))`: De te tellen tabel.
+- `@Exact (BIT, default NULL)`: **`NULL` (default) = geschatte grootte teruggeven**; `1` = exact tellen; `0` = alleen controleren of de tabel niet leeg is.
+- `@Active (NCHAR(1), default 0)`: `1` = alleen records met `isCurrent = 1` tellen.
+
+### `[LoadManagement].[spRegenerateSurrogateKeys]`
+
+**Doel:** Genereert surrogate keys voor een brontabel opnieuw, doorgaans na brongegevenswijzigingen.
+
+**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@Execute`, `@AppUser`.
+
+### `[LoadManagement].[spCheckKeyAndRowHash]`
+
+**Doel:** Controleert de integriteit van key- en row-hashes; vergelijkt staging- en history-data en rapporteert inconsistenties.
+
+**Parameters:** `@EXECUTE (BIT, default 0)`, `@Source (NVARCHAR(MAX))`, `@Schema (NVARCHAR(MAX))`, `@Table (NVARCHAR(MAX))`, `@sampleSize (NVARCHAR(MAX), default 10)`.
+
+### `[LoadManagement].[spGenerateTypeMapping]`
+
+**Doel:** Genereert ontbrekende type-mappings voor bronsystemen en voegt ze toe aan `LoadManagement.TypeMapping` (additief — bestaande mappings blijven ongemoeid).
+
+**Parameters:** `@AppUser (NVARCHAR(4000), default 'Unknown')`.
+
+### `[LoadManagement].[spGetColumnMapping]`
+
+**Doel:** Bouwt een JSON-object met de kolom-mappings tussen bron en doel, gebruikt in het ETL-proces.
+
+**Parameters:** `@tablename`, `@schemaname`, `@source` (`VARCHAR(256)`, optioneel), `@Target (NVARCHAR(MAX))`, `@Pipeline_ID (NVARCHAR(MAX), default 1)`.
+
+### `[LoadManagement].[spFillDictionary_AFAS]` / `[spFillDictionary_oDATA]`
+
+**Doel:** Importeren metadata van een AFAS- respectievelijk OData-bron in `LoadManagement.Dictionary` (kolommen + datatypes).
+
+**Parameters (AFAS):** `@input (ttDictionary_AFAS READONLY)`, `@source (NVARCHAR(1024))`, `@EXECUTE (BIT, default 1)`. **OData** voegt `@schema (NVARCHAR(1024), default 'API')` toe.
+
+### `[LoadManagement].[spFillTable_Json]` / `[spFillTable_Monday]`
+
+**Doel:** Vullen een doeltabel met data uit JSON respectievelijk Monday.com, waarbij de structuur naar tabelvorm wordt omgezet.
+
+**Parameters (`spFillTable_Json`):** `@Collection (NVARCHAR(1024))`, `@jsonTable (ttTable_JsonAdf READONLY)`, `@targetSchema`, `@targetTable`. **`spFillTable_Monday`:** `@Table (ttTable_Monday READONLY)`.
+
+### `[LoadManagement].[spFindTablesBehindSQL]`
+
+**Doel:** Bepaalt welke tabellen een SQL-query gebruikt (dependency-analyse).
+
+**Parameters:** `@SQL (NVARCHAR(MAX))`.
+
+### De `spMaintain*`-familie
+
+Deze procedures schrijven de metadata waarmee de laadmachine werkt (in `LoadManagement.UsedTables`, `UsedColumns`, `SourceSystems`, `ViewPersistence`, enz.). Ze worden vanuit de webapp aangeroepen wanneer je bronnen, tabellen, bestanden of triggers beheert. Allemaal ondersteunen ze een `@action`-parameter (`ADD`, `UPDATE`, `DELETE`, soms `DEACTIVATE`).
+
+| Procedure | Doel (kort) |
+|---|---|
+| `[LoadManagement].[spMaintainSource]` | Beheert databronnen in `SourceSystems` (`@action`, `@source`, `@sourceType`, `@AppUser`). |
+| `[LoadManagement].[spMaintainTable]` | Beheert tabellen (`UsedTables`/`UsedColumns`); veel extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …). |
+| `[LoadManagement].[spMaintainFiles]` | Beheert bestandsbronnen voor import. |
+| `[LoadManagement].[spMaintainRestService]` | Beheert REST-service-endpoints (`@service`, `@endpoint`, …). |
+| `[LoadManagement].[spMaintainTrigger]` | Beheert triggers per bron/schema/tabel (`@action` = `ADD`/`DELETE`; `"all"`/`"ALL"` mogelijk). |
+| `[LoadManagement].[spMaintainPersistView]` | Beheert view-persistentie in `ViewPersistence`. |
+| `[LoadManagement].[spMaintainFilesInDictionary]` | Beheert bestand-metadata in `Dictionary`/`UsedColumns`. |
+| `[LoadManagement].[spMaintainRestInDictionary]` | Beheert REST-metadata in de dictionary. |
+
+---
+
+## Config — instellingen, logging en DB-tuning
+
+### `[Config].[spAddFrameWorkColumns]`
+
+**Doel:** Voegt de framework-kolommen (`ETL_Date`, `KeyHash`, `RowHash`) toe aan een stagingtabel.
+
+**Parameters:** `@Execute (BIT, default 0)`, `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
+
+### `[Config].[spCreateTablesFromDictionary]` / `[spUpdateTablesFromDictionary]` / `[spDeleteTablesFromDB]` / `[spCreateExternalTablesFromDictionary]`
+
+**Doel:** Creëren, bijwerken, verwijderen of als external table genereren van DWH-tabellen op basis van de dictionary-metadata.
+
+**Parameters (gedeeld):** `@Execute (BIT, default 0)`, `@SelectedSource`, `@SelectedSchema`, `@SelectedTable` (alle `NVARCHAR(MAX), default 'NoneSelected'`), `@AppUser`. `spUpdateTablesFromDictionary` voegt toe: `@Methods` (`ADD`/`REMOVE`/`UPDATE`), `@Stage (BIT)`, `@HIS (BIT)`.
+
+### `[Config].[spCompareMetadata]`
+
+**Doel:** Vergelijkt de actuele metadata met de opgeslagen metadata en vult `Config.MetadataComparison` met de verschillen (ontbrekende/verwijderde kolommen, type-mismatches). Geen parameters.
+
+### `[Config].[spEnableColumnstore]`
+
+**Doel:** Schakelt een columnstore-index in op bestaande tabellen voor snellere analytische queries.
+
+**Parameters:** `@Execute (BIT)`, `@Schema (NVARCHAR(50), default 'BOTH')` (`HIS`, `STAGE` of `BOTH`), `@Table (NVARCHAR(1024))`.
+
+### `[Config].[spEnableMemoryOptimization]`
+
+**Doel:** Zet memory-optimization aan in de database (voegt een `MEMORY_OPTIMIZED_DATA`-filegroup toe).
+
+**Parameters:** `@Execute (BIT, default 1)`.
+
+### `[Config].[spApplyDbSettings]`
+
+**Doel:** Past de database-instellingen toe die in `Config.Settings` staan (o.a. collatie/case-sensitivity).
+
+**Parameters:** `@overwriteProcessID (UNIQUEIDENTIFIER, default NULL)`.
+
+### `[Config].[spSetDatabaseParameter]`
+
+**Doel:** Zet één database-parameter op een waarde.
+
+**Parameters:** `@Execute (BIT, default 0)`, `@Parameter (NVARCHAR(256))`, `@Setting (NVARCHAR(256))`.
+
+### `[Config].[spSetDatabaseServiceTier]`
+
+**Doel:** Wijzigt de Azure SQL service tier (schaalt de database op/af). Aangeroepen in de master-pipeline rond een load.
+
+**Parameters:** `@toTier (NVARCHAR(250), default 'Default')`, `@requestor (NVARCHAR(1024), default 'Unknown')`, `@AppUser (NVARCHAR(1024), default '')`, `@EXECUTE (BIT, default 1)`.
+
+### `[Config].[spUpdateRefreshToken]`
+
+**Doel:** Werkt de refresh- en access-tokens in de tokens-tabel bij (voor API-authenticatie).
+
+**Parameters:** `@Source (NVARCHAR(4000))`, `@RefreshToken (NVARCHAR(4000))`, `@AccessToken (NVARCHAR(4000))`, `@ExpirationTime (INT, default 10)`.
+
+### `[Config].[spFillServices_SAC]`
+
+**Doel:** Importeert SAC (SAP Analytics Cloud)-providers in de services-tabel.
+
+**Parameters:** `@input (ttServices_SAC READONLY)`, `@source (NVARCHAR(1024))`, `@Execute (BIT, default 1)`.
+
+### `[Config].[spGetDependenciesSQL]`
+
+**Doel:** Analyseert een `SELECT`-statement en bepaalt welke tabellen/views/objecten het gebruikt.
+
+**Parameters:** `@SQL (NVARCHAR(MAX))`.
+
+### `[Config].[spGenerateDbreader]`
+
+**Doel:** (Her)bouwt de databaserol **`Yres_dbreader`**: dropt en hercreëert de rol, voegt hem toe aan `db_datareader`, en plaatst vervolgens `DENY`-statements op interne schema's/objecten plus `DENY INSERT/UPDATE/DELETE` op het HIS-schema (`Config.fxGetSetting('SchemaHIS')`). Bestaande rolleden worden opnieuw toegevoegd. **Geen parameters.**
+
+### De `Config.spWrite*`-loggingfamilie
+
+Alle hieronder schrijven naar `Config.ProcessLog`. De "message-klasse" schrijvers (`spWriteMessage`, `spWriteWarning`) delen een identiek **10-parameter-blok**.
+
+#### `[Config].[spWriteMessage]` en `[Config].[spWriteWarning]`
+
+**Doel:** Loggen respectievelijk een informatieboodschap en een waarschuwing. Het `returnCode`-niveau zit hard in de procedure, dus is géén parameter.
+
+**Parameters (10, identiek voor beide):**
+
+- `@processID (UNIQUEIDENTIFIER)`
+- `@spName (NVARCHAR(4000))`
+- `@spStep (NVARCHAR(4000))`
+- `@spCall (NVARCHAR(MAX))`
+- `@appUser (NVARCHAR(4000))`
+- `@message1 (NVARCHAR(4000))`
+- `@message2 (NVARCHAR(4000), default NULL)`
+- `@message3 (NVARCHAR(4000), default NULL)`
+- `@message4 (NVARCHAR(4000), default NULL)`
+- `@dbRequest (NVARCHAR(MAX), default NULL)`
+
+:::info Eén `spWriteMessage`, niet twee
+Oudere documentatie bevatte twee tegenstrijdige beschrijvingen van `spWriteMessage` (een 6-param- en een 10-param-versie). De live procedure heeft het **10-parameter-blok** hierboven.
+:::
+
+#### `[Config].[spWriteError]`
+
+**Doel:** Logt een fout naar `Config.ProcessLog`.
+
+**Parameters:** het 10-parameter-blok van `spWriteMessage` **plus** de foutvelden `@errorLine (INT, default NULL)`, `@errorMessage (NVARCHAR(4000), default NULL)`, `@errorNumber (INT, default NULL)`, **`@errorPrecedure (NVARCHAR(4000), default NULL)`**, `@errorSeverity (INT, default NULL)`, `@errorState (INT, default NULL)`.
+
+:::note `errorPrecedure` is geen typefout in de wiki
+De kolom/parameter heet zowel in de procedure als in de `ProcessLog`-tabel letterlijk `errorPrecedure` (sic). Laat de spelling zo staan.
+:::
+
+#### `[Config].[spWriteLog]`, `[spWriteFullLog]`, `[spWriteCrash]`, `[spWriteDump]`
+
+**Doel:** Schrijven uitgebreidere logregels naar `Config.ProcessLog`. `spWriteLog` logt berichten/waarschuwingen/fouten met een expliciete `@ReturnCode`; `spWriteFullLog` bevat het volledige veldenpalet (incl. `@CallSource`, `@DbUser`, `@DbServer`, `@DbName`); `spWriteCrash` en `spWriteDump` leggen gedetailleerde fout-/dumpinformatie vast bij vastlopers. Ze delen de proces-/stap-/bericht-/foutvelden van `spWriteError`.
+
+---
+
+## Change — DTAP-wijzigingsbeheer
+
+Het schema `Change` ondersteunt het overzetten van wijzigingen tussen omgevingen (dev → test → prod) via projecten en changes.
+
+### `[Change].[spMaintainProject]`
+
+**Doel:** Beheert projecten (toevoegen, bijwerken, verwijderen).
+
+**Parameters:** `@Action (NVARCHAR(256), default 'ADD')`, `@Name (NVARCHAR(1024), default '')`, `@Description (NVARCHAR(MAX), default 'No description')`, `@DueDate (DATE, default NULL)`, `@Status (INT, default 1)`, `@AppUser (NVARCHAR(4000), default 'Unknown')`, `@Id (INT, default -1)`.
+
+### `[Change].[spMaintain]`
+
+**Doel:** Beheert changes (toevoegen, bijwerken, verwijderen) binnen het wijzigingsbeheer.
+
+**Parameters:** dezelfde set als `spMaintainProject` (`@Action`, `@Name`, `@Description`, `@Project (INT, default NULL)`, `@DueDate`, `@Status`, `@AppUser`, `@Id`).
+
+### `[Change].[spAddTable]`
+
+**Doel:** Voegt een tabel met bijbehorende metadata (kolommen, keys, datatypes) toe aan een bestaande change; beheert dependencies en bewaakt dat er geen conflicterende actieve changes zijn.
+
+**Parameters:** `@ChangeID (INT)`, `@Source (NVARCHAR(1024))`, `@Schema (NVARCHAR(1024))`, `@Table (NVARCHAR(1024))`, `@appUser (NVARCHAR(MAX), default 'Unknown')`, `@OverwriteProcessID (UNIQUEIDENTIFIER, default NULL)`.
+
+### `[Change].[spAddScriptedObject]`
+
+**Doel:** Voegt een scripted object (procedure, function, trigger, view, tabel) toe aan een change en houdt het object plus dependencies bij.
+
+**Parameters:** `@ChangeID (INT)`, `@ObjectType (NVARCHAR(5))` (bijv. `'P'`, `'FN'`), `@ObjectName (NVARCHAR(4000))`, `@Delete (BIT, default 0)`, `@AddDependencies (BIT, default 1)`, `@IgnoreYresObjects (BIT, default 1)`, `@appuser (NVARCHAR(512))`, `@OverwriteProcessID (UNIQUEIDENTIFIER, default NULL)`.
+
+### `[Change].[spCopyTableContent]`
+
+**Doel:** Kopieert data van een bron- naar een doeltabel, met optionele kolom-mapping en -casting (handig bij vergelijkbare maar niet identieke structuren).
+
+**Parameters:** `@SourceTable (NVARCHAR(256))`, `@TargetTable (NVARCHAR(256))`, `@Execute (BIT, default 0)`.
+
+### `[Change].[spImport]`
+
+**Doel:** Importeert changes die als JSON zijn aangeleverd in het wijzigingsbeheer (changes, projecten, content, dependencies).
+
+**Parameters:** `@JSON (NVARCHAR(MAX))`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
+
+### `[Change].[spInstall]`
+
+**Doel:** Installeert een change in het doelsysteem, met de keuze tussen uitvoeren, SQL printen of een impactanalyse.
+
+**Parameters:** `@ChangeID (NVARCHAR(1024))`, `@Execute (INT, default 2)` (**1** = uitvoeren, **0** = SQL printen, **2** = impactanalyse), `@AppUser (NVARCHAR(4000), default 'Unknown')`, `@CommitPartial (BIT, default 0)`.
+
+### `[Change].[spRelease]`
+
+**Doel:** Geeft een change vrij (release): valideert dependencies, werkt de status bij en logt het releaseproces.
+
+**Parameters:** `@ChangeId (INT)`, `@UseLatestVersion (BIT, default 1)` (of de meest recente versie van de objecten in de change wordt gebruikt), `@AppUser (NVARCHAR(1024))`.
+
+### `[Change].[spDeleteObject]`
+
+**Doel:** Markeert/verwijdert een object binnen een change. (De live procedure is in deze release een lege stub met alleen een headercommentaar; de werkende verwijderlogica loopt via `spAddScriptedObject` met `@Delete=1`.)
+
+---
+
+## Monitoring — laadstatus-logging
 
 ### `[Monitoring].[spWriteLoadStatus]`
 
-**Purpose:**
+**Doel:** De centrale laadstatus-logger. Op `@Step IN ('Start workflow','Start load')` schrijft hij een rij in `Monitoring.LS_Pipeline` en zet hij de bijbehorende `LoadManagement.LoadLog.LoadStatus` op `RUNNING`. **Elke** aanroep schrijft een rij in `Monitoring.LS_Trans`. Op `@Status IN ('Success','Succeeded')` wordt `LoadLog` → `SUCCEEDED`; op `('Failed','Fail','Error')` → `FAILED` (met `@Log` toegevoegd aan `LoadLog.Error`).
 
-This stored procedure is designed to log the status and details of data load processes within the system. It helps in tracking the progress of ETL (Extract, Transform, Load) workflows by recording key steps, their status, and any relevant messages or errors.
+**Parameters (16):**
 
-**Inputs:**
+- `@PipelineID (NVARCHAR(255))`
+- `@Process (NVARCHAR(255), default NULL)`
+- `@Step (NVARCHAR(255), default NULL)`
+- `@Status (NVARCHAR(255), default NULL)`
+- `@Rows (BIGINT, default NULL)`
+- `@WorkflowID (NVARCHAR(255), default NULL)`
+- `@PipelineName (NVARCHAR(255), default NULL)`
+- `@Started_by (NVARCHAR(255), default NULL)`
+- `@Target (NVARCHAR(255), default NULL)`
+- `@Source_system (NVARCHAR(255), default NULL)`
+- `@Table (NVARCHAR(255), default NULL)`
+- `@Schema (NVARCHAR(255), default NULL)`
+- `@LoadType (NVARCHAR(255), default NULL)`
+- **`@LatestRecord (NVARCHAR(255), default NULL)`**
+- `@ETL_Date (DATETIME, default NULL)`
+- `@Log (NVARCHAR(MAX), default 'No details provided')`
 
-- `@PipelineID (NVARCHAR(255))`: A unique identifier for the pipeline being executed.
+:::note Robuust ontwerp
+Alle boekhoudkundige writes staan in een `TRY/CATCH` en zijn best-effort: een mislukte monitoring-write mag de load van de aanroeper nooit breken. De bewuste `RAISERROR` voor `@Status IN ('Failed','Fail','Error')` staat juist **buiten** de TRY, zodat echte laadfouten altijd in ADF zichtbaar worden. Bij `@PipelineID='UNKNOWN'` wordt het echte PipelineID uit `LS_Pipeline` (laatste 24 uur, op Target+LoadType) opgelost; bij `@WorkflowID IS NULL` wordt het via `SELECT TOP 1` afgeleid.
+:::
 
-- `@Process (NVARCHAR(255), default NULL)`: The name or description of the process within the pipeline.
+### `[Monitoring].[spDeleteDuplicatesInAdfMonitor]`
 
-- `@Step (NVARCHAR(255), default NULL)`: The specific step within the process being logged.
+**Doel:** Verwijdert dubbele records uit `Monitoring.AdfLoadMonitor` (de ADF-load haalt alle beschikbare monitoringrecords op; daarna blijft per `id` alleen de meest recente staan). Geen parameters.
 
-- `@Status (NVARCHAR(255), default NULL)`: The current status of the step (e.g., 'Running', 'Completed', 'Failed').
+### `[Monitoring].[spWhoIsActive]`
 
-- `@Rows (BIGINT, default NULL)`: The number of rows affected or processed in this step.
+**Doel:** Toont de actuele actieve sessies/queries op de database (de bekende `sp_WhoIsActive`-diagnostiek). Voor ad-hoc troubleshooting.
 
-- `@WorkflowID (NVARCHAR(255), default NULL)`: An identifier for the overall workflow being executed.
+---
 
-- `@PipelineName (NVARCHAR(255), default NULL)`: The name of the pipeline.
+## Maintenance — onderhoud en health checks
 
-- `@Started_by (NVARCHAR(255), default NULL)`: The user or system that initiated the process.
+Dit schema bevat onderhoudsroutines en de health-check-implementatie. De health-check-resultaten zijn te raadplegen via de view `[Maintenance].[vwYresChecks]` (de bronfile heet nog `vwIrisChecks.sql`).
 
-- `@Target (NVARCHAR(255), default NULL)`: The target system or table being loaded.
+### `[Maintenance].[spImplementSolution]`
 
-- `@Source_system (NVARCHAR(255), default NULL)`: The source system from which data is being extracted.
+**Doel:** Past automatisch een door de health-check-view (`[Maintenance].[vwYresChecks]`) voorgestelde fix toe.
 
-- `@Table (NVARCHAR(255), default NULL)`: The specific table being loaded.
+**Parameters:** `@SolutionID (NVARCHAR(512))`, `@AppUser (NVARCHAR(1024))`.
 
-- `@Schema (NVARCHAR(255), default NULL)`: The schema of the table being loaded.
+### `[Maintenance].[spDatabaseRestore]`
 
-- `@LoadType (NVARCHAR(255), default NULL)`: The type of load being performed (e.g., 'Full', 'Delta').
+**Doel:** Voert een database-restore uit (onderdeel van back-up/restore-onderhoud).
 
-- `@LapageRecord (NVARCHAR(255), default NULL)`: The identifier or timestamp of the lapage record processed.
+### Onderhouds- en diagnostiekprocedures (third-party)
 
-- `@ETL_Date (DATETIME, default NULL)`: The date and time when the ETL process occurred.
+De volgende procedures zijn breed bekende SQL-Server-onderhouds- en diagnostiektools die in `IRIS_DWH` zijn meegeleverd. Je gebruikt ze read-only voor diagnose; ze worden door Yres niet vanuit de webapp aangestuurd.
 
-- `@Log (NVARCHAR(max), default 'No details provided')`: A log message or additional details about the process or step.
+| Procedure | Doel |
+|---|---|
+| `[Maintenance].[spAdaptiveIndexDefrag]` | Adaptieve index- en statistieken-defragmentatie. |
+| `[Maintenance].[spBlitz]`, `spBlitzFirst`, `spBlitzCache`, `spBlitzIndex`, `spBlitzQueryStore`, `spBlitzWho`, `spBlitzBackups`, `spBlitzAnalysis` | De "Blitz"-diagnostiekfamilie: gezondheid, knelpunten, indexen, querystore, actieve sessies en back-upcontrole. |
+| `[Maintenance].[spAllNightLog]`, `spAllNightLog_Setup` | Continue log-back-uproutine. |
+| `[Maintenance].[spInEachDb]` | Voert een commando uit in elke database. |
 
-**Outputs:**
+---
 
-No direct output. The procedure inserts logs into LS_Pipeline  and LS_Trans  tables to record the process details and status. Additional Logic: If the @Step  is 'Start workflow' or 'Start load', it inserts a record into the LS_Pipeline  table with basic details about the workflow or load. Every step is logged in the LS_Trans  table. If the status is 'Failed', 'Fail', or 'Error', it raises an error with the logged message.
+## Expose — rapportagelaag en RBAC
 
-### `config.spGenerateDbreader`
+Het schema `Expose` beheert de rapportageobjecten en de toegang daarop (gebruikers, rollen, rol-toewijzingen).
 
-**Purpose:**
+### `[Expose].[spMaintainObjects]`
 
-This stored procedure dynamically generates and configures the Yres_dbreader  database role in SQL Server. The role is designed to have specific read permissions while denying other actions on certain schemas and objects. Detailed Description: The procedure checks if the Yres_dbreader  role already exists in the database. If it does, the role is dropped and recreated. The procedure then assigns this role to the db_datareader  role, granting it select permissions on all objects by default. However, it explicitly denies select, insert, update, and delete permissions on various schemas and objects to ensure restricted access. Additionally, any members of existing roles are added to the Yres_dbreader  role to maintain role memberships.
+**Doel:** Dropt en (her)creëert rapportageobjecten (views/tabellen) in de exposed laag, met het gewenste service-type en datamodel-vorm.
 
-**Inputs:**
+**Parameters:** `@Action (NVARCHAR(20))` (`ADD`/`UPDATE`/`DELETE`), `@Schema`, `@Name`, `@type` (`[View]`/`[Table]`), `@ServiceTypes` (`[ODATA]`/`[SQL]`), `@DataType` (`[None]`/`[FACT]`/`[DIM1]`/`[DIM2]`/`[DIM4]`), `@AppUser`, `@execute (INT, default 0)`.
 
-There are no input parameters for this procedure.
+### `[Expose].[spRebuildObjects]`
 
-**Outputs:**
+**Doel:** Herbouwt alle rapportageobjecten ineens.
 
-The procedure dynamically generates and executes SQL commands that configure the Yres_dbreader  role with specific permissions and memberships. Procedure Logic:
+**Parameters:** `@AppUser (NVARCHAR(4000))`, `@execute (INT, default 0)`.
 
-1. Variable Declarations:
+### `[Expose].[spMaintainRoles]`
 
-- `@SQL (NVARCHAR(MAX))`: Holds the dynamically generated SQL query.
+**Doel:** Beheert rapportagerollen (toevoegen, hernoemen, verwijderen).
 
-- `@Schema (NVARCHAR(1024))`: Stores the schema name retrieved using the Config.fxGetSetting function with 'SchemaHIS' as the key. 2. Role Existence Check: The procedure checks if the Yres_dbreader role already exists using the DATABASE_PRINCIPAL_ID function. If the role exists, it appends a command to drop the existing role to the @SQL variable. 3. Role Creation and Configuration: The procedure appends commands to create the Yres_dbreader role and assigns it to the db_datareader role. The procedure then appends multiple DENY statements to restrict select permissions on specified schemas and objects. Additionally, DENY INSERT , UPDATE , and DELETE permissions are appended for the schema stored in @Schema . 4. Role Membership Configuration: The procedure dynamically adds existing role members to the Yres_dbreader role by querying sys.database_role_members and sys.database_principals to find relevant roles and members. 5. Execution of Dynamic SQL: The final SQL query stored in the @SQL variable is executed using the EXEC command.
+**Parameters:** `@Action (NVARCHAR(20))`, `@Name (NVARCHAR(1024))`, `@NewName (NVARCHAR(1024), default NULL)` (alleen bij `UPDATE`), `@AppUser`.
 
-**Permissions Granted:**
+### `[Expose].[spMaintainUsers]`
 
-The procedure grants select permissions on the Loadmanagement.SurrogateKeys  object and denies select permissions on various other schemas and objects. It also denies execute permissions on specific stored procedures.
+**Doel:** Beheert rapportagegebruikers.
 
-**Role Membership:**
+**Parameters:** `@Action (NVARCHAR(20))`, `@NickName (NVARCHAR(1024), default '')`, `@UserID (NVARCHAR(1024))` (default een guid), `@Provider (NVARCHAR(1024))` (`[ENTRA]`/`[LOCAL]`), `@ServiceTypes (NVARCHAR(1024))` (`[ODATA]`/`[SQL]`), `@AppUser`.
 
-Any existing members of roles with the name Yres_dbReader  are added to the newly created Yres_dbreader  role. This procedure ensures that the Yres_dbreader  role is appropriately configured with the necessary permissions and maintains role membership consistency across the database.
+### `[Expose].[spMaintainRoleAssignment]`
+
+**Doel:** Voegt leden toe aan of verwijdert ze uit een rapportagerol.
+
+**Parameters:** `@Action (NVARCHAR(20))` (`ADD`/`REMOVE`), `@member (NVARCHAR(1024))`, `@Role (NVARCHAR(1024))`, `@AppUser`.
+
+---
+
+## dbo — hulpprocedures
+
+Generieke hulpprocedures die de andere schema's gebruiken.
+
+| Procedure | Doel | Belangrijkste parameters |
+|---|---|---|
+| `[dbo].[spLongPrint]` | Print lange strings in stukken (omzeilt de `PRINT`-lengtelimiet). | `@String (NVARCHAR(MAX))` |
+| `[dbo].[spRunSQL]` | Voert een willekeurig SQL-statement dynamisch uit. | `@SQL (NVARCHAR(MAX))` |
+| `[dbo].[spJsonToTable]` | Zet JSON om naar een relationele tabel. | `@Collection`, `@json (default '{}')`, `@targetSchema`, `@targetTable` |
+| `[dbo].[spCopyDB]` | Maakt een kopie van een database, optioneel met drop en service-tier. | `@sourceDB`, `@targetDB`, `@targetTier (default 'GP_Gen5_2')`, `@dropIfExists (BIT, default 0)` |
+| `[dbo].[spMSForEachTable]` / `[spMSForEachWorker]` | Voert een commando uit tegen elke tabel (batch-operatie); `@replacechar` wordt door de tabelnaam vervangen. | `@command1 (NVARCHAR(2000))`, `@replacechar (NCHAR(1), default '?')`, … |
+| `[dbo].[spAdaptiveIndexDefrag_CurrentExecStats]` | Rapporteert de voortgang van de index-defragmentatie. | `@dbname (NVARCHAR(255), optioneel)` |
+| `[dbo].[spAdaptiveIndexDefrag_Exceptions]` | Beheert uitzonderingen op de defragmentatie (db's, dagen, tabellen, indexen). | `@exceptionMask_DB`, `@exceptionMask_days`, `@exceptionMask_tables`, `@exceptionMask_indexes` |
+| `[dbo].[spAdaptiveIndexDefrag_PurgeLogs]` | Ruimt oude defragmentatielogs op. | `@daystokeep (SMALLINT, default 90)` |
+
+---
+
+## Zie ook
+
+- [Functions](./functions.md) — alle scalar- en table-valued functions (`fxExtractor`, `fxGetSetting`, `fxGetSchemaName`, …).
+- [Logs & views](./logs-views.md) — de logtabellen (`LS_Pipeline`, `LS_Trans`, `LoadLog`, `ProcessLog`, `EventLog`) en monitoringviews (`vwLoads`, `vwMonitor`, `vwWorkflow`, `vwUsedTables`).

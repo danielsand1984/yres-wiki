@@ -8,21 +8,58 @@ description: AFAS koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Directe koppeling  ·  🏅 Official partner
 
-Nederlands ERP-systeem. Official partner.
+Nederlands ERP-systeem. Official partner. Yres leest AFAS uit via de
+**AFAS App connector** (de REST-services van AFAS Profit/InSite). In Azure Data
+Factory wordt dit een `RestService` linked service.
 
-## Verbindingseisen
+## Verwachte input
 
-- URL
-- API token
+Je legt de koppeling aan via de wizard **Bron toevoegen**. Naast de velden die voor
+elke bron gelden (bronnaam, type, integration runtime, of de credentials voor alle
+omgevingen gelijk zijn, eventuele vervaldatum van de credentials, tags) vraagt de
+AFAS-bron de volgende velden:
 
-## Setup
+| Veld | Toelichting |
+|---|---|
+| **URL** | De REST-basis-URL van je AFAS-omgeving. Moet eindigen op `…afas.online/profitrestservices`. Voorbeeld/placeholder: `https://12345.rest.afas.online/profitrestservices`, waarbij `12345` je AFAS-omgevingsnummer is. |
+| **API token** | Het volledige tokenblob dat AFAS bij de App connector genereert: `<token><version>1</version><data>…</data></token>`. Plak de hele waarde, niet alleen het `data`-deel. |
 
-Koppel via de AFAS app-connector.
+**Authenticatie:** het API token wordt als **Authorization-header** meegestuurd
+(RestService met auth headers — `hasAuthHeaders() = true`). Er is geen
+gebruikersnaam/wachtwoord.
 
-## Gegevens ophalen
+**Integration runtime:** **cloud** — `AutoResolveIntegrationRuntime`. AFAS Online is
+publiek bereikbaar via HTTPS, dus een self-hosted integration runtime is niet nodig.
 
-- **URL** — dit is de REST-basis-URL van je AFAS Profit/InSite-omgeving: `https://<env>.rest.afas.online/profitrestservices`. `<env>` is je omgevingsnummer (te zien in AFAS Profit, bijvoorbeeld `12345`).
-- **API token** — maak in AFAS Profit een **App connector** aan via **Algemeen → Beheer → App connector**. Voeg daar de GetConnectors toe die Yres mag uitlezen en genereer vervolgens het token. Het token wordt als XML-bestand opgeslagen; geef de tokenwaarde door aan Yres. De autorisatieheader van AFAS heeft de vorm `AfasToken <token>`.
+**Waar de credentials terechtkomen:** de frontend bewaart geen secrets. Het API token
+gaat naar de **Azure Key Vault** van je eigen omgeving en wordt vanuit de linked
+service opgehaald als secret **`adf-AFAS-connectionstring`** (het secret valt onder de
+naamgroep `adf-{bronnaam}-…`). De linked service (`AFAS.json`) staat zelf op
+`Anonymous` en zet het token via `authHeaders.Authorization` als verwijzing naar dat
+Key Vault-secret.
+
+## Voorbereiding (in AFAS Profit)
+
+1. Maak een **App connector** aan via **Algemeen → Beheer → App connector**.
+2. Voeg de **GetConnectors** toe die Yres mag uitlezen (elke GetConnector is een
+   bron-"tabel" die je later als gebruikte tabel kunt selecteren).
+3. Genereer het token. AFAS levert dit als XML-bestand; de inhoud is het
+   `<token>…</token>`-blob dat je in het veld **API token** plakt.
+4. Noteer je omgevingsnummer voor de **URL** (`https://<omgevingsnummer>.rest.afas.online/profitrestservices`).
+
+:::info Te bevestigen
+De exacte vorm van de Authorization-header (bijvoorbeeld een prefix zoals
+`AfasToken <token>`) en eventuele licentie-/abonnementsvereisten voor de App connector
+worden door AFAS bepaald en niet door Yres. Yres stuurt de waarde die je opgeeft als
+header mee; controleer de actuele AFAS-documentatie voor de precieze headeropmaak.
+:::
+
+## Load types & delta
+
+AFAS-tabellen worden geladen via GetConnectors. De gebruikelijke load types
+(FULL, DELTA, IMAGE, OVERWRITE, RELOAD, ADDITIONAL, DELTAIMAGE) zijn van toepassing;
+delta laden vereist een geschikte deltakolom in de betreffende GetConnector. De
+beperking op twee deltakolommen geldt alleen voor MySQL, niet voor AFAS.
 
 Officiële documentatie: [AFAS Profit — GetConnector / App connector](https://docs.afas.help/profit/en/get-connector).
 

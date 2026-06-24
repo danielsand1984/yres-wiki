@@ -8,21 +8,47 @@ description: Connect Dynamics 365 to Yres — connection requirements.
 
 **Category:** Direct connection
 
-Microsoft Dynamics 365. Direct connection.
+Microsoft Dynamics 365 (Business Central / Dataverse) is connected as an OData source with OAuth2 authentication (Azure AD / Microsoft Entra ID). You select this source via the **Dynamics 365** preset in the *Add source* wizard; the connection address and the token address are mostly built automatically from your tenant and company, so you mainly need to fill in the OAuth details of an app registration.
 
-## Connection requirements
+## Expected input
 
-_No additional connection details needed in this setup._
+Besides the shared wizard fields (**source name**, **integration runtime**, **credentials identical for all environments?**, **credential expiry date**, **tags**), you fill in the following fields for Dynamics 365:
 
-## Where to find these
+| Field | Notes |
+|---|---|
+| **URL** | _Read-only._ Built automatically (Business Central OData V4) from the **tenant** + **company name**. |
+| **Access token URL** | _Read-only._ Built as `https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token`. |
+| **Tenant ID** | The directory/tenant ID of your Microsoft Entra ID. |
+| **Company name** | The name of the Business Central company you want to expose; it is woven into the OData URL. |
+| **Client ID** | The application (client) ID of the registered app. |
+| **Client secret** | The client secret of the app registration (shown only once when created). |
+| **Scope** | The OAuth scope for the token request. |
+| **Grant Type** | `Client Credentials` or `Authorization Code`. With **Authorization Code**, an extra **Refresh token** field appears. |
 
-Dynamics 365 connects directly via the Dataverse/D365 Web API using a **service principal**.
+Fixed (hidden) parameters: pagination `paginationType=BodyUrl` with `body_url=@odata.nextLink` (Yres automatically follows the `@odata.nextLink` pagination of the OData feed).
 
-- **Environment URL** — The URL of your D365/Dataverse environment, e.g. `https://<org>.crm4.dynamics.com` (the region suffix `crm4` differs per data center).
-- **Register an app** — In Microsoft Entra ID (Azure portal) → **App registrations**, register an app with API permissions for Dynamics CRM/Dataverse (`user_impersonation`). On *Overview* you'll find the **client ID** (and tenant ID); under **Certificates & secrets** create a **client secret** and copy it immediately.
-- **Application user** — In the D365 environment (Power Platform admin center → *Application users*), create an application user bound to the registered app and assign it a security role with the required read permissions.
+**Authentication method:** OAuth2 via an Azure AD / Microsoft Entra ID service principal — client credentials or authorization code (with refresh token).
 
-Official docs: [Register an app with Microsoft Entra ID (Microsoft Dataverse) — Microsoft Learn](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-azure-active-directory).
+**Integration runtime:** by default the cloud runtime **`AutoResolveIntegrationRuntime`**. A self-hosted IR is not needed, because the OData endpoints are publicly reachable over the internet.
+
+**Where secrets are stored:** Yres never stores passwords or secrets itself. The values you enter are placed as secrets in the **Azure Key Vault** of your own environment, following the pattern `adf-{sourcename}-{suffix}`; the linked service in Azure Data Factory references those secrets.
+
+## Preparation
+
+- **Register an app in Microsoft Entra ID** — In the Azure portal → **App registrations**, register an application. On *Overview* you will find the **client ID** and the **tenant ID**.
+- **Create a client secret** — Under **Certificates & secrets**, create a **client secret** and copy it immediately (it is no longer visible afterwards).
+- **Permissions on Dynamics CRM/Dataverse** — Assign the app the required API permissions for Dynamics CRM/Dataverse (e.g. `user_impersonation`) with admin consent.
+- **Company and tenant** — Keep the **tenant ID** and the **company name** (Business Central company) at hand; together they determine the automatically built OData URL.
+
+:::info To be confirmed
+This preset is stored in the webapp as backend type **`OData`**, but the form supplies OAuth fields (`client_id`, `token_url`, `grant_type`, `refresh_token`). The default `ODataSource` builder only handles Anonymous/Basic authentication. Whether this source is actually handled at deployment via `ODataOAuthSource` (or an older code path) **cannot be confirmed** from the data-plane repositories. Verify the deploy routing before you build on this.
+:::
+
+## Load types & delta
+
+Dynamics 365 is exposed as an OData source. Metadata discovery runs through the standard `GetMetaData` pipeline; after that you set the load type and any delta/key columns per table, just like with other OData sources. The OData feed is paginated automatically via `@odata.nextLink`.
+
+Official documentation: [Register an app with Microsoft Entra ID (Microsoft Dataverse) — Microsoft Learn](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-azure-active-directory).
 
 ---
 

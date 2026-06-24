@@ -8,22 +8,44 @@ description: Azure Data Lake koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Azure · Bestand
 
-Opslag voor onbewerkte data. Geïmporteerde data kan in de database, de Data Lake of beide landen; Yres voegt RowHash, KeyHash en EtlDate toe voor een medallion-architectuur.
+Azure Data Lake Storage Gen2 is een Azure Storage-account met **hiërarchische naamruimte (hierarchical namespace)** ingeschakeld. Binnen Yres speelt de Data Lake vooral een rol als **opslag voor (onbewerkte) data**: naast de database kan Yres geladen data optioneel ook als **Parquet** in de Data Lake landen. Yres voegt daarbij de framework-kolommen `RowHash`, `KeyHash` en `EtlDate` toe, zodat een medallion-architectuur (bronze/silver/gold) mogelijk is.
 
-## Verbindingseisen
+:::info Te bevestigen
+De Data Lake is in de huidige code **geen losse, selecteerbare bron** in de "Bron toevoegen"-wizard: er is geen invoerformulier voor Azure Data Lake in `CreateSource.tsx`. Wat er wél is, is een vaste linked service (`AzureDataLakeStorage.json`, type `AzureBlobFS`) die Yres als **eigen staging-/uitvoeropslag** gebruikt — de bestemming waar Yres optioneel Parquet wegschrijft. Of de Data Lake daarnaast als door de gebruiker te kiezen *bron* bedoeld is (zoals Azure Blob Storage), of puur interne Yres-infrastructuur is, moet de eigenaar bevestigen. Documenteer dit niet als selecteerbare bron tot dit duidelijk is.
+:::
 
-_Geen aanvullende verbindingsgegevens nodig in deze opzet._
+## Verwachte input
+
+Wanneer de Data Lake als opslag wordt aangesproken, gebruikt Yres dezelfde verbindingsvorm als bij Azure Blob Storage en SAP Business Data Cloud: een **`AzureBlobFS`**-linked service met een **SAS-uri** op het `dfs.core.windows.net`-endpoint.
+
+**Verbindingsvelden** (analoog aan de SAS-gebaseerde opslagbronnen):
+
+- **Storage-accountnaam** — het Azure Storage-account met hiërarchische naamruimte ingeschakeld.
+- **Container / filesystem** — in ADLS Gen2 heet een container ook wel een *filesystem*. De naam ervan geef je op.
+- **SAS-token** — het token dat toegang verleent tot de Data Lake.
+
+**Authenticatie:** **SAS-token** (geen gebruikersnaam/wachtwoord). De volledige SAS-uri wordt opgeslagen in **Azure Key Vault** en door de linked service gerefereerd; de frontend bewaart nooit secrets.
+
+**Integration runtime:** **cloud** — de standaard `AutoResolveIntegrationRuntime`. De `AzureBlobFS`-template zet geen `connectVia` en draait dus op de cloud-IR (net als Azure Blob Storage en SAP_BDC).
+
+**Vereisten:**
+
+- Een Azure Storage-account met **hiërarchische naamruimte** ingeschakeld (anders is het een gewoon Blob-account, geen Data Lake Gen2).
+- Een **SAS-token** met minimaal lees-/lijstrechten op de container/het filesystem.
+- Een Key Vault-secret volgens de Yres-naamconventie `adf-{bronnaam}-{suffix}` (de SAS-uri komt bij provisioning vanuit Key Vault, niet uit de frontend).
+
+> Let op: de waarden in de meegeleverde `AzureDataLakeStorage.json` (account, host) zijn **voorbeeld-/seeddata** voor de dev-factory, geen klant-specifieke configuratie. De *vorm* van de linked service is leidend, de hostnamen niet.
 
 ## Gegevens ophalen
 
-Azure Data Lake (Gen2) is een gewoon Azure Storage-account met **hiërarchische naamruimte (hierarchical namespace)** ingeschakeld. Wordt in Yres gebruikt als opslag voor onbewerkte/medallion-data (bronze/silver/gold). De verbindingsgegevens komen op dezelfde plek vandaan als bij Azure Blob Storage:
+De verbindingsgegevens haal je op dezelfde plek op als bij Azure Blob Storage:
 
 - **Storage-accountnaam** — in de [Azure Portal](https://portal.azure.com) → **Storage accounts** → het account met hiërarchische naamruimte (zichtbaar onder **Settings → Configuration → Hierarchical namespace: Enabled**).
 - **Container / filesystem** — open het account → blade **Containers**; in ADLS Gen2 heet een container ook wel een *filesystem*. De naam ervan is wat je opgeeft.
-- **SAS-token of access key** — een SAS maak je via **Security + networking → Shared access signature** (Blob-service + rechten + vervaldatum → Generate SAS). Als alternatief gebruik je een **account access key** via **Security + networking → Access keys** (key1/key2 → Show/Copy).
+- **SAS-token** — maak je aan via **Security + networking → Shared access signature** (Blob-service + benodigde rechten + vervaldatum → **Generate SAS**). Bewaar het token direct: het wordt maar één keer getoond.
 
 > Officiële documentatie: [Introduction to Azure Data Lake Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
 
 ---
 
-**Zie ook:** [Integratiecatalogus](../catalogus.md) · [Alle databron-vereisten](../../referentie/databron-vereisten.md) · [Integraties — overzicht](../overzicht.md)
+**Zie ook:** [Azure Blob Storage](azure-blob-storage.md) · [Integratiecatalogus](../catalogus.md) · [Alle databron-vereisten](../../referentie/databron-vereisten.md) · [Integraties — overzicht](../overzicht.md)

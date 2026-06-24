@@ -6,6 +6,10 @@ description: Klantcase Woonstichting 'thuis — IT Manager Toin Pijnenburg.
 
 # Woonstichting 'thuis
 
+:::info Te bevestigen
+Deze klantcase — bedrijfsnaam, contactpersoon, omvang, citaten en het verbeterpunt — is afkomstig uit interviews/marketing en staat **niet** in de officiële Yres-productdocumentatie. Bevestig de inhoud en verkrijg **toestemming van de klant** (privacy/AVG) voordat je deze pagina extern publiceert.
+:::
+
 | | |
 |---|---|
 | **Contact** | Toin Pijnenburg — IT Manager |
@@ -17,7 +21,7 @@ description: Klantcase Woonstichting 'thuis — IT Manager Toin Pijnenburg.
 Een sociale verhuurder die betaalbare, duurzame woonruimte biedt in o.a. Eindhoven, Veldhoven, Best, Son & Breugel, Waalre en Oirschot. Verhuurt en beheert woningen, bouwt nieuwe duurzame woningen en zet sterk in op Lean management.
 
 ## De aanleiding
-De wens om beheertijd van rapportages te reduceren, meer maatwerkrapportages te ontwikkelen en sneller in te spelen op veranderende KPI- en procesbehoeften. Bestaande rapportages werkten niet goed en hadden een lange **"time to repair"**.
+De wens om de beheertijd van rapportages te reduceren, meer maatwerkrapportages te ontwikkelen en sneller in te spelen op veranderende KPI- en procesbehoeften. De bestaande rapportages werkten niet goed en hadden een lange **"time to repair"**.
 
 ## Overwogen alternatieven
 Blue Mountain en ZIG — beide ervaren als te duur voor te weinig toegevoegde waarde en met gedwongen standaardrapportages.
