@@ -1,6 +1,8 @@
 ---
-sidebar_position: 3
 title: Release notes
+sidebar_label: ''
+sidebar_position: 3
+slug: ''
 description: Versiehistorie van Yres DWH (v1.47 t/m v1.55), met breaking changes en nieuwe bronnen.
 ---
 
@@ -10,11 +12,11 @@ Versiehistorie van Yres DWH. Oudere versies kunnen niet meer ondersteund zijn; z
 naslag. Per versie staan de nieuwe features, verbeteringen en eventuele breaking changes.
 
 :::note Datums uit de productdocumentatie
-De datums per versie hieronder komen uit *Yres Documentation 1.55* (release-notes-sectie). Yres-versies
+De datums per versie hieronder komen uit _Yres Documentation 1.55_ (release-notes-sectie). Yres-versies
 ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — niet als semver.
 :::
 
-## v1.55 — september 2025 _(datum uit PDF)_
+## v1.55 — september 2025
 
 - **Data & loading:** kolommen kiezen die meetellen bij het vergelijken van rijen om gewijzigde records
   (changed records) te bepalen.
@@ -32,7 +34,7 @@ ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — n
   vereisen een extra property ter voorbereiding op subdomeinen per organisatie; client & secrets waarmee
   Yres bij de Azure-tenant van de organisatie komt, zijn beheerbaar door admins.
 
-## v1.54 — juli 2025 _(datum uit PDF)_
+## v1.54 — juli 2025 
 
 - **Data & loading:** tabellen deactiveren zodat ze tijdelijk buiten loads blijven; loads starten direct
   vanuit het datasource-menu; persist view direct vanuit het Persist View-menu.
@@ -47,15 +49,15 @@ ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — n
   starten van loads; parallelisme instelbaar voor loads; alternative load volledig beschikbaar.
 - **Communicatie:** announcements nu beschikbaar voor organisatie-admins.
 
-## v1.53 — mei 2025 _(datum uit PDF)_
+## v1.53 — mei 2025 
 
 - **Data & loading:** **Delta Image** load mode (selectief specifieke periodes herladen, bijv. het vorige
   jaar, met verwijdering van verouderde records én behoud van historie); uitgebreide paging in REST-bronnen
   (RFC 5988, offset-based, looped page traversal, body-result-URL); schaalbare verwerking via paging
   (100M+ records); PowerBI Models verversen binnen loads.
 - **Nieuwe bronnen:** **OneStream**, **SAP Business Data Cloud** (`SAP_BDC`) en **Simplicate**;
-  OpenAPI-support voor REST (`openapi.json` / `swagger.json`, endpoints visueel selecteerbaar); **custom
-  database deployment** (deployen op een eigen bestaande Azure-database in plaats van de standaard embedded
+  OpenAPI-support voor REST (`openapi.json` / `swagger.json`, endpoints visueel selecteerbaar); **custom**
+\*\*  database deployment\*\* (deployen op een eigen bestaande Azure-database in plaats van de standaard embedded
   database).
 
   :::info SAP Business Data Cloud ≠ SAP Datasphere
@@ -84,7 +86,7 @@ ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — n
 - **Verbeteringen:** alle timestamps in **UTC** (weergave in eigen tijdzone); duidelijkere foutmeldingen;
   fix voor IMAGE-loads die in de staging-stap konden falen en alle target-records sloten.
 
-## v1.52 — januari 2025 _(datum uit PDF)_
+## v1.52 — januari 2025 
 
 :::warning Breaking change (herinnering)
 De view `[Monitoring].[LoadMonitor]` is in release **1.51** vervangen door `[Monitoring].[Monitor]`. Beide
@@ -93,7 +95,7 @@ views blijven co-existeren tot versie **1.53**, waarna `[Monitoring].[LoadMonito
 > Let op: dit betreft de webapp-gerichte monitoring-view. In de huidige `IRIS_DWH`-database loopt
 > load-monitoring via de views `vwLoads` (pipeline-timeline) en `vwMonitor` (breder). Zie
 > [SQL-interactie](sql-interaction.md).
-:::
+> :::
 
 - **Security & gebruikers:** SSO verplicht per gebruiker (admins kunnen SSO afdwingen, in het Users & Roles-menu).
 - **Database object viewer:** alle database-objecten tonen (ook objecten die níét door of met Yres zijn
@@ -109,12 +111,12 @@ views blijven co-existeren tot versie **1.53**, waarna `[Monitoring].[LoadMonito
   Feature request / Feedback); "Panel" hernoemd naar Users & Roles; upgrade van LinkedServices in ADF
   (MySQL, PostgreSQL, Snowflake, custom dispatcher); bronnen zonder key beter ondersteund.
 
-## v1.51 — september 2024 _(datum uit PDF)_
+## v1.51 — september 2024 
 
 :::warning Breaking change
 De view `[Monitoring].[LoadMonitor]` is vervangen door `[Monitoring].[Monitor]`. Beide views co-existeren
-tot versie **1.52**, waarna `[Monitoring].[LoadMonitor]` wordt verwijderd. _(De v1.52-herinnering hierboven
-noemt 1.53 als verwijderversie — de productdocumentatie is op dit punt niet helemaal consistent.)_
+tot versie **1.52**, waarna `[Monitoring].[LoadMonitor]` wordt verwijderd. _(De v1.52-herinnering hierboven_
+_noemt 1.53 als verwijderversie — de productdocumentatie is op dit punt niet helemaal consistent.)_
 :::
 
 - **UI:** nieuwe homepage met monitors voor jobs, errors en loads; nieuwe datasource-picker; resizable en
@@ -130,7 +132,7 @@ noemt 1.53 als verwijderversie — de productdocumentatie is op dit punt niet he
   (handmatig instelbaar via het `deltaColumn`-veld in `Loadmanagement.UsedTables`, komma-gescheiden, beide
   kolommen hetzelfde datatype; het systeem neemt de hoogste waarde).
 
-## v1.50 — augustus 2024 _(datum uit PDF)_
+## v1.50 — augustus 2024 
 
 - Standaard support voor **surrogate keys** (systeembreed én per tabel).
 - Table settings in de web-frontend: columnstore, inMemory, loadfilters, delta-offsets, page limits en
@@ -139,20 +141,20 @@ noemt 1.53 als verwijderversie — de productdocumentatie is op dit punt niet he
 - Volledige logging in **UTC**, weergave in elke tijdzone.
 - Nieuw data-engineering-menu; lijsten alfabetisch gesorteerd.
 
-## v1.49 — juni 2024 _(datum uit PDF)_
+## v1.49 — juni 2024 
 
 - Nieuw topmenu; beter inzicht in actieve jobs.
 - Push-berichten voor afgeronde jobs, waar je je ook in de applicatie bevindt.
 - Strikt databasebeheer: geen ongevraagde wijzigingen in settings, logs of objecten.
 
-## v1.48 — april 2024 _(datum uit PDF)_
+## v1.48 — april 2024 
 
 - Nieuw topmenu en notificaties voor afgeronde jobs.
 - Firewall specifiek voor de web-frontend.
 - Directe links naar bestaande Azure-resources; nieuw rolbeheer.
 - Actieve monitoring op bronwijzigingen die het dataplatform raken.
 
-## v1.47 — januari 2024 _(datum uit PDF)_
+## v1.47 — januari 2024
 
 - Nieuw audit-log voor webapp-gebruik.
 - PowerBI-dashboard integreerbaar in Yres (voor uitgebreide load-monitoring).
