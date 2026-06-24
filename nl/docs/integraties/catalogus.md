@@ -27,7 +27,7 @@ dit is het patroon:
 - **Azure-opslag** (Azure Blob Storage, SAP Business Data Cloud, SAP Datasphere, Azure Data Lake):
   account/container + **SAS-token**. **Auth:** SAS.
 - **OData / REST**: service-URL + paginatie-instelling, met Anonymous, Basic of OAuth2.
-- **Microsoft-platform** (SharePoint, Teams, Microsoft Graph, Dynamics 365, Microsoft 365, Power BI,
+- **Microsoft-platform** (SharePoint, Teams, Microsoft Graph, Dynamics 365, Power BI,
   Intune): een **Entra ID (Azure AD) app-registratie** met Tenant ID, Client ID en Client secret.
 - **SaaS met token** (AFAS, Monday, Simplicate, Exact Online, Salesforce): API-token of OAuth2.
 
@@ -84,8 +84,6 @@ Generieke REST-koppeling en SaaS-bronnen die onder water op REST draaien.
 | Mendix | Via gepubliceerde OData- of REST-service in Studio Pro |
 | Onestream | *(preview)* — OAuth2 of Personal Access Token (PAT) |
 | Board (BoardEPM) | OAuth2 client credentials |
-| NetSuite | REST-koppeling (dedicated ADF-connector) |
-| TrustIT | REST-koppeling (dedicated ADF-connector) |
 
 ## Microsoft-platform (Entra ID / Graph)
 
@@ -99,7 +97,6 @@ gebruikersnaam + wachtwoord).
 | SharePoint | Azure AD app-only; rechten via `appinv.aspx` |
 | Microsoft Teams | Via **Microsoft Graph** (OData/REST onder water) |
 | Microsoft Graph | OAuth2 (client credentials of authorization code) |
-| Microsoft 365 / Office 365 | Via de `Office365`-connector (e-mail, agenda, gebruikersactiviteit) |
 | Dynamics 365 (Business Central) | Via **OData** + OAuth2 onder water |
 | Topdesk | Via **OData** (reporting-endpoint) + Basic auth onder water |
 | Microsoft Intune (Intune Data Warehouse) | Via **OData** + OAuth2 onder water |

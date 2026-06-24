@@ -27,7 +27,7 @@ this is the general pattern:
 - **Azure storage** (Azure Blob Storage, SAP Business Data Cloud, SAP Datasphere, Azure Data Lake):
   account/container + **SAS token**. **Auth:** SAS.
 - **OData / REST**: service URL + pagination setting, with Anonymous, Basic or OAuth2.
-- **Microsoft platform** (SharePoint, Teams, Microsoft Graph, Dynamics 365, Microsoft 365, Power BI,
+- **Microsoft platform** (SharePoint, Teams, Microsoft Graph, Dynamics 365, Power BI,
   Intune): an **Entra ID (Azure AD) app registration** with Tenant ID, Client ID and Client secret.
 - **SaaS with token** (AFAS, Monday, Simplicate, Exact Online, Salesforce): API token or OAuth2.
 
@@ -84,8 +84,6 @@ Generic REST connection and SaaS sources that run on REST under the hood.
 | Mendix | Via a published OData or REST service in Studio Pro |
 | Onestream | *(preview)* — OAuth2 or Personal Access Token (PAT) |
 | Board (BoardEPM) | OAuth2 client credentials |
-| NetSuite | REST connection (dedicated ADF connector) |
-| TrustIT | REST connection (dedicated ADF connector) |
 
 ## Microsoft platform (Entra ID / Graph)
 
@@ -99,7 +97,6 @@ username + password).
 | SharePoint | Azure AD app-only; permissions via `appinv.aspx` |
 | Microsoft Teams | Via **Microsoft Graph** (OData/REST under the hood) |
 | Microsoft Graph | OAuth2 (client credentials or authorization code) |
-| Microsoft 365 / Office 365 | Via the `Office365` connector (email, calendar, user activity) |
 | Dynamics 365 (Business Central) | Via **OData** + OAuth2 under the hood |
 | Topdesk | Via **OData** (reporting endpoint) + Basic auth under the hood |
 | Microsoft Intune (Intune Data Warehouse) | Via **OData** + OAuth2 under the hood |

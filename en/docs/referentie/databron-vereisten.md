@@ -164,18 +164,6 @@ Entra ID (Azure AD) app registration: Client ID, Tenant ID, Client secret and Gr
   OAuth2 fields identical to Graph/D365 (Tenant ID · Client ID · Client Secret · Scope · Grant Type).
 - **Auth:** OAuth2. There is (as yet) no separate source page for Intune DWH; it works as an OData preset.
 
-### Office 365 / Microsoft 365
-
-Office 365 is accessed via **Microsoft Graph** (or a specific `DynamicMS365`/`Office365`
-connector). In practice you fill in the **Graph preset** (see above): an Entra ID app registration with
-the right Graph permissions and admin consent.
-
-:::info To be confirmed
-For Office 365 / Microsoft 365 there are ADF templates (`DynamicMS365.json`, `Office365.json`), but no
-separate picker entry. Confirm with the product owner whether this is an independently selectable source or
-runs exclusively through the Graph preset.
-:::
-
 ### Power BI
 
 - **Fields:** Tenant ID · Client ID · Client secret
@@ -229,8 +217,6 @@ Confirm with the product owner whether Datasphere has its own picker entry or ru
 | **Salesforce** | Environment URL · Client ID · Client secret | OAuth2 client credential | Consumer ID/secret from the App Manager |
 | **Topdesk** | Domain · Username · Password | Basic | Create an application password in Topdesk |
 | **BoardEPM** | Server · Application · Identity provider | OAuth2 client credential | Set up an OAuth client in Board |
-| **TrustIT** | Base URL · Username · Password | Basic | Application/API credentials in TrustIT |
-| **NetSuite** | Account/host + OAuth credentials | OAuth (NetSuite token) | Integration record + token in NetSuite |
 
 :::note Exact Online: separate app per environment
 For Exact Online, **"Credentials identical for all environments?" is forced to "No"**: you create a
@@ -320,12 +306,12 @@ A quick look at which authentication method and which integration runtime go wit
 
 | Authentication | Sources |
 |---|---|
-| **Username + password (Basic, in Key Vault)** | MySQL, DB2, SQL Server, Azure SQL, Oracle, PostgreSQL, Snowflake, OData (Basic), RestService (Basic), Topdesk, File Server, TrustIT, Mendix *(option)* |
+| **Username + password (Basic, in Key Vault)** | MySQL, DB2, SQL Server, Azure SQL, Oracle, PostgreSQL, Snowflake, OData (Basic), RestService (Basic), Topdesk, File Server, Mendix *(option)* |
 | **SAS token** | Azure Blob Storage, SAP_BDC, SAP Datasphere, Azure Data Lake |
 | **API token as HTTP header** | AFAS, Monday, Simplicate (key + secret) |
 | **OAuth2 client credentials** | SAC, Salesforce, OData OAuth (Client Credentials), RestService (OAuth2ClientCredential), BoardEPM, Onestream (OAUTH2), Graph/Dynamics 365/Intune (Client Credentials) |
 | **OAuth2 authorization code (+ refresh token)** | Exact Online, OData OAuth (Authorization Code), Graph/Dynamics 365/Intune (Authorization Code) |
-| **Azure AD service principal (app registration)** | SharePoint, Power BI, Teams/Graph, Dynamics 365, Office 365 |
+| **Azure AD service principal (app registration)** | SharePoint, Power BI, Teams/Graph, Dynamics 365 |
 | **Personal access token** | Onestream (PAT) |
 | **Anonymous (public)** | CBS, Tweede Kamer |
 
