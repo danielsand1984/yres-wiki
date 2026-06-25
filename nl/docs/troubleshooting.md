@@ -146,7 +146,7 @@ beschikbaar vanaf versie **1.51**) de status van de DWH-kant van Yres. De contro
 lijst objecten en instellingen en markeert veelvoorkomende problemen — vaak met een kant-en-klaar
 fix-script.
 
-![Health checks-scherm: overzicht met geslaagde, waarschuwings- en foutchecks, plus een uitgeklapte fout met een SQL-fixscript.](/img/screens/admin-healthchecks.svg)
+![Health checks-scherm: overzicht met geslaagde, waarschuwings- en foutchecks, plus een uitgeklapte fout met een SQL-fixscript.](/img/screens/admin-healthchecks.png)
 
 *Het Health checks-scherm: bovenaan een samenvatting (OK / Warning / Error), daaronder de checks per regel; een check kun je uitklappen om de foutmelding en het voorgestelde fix-script te zien.*
 

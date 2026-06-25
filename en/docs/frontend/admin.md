@@ -32,7 +32,7 @@ The full list of app screens with their route and fields is in
 
 Route: `/admin/panel`. The central management screen with a **Users** table on the left and a **Roles** table on the right.
 
-![Admin panel with a Users table (name, email, role, SSO) on the left and a Roles table on the right.](/img/screens/admin-panel.svg)
+![Admin panel with a Users table (name, email, role, SSO) on the left and a Roles table on the right.](/img/screens/admin-panel.png)
 
 The screen consists of:
 
@@ -59,7 +59,7 @@ Route: `/admin/announcements`. Send messages to all users or only to those of a 
 organization (organization admins reach only their own organization). Announcements appear on the
 homepage and are handy for, for example, scheduled maintenance or an upcoming release.
 
-![Announcements: list with title, priority and period, plus a Create form with a Markdown body.](/img/screens/admin-announcements.svg)
+![Announcements: list with title, priority and period, plus a Create form with a Markdown body.](/img/screens/admin-announcements.png)
 
 1. **Create** — open the form to compose a new announcement.
 2. **Body (Markdown)** — the text supports Markdown (headers, lists, links).
@@ -83,7 +83,7 @@ database, you update it here directly.
 Route: `/admin/firewall`. Allow or deny access per IP address, so admins decide from where Yres
 may be accessed. This improves security by restricting network access.
 
-![Firewall: table with IP rules (label, IP/CIDR, Allow or Deny) and a Create form.](/img/screens/admin-firewall.svg)
+![Firewall: table with IP rules (label, IP/CIDR, Allow or Deny) and a Create form.](/img/screens/admin-firewall.png)
 
 1. **Create** — add an IP rule.
 2. **IP address / CIDR + label** — record the range and give it a recognizable name.
@@ -183,7 +183,7 @@ Route: `/admin/dwhlogs`. View and filter the logs with step-by-step actions of e
 procedures, by date range, stored procedure type and severity. The log lines come from `[Config].[ProcessLog]`
 in the data warehouse.
 
-![DWH logs: filter row (date, procedure, log level), a log table and a steps modal with the failed step and an ADF link.](/img/screens/admin-dwhlogs.svg)
+![DWH logs: filter row (date, procedure, log level), a log table and a steps modal with the failed step and an ADF link.](/img/screens/admin-dwhlogs.png)
 
 1. **Date filter** — limit the log lines to a period.
 2. **Procedure and log-level filters** — filter on a specific stored procedure and on severity
@@ -203,7 +203,7 @@ Data Warehouse Logs are **not available on the Development environment**. On dev
 
 Route: `/admin/dbsettings`. DWH settings configurable per environment.
 
-![DWH settings: table with setting name and value per environment, with an edit modal with a field per setting.](/img/screens/admin-dwhsettings.svg)
+![DWH settings: table with setting name and value per environment, with an edit modal with a field per setting.](/img/screens/admin-dwhsettings.png)
 
 1. **Settings table** — shows the name and a readable value per setting for the selected environment.
 2. **Edit modal** — the right input field per setting (combobox for tiers, free text for schema names,
@@ -256,7 +256,7 @@ from the webapp. The checks are based on the view **`[Maintenance].[vwYresChecks
 is still called `vwIrisChecks.sql`). The view contains the expected list of objects and settings and flags
 common issues, often with an error message and sometimes with a SQL script to fix it.
 
-![Health checks: overview with passed, warning and error checks, plus an expanded error with a SQL fix script.](/img/screens/admin-healthchecks.svg)
+![Health checks: overview with passed, warning and error checks, plus an expanded error with a SQL fix script.](/img/screens/admin-healthchecks.png)
 
 1. **Status per check** — each check is OK, Warning or Error.
 2. **Error message** — on a deviation the check shows a description of the problem.

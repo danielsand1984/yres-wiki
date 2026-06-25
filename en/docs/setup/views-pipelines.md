@@ -91,7 +91,7 @@ The interface shows the hint *"Timezone UTC(+1) will be used"*, but the trigger 
 
 With **master pipelines** you tie existing Yres building blocks together into a single flow with conditional logic — for example deltas during the week and a full reload at the weekend, or a Power BI refresh that only runs after a successful load. You work in a visual editor (based on [reactflow](https://reactflow.dev/)) under **Load Management → Design master pipeline**.
 
-![Design master pipeline screen: the node palette on the left, the reactflow canvas in the middle with connected nodes and their success/failure/completion outputs, plus Save and Publish buttons.](/img/screens/loadmanagement-masterpipelines.svg)
+![Design master pipeline screen: the node palette on the left, the reactflow canvas in the middle with connected nodes and their success/failure/completion outputs, plus Save and Publish buttons.](/img/screens/loadmanagement-masterpipelines.png)
 
 *The Design master pipeline screen: drag node types onto the canvas, connect their outputs and publish the flow to ADF.*
 

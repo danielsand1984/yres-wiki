@@ -32,7 +32,7 @@ De volledige lijst schermen van de app met hun route en velden staat in
 
 Route: `/admin/panel`. Het centrale beheerscherm met links een **Users**-tabel en rechts een **Roles**-tabel.
 
-![Admin-paneel met een Users-tabel (naam, e-mail, rol, SSO) links en een Roles-tabel rechts.](/img/screens/admin-panel.svg)
+![Admin-paneel met een Users-tabel (naam, e-mail, rol, SSO) links en een Roles-tabel rechts.](/img/screens/admin-panel.png)
 
 Het scherm bestaat uit:
 
@@ -59,7 +59,7 @@ Route: `/admin/announcements`. Stuur berichten naar alle gebruikers of alleen di
 organisatie (organisatie-admins bereiken alleen hun eigen organisatie). Mededelingen verschijnen op de
 homepage en zijn handig voor bijvoorbeeld gepland onderhoud of een aankomende release.
 
-![Announcements: lijst met titel, prioriteit en periode, plus een Create-formulier met Markdown-body.](/img/screens/admin-announcements.svg)
+![Announcements: lijst met titel, prioriteit en periode, plus een Create-formulier met Markdown-body.](/img/screens/admin-announcements.png)
 
 1. **Create** — open het formulier om een nieuwe mededeling op te stellen.
 2. **Body (Markdown)** — de tekst ondersteunt Markdown (headers, lijsten, links).
@@ -83,7 +83,7 @@ database toegevoegd, dan werk je die hier direct bij.
 Route: `/admin/firewall`. Sta toe of weiger toegang per IP-adres, zodat admins bepalen vanaf waar Yres
 benaderd mag worden. Dit verhoogt de beveiliging door netwerktoegang te beperken.
 
-![Firewall: tabel met IP-regels (label, IP/CIDR, Allow of Deny) en een Create-formulier.](/img/screens/admin-firewall.svg)
+![Firewall: tabel met IP-regels (label, IP/CIDR, Allow of Deny) en een Create-formulier.](/img/screens/admin-firewall.png)
 
 1. **Create** — voeg een IP-regel toe.
 2. **IP-adres / CIDR + label** — leg het bereik vast en geef het een herkenbare naam.
@@ -183,7 +183,7 @@ Route: `/admin/dwhlogs`. Bekijk en filter de logs met stap-voor-stap acties van 
 procedures, op datumrange, type stored procedure en severity. De logregels komen uit `[Config].[ProcessLog]`
 in het datawarehouse.
 
-![DWH logs: filterrij (datum, procedure, log-level), een logtabel en een stappen-modal met de mislukte stap en een ADF-link.](/img/screens/admin-dwhlogs.svg)
+![DWH logs: filterrij (datum, procedure, log-level), een logtabel en een stappen-modal met de mislukte stap en een ADF-link.](/img/screens/admin-dwhlogs.png)
 
 1. **Datumfilter** — beperk de logregels tot een periode.
 2. **Procedure- en log-levelfilters** — filter op een specifieke stored procedure en op severity
@@ -203,7 +203,7 @@ Data Warehouse Logs zijn **niet beschikbaar op de Development-omgeving**. Gebrui
 
 Route: `/admin/dbsettings`. Per omgeving instelbare DWH-instellingen.
 
-![DWH settings: tabel met setting-naam en waarde per omgeving, met een edit-modal met een veld per setting.](/img/screens/admin-dwhsettings.svg)
+![DWH settings: tabel met setting-naam en waarde per omgeving, met een edit-modal met een veld per setting.](/img/screens/admin-dwhsettings.png)
 
 1. **Settings-tabel** — toont per setting de naam en een leesbare waarde voor de gekozen omgeving.
 2. **Edit-modal** — per setting het juiste invoerveld (combobox voor tiers, vrije tekst voor schema-namen,
@@ -256,7 +256,7 @@ vanuit de webapp. De controles zijn gebaseerd op de view **`[Maintenance].[vwYre
 heet nog `vwIrisChecks.sql`). De view bevat de verwachte lijst objecten en instellingen en markeert
 veelvoorkomende issues, vaak met een foutmelding en soms met een SQL-script om het te herstellen.
 
-![Health checks: overzicht met geslaagde, waarschuwings- en foutchecks, plus een uitgeklapte fout met een SQL-fixscript.](/img/screens/admin-healthchecks.svg)
+![Health checks: overzicht met geslaagde, waarschuwings- en foutchecks, plus een uitgeklapte fout met een SQL-fixscript.](/img/screens/admin-healthchecks.png)
 
 1. **Status per check** — elke controle is OK, Warning of Error.
 2. **Foutmelding** — bij een afwijking toont de check een omschrijving van het probleem.

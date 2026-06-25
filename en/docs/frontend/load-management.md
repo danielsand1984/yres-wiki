@@ -103,7 +103,7 @@ The raw log lines behind this screen come from the monitoring views `vwLoads` (t
 
 With **master pipelines** you build your own flow by combining **nodes** in a visual editor (based on [reactflow](https://reactflow.dev/)). You don't draw the underlying ADF activities yourself; you configure nodes and their connections, and Yres **generates** an ADF pipeline from them (in the Data Factory folder `MasterPipelines`).
 
-![Master pipelines: the node palette on the left, the canvas in the middle with connected nodes and their success/failure/completion outputs.](/img/screens/loadmanagement-masterpipelines.svg)
+![Master pipelines: the node palette on the left, the canvas in the middle with connected nodes and their success/failure/completion outputs.](/img/screens/loadmanagement-masterpipelines.png)
 
 *The Design master pipeline screen: drag node types onto the canvas, connect their outputs and publish the flow to ADF.*
 

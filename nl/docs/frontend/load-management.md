@@ -103,7 +103,7 @@ De ruwe logregels achter dit scherm komen uit de monitoring-views `vwLoads` (tij
 
 Met **master pipelines** bouw je een eigen flow door **nodes** te combineren in een visuele editor (op basis van [reactflow](https://reactflow.dev/)). Je tekent niet zelf de onderliggende ADF-activiteiten; je configureert nodes en hun verbindingen, en Yres **genereert** daaruit een ADF-pipeline (in de Data Factory-map `MasterPipelines`).
 
-![Master pipelines: links het node-palet, in het midden het canvas met verbonden nodes en hun success/failure/completion-uitgangen.](/img/screens/loadmanagement-masterpipelines.svg)
+![Master pipelines: links het node-palet, in het midden het canvas met verbonden nodes en hun success/failure/completion-uitgangen.](/img/screens/loadmanagement-masterpipelines.png)
 
 *Het Design master pipeline-scherm: sleep node-types op het canvas, verbind hun uitgangen en publiceer de flow naar ADF.*
 

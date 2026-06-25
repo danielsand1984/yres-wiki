@@ -80,7 +80,7 @@ Yres volgt bestaande naming conventions, met één vaste beperking: **de eerste 
 
 Firewall- en netwerkregels beheer je per resource vanuit het admin-scherm **Firewall**. Daar zie je per resource (SQL Database, Key Vault, Storage account, Data Factory) welke regels actief zijn, welke door Yres zijn aangemaakt en welke je zelf hebt toegevoegd.
 
-![Admin-scherm Firewall met per-resource tabs en een tabel met firewallregels voor de SQL Database](/img/screens/admin-firewall.svg)
+![Admin-scherm Firewall met per-resource tabs en een tabel met firewallregels voor de SQL Database](/img/screens/admin-firewall.png)
 
 *Het Firewall-scherm onder Admin: kies bovenaan de Azure-resource, en beheer daaronder de toegestane IP-regels voor de geselecteerde omgeving.*
 

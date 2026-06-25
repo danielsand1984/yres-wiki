@@ -80,7 +80,7 @@ Yres follows existing naming conventions, with one fixed constraint: **the first
 
 You manage firewall and network rules per resource from the **Firewall** admin screen. There you see, per resource (SQL Database, Key Vault, Storage account, Data Factory), which rules are active, which were created by Yres, and which you added yourself.
 
-![Firewall admin screen with per-resource tabs and a table of firewall rules for the SQL Database](/img/screens/admin-firewall.svg)
+![Firewall admin screen with per-resource tabs and a table of firewall rules for the SQL Database](/img/screens/admin-firewall.png)
 
 *The Firewall screen under Admin: choose the Azure resource at the top, and manage the allowed IP rules for the selected environment below.*
 

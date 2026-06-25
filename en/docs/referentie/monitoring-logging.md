@@ -138,7 +138,7 @@ The **Monitoring** page (`/loadmanagement/monitoring`) shows the load status per
 
 The **DWH logs** page (`/admin/dwhlogs`) shows the step-by-step actions of stored procedures from `[Config].[ProcessLog]` — handy for seeing *which* procedure failed and with what message.
 
-![DWH logs screen with filter row, log table and a steps modal for a failed procedure](/img/screens/admin-dwhlogs.svg)
+![DWH logs screen with filter row, log table and a steps modal for a failed procedure](/img/screens/admin-dwhlogs.png)
 
 *The DWH logs page reads `Config.ProcessLog`; filter by date, procedure and log level, and open the steps per row.*
 

@@ -146,7 +146,7 @@ available from version **1.51**) shows the status of the DWH side of Yres. The c
 expected list of objects and settings and flags common problems — often with a ready-to-use
 fix script.
 
-![Health checks screen: overview with passed, warning and error checks, plus an expanded error showing a SQL fix script.](/img/screens/admin-healthchecks.svg)
+![Health checks screen: overview with passed, warning and error checks, plus an expanded error showing a SQL fix script.](/img/screens/admin-healthchecks.png)
 
 *The Health checks screen: at the top a summary (OK / Warning / Error), below it the checks per row; you can expand a check to see the error message and the suggested fix script.*
 

@@ -138,7 +138,7 @@ De **Monitoring**-pagina (`/loadmanagement/monitoring`) toont per target de laad
 
 De **DWH logs**-pagina (`/admin/dwhlogs`) toont de stap-voor-stap-acties van stored procedures uit `[Config].[ProcessLog]` — handig om te zien wélke procedure faalde en met welke melding.
 
-![DWH logs-scherm met filterrij, logtabel en een stappen-modal voor een mislukte procedure](/img/screens/admin-dwhlogs.svg)
+![DWH logs-scherm met filterrij, logtabel en een stappen-modal voor een mislukte procedure](/img/screens/admin-dwhlogs.png)
 
 *De DWH logs-pagina leest `Config.ProcessLog`; filter op datum, procedure en log-level, en open per regel de stappen.*
 
