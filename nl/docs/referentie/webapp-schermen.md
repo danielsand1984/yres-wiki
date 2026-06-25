@@ -92,7 +92,7 @@ Deze hele sectie is **verborgen bij een single-environment-organisatie**. Projec
 | Scherm | Route | Belangrijkste velden |
 |---|---|---|
 | Projects | `/projects` | `Name` · `Description` · `DueDate` · `Creator` · status-tekst |
-| Changes | `/changes` | project/change-selectie · changes-tabel (`Name` · `Status` · `Released*`) · "Create change" (alleen bij open project) · **contextuele acties op de change zelf**: een open change toont **Release**; een vrijgegeven change toont **Import** / **Install** met de omgevings-hop (van → naar) |
+| Changes | `/changes` | filters (Project · "Only show open projects" · Where environment · Has status) · changes-tabel (`Name` · `Description` · `DueDate` · `ReleasedDate` · `Status overview` · `NextStep` · `Dependencies` · `Actions`) · "Create change" · **acties via het ☰-menu per change**: Update/Delete, per-omgeving-submenu (dev ▸ release change; doelomgeving ▸ Reimport/Reinstall change), View dependencies (graaf) en Logs |
 
 :::note Release & Install gebeuren op de Changes-zelf
 Er zijn geen aparte "Release change"- of "Install change"-schermen meer. Release, Import en Install zijn **acties op de geselecteerde change** binnen het **Changes**-scherm (`/changes`), contextueel op de status: een open change toont **Release** (`[Change].[spRelease]`), een vrijgegeven change toont **Import** (`[Change].[spImport]`, alleen DWH) en **Install** (`[Change].[spInstall]` + de `publish-datafactory`-pipeline, DWH + ADF). Scripted/eigen objecten beheer je via de **Object Explorer** in **Data engineering** (`/dataengineering/objecthistory`), waar je een object aan een change toevoegt.

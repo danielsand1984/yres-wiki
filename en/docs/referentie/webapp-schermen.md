@@ -92,7 +92,7 @@ This entire section is **hidden for a single-environment organization**. Project
 | Screen | Route | Key fields |
 |---|---|---|
 | Projects | `/projects` | `Name` · `Description` · `DueDate` · `Creator` · status text |
-| Changes | `/changes` | project/change selection · changes table (`Name` · `Status` · `Released*`) · "Create change" (only when a project is open) · **contextual actions on the change itself**: an open change shows **Release**; a released change shows **Import** / **Install** with the environment hop (from → to) |
+| Changes | `/changes` | filters (Project · "Only show open projects" · Where environment · Has status) · changes table (`Name` · `Description` · `DueDate` · `ReleasedDate` · `Status overview` · `NextStep` · `Dependencies` · `Actions`) · "Create change" · **actions via the per-change ☰ menu**: Update/Delete, per-environment submenu (dev ▸ release change; target env ▸ Reimport/Reinstall change), View dependencies (graph) and Logs |
 
 :::note Release & Install happen on the Changes screen
 There are no separate "Release change" or "Install change" screens anymore. Release, Import and Install are **actions on the selected change** within the **Changes** screen (`/changes`), contextual to its status: an open change shows **Release** (`[Change].[spRelease]`), a released change shows **Import** (`[Change].[spImport]`, DWH only) and **Install** (`[Change].[spInstall]` + the `publish-datafactory` pipeline, DWH + ADF). You manage scripted/custom objects via the **Object Explorer** in **Data engineering** (`/dataengineering/objecthistory`), where you add an object to a change.

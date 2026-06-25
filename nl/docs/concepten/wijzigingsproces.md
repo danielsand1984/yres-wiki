@@ -60,10 +60,13 @@ Change is straks je transporteenheid naar test en prod.
       1–3            4            5                6
 ```
 
-Je doorloopt deze hele reis **vanuit de change zelf**: op het **Changes**-scherm kies je een project en een
-change, en de knoppen die je ziet zijn **afhankelijk van de status** van die change. Een open change toont
-**Release**; een gereleasede change toont **Import** en **Install** samen met de omgeving-hop. Je hoeft dus
-niet naar aparte release- of install-schermen.
+Je doorloopt deze hele reis **vanuit de changes-tabel**: op het **Changes**-scherm (sectie *Projects* →
+sub-link **Changes**) staat per change een rij met onder meer een **Status overview** (per omgeving een
+voortgangsindicator — groen als die stap klaar is, grijs als die nog moet), een **NextStep** (de
+voorgestelde volgende actie, bijv. *"Release on dev"* of *"Install on prd"*) en een **Actions**-menu (☰)
+helemaal rechts. Releasen, importeren en installeren doe je allemaal vanuit dat **☰-menu** — de acties die
+je krijgt zijn **afhankelijk van de status** van de change. Je hoeft dus niet naar aparte release- of
+install-schermen.
 
 1. **Plan je werk — maak een Project.** Geef het een naam, omschrijving en einddatum. Onder dit project
    verzamel je je changes.
@@ -73,39 +76,42 @@ niet naar aparte release- of install-schermen.
 3. **Bekijk en controleer de Change.** Je ziet de inhoud als **diagram** (bron → schema → tabel) of als
    **tabel** (per object het load type, de delta-kolom, en wat er gebeurt als het object al bestaat). Zo
    weet je precies wat er straks meereist.
-4. **Release de Change.** Op de open change klik je **Release**. Hiermee **vergrendel** je de change: er kan
-   niets meer aan worden bewerkt en hij wordt een verzegeld, promoteerbaar pakket. Yres controleert eerst de
-   **afhankelijkheden** — bevat je change iets dat steunt op een andere, nog niet vrijgegeven change, dan
-   blokkeert Yres de release en noemt die andere change(s). Zo neem je nooit per ongeluk half werk mee.
-5. **Promoot naar test en valideer.** Op de gereleasede change kies je de omgeving-hop **dev → test** en
-   klik je **Install**. Yres brengt je wijziging naar test en je controleert daar of de loads en structuren
-   kloppen.
-6. **Promoot naar productie.** Klopt het in test? Dan installeer je dezelfde change van **test → prod**.
-   Daarmee staat je wijziging live — getest en wel.
+4. **Release de Change.** Open het **Actions**-menu (☰) van de change en kies bij **dev ▸** de actie
+   **release change**. Hiermee **vergrendel** je de change: er kan niets meer aan worden bewerkt en hij
+   wordt een verzegeld, promoteerbaar pakket. Yres controleert eerst de **afhankelijkheden** — bevat je
+   change iets dat steunt op een andere, nog niet vrijgegeven change, dan blokkeert Yres de release en noemt
+   die andere change(s). Zo neem je nooit per ongeluk half werk mee.
+5. **Promoot naar test en valideer.** Open opnieuw het **Actions**-menu (☰), kies het submenu van de
+   doelomgeving — **test ▸** — en klik **Reinstall change**. Yres brengt je wijziging naar test en je
+   controleert daar of de loads en structuren kloppen.
+6. **Promoot naar productie.** Klopt het in test? Open dan het **Actions**-menu (☰), kies **prd ▸** en klik
+   weer **Reinstall change**. Daarmee staat je wijziging live — getest en wel.
 
-![De change-detail met inline Release / Import / Install: de DTAP-flowstrip, de status-badge van de change, de change-inhoud (diagram/tabel), de omgeving-hop (van → naar) en de knoppen Import change en Install change.](/img/screens/changes-release-install.png)
+![Het geopende Actions-menu (☰) van een change op het Changes-scherm, met per-omgeving submenu's (dev ▸, prd ▸): op dev een open change met release change; op een doelomgeving een gereleasede change met Reimport change en Reinstall change, plus Update, Delete, View dependencies en Logs.](/img/screens/changes-release-install.png)
 
-*Je releaset en promoot een change vanuit de change zelf: op een gereleasede change kies je de
-omgeving-hop en klik je Import of Install. De voortgang verschijnt als melding, omdat het publiceren van de
-pipelines op de achtergrond doorloopt.*
+*Je releaset en promoot een change vanuit het Actions-menu (☰) van die change: op **dev** kies je *release
+change*, op een doelomgeving (**test**, **prd**) kies je *Reimport change* of *Reinstall change*. De
+voortgang verschijnt als melding, omdat het publiceren van de pipelines op de achtergrond doorloopt.*
 
 ### Importeren vs. installeren
 
-Op een gereleasede change heb je twee acties — beide werk je uit **op de change zelf**, met de omgeving-hop
-(van → naar) ernaast:
+In het submenu van de doelomgeving (bijv. **test ▸** of **prd ▸**) van het **Actions**-menu (☰) biedt een
+gereleasede change twee acties:
 
-- **Import change** — haalt de change alleen in het **datawarehouse** van de doelomgeving binnen. De
-  ADF-pipelines worden hierbij **niet** vernieuwd. Handig als je alleen de DWH-structuur wilt klaarzetten.
-- **Install change** — doet het volledige werk: de change in het datawarehouse **én** het opnieuw
-  publiceren van de ADF-pipelines, zodat ook je nieuwe bron-pijplijnen in de doelomgeving landen. Dit is
-  de stap die DWH en ADF synchroon brengt.
+- **Reimport change** — haalt de change alleen in het **datawarehouse** van de doelomgeving binnen (roept
+  `[Change].[spImport]` aan). De ADF-pipelines worden hierbij **niet** vernieuwd. Handig als je alleen de
+  DWH-structuur wilt klaarzetten.
+- **Reinstall change** — doet het volledige werk: de change in het datawarehouse **én** het opnieuw
+  publiceren van de ADF-pipelines (roept `[Change].[spInstall]` aan plus de `publish-datafactory`-pipeline),
+  zodat ook je nieuwe bron-pijplijnen in de doelomgeving landen. Dit is de stap die DWH en ADF synchroon
+  brengt.
 
-In de meeste gevallen kies je **Install change**. Op een al geïnstalleerde change kun je via dezelfde
-knoppen opnieuw importeren of installeren.
+In de meeste gevallen kies je **Reinstall change**. Via dezelfde acties in het ☰-menu kun je een change
+later opnieuw importeren of installeren.
 
 ## Wat Yres automatisch voor je regelt
 
-Het mooie: bij stap 5 en 6 hoef je zelf niets technisch te doen. Achter één knop regelt Yres:
+Het mooie: bij stap 5 en 6 hoef je zelf niets technisch te doen. Achter één actie in het ☰-menu regelt Yres:
 
 - **De databasestructuur** uitrollen in de doelomgeving (nieuwe/aangepaste tabellen, views, procedures).
 - **De ADF-pipelines** opnieuw publiceren zodat je bronladingen in de doelomgeving werken.
@@ -149,11 +155,12 @@ Acme wil hun AFAS-administratie ontsluiten:
 2. In **dev** koppelt ze de AFAS-bron, ververst de metadata en voegt de gewenste tabellen toe — alles
    wordt geboekt onder de change **"AFAS tabellen v1"**.
 3. Ze laat de eerste loads in dev draaien en controleert de data.
-4. Ze **bekijkt de change-inhoud** (klopt het load type per tabel?), en **releaset** de change.
-5. Ze **installeert** de change van **dev → test**, draait de loads in test en laat een collega de
-   rapportage valideren.
-6. Akkoord? Dan **installeert** ze dezelfde change van **test → prod**. De AFAS-data staat live, en dev,
-   test en prod lopen weer gelijk.
+4. Ze **bekijkt de change-inhoud** (klopt het load type per tabel?), opent het **Actions**-menu (☰) en kiest
+   bij **dev ▸** de actie **release change**.
+5. Ze opent het ☰-menu opnieuw, kiest **test ▸ Reinstall change**, draait de loads in test en laat een
+   collega de rapportage valideren.
+6. Akkoord? Dan kiest ze in het ☰-menu **prd ▸ Reinstall change** voor dezelfde change. De AFAS-data staat
+   live, en dev, test en prod lopen weer gelijk.
 
 Voor een **nieuwe bron van een bestaand type** (zoals hierboven) is er meestal **geen** codewijziging
 nodig — het zijn metadata-rijen die de install-flow netjes tussen je omgevingen promoot.

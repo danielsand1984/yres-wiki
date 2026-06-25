@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: CI/CD & DTAP
-description: How Yres rolls out code and data structures across DTAP — DACPAC deployment, adf_publish, and the release/install flow driven from the change on the Changes screen.
+description: How Yres rolls out code and data structures across DTAP — DACPAC deployment, adf_publish, and the release/import/install flow driven from the change's Actions menu (☰) on the Changes screen.
 ---
 
 # CI/CD & DTAP
@@ -11,7 +11,7 @@ Yres consists of **two repositories with two very different deployment models**,
 - **The data warehouse** (`IRIS_DWH`, Azure SQL) is rolled out with **SSDT/DACPAC** (a schema comparison that creates and alters objects).
 - **The ADF factory** is rolled out via a **Git-integrated publish** to the `adf_publish` branch and from there to the target factory.
 
-On top of that, Yres promotes not only *code* but also *structural changes* between already-running environments via the runtime change management in the `Change` schema — you drive this **from the change** on the **Changes** screen (release and install are actions on the change itself, not separate screens).
+On top of that, Yres promotes not only *code* but also *structural changes* between already-running environments via the runtime change management in the `Change` schema — you drive this from the change's **Actions menu (☰)** on the **Changes** screen (release, reimport, and reinstall are actions in that menu, not separate screens).
 
 :::tip Architecture overview first
 This page assumes familiarity with [Architecture (high-level)](./overzicht.md) and [Azure architecture](./azure-architectuur.md). For the corresponding screens in the web app, see [Projects & Changes](../frontend/projecten-changes.md).
@@ -113,35 +113,43 @@ The Key Vault resources are still named `kv-iris-…` in the code (IRIS branding
 
 ## DTAP at the data level — runtime change management
 
-Besides rolling out *code*, Yres also promotes *structural and content changes* between already-running environments. This goes through the **`Change` schema** — which you drive **from the change** on the **Changes** screen in the web app. There are no separate Release or Install screens anymore: you pick a project + change on the Changes screen, and the change's actions are **contextual to its status** (an open change shows **Release**; a released change shows **Import** and **Install** with the environment hop).
+Besides rolling out *code*, Yres also promotes *structural and content changes* between already-running environments. This goes through the **`Change` schema** — which you drive in the web app from each change's **Actions menu (☰)** on the **Changes** screen. There are no separate Release or Install screens anymore: everything happens on the Changes screen. The Changes screen has **filters** (a Project select, an *Only show open projects* checkbox, and the *Where environment…* and *Has status* filters) and shows a **changes table** whose columns include **Status overview** (per-environment progress indicators — green when that step is done, grey when not), **NextStep** (the suggested next action, e.g. *Release on dev* / *Install on prd*), **Dependencies** (an *N dependencies* link that opens a dependency graph), and **Actions** (the ☰ menu per change). The actions in that menu are **contextual to the status** per environment.
 
-The path is always **Changes → Release → Install**:
+The path is always **release → reimport → reinstall**, driven from the ☰ menu:
 
-![Screenshot of the Yres change detail view, showing the DTAP flow strip, the released status badge, the change content, the environment hop, and the inline Import change and Install change buttons](/img/screens/changes-release-install.png)
+![Screenshot of the Yres Changes screen with a change's Actions menu (☰) open: per-environment submenus (dev ▸, prd ▸) with release change on dev and Reimport change / Reinstall change on the target environment, plus the View dependencies and Logs menu items](/img/screens/changes-release-install.png)
 
-*The change detail view on the Changes screen shows the change's status and — once it is released — the environment hop (from dev to the next environment) and the two inline actions: Import change (DWH only) and Install change (DWH + ADF). Everything happens from the change itself, not on a separate screen.*
+*The opened **Actions menu (☰)** of a change on the Changes screen. At the top are **Update** and **Delete**; below them a **submenu per environment** (dev ▸, prd ▸): on dev an open change offers **release change**, on a target environment a released change offers **Reimport change** (DWH only) and **Reinstall change** (DWH + ADF publish). The menu also has **View dependencies** (opens the dependency graph) and **Logs** (the step-by-step import/install log). Everything happens from this menu on the Changes screen, not on a separate screen.*
 
-1. **DTAP flow** — a change moves through Change (dev) → Release → Import → Install → `publish-datafactory`.
-2. **Status-contextual actions** — the actions appear on the change itself based on its status: an **open** change shows **Release**; only a change with status `released` shows **Import** and **Install**. (Reimport / reinstall are available the same way on an already-installed change.)
-3. **Environment hop** — choose from which environment to which next environment you publish (the dropdown links each environment to the immediately following one).
-4. **Import change** — copies the change JSON and runs `spImport` in the target environment. This touches **the DWH only** and does **not** publish the ADF factory.
-5. **Install change** — both imports and installs, and then publishes ADF (see below).
-6. **Progress** — on Install, `publish-datafactory` runs in Azure DevOps; the web app shows a progress notification because the publish is asynchronous.
+1. **Changes table** — columns **Name**, **Description**, **DueDate**, **ReleasedDate**, **Status overview** (green/grey per environment), **NextStep**, **Dependencies** (the *N dependencies* link), and **Actions** (the ☰ menu). A **Create change** button sits at the top; the filters narrow the rows shown.
+2. **Status-contextual actions** — the items in the ☰ menu appear per environment based on the status: in the **dev ▸** submenu an **open** change shows **release change**; in the submenu of a **target environment** (e.g. **prd ▸**) a **released** change shows **Reimport change** and **Reinstall change**.
+3. **release change** — locks the change and runs `[Change].[spRelease]` with a dependency check (only on dev, on the open change).
+4. **Reimport change** — runs `spImport` in the target environment. This touches **the DWH only** and does **not** publish the ADF factory.
+5. **Reinstall change** — both imports and installs, and then publishes ADF (see below).
+6. **View dependencies & Logs** — **View dependencies** opens the dependency graph (which changes this one depends on, with their status); **Logs** opens the step-by-step import/install log. On Reinstall, `publish-datafactory` runs in Azure DevOps and the web app shows a progress notification because the publish is asynchronous.
 
-### Changes → Release → Install — step by step
+### release → reimport → reinstall — step by step
 
 1. **Edit in dev and bundle under a Change.** Every data-plane edit (new tables, scripted objects) is recorded in `Change.ChangeContent` under a **Change**, which belongs to a **Project**. Scripted/custom objects are added to the change from the **Object Explorer** (the object tree under Data Engineering).
-2. **Release the change** — from the open change, **Release** runs `[Change].[spRelease]`, which validates the dependencies and locks the change (no further edits). Yres blocks releasing if the change contains content that another, not-yet-released change depends on; the error message names that dependent change(s).
-3. **Import to the next environment** — the **Import** action on the released change runs `[Change].[spImport]`, which imports the released change (as JSON) into the target environment. This is a **DWH-only** step.
-4. **Install** — the **Install** action on the released change runs `[Change].[spInstall]`, which applies the change (`@Execute`: `1` = execute, `0` = print SQL, `2` = impact analysis). The ADF pipeline **`InstallChange`** is the automation entry point.
+2. **Release the change** — in the **dev ▸** submenu of the ☰ menu, **release change** runs `[Change].[spRelease]`, which validates the dependencies and locks the change (no further edits). Yres blocks releasing if the change contains content that another, not-yet-released change depends on; the error message names that dependent change(s).
+3. **Reimport to the next environment** — **Reimport change** in the target environment's submenu runs `[Change].[spImport]`, which imports the released change (as JSON) into the target environment. This is a **DWH-only** step.
+4. **Reinstall** — **Reinstall change** in the target environment's submenu runs `[Change].[spInstall]`, which applies the change (`@Execute`: `1` = execute, `0` = print SQL, `2` = impact analysis). The ADF pipeline **`InstallChange`** is the automation entry point.
 
-**Install does three things in sequence:**
+**Reinstall does three things in sequence:**
 
 1. **Import** — runs `spImport` (the change JSON is pulled into the target environment).
 2. **Install** — runs the **`InstallChange`** ADF pipeline if it exists (otherwise the DWH procedure `InstallProcedure`).
 3. **Publish ADF** — starts the Azure DevOps pipeline **`publish-datafactory`** with `{ environment: <targettype> }`, so that the new data-source pipelines land in the target factory.
 
-That makes **Install** the step that synchronizes both DWH and ADF; **Import** touches the DWH only.
+That makes **Reinstall** the step that synchronizes both DWH and ADF; **Reimport** touches the DWH only.
+
+### Inspecting change content, dependencies, and logs
+
+From the Changes screen you can inspect the change without leaving the ☰ menu:
+
+- **Change content** — select a change to open the content panel: an **object tree** (source → schema → table → properties such as **LoadType**, **DeltaColumn**, **ifExists**), with a **View as table** toggle for the same objects as a table.
+- **View dependencies** — opens the dependency graph: which changes this one depends on and what their status is. This is the same check that `release change` (via `[Change].[spRelease]`) enforces.
+- **Logs** — opens the step-by-step import/install log: **INIT → ADD CHANGES → ADD PROJECT → ADD CHANGE CONTENT → ADD CHANGE DEPENDENCIES → END OF PROCESS**, with status and origin per step.
 
 :::warning Versions must match
 Before an install, Yres checks that the DWH versions of the source and target environments are equal (`throwErrorIfDwhVersionDontMatch`). If they do not match, the message *"Environment versions do not match, please update"* appears and nothing is installed. Update the lagging environment first.

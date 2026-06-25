@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: CI/CD & DTAP
-description: Hoe Yres code en datastructuren uitrolt over DTAP — DACPAC-deployment, adf_publish, en de release/install-flow vanuit de change op het Changes-scherm.
+description: Hoe Yres code en datastructuren uitrolt over DTAP — DACPAC-deployment, adf_publish, en de release/import/install-flow vanuit het Actions-menu (☰) van de change op het Changes-scherm.
 ---
 
 # CI/CD & DTAP
@@ -11,7 +11,7 @@ Yres bestaat uit **twee repositories met twee heel verschillende deploymentmodel
 - **Het datawarehouse** (`IRIS_DWH`, Azure SQL) wordt uitgerold met **SSDT/DACPAC** (een schema-vergelijking die objecten aanmaakt en aanpast).
 - **De ADF-factory** wordt uitgerold via een **Git-geïntegreerde publish** naar de `adf_publish`-branch en daarna naar de doelfactory.
 
-Daarbovenop promoot Yres niet alleen *code*, maar ook *structuurwijzigingen* tussen al draaiende omgevingen via het runtime-changemanagement in het `Change`-schema — dit stuur je aan **vanuit de change** op het **Changes**-scherm (release en install zijn acties op de change zelf, geen aparte schermen).
+Daarbovenop promoot Yres niet alleen *code*, maar ook *structuurwijzigingen* tussen al draaiende omgevingen via het runtime-changemanagement in het `Change`-schema — dit stuur je aan vanuit het **Actions-menu (☰)** van de change op het **Changes**-scherm (release, reimport en reinstall zijn acties in dat menu, geen aparte schermen).
 
 :::tip Eerst de architectuur op hoofdlijnen
 Deze pagina veronderstelt kennis van [Architectuur (high-level)](./overzicht.md) en [Azure-architectuur](./azure-architectuur.md). Voor de bijbehorende schermen in de webapp, zie [Projecten & Changes](../frontend/projecten-changes.md).
@@ -113,35 +113,43 @@ De Key Vault-resources heten in de code nog `kv-iris-…` (IRIS-branding). De ex
 
 ## DTAP op datniveau — runtime-changemanagement
 
-Naast het uitrollen van *code* promoot Yres ook *structuur- en inhoudswijzigingen* tussen al draaiende omgevingen. Dat loopt via het **`Change`-schema** — wat je in de webapp **vanuit de change** aanstuurt op het **Changes**-scherm. Er zijn geen aparte Release- of Install-schermen meer: je kiest een project + change op het Changes-scherm, en de acties van de change zijn **contextueel aan de status** (een open change toont **Release**; een released change toont **Import** en **Install** met de omgeving-hop).
+Naast het uitrollen van *code* promoot Yres ook *structuur- en inhoudswijzigingen* tussen al draaiende omgevingen. Dat loopt via het **`Change`-schema** — wat je in de webapp aanstuurt vanuit het **Actions-menu (☰)** per change op het **Changes**-scherm. Er zijn geen aparte Release- of Install-schermen meer: alles gebeurt op het Changes-scherm. Het Changes-scherm heeft **filters** (een Project-select, een checkbox *Only show open projects* en de filters *Where environment…* en *Has status*) en toont een **changes-tabel** met onder meer de kolommen **Status overview** (voortgangsindicatoren per omgeving — groen als die stap klaar is, grijs als niet), **NextStep** (de voorgestelde volgende actie, bv. *Release on dev* / *Install on prd*), **Dependencies** (een *N dependencies*-link die een dependency-graph opent) en **Actions** (het ☰-menu per change). De acties in dat menu zijn **contextueel aan de status** per omgeving.
 
-Het pad is altijd **Changes → Release → Install**:
+Het pad is altijd **release → reimport → reinstall**, gestuurd vanuit het ☰-menu:
 
-![Schermafbeelding van het Yres-scherm met de change-detailweergave, met de DTAP-flowstrip, de status-badge released, de change-content, de omgeving-hop en de inline knoppen Import change en Install change](/img/screens/changes-release-install.png)
+![Schermafbeelding van het Yres Changes-scherm met het Actions-menu (☰) van een change open: per-omgeving-submenu's (dev ▸, prd ▸) met release change op dev en Reimport change / Reinstall change op de doelomgeving, plus de menu-items View dependencies en Logs](/img/screens/changes-release-install.png)
 
-*De change-detailweergave op het Changes-scherm laat de status van de change zien en — zodra die released is — de omgeving-hop (van dev naar de volgende omgeving) en de twee inline acties: Import change (alleen DWH) en Install change (DWH + ADF). Alles gebeurt vanuit de change zelf, niet op een apart scherm.*
+*Het geopende **Actions-menu (☰)** van een change op het Changes-scherm. Bovenaan staan **Update** en **Delete**; daaronder een **submenu per omgeving** (dev ▸, prd ▸): op dev biedt een open change **release change**, op een doelomgeving biedt een released change **Reimport change** (alleen DWH) en **Reinstall change** (DWH + ADF-publish). Verder bevat het menu **View dependencies** (opent de dependency-graph) en **Logs** (de stap-voor-stap import/install-log). Alles gebeurt vanuit dit menu op het Changes-scherm, niet op een apart scherm.*
 
-1. **DTAP-flow** — een wijziging doorloopt Change (dev) → Release → Import → Install → `publish-datafactory`.
-2. **Status-contextuele acties** — de acties verschijnen op de change zelf op basis van de status: een **open** change toont **Release**; alleen een change met status `released` toont **Import** en **Install**. (Reimport / reinstall zijn op dezelfde manier beschikbaar op een al geïnstalleerde change.)
-3. **Omgeving-hop** — kies van welke omgeving naar welke volgende omgeving je publiceert (de keuzelijst koppelt elke omgeving aan de eerstvolgende).
-4. **Import change** — kopieert de change-JSON en draait `spImport` in de doelomgeving. Dit raakt **alleen het DWH** en publiceert de ADF-factory **niet**.
-5. **Install change** — importeert én installeert, en publiceert daarna ADF (zie hieronder).
-6. **Voortgang** — bij Install draait `publish-datafactory` in Azure DevOps; de webapp toont een voortgangsmelding omdat de publish asynchroon is.
+1. **Changes-tabel** — kolommen **Name**, **Description**, **DueDate**, **ReleasedDate**, **Status overview** (per omgeving groen/grijs), **NextStep**, **Dependencies** (de *N dependencies*-link) en **Actions** (het ☰-menu). Bovenaan staat een **Create change**-knop; de filters beperken de getoonde rijen.
+2. **Status-contextuele acties** — de items in het ☰-menu verschijnen per omgeving op basis van de status: in het **dev ▸**-submenu toont een **open** change **release change**; in het submenu van een **doelomgeving** (bv. **prd ▸**) toont een **released** change **Reimport change** en **Reinstall change**.
+3. **release change** — vergrendelt de change en draait `[Change].[spRelease]` met een dependency-check (alleen op dev, op de open change).
+4. **Reimport change** — draait `spImport` in de doelomgeving. Dit raakt **alleen het DWH** en publiceert de ADF-factory **niet**.
+5. **Reinstall change** — importeert én installeert, en publiceert daarna ADF (zie hieronder).
+6. **View dependencies & Logs** — **View dependencies** opent de dependency-graph (van welke changes deze afhangt, met hun status); **Logs** opent de stap-voor-stap import/install-log. Bij Reinstall draait `publish-datafactory` in Azure DevOps en toont de webapp een voortgangsmelding omdat de publish asynchroon is.
 
-### Changes → Release → Install — stap voor stap
+### release → reimport → reinstall — stap voor stap
 
 1. **Bewerk in dev en bundel onder een Change.** Elke data-plane-bewerking (nieuwe tabellen, scripted objects) wordt vastgelegd in `Change.ChangeContent` onder een **Change**, die hoort bij een **Project**. Scripted/custom objecten voeg je toe aan de change vanuit de **Object Explorer** (de objectboom onder Data Engineering).
-2. **Release de change** — vanuit de open change draait **Release** `[Change].[spRelease]`, dat de afhankelijkheden valideert en de change vergrendelt (geen verdere bewerkingen). Yres blokkeert het releasen als de change content bevat waar een andere, nog niet-released change van afhankelijk is; de foutmelding noemt die afhankelijke change(s).
-3. **Importeer naar de volgende omgeving** — de **Import**-actie op de released change draait `[Change].[spImport]`, dat de released change (als JSON) in de doelomgeving importeert. Dit is een **DWH-only** stap.
-4. **Installeer** — de **Install**-actie op de released change draait `[Change].[spInstall]`, dat de change toepast (`@Execute`: `1` = uitvoeren, `0` = SQL printen, `2` = impactanalyse). De ADF-pipeline **`InstallChange`** is het automatiseringsingangspunt.
+2. **Release de change** — in het **dev ▸**-submenu van het ☰-menu draait **release change** `[Change].[spRelease]`, dat de afhankelijkheden valideert en de change vergrendelt (geen verdere bewerkingen). Yres blokkeert het releasen als de change content bevat waar een andere, nog niet-released change van afhankelijk is; de foutmelding noemt die afhankelijke change(s).
+3. **Reimporteer naar de volgende omgeving** — **Reimport change** in het submenu van de doelomgeving draait `[Change].[spImport]`, dat de released change (als JSON) in de doelomgeving importeert. Dit is een **DWH-only** stap.
+4. **Reinstall** — **Reinstall change** in het submenu van de doelomgeving draait `[Change].[spInstall]`, dat de change toepast (`@Execute`: `1` = uitvoeren, `0` = SQL printen, `2` = impactanalyse). De ADF-pipeline **`InstallChange`** is het automatiseringsingangspunt.
 
-**Install doet drie dingen achter elkaar:**
+**Reinstall doet drie dingen achter elkaar:**
 
 1. **Import** — draait `spImport` (de change-JSON wordt in de doelomgeving binnengehaald).
 2. **Install** — draait de **`InstallChange`** ADF-pipeline als die bestaat (anders de DWH-procedure `InstallProcedure`).
 3. **Publish ADF** — start de Azure DevOps-pipeline **`publish-datafactory`** met `{ environment: <doeltype> }`, zodat de nieuwe data-source-pipelines in de doelfactory landen.
 
-Daarmee is **Install** de stap die DWH én ADF synchroniseert; **Import** raakt alleen het DWH.
+Daarmee is **Reinstall** de stap die DWH én ADF synchroniseert; **Reimport** raakt alleen het DWH.
+
+### Change-content, dependencies en logs inspecteren
+
+Vanuit het Changes-scherm inspecteer je de change zonder het ☰-menu te verlaten:
+
+- **Change-content** — selecteer een change om het content-paneel te openen: een **objectboom** (source → schema → table → properties zoals **LoadType**, **DeltaColumn**, **ifExists**), met een **View as table**-toggle voor dezelfde objecten als tabel.
+- **View dependencies** — opent de dependency-graph: van welke changes deze afhangt en wat hun status is. Dit is dezelfde check die `release change` (via `[Change].[spRelease]`) afdwingt.
+- **Logs** — opent de stap-voor-stap import/install-log: **INIT → ADD CHANGES → ADD PROJECT → ADD CHANGE CONTENT → ADD CHANGE DEPENDENCIES → END OF PROCESS**, met per stap status en origin.
 
 :::warning Versies moeten overeenkomen
 Vóór een install controleert Yres of de DWH-versies van bron- en doelomgeving gelijk zijn (`throwErrorIfDwhVersionDontMatch`). Komen ze niet overeen, dan volgt de melding *"Environment versions do not match, please update"* en wordt er niet geïnstalleerd. Werk eerst de achterlopende omgeving bij.
