@@ -1,15 +1,15 @@
 ---
 sidebar_position: 6
 title: Data Engineering
-description: Manage view persistence (Level/Delta) and object history (version comparison and dependency trees) from the Yres web app.
+description: Manage view persistence (Level/Delta) and Database objects (object tree, SQL definition, version comparison and the Add-to-change actions) from the Yres web app.
 ---
 
 # Data Engineering
 
-The **Data engineering** section (icon bar, key `general.dataEngineering`) contains two screens that let you manage database objects without working directly in the database:
+The **Data engineering** section (icon bar, key `general.dataEngineering`) has exactly two sub-links that let you manage database objects without working directly in the database:
 
 - **View persistence** (`/dataengineering/viewpersistence`) — materialize views into tables.
-- **Object history** (`/dataengineering/objecthistory`) — view the version history and dependencies of objects.
+- **Database objects** (`/dataengineering/objecthistory`) — the object viewer: the object tree, the current SQL definition, version comparison and the right-click menu for adding objects to a change.
 
 :::tip All screens & routes
 The full list of app screens with their route and fields is in [Web app screens](../referentie/webapp-schermen.md).
@@ -60,39 +60,38 @@ The `Delta` column of the table (and the load type in the form) shows how the vi
 The configuration is stored via `MaintainPersistView`; the actual materialization is done by the stored procedure **`[LoadManagement].[spMaterializeViews]`**, which is called by the **Materialize View** pipeline. The same step also sits as **Materialize Views** at the end of the standard load workflow, so that persisted views automatically stay current after a load.
 :::
 
-## Object history
+## Database objects
 
-The **Object history** screen (`/dataengineering/objecthistory`) shows all database objects — created by a user and by Yres — with their **definition**, **version history** and **dependencies**. You can compare versions, explore dependency trees and add objects to a change.
+The **Database objects** sub-link (`/dataengineering/objecthistory`) is the **object viewer**: a tree of all database objects — created by a user and by Yres — where you inspect each object's **current SQL definition**, **compare versions** and use a **right-click menu** to add objects to a change.
 
-The object tree on this screen is also the **Object Explorer**: this is where you manage your **scripted/custom objects** (your own tables, views, stored procedures and functions). You browse your DWH objects here and add a custom object — or an existing database object — to a change directly from the explorer via the **Add to change** action. There is no separate "Scripted objects" screen anymore; scripted objects live here in the Object Explorer.
+This screen is the home for your **scripted/custom objects** (your own tables, views, stored procedures and functions). You browse your DWH objects here and add a custom object — or an existing database object — to a change directly via the right-click menu (**Add to change**). There is no separate "Scripted objects" screen anymore; scripted objects are managed here in **Database objects**.
 
-![Object history screen: on the left a schema and object tree with a right-click context menu, top right the version comparison with a diff of the object definition, and bottom right a dependency tree.](/img/screens/dataengineering-objecthistory.png)
+![Database objects screen: on the left the object tree (schema → object-type folder → object), in the middle the source pane with the current SQL definition (syntax-highlighted), at the top the "No comparison"/"Compare versions" dropdown, and a right-click context menu with cascading Add-to-change submenus.](/img/screens/dataengineering-objecthistory.png)
 
-*The Object history screen: the object tree on the left, the version comparison with diff in the top right, and the dependency graph in the bottom right.*
+*The Database objects screen: the object tree on the left (schema → object type → object), the source pane with the current definition in the middle, the comparison dropdown at the top, and the right-click context menu with the Add-to-change cascade.*
 
-(1) **Comparison dropdown** — at the top of the object tree; choose what you compare against (default "No comparison").
-(2) **Schema/object tree** — all schemas and objects (for example `CustomYres`, `dbo`, `Expose`, `ODS`, `STAGE`). Click an object to load its definition and dependencies.
-(3) **Right-click context menu** — actions on an object (see [Adding objects to a change](#adding-objects-to-a-change)).
-(4) **Version comparison + diff** — two dropdowns select the versions; the main pane shows the definition or a line-by-line difference. The button in the bottom left compares the current with the previous definition.
-(5) **Dependency tree** — the objects this object **depends on** and those that **depend on it**; click a node to highlight linked objects (handy in large trees).
+(1) **Object tree** — three levels: **schema → object-type folder → object**. For example `dbo → SCALAR_FUNCTION → fxToReadableSize`, or `ODS → TABLE → AzureSQL_dbo_attractions`. Click an object to load its definition.
+(2) **Source pane** — shows the **current SQL definition** of the selected object, syntax-highlighted.
+(3) **"No comparison" / "Compare versions" dropdown** (+ layout toggles) — at the top; defaults to "No comparison". Choose **Compare versions** for a diff.
+(4) **Version diff** — with **Compare versions** selected, a red/green difference appears between the current version and a previous `ALTER` (added/removed columns, indexes, and so on).
+(5) **Right-click context menu** — right-click an object for the change and dependency actions (see [Adding objects to a change](#adding-objects-to-a-change)).
 
 ### Comparing versions
 
-1. Select an object in the tree.
-2. In the dropdowns, choose the **current** version and the version you want to **compare** with.
-3. Read the difference in the main pane (added and removed lines are highlighted).
-4. Or click the button in the bottom left to quickly compare the **current vs. previous** definition.
+1. Select an object in the tree; the source pane shows the current SQL definition.
+2. Switch the dropdown at the top from **No comparison** to **Compare versions**.
+3. Read the red/green difference between the current version and the previous `ALTER`: added lines are green, removed lines are red (for example added or removed columns or indexes).
+4. Use the layout toggles to change how the source and diff panes are displayed.
 
 ### Adding objects to a change
 
-Select an object in the **Object Explorer** (the tree) and use the **Add to change** action to include it in a change. This is how your scripted/custom objects — your own tables, views, stored procedures and functions — end up in a change, together with existing database objects you want to take along.
+The **right-click menu** on an object in the tree is how you add scripted/custom objects — your own tables, views, stored procedures and functions — as well as existing database objects to a change. Right-click an object and choose one of the following actions (the first three have cascading submenus):
 
-Right-click an object in the tree to open the context menu. From there you can:
-
-- **add it to a change with dependencies** — also includes the objects this object depends on;
-- **add it to a change without dependencies** — only the object itself;
-- **add it with content** — including the object content (for a custom table this determines whether the table content travels);
-- **delete it with a change** — record the deletion in a change.
+- **Add to change ▸** — pick a **project** ▸ pick a **change** (or **New change…** / **Create project…**). The object is added to that change.
+- **Add to change with dependencies ▸** — the same project → change path, but also includes the object's **dependencies**.
+- **Delete with change ▸** — schedules the object's **deletion** as part of a change.
+- **View dependencies** — opens a **dependency graph** (React Flow) of what the object depends on and what depends on it, for example `[dbo].[UNQUOTENAME]` → `[LoadManagement].[fxExtractor]` → `vwExtractor` / `spPrepareWorkload`.
+- **View change history** — opens a **modal** listing the changes that touched this object (columns Change · Status overview · CreationDate · plus a link to navigate to the change).
 
 :::note Changes & DTAP
 Adding to a change is part of the [Projects → Changes](projecten-changes.md) process, which promotes changes through your DTAP environments in a controlled way. This menu is meant for setups with multiple environments.

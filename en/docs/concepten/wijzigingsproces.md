@@ -42,7 +42,7 @@ You bundle all your work into two units, so it travels as a whole and stays trac
 
 - A **Project** is a container with a name, description and due date — for example *"AFAS expansion Q3"*.
 - A **Change** is the unit you actually release and promote. Every edit you make in dev — connecting a
-  source, adding tables, persisting a view, adding a scripted object via the Object Explorer — is
+  source, adding tables, persisting a view, adding a scripted object via Database objects — is
   **automatically booked under a Change**. A Change always belongs to a Project.
 
 So you don't have to track manually what changed: Yres collects it in the Change, and that Change is your
@@ -69,7 +69,7 @@ the far right. You release, import and install everything from that **☰ menu**
 1. **Plan your work — create a Project.** Give it a name, description and due date. You collect your
    changes under this project.
 2. **Build in dev.** Connect sources, add tables, create persisted views, and add scripted objects via the
-   **Object Explorer** (the object tree under Data Engineering). Everything you do is recorded under your
+   **Database objects** (the object tree under Data Engineering). Everything you do is recorded under your
    **Change**. You load and test freely here — this does not touch test or prod.
 3. **Review and check the Change.** You see its content as a **diagram** (source → schema → table) or as
    a **table** (per object the load type, the delta column, and what happens if the object already

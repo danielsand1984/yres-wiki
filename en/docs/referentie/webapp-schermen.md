@@ -81,7 +81,7 @@ For **Triggers**, the timezone of the logged-in user is used (not a fixed UTC+1)
 | Screen | Route | Key fields |
 |---|---|---|
 | View persistence | `/dataengineering/viewpersistence` | `DestinationSchemaName` · `DestinationTableName` · `Level` · `Delta` · "Run materialize view (all)" |
-| Object Explorer / Object history | `/dataengineering/objecthistory` | DWH object tree · object history · **"Add to change"** to add a scripted/custom object (your own table, view, procedure, function) to a change |
+| Database objects | `/dataengineering/objecthistory` | object tree (schema → type → object) · SQL source / **"Compare versions"** diff · right-click menu: **Add to change** (project → change), **Add to change with dependencies**, **Delete with change**, **View dependencies** (graph), **View change history** |
 
 ## Projects & Changes
 
@@ -95,7 +95,7 @@ This entire section is **hidden for a single-environment organization**. Project
 | Changes | `/changes` | filters (Project · "Only show open projects" · Where environment · Has status) · changes table (`Name` · `Description` · `DueDate` · `ReleasedDate` · `Status overview` · `NextStep` · `Dependencies` · `Actions`) · "Create change" · **actions via the per-change ☰ menu**: Update/Delete, per-environment submenu (dev ▸ release change; target env ▸ Reimport/Reinstall change), View dependencies (graph) and Logs |
 
 :::note Release & Install happen on the Changes screen
-There are no separate "Release change" or "Install change" screens anymore. Release, Import and Install are **actions on the selected change** within the **Changes** screen (`/changes`), contextual to its status: an open change shows **Release** (`[Change].[spRelease]`), a released change shows **Import** (`[Change].[spImport]`, DWH only) and **Install** (`[Change].[spInstall]` + the `publish-datafactory` pipeline, DWH + ADF). You manage scripted/custom objects via the **Object Explorer** in **Data engineering** (`/dataengineering/objecthistory`), where you add an object to a change.
+There are no separate "Release change" or "Install change" screens anymore. Release, Import and Install are **actions on the selected change** within the **Changes** screen (`/changes`), contextual to its status: an open change shows **Release** (`[Change].[spRelease]`), a released change shows **Import** (`[Change].[spImport]`, DWH only) and **Install** (`[Change].[spInstall]` + the `publish-datafactory` pipeline, DWH + ADF). You manage scripted/custom objects via **Database objects** in **Data engineering** (`/dataengineering/objecthistory`), where you add an object to a change.
 :::
 
 ## Admin (organization)

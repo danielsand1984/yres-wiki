@@ -81,7 +81,7 @@ Bij **Triggers** wordt de timezone van de ingelogde gebruiker gebruikt (niet een
 | Scherm | Route | Belangrijkste velden |
 |---|---|---|
 | View persistence | `/dataengineering/viewpersistence` | `DestinationSchemaName` · `DestinationTableName` · `Level` · `Delta` · "Run materialize view (all)" |
-| Object Explorer / Object history | `/dataengineering/objecthistory` | objectboom van het DWH · objecthistorie · **"Add to change"** om een scripted/eigen object (eigen tabel, view, procedure, functie) aan een change toe te voegen |
+| Database objects | `/dataengineering/objecthistory` | objectboom (schema → type → object) · SQL-broncode / **"Compare versions"**-diff · rechtsklikmenu: **Add to change** (project → change), **Add to change with dependencies**, **Delete with change**, **View dependencies** (graph), **View change history** |
 
 ## Projects & Changes
 
@@ -95,7 +95,7 @@ Deze hele sectie is **verborgen bij een single-environment-organisatie**. Projec
 | Changes | `/changes` | filters (Project · "Only show open projects" · Where environment · Has status) · changes-tabel (`Name` · `Description` · `DueDate` · `ReleasedDate` · `Status overview` · `NextStep` · `Dependencies` · `Actions`) · "Create change" · **acties via het ☰-menu per change**: Update/Delete, per-omgeving-submenu (dev ▸ release change; doelomgeving ▸ Reimport/Reinstall change), View dependencies (graaf) en Logs |
 
 :::note Release & Install gebeuren op de Changes-zelf
-Er zijn geen aparte "Release change"- of "Install change"-schermen meer. Release, Import en Install zijn **acties op de geselecteerde change** binnen het **Changes**-scherm (`/changes`), contextueel op de status: een open change toont **Release** (`[Change].[spRelease]`), een vrijgegeven change toont **Import** (`[Change].[spImport]`, alleen DWH) en **Install** (`[Change].[spInstall]` + de `publish-datafactory`-pipeline, DWH + ADF). Scripted/eigen objecten beheer je via de **Object Explorer** in **Data engineering** (`/dataengineering/objecthistory`), waar je een object aan een change toevoegt.
+Er zijn geen aparte "Release change"- of "Install change"-schermen meer. Release, Import en Install zijn **acties op de geselecteerde change** binnen het **Changes**-scherm (`/changes`), contextueel op de status: een open change toont **Release** (`[Change].[spRelease]`), een vrijgegeven change toont **Import** (`[Change].[spImport]`, alleen DWH) en **Install** (`[Change].[spInstall]` + de `publish-datafactory`-pipeline, DWH + ADF). Scripted/eigen objecten beheer je via **Database objects** in **Data engineering** (`/dataengineering/objecthistory`), waar je een object aan een change toevoegt.
 :::
 
 ## Admin (organisatie)

@@ -42,8 +42,8 @@ Al je werk bundel je in twee eenheden, zodat het als geheel reist en traceerbaar
 
 - Een **Project** is een container met een naam, omschrijving en einddatum — bijvoorbeeld *"AFAS-uitbreiding Q3"*.
 - Een **Change** is de eenheid die je daadwerkelijk releaset en promoot. Elke bewerking die je in dev
-  doet — een bron koppelen, tabellen toevoegen, een view persisteren, een scripted object toevoegen via de
-  Object Explorer — wordt **automatisch onder een Change geboekt**. Een Change hoort altijd bij een
+  doet — een bron koppelen, tabellen toevoegen, een view persisteren, een scripted object toevoegen via
+  Database objects — wordt **automatisch onder een Change geboekt**. Een Change hoort altijd bij een
   Project.
 
 Je hoeft dus niet handmatig bij te houden wat er veranderd is: Yres verzamelt het in de Change, en die
@@ -71,7 +71,7 @@ install-schermen.
 1. **Plan je werk — maak een Project.** Geef het een naam, omschrijving en einddatum. Onder dit project
    verzamel je je changes.
 2. **Bouw in dev.** Koppel bronnen, voeg tabellen toe, maak persisted views, en voeg scripted objects toe
-   via de **Object Explorer** (de objectboom onder Data Engineering). Alles wat je doet wordt onder je
+   via **Database objects** (de objectboom onder Data Engineering). Alles wat je doet wordt onder je
    **Change** vastgelegd. Je laadt en test hier vrij — dit raakt test en prod niet.
 3. **Bekijk en controleer de Change.** Je ziet de inhoud als **diagram** (bron → schema → tabel) of als
    **tabel** (per object het load type, de delta-kolom, en wat er gebeurt als het object al bestaat). Zo

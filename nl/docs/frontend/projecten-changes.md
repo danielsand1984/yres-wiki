@@ -94,9 +94,9 @@ De **DueDate** van een change moet **op of vóór** de DueDate van het bovenligg
 
 ## Scripted Objects
 
-Custom SQL-objecten die niet door Yres zijn gegenereerd — je eigen tabellen, views, stored procedures en functions — beheer je vanuit de **Object Explorer**: de database-objectboom onder **Data Engineering**. Daar blader je door je DWH-objecten en **voeg je een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change**. Er is geen apart "Scripted objects"-scherm meer; scripted/custom objecten leven in de Object Explorer en reizen via de change mee bij het releasen en installeren naar test en prod.
+Custom SQL-objecten die niet door Yres zijn gegenereerd — je eigen tabellen, views, stored procedures en functions — beheer je vanuit **Database objects**: de database-objectboom onder **Data Engineering**. Daar blader je door je DWH-objecten en **voeg je een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change**. Er is geen apart "Scripted objects"-scherm meer; scripted/custom objecten leven in het Database objects-scherm en reizen via de change mee bij het releasen en installeren naar test en prod.
 
-- Open onder **Data Engineering** de **Object Explorer** en rechtsklik een object om het — met of zonder dependencies, en eventueel met content — aan een change toe te voegen. Zie [Objecten aan een change toevoegen](./data-engineering.md#objecten-aan-een-change-toevoegen).
+- Open onder **Data Engineering** het **Database objects**-scherm en rechtsklik een object om het — met of zonder dependencies, en eventueel met content — aan een change toe te voegen. Zie [Objecten aan een change toevoegen](./data-engineering.md#objecten-aan-een-change-toevoegen).
 - Bij een **custom tabel** kies je of de inhoud van de tabel meegaat (achterliggend: `[Change].[spCopyTableContent]`).
 
 ## Het acties-menu (☰) {#het-acties-menu}

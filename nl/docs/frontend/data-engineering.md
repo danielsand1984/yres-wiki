@@ -1,15 +1,15 @@
 ---
 sidebar_position: 6
 title: Data Engineering
-description: View-persistentie (Level/Delta) en object-historie (versievergelijking en dependency-trees) beheren vanuit de Yres-webapp.
+description: View-persistentie (Level/Delta) en Database objects (objectboom, SQL-definitie, versievergelijking en de Add-to-change-acties) beheren vanuit de Yres-webapp.
 ---
 
 # Data Engineering
 
-De sectie **Data engineering** (icoonbalk, sleutel `general.dataEngineering`) bevat twee schermen waarmee je database-objecten beheert zonder rechtstreeks in de database te werken:
+De sectie **Data engineering** (icoonbalk, sleutel `general.dataEngineering`) heeft precies twee sub-links waarmee je database-objecten beheert zonder rechtstreeks in de database te werken:
 
 - **View persistence** (`/dataengineering/viewpersistence`) — views materialiseren naar tabellen.
-- **Object history** (`/dataengineering/objecthistory`) — versiehistorie en afhankelijkheden van objecten bekijken.
+- **Database objects** (`/dataengineering/objecthistory`) — de objectviewer: de objectboom, de huidige SQL-definitie, versievergelijking en het rechtsklik-menu om objecten aan een change toe te voegen.
 
 :::tip Alle schermen & routes
 De volledige lijst schermen van de app met hun route en velden staat in [Webapp-schermen](../referentie/webapp-schermen.md).
@@ -60,39 +60,38 @@ In de kolom `Delta` van de tabel (en bij het load type in het formulier) staat h
 De configuratie wordt opgeslagen via `MaintainPersistView`; het daadwerkelijke materialiseren gebeurt door de stored procedure **`[LoadManagement].[spMaterializeViews]`**, die door de **Materialize View**-pipeline wordt aangeroepen. Dezelfde stap zit als **Materialize Views** ook aan het eind van de standaard laad-workflow, zodat persisted views automatisch actueel blijven na een load.
 :::
 
-## Object history
+## Database objects
 
-Het scherm **Object history** (`/dataengineering/objecthistory`) toont alle database-objecten — door een gebruiker én door Yres gemaakt — met hun **definitie**, **versiehistorie** en **afhankelijkheden**. Je kunt versies vergelijken, dependency-trees verkennen en objecten toevoegen aan een change.
+De sub-link **Database objects** (`/dataengineering/objecthistory`) is de **objectviewer**: een boomstructuur met alle database-objecten — door een gebruiker én door Yres gemaakt — waarmee je per object de **huidige SQL-definitie** bekijkt, **versies vergelijkt** en via een **rechtsklik-menu** objecten aan een change toevoegt.
 
-De objectboom op dit scherm is tegelijk de **Object Explorer**: hier beheer je je **scripted/custom objecten** (je eigen tabellen, views, stored procedures en functions). Je bladert er door je DWH-objecten en voegt een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change via de actie **Add to change**. Er is geen apart "Scripted objects"-scherm meer; scripted objecten leven hier in de Object Explorer.
+Dit scherm is dé plek voor je **scripted/custom objecten** (je eigen tabellen, views, stored procedures en functions). Je bladert er door je DWH-objecten en voegt een eigen object — of een bestaand database-object — via het rechtsklik-menu (**Add to change**) rechtstreeks aan een change toe. Er is geen apart "Scripted objects"-scherm meer; scripted objecten beheer je hier in **Database objects**.
 
-![Object history-scherm: links een schema- en objectboom met een rechtsklik-contextmenu, rechtsboven de versievergelijking met een diff van de objectdefinitie en rechtsonder een dependency-tree.](/img/screens/dataengineering-objecthistory.png)
+![Database objects-scherm: links de objectboom (schema → objecttype-map → object), in het midden het broncodepaneel met de huidige SQL-definitie (syntax highlighting), bovenaan de "No comparison"/"Compare versions"-dropdown en een rechtsklik-contextmenu met cascademenu's voor Add to change.](/img/screens/dataengineering-objecthistory.png)
 
-*Het Object history-scherm: de objectboom links, de versievergelijking met diff rechtsboven en de afhankelijkheidsgraaf rechtsonder.*
+*Het Database objects-scherm: de objectboom links (schema → objecttype → object), het broncodepaneel met de huidige definitie in het midden, de vergelijkingsdropdown bovenaan en het rechtsklik-contextmenu met de Add-to-change-cascade.*
 
-(1) **Comparison-dropdown** — bovenaan de objectboom; kies waarmee je vergelijkt (standaard "No comparison").
-(2) **Schema-/objectboom** — alle schema's en objecten (bijvoorbeeld `CustomYres`, `dbo`, `Expose`, `ODS`, `STAGE`). Klik een object aan om zijn definitie en afhankelijkheden te laden.
-(3) **Rechtsklik-contextmenu** — acties op een object (zie [Objecten aan een change toevoegen](#objecten-aan-een-change-toevoegen)).
-(4) **Versievergelijking + diff** — twee dropdowns kiezen de versies; het hoofdvenster toont de definitie of een regel-voor-regel-verschil. De knop linksonder vergelijkt de huidige met de vorige definitie.
-(5) **Dependency-tree** — de objecten waar dit object **van afhangt** én die **ervan afhangen**; klik een knoop aan om gelinkte objecten te markeren (handig in grote bomen).
+(1) **Objectboom** — drie niveaus: **schema → objecttype-map → object**. Bijvoorbeeld `dbo → SCALAR_FUNCTION → fxToReadableSize`, of `ODS → TABLE → AzureSQL_dbo_attractions`. Klik een object aan om zijn definitie te laden.
+(2) **Broncodepaneel** — toont de **huidige SQL-definitie** van het geselecteerde object, met syntax highlighting.
+(3) **"No comparison" / "Compare versions"-dropdown** (+ layout-toggles) — bovenaan; standaard "No comparison". Kies **Compare versions** voor een diff.
+(4) **Versie-diff** — bij **Compare versions** verschijnt een rood/groen-verschil tussen de huidige versie en een vorige `ALTER` (toegevoegde/verwijderde kolommen, indexen, enzovoort).
+(5) **Rechtsklik-contextmenu** — rechtsklik op een object voor de change- en dependency-acties (zie [Objecten aan een change toevoegen](#objecten-aan-een-change-toevoegen)).
 
 ### Versies vergelijken
 
-1. Selecteer een object in de boom.
-2. Kies in de dropdowns de **huidige** versie en de versie waarmee je wilt **vergelijken**.
-3. Lees het verschil af in het hoofdvenster (toegevoegde en verwijderde regels worden gemarkeerd).
-4. Of klik de knop linksonder om snel **huidige vs. vorige** definitie te vergelijken.
+1. Selecteer een object in de boom; het broncodepaneel toont de huidige SQL-definitie.
+2. Zet de dropdown bovenaan van **No comparison** naar **Compare versions**.
+3. Lees het rood/groen-verschil af tussen de huidige versie en de vorige `ALTER`: toegevoegde regels staan groen, verwijderde regels rood (bijvoorbeeld toegevoegde of verwijderde kolommen of indexen).
+4. Met de layout-toggles wissel je hoe het broncode- en diff-paneel worden weergegeven.
 
 ### Objecten aan een change toevoegen
 
-Selecteer een object in de **Object Explorer** (de boom) en gebruik de actie **Add to change** om het in een change op te nemen. Zo komen je scripted/custom objecten — je eigen tabellen, views, stored procedures en functions — in een change terecht, samen met bestaande database-objecten die je wilt meenemen.
+Het **rechtsklik-menu** op een object in de boom is de manier waarop je scripted/custom objecten — je eigen tabellen, views, stored procedures en functions — én bestaande database-objecten aan een change toevoegt. Rechtsklik een object en kies een van de volgende acties (de eerste drie hebben cascademenu's):
 
-Rechtsklik op een object in de boom voor het contextmenu. Van daaruit kun je het object:
-
-- **toevoegen aan een change met dependencies** — neemt ook de objecten mee waarvan dit object afhangt;
-- **toevoegen aan een change zonder dependencies** — alleen het object zelf;
-- **toevoegen met content** — inclusief de objectinhoud (voor een eigen tabel bepaal je zo of de tabelinhoud meereist);
-- **verwijderen met een change** — boek de verwijdering in een change.
+- **Add to change ▸** — kies een **project** ▸ kies een **change** (of **New change…** / **Create project…**). Het object wordt aan die change toegevoegd.
+- **Add to change with dependencies ▸** — hetzelfde project → change-pad, maar neemt ook de **afhankelijkheden** van het object mee.
+- **Delete with change ▸** — plant de **verwijdering** van het object als onderdeel van een change.
+- **View dependencies** — opent een **dependency-graaf** (React Flow) van waar het object van afhangt én wat ervan afhangt, bijvoorbeeld `[dbo].[UNQUOTENAME]` → `[LoadManagement].[fxExtractor]` → `vwExtractor` / `spPrepareWorkload`.
+- **View change history** — opent een **modal** met de changes die dit object hebben geraakt (kolommen Change · Status overview · CreationDate · plus een link om naar de change te navigeren).
 
 :::note Changes & DTAP
 Het toevoegen aan een change hoort bij het [Projects → Changes](projecten-changes.md)-proces, waarmee wijzigingen gecontroleerd door je DTAP-omgevingen worden gepromoveerd. Dit menu is bedoeld voor omgevingen met meerdere environments.
