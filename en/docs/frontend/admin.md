@@ -73,6 +73,12 @@ homepage and are handy for, for example, scheduled maintenance or an upcoming re
 Route: `/admin/auditlogs`. Monitor actions of organization users: user-agent, client IP and extra
 properties per log type. Filterable by date range, severity or user.
 
+![Audit Logs: filters (Date, Events, Users) above a table (Causer, Organization, Action, Subject, Description, IP, created).](/img/screens/admin-auditlogs.png)
+
+At the top are the filters (Date, Events, Users); below them a table that logs the **Causer**,
+**Organization**, **Action**, **Subject**, **Description**, **IP** and timestamp (**created**) per action, so
+user actions across the whole organization are traceable.
+
 ## Database overview
 
 Route: `/admin/databases`. View all databases that the organization uses. If you have added a custom
@@ -129,6 +135,12 @@ Route: `/admin/secrets`. View the secrets in the associated Azure Key Vault, wit
 expiry date. With the right permission you can update a value. Yres never stores credentials in the
 frontend; they always live in the customer's Key Vault.
 
+![Secrets: an expiry calendar above a table of secrets (Name, Expires_at, Status valid/expires-soon).](/img/screens/admin-secrets.png)
+
+An expiry overview (calendar) at the top and below it a table of the stored secrets — **Name**,
+**Expires_at** and **Status** (`valid` / `expires-soon`). These are the source credentials in the Key Vault;
+Yres warns before they expire.
+
 ## Shared integration runtimes
 
 Route: `/admin/shared-integration-runtimes` (available from version **1.55**). Manage self-hosted
@@ -145,6 +157,11 @@ Route: `/admin/environments`. Update each environment to the latest Yres version
 (CI/CD pipeline) for the selected environment.
 
 ![Update environments: one card per environment (dev/test/prod) with version, last CI/CD result and a deploy confirmation.](/img/screens/admin-environments.svg)
+
+![Update environment: per-environment cards (dev/prd) showing the current YRES DWH version and an "Already up to date" state.](/img/screens/admin-update-environment.png)
+
+Per environment (dev / prd) a card shows the current **YRES DWH version** and, when there is nothing to do,
+the **"Already up to date"** state. Updating updates the DWH and republishes the data factory.
 
 1. **Card per environment** — each environment (Development, Test, Production) has its own card.
 2. **Version + last CI/CD** — shows the current DWH version and the State / Result / Ran date of the last
@@ -168,6 +185,11 @@ you change anything.
 
 Route: `/admin/azure/resources`. Overview of the linked Azure resources: name, type, location and a
 direct hyperlink to the resource.
+
+![Azure Resources: table with the provisioned resources (Data Factory, Key Vault, SQL Server, SQL Database, Storage) with type and location.](/img/screens/admin-azureresources.png)
+
+The table shows the provisioned Azure resources for the environment — **Data Factory**, **Key Vault**,
+**SQL Server**, **SQL Database** and **Storage** — each with their type and location.
 
 ### Change deployment rules (Change overwrites)
 

@@ -71,6 +71,16 @@ Schedule a pipeline with a recurrence pattern (an ADF schedule trigger). For eac
 The interface shows the hint *"Timezone UTC(+1) will be used"*, but the trigger actually uses the **timezone of the logged-in user** (from your user settings), not a fixed UTC+1.
 :::
 
+## Integration runtimes
+
+**Route:** `/loadmanagement/integration-runtimes`
+
+Manage the Data Factory **integration runtimes**: the compute environments in which pipelines run. The list shows, per runtime, its type and running status, with a **Create** action to add one.
+
+![Integration runtimes: the list of integration runtimes with their type and running status, plus a Create button.](/img/screens/loadmanagement-integration-runtimes.png)
+
+*The Integration runtimes screen: the list of integration runtimes (Managed AutoResolve and linked Self-Hosted/shared) with their type and running status, and a Create action.*
+
 ## Monitoring
 
 **Route:** `/loadmanagement/monitoring`
@@ -96,6 +106,26 @@ Monitor the load status per target table, drill down into the individual runs an
 :::tip
 The raw log lines behind this screen come from the monitoring views `vwLoads` (timeline per pipeline) and `vwMonitor` (broader, including view materialization and Power BI refresh), and from the tables `[Monitoring].[LS_Pipeline]` (1 row per run) and `[Monitoring].[LS_Trans]` (1 row per step).
 :::
+
+### DWH processes
+
+**Route:** `/loadmanagement/datawarehouse-processes`
+
+A **Processes/Locks** view of the active table locks in the database (session, host, login, database, schema, table, lock type), so you can spot blocking processes quickly.
+
+![DWH processes: the Processes/Locks view with active table locks (session, host, login, database, schema, table, lock type).](/img/screens/loadmanagement-datawarehouse-processes.png)
+
+*The Data Warehouse Processes screen: review the active table locks to spot blocking.*
+
+### DWH queries
+
+**Route:** `/loadmanagement/datawarehouse-queries`
+
+A list of **long running queries** (date, query, number of executions, max/avg/total exec seconds) to find slow SQL.
+
+![DWH queries: the long running queries list (date, query, executions, max/avg/total exec seconds).](/img/screens/loadmanagement-datawarehouse-queries.png)
+
+*The DWH Queries screen: find slow SQL via the long running queries list.*
 
 ## Master pipelines
 

@@ -71,6 +71,16 @@ Plan een pipeline met een herhaalpatroon (een ADF schedule-trigger). Per geselec
 De interface toont de hint *"Timezone UTC(+1) will be used"*, maar de trigger gebruikt in werkelijkheid de **tijdzone van de ingelogde gebruiker** (uit je gebruikersinstellingen), niet een vaste UTC+1.
 :::
 
+## Integration runtimes
+
+**Route:** `/loadmanagement/integration-runtimes`
+
+Beheer de **integration runtimes** van de Data Factory: de reken-omgevingen waarin pipelines draaien. De lijst toont per runtime het type en de draai-status, met een **Create**-actie om er een toe te voegen.
+
+![Integration runtimes: de lijst met integration runtimes met hun type en draai-status, plus een Create-knop.](/img/screens/loadmanagement-integration-runtimes.png)
+
+*Het Integration runtimes-scherm: de lijst integration runtimes (Managed AutoResolve en gekoppelde Self-Hosted/gedeelde) met hun type en running-status, en een Create-actie.*
+
 ## Monitoring
 
 **Route:** `/loadmanagement/monitoring`
@@ -96,6 +106,26 @@ Bewaak de laadstatus per doeltabel, drill door naar de losse runs en stappen, en
 :::tip
 De ruwe logregels achter dit scherm komen uit de monitoring-views `vwLoads` (tijdlijn per pipeline) en `vwMonitor` (breder, inclusief view-materialisatie en Power BI-refresh), en uit de tabellen `[Monitoring].[LS_Pipeline]` (1 regel per run) en `[Monitoring].[LS_Trans]` (1 regel per stap).
 :::
+
+### DWH processes
+
+**Route:** `/loadmanagement/datawarehouse-processes`
+
+Een **Processes/Locks**-overzicht van de actieve table locks in de database (session, host, login, database, schema, table, lock type), zodat je blokkerende processen snel opspoort.
+
+![DWH processes: het Processes/Locks-overzicht met actieve table locks (session, host, login, database, schema, table, lock type).](/img/screens/loadmanagement-datawarehouse-processes.png)
+
+*Het Data Warehouse Processes-scherm: bekijk de actieve table locks om blocking op te sporen.*
+
+### DWH queries
+
+**Route:** `/loadmanagement/datawarehouse-queries`
+
+Een lijst met **long running queries** (datum, query, aantal executies, max/avg/total exec-seconden) om trage SQL te vinden.
+
+![DWH queries: de lijst met long running queries (datum, query, executies, max/avg/total exec-seconden).](/img/screens/loadmanagement-datawarehouse-queries.png)
+
+*Het DWH Queries-scherm: spoor trage SQL op via de lijst met long running queries.*
 
 ## Master pipelines
 

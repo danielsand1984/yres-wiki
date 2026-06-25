@@ -73,6 +73,12 @@ homepage en zijn handig voor bijvoorbeeld gepland onderhoud of een aankomende re
 Route: `/admin/auditlogs`. Monitor acties van organisatiegebruikers: user-agent, client-IP en extra
 eigenschappen per logtype. Filterbaar op datumrange, severity of gebruiker.
 
+![Audit Logs: filters (Date, Events, Users) boven een tabel (Causer, Organization, Action, Subject, Description, IP, created).](/img/screens/admin-auditlogs.png)
+
+Bovenaan staan de filters (Date, Events, Users); daaronder een tabel die per actie de **Causer**,
+**Organization**, **Action**, **Subject**, **Description**, **IP** en het tijdstip (**created**) logt, zodat
+gebruikersacties binnen de hele organisatie traceerbaar zijn.
+
 ## Database overview
 
 Route: `/admin/databases`. Bekijk alle databases die de organisatie gebruikt. Heb je een eigen (custom)
@@ -129,6 +135,12 @@ Route: `/admin/secrets`. Bekijk de secrets in de bijbehorende Azure Key Vault, m
 vervaldatum. Met de juiste permissie kun je een waarde bijwerken. Yres bewaart credentials nooit in de
 frontend; ze staan altijd in de Key Vault van de klant.
 
+![Secrets: een vervalkalender met daaronder een tabel met secrets (Name, Expires_at, Status valid/expires-soon).](/img/screens/admin-secrets.png)
+
+Een vervaloverzicht (kalender) bovenaan en daaronder een tabel met de opgeslagen secrets — **Name**,
+**Expires_at** en **Status** (`valid` / `expires-soon`). Dit zijn de broncredentials in de Key Vault; Yres
+waarschuwt voordat ze verlopen.
+
 ## Shared integration runtimes
 
 Route: `/admin/shared-integration-runtimes` (beschikbaar vanaf versie **1.55**). Beheer self-hosted
@@ -145,6 +157,11 @@ Route: `/admin/environments`. Werk elke omgeving bij naar de laatste Yres-versie
 (CI/CD-pipeline) voor de gekozen omgeving.
 
 ![Update environments: één kaart per omgeving (dev/test/prod) met versie, laatste CI/CD-resultaat en een deploy-bevestiging.](/img/screens/admin-environments.svg)
+
+![Update environment: kaarten per omgeving (dev/prd) met de huidige YRES DWH-versie en een "Already up to date"-status.](/img/screens/admin-update-environment.png)
+
+Per omgeving (dev / prd) een kaart met de huidige **YRES DWH-versie** en, als er niets te doen is, de status
+**"Already up to date"**. Bijwerken werkt de DWH bij en publiceert de data factory opnieuw.
 
 1. **Kaart per omgeving** — elke omgeving (Development, Test, Production) heeft een eigen kaart.
 2. **Versie + laatste CI/CD** — toont de huidige DWH-versie en de State / Result / Ran-datum van de laatste
@@ -168,6 +185,11 @@ je iets aanpast.
 
 Route: `/admin/azure/resources`. Overzicht van de gekoppelde Azure-resources: naam, type, locatie en een
 directe hyperlink naar de resource.
+
+![Azure Resources: tabel met de geprovisionde resources (Data Factory, Key Vault, SQL Server, SQL Database, Storage) met type en locatie.](/img/screens/admin-azureresources.png)
+
+De tabel toont de geprovisionde Azure-resources voor de omgeving — **Data Factory**, **Key Vault**,
+**SQL Server**, **SQL Database** en **Storage** — elk met hun type en locatie.
 
 ### Change deployment rules (Change overwrites)
 
