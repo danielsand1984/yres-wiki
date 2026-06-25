@@ -104,7 +104,7 @@ For analysis there are **monitoring views**: **`vwLoads`** (timeline per pipelin
 
 In the frontend you see this on the **Load management → Monitoring** screen:
 
-![Yres Monitoring screen with the targets tree on the left, runs grid in the middle and a steps modal at the bottom](/img/screens/loadmanagement-monitoring.svg)
+![Yres Monitoring screen with the targets tree on the left, runs grid in the middle and a steps modal at the bottom](/img/screens/loadmanagement-monitoring.png)
 
 *The Monitoring screen reads directly from `Monitoring.LS_Trans`; for a failed run the error message and a link to the ADF run appear above the overview.*
 

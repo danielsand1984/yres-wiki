@@ -65,7 +65,7 @@ For **file sources** (such as File Server or local files) and **REST API** sourc
 
 On **Data sources › (source) › Used tables** you see which source tables are already being loaded (read from `LoadManagement.vwUsedTables`). Per row you can view columns, run an ad-hoc load and — as of v1.54 — **activate/deactivate** a table without deleting its definition or history.
 
-![The Used tables page in Yres with a metadata pipeline card and a table with used source tables, load types and target tables](/img/screens/source-usedtables.svg)
+![The Used tables page in Yres with a metadata pipeline card and a table with used source tables, load types and target tables](/img/screens/source-usedtables.png)
 
 *The Used tables page: at the top the metadata pipeline card, below it the loaded tables with their load type, delta column and target table.*
 

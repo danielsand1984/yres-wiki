@@ -44,7 +44,7 @@ Lees meer in [Laadtypes](../concepten/load-types.md) en [SCD2 & historie](../con
 
 Loads draaien op het moment dat jij wilt. Je start ze handmatig of laat ze automatisch lopen via **triggers** (een schema in de tijdzone van de ingelogde gebruiker). In het Monitoring-scherm zie je per doeltabel de laatste status, de pipeline-runs en de afzonderlijke stappen — succesvol, mislukt of nog bezig.
 
-![Monitoring-scherm van Yres met links de targets-boom (bron / schema / tabel) en rechts de pipeline-runs met statussen, laadtype en aantallen, plus een uitklappend stappen-overzicht](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring-scherm van Yres met links de targets-boom (bron / schema / tabel) en rechts de pipeline-runs met statussen, laadtype en aantallen, plus een uitklappend stappen-overzicht](/img/screens/loadmanagement-monitoring.png)
 
 *Het Monitoring-scherm: per doeltabel de laadstatus, de runs en hun stappen — met de mogelijkheid om een tabel te resetten of een run terug te draaien.*
 

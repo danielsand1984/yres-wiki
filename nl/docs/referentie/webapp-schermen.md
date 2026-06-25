@@ -27,7 +27,7 @@ Routes zijn relatief aan het org-subdomein (bv. `acme.<host>/admin/announcements
 
 Elk ingelogd scherm deelt dezelfde "schil": een vaste **bovenbalk**, een **icoonkolom** links en een contextuele **sub-link-zijbalk**.
 
-![Wireframe van de gedeelde Yres-chrome: bovenbalk met logo en omgevingswisselaar, links de icoonkolom en de sub-link-zijbalk, rechts het dashboard.](/img/screens/dashboard-nav.svg)
+![Wireframe van de gedeelde Yres-chrome: bovenbalk met logo en omgevingswisselaar, links de icoonkolom en de sub-link-zijbalk, rechts het dashboard.](/img/screens/dashboard.png)
 
 *De gedeelde chrome rond elk scherm: bovenbalk, icoonkolom en contextuele sub-links. De genummerde markeringen verwijzen naar de uitleg hieronder.*
 

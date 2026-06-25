@@ -65,7 +65,7 @@ Voor **bestandsbronnen** (zoals File Server of lokale bestanden) en **REST API**
 
 Op **Data sources › (bron) › Used tables** zie je welke brontabellen al geladen worden (gelezen uit `LoadManagement.vwUsedTables`). Per rij kun je kolommen bekijken, een ad-hoc load draaien en — vanaf v1.54 — een tabel **activeren/deactiveren** zonder de definitie of historie te verwijderen.
 
-![De Used tables-pagina in Yres met een metadata-pipelinekaart en een tabel met gebruikte brontabellen, load types en doeltabellen](/img/screens/source-usedtables.svg)
+![De Used tables-pagina in Yres met een metadata-pipelinekaart en een tabel met gebruikte brontabellen, load types en doeltabellen](/img/screens/source-usedtables.png)
 
 *De Used tables-pagina: bovenaan de metadata-pipelinekaart, daaronder de geladen tabellen met hun load type, deltakolom en doeltabel.*
 

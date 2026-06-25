@@ -104,7 +104,7 @@ Voor analyse zijn er **monitoring-views**: **`vwLoads`** (tijdlijn per pipeline)
 
 In de frontend zie je dit terug op het scherm **Load management → Monitoring**:
 
-![Yres Monitoring-scherm met targets-tree links, runs-grid in het midden en een steps-modal onderaan](/img/screens/loadmanagement-monitoring.svg)
+![Yres Monitoring-scherm met targets-tree links, runs-grid in het midden en een steps-modal onderaan](/img/screens/loadmanagement-monitoring.png)
 
 *Het Monitoring-scherm leest direct uit `Monitoring.LS_Trans`; bij een mislukte run verschijnen de foutmelding en een link naar de ADF-run boven het overzicht.*
 

@@ -44,7 +44,7 @@ Read more in [Load types](../concepten/load-types.md) and [SCD2 & history](../co
 
 Loads run whenever you want. You start them manually or let them run automatically via **triggers** (a schedule in the time zone of the logged-in user). In the Monitoring screen you see, per target table, the latest status, the pipeline runs and the individual steps — succeeded, failed or still in progress.
 
-![Yres Monitoring screen with the targets tree (source / schema / table) on the left and the pipeline runs on the right, showing statuses, load type and counts, plus an expandable step overview](/img/screens/loadmanagement-monitoring.svg)
+![Yres Monitoring screen with the targets tree (source / schema / table) on the left and the pipeline runs on the right, showing statuses, load type and counts, plus an expandable step overview](/img/screens/loadmanagement-monitoring.png)
 
 *The Monitoring screen: per target table, the load status, the runs and their steps — with the option to reset a table or roll back a run.*
 

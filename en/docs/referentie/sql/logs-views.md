@@ -111,7 +111,7 @@ as `ProcessLog` protects this table.
 
 In the webapp these views come together on the **Monitoring** screen.
 
-![Monitoring: on the left the targets tree with load status, on the right the runs and the step detail.](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring: on the left the targets tree with load status, on the right the runs and the step detail.](/img/screens/loadmanagement-monitoring.png)
 
 *The Monitoring screen reads `vwLoads`/`vwMonitor`: select a target on the left and review its runs and their steps on the right.*
 

@@ -20,7 +20,7 @@ The complete list of screens with their route and fields is in [Webapp screens](
 
 The catalog is the panel's landing page: a single table with all your configured source systems for the active environment.
 
-![Source catalog: a table showing for each source the name, the type, the integration runtime, the credential expiry and a type-mapping button, with 'Add source' and 'Refresh metadata' at the top.](/img/screens/source-catalog.svg)
+![Source catalog: a table showing for each source the name, the type, the integration runtime, the credential expiry and a type-mapping button, with 'Add source' and 'Refresh metadata' at the top.](/img/screens/source-catalog.png)
 
 *The source catalog shows one connected source per row. Key elements:*
 

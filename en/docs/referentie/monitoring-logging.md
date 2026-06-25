@@ -123,7 +123,7 @@ Object and permission changes: `EventType, ObjectType, TimeStamp, ServerName, Da
 
 The **Monitoring** page (`/loadmanagement/monitoring`) shows the load status per target, the individual runs and — on a failure — the steps. Under the hood it reads `vwLoads`/`vwMonitor` and the `LS_Trans` table.
 
-![Monitoring screen with the Targets tree on the left and the pipeline runs and steps on the right](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring screen with the Targets tree on the left and the pipeline runs and steps on the right](/img/screens/loadmanagement-monitoring.png)
 
 *The Monitoring page: pick a target on the left, view the runs on the right, and open the steps per run.*
 

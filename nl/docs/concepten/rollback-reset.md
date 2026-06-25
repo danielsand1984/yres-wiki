@@ -21,7 +21,7 @@ Beide procedures voeren `DELETE`/`TRUNCATE` uit op het history-schema (`HIS`/`OD
 
 Rollback en reset worden in de webapp aangeboden vanuit het **monitoring-scherm** (Load management → Monitoring): per geladen tabel kun je een specifieke load selecteren en daarvandaan een rollback naar dat moment starten, of de tabel in zijn geheel resetten.
 
-![Monitoring-scherm met per tabel de laadgeschiedenis en de acties rollback en reset](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring-scherm met per tabel de laadgeschiedenis en de acties rollback en reset](/img/screens/loadmanagement-monitoring.png)
 
 *Het monitoring-scherm toont per tabel de laatste loads, hun status en duur. Vanaf hier start je een rollback (terug naar een gekozen moment) of een reset (tabel volledig leegmaken).*
 

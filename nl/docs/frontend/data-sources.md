@@ -20,7 +20,7 @@ De volledige lijst schermen met hun route en velden staat in [Webapp-schermen](.
 
 De catalogus is de startpagina van het paneel: één tabel met al je geconfigureerde bronsystemen voor de actieve omgeving.
 
-![Broncatalogus: een tabel met per bron de naam, het type, de integration runtime, het credential-verloop en een typemapping-knop, met bovenaan 'Add source' en 'Refresh metadata'.](/img/screens/source-catalog.svg)
+![Broncatalogus: een tabel met per bron de naam, het type, de integration runtime, het credential-verloop en een typemapping-knop, met bovenaan 'Add source' en 'Refresh metadata'.](/img/screens/source-catalog.png)
 
 *De broncatalogus toont per rij één gekoppelde bron. Belangrijkste elementen:*
 

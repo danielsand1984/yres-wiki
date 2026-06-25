@@ -123,7 +123,7 @@ Object- en rechtenwijzigingen: `EventType, ObjectType, TimeStamp, ServerName, Da
 
 De **Monitoring**-pagina (`/loadmanagement/monitoring`) toont per target de laadstatus, de afzonderlijke runs en — bij een fout — de stappen. Onderliggend leest hij `vwLoads`/`vwMonitor` en de `LS_Trans`-tabel.
 
-![Monitoring-scherm met de Targets-boom links en de pipeline-runs en stappen rechts](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring-scherm met de Targets-boom links en de pipeline-runs en stappen rechts](/img/screens/loadmanagement-monitoring.png)
 
 *De Monitoring-pagina: kies links een target, bekijk rechts de runs en open per run de stappen.*
 

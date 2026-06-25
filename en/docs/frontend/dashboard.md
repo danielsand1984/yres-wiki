@@ -8,7 +8,7 @@ description: The home screen of the Yres web app — jobs, errors, load statuses
 
 After logging in you land on the **Dashboard**: the overview with the key metrics for the selected environment. At a glance you can see which jobs are running, which errors have occurred recently, and how the loads are doing per source system. Click the **logo** in the top left (this can be your own company logo) to return to this Dashboard from any screen.
 
-![Dashboard of the Yres web app with the quick-nav tiles, the welcome block, announcements, the accordions for monitored jobs and error logs, and the load history per source system.](/img/screens/dashboard.svg)
+![Dashboard of the Yres web app with the quick-nav tiles, the welcome block, announcements, the accordions for monitored jobs and error logs, and the load history per source system.](/img/screens/dashboard.png)
 
 The numbers in the screenshot (1)–(6) refer to the components below:
 
@@ -39,7 +39,7 @@ Under **Load statusses** you see only the most recent load per source object. Th
 
 Every signed-in screen — not just the Dashboard — is framed by the same three navigation elements: the **top bar**, the **icon rail on the left** (the sections) and the **contextual sub-links** next to it.
 
-![The shared chrome of the Yres web app: top bar with logo, environment switcher and help button, the icon rail with sections, and the expandable sub-link sidebar.](/img/screens/dashboard-nav.svg)
+![The shared chrome of the Yres web app: top bar with logo, environment switcher and help button, the icon rail with sections, and the expandable sub-link sidebar.](/img/screens/dashboard.png)
 
 The numbers (1)–(6) in this screenshot:
 

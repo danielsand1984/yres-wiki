@@ -20,7 +20,7 @@ De volledige lijst schermen met hun route en velden staat in [Webapp-schermen](.
 
 Start handmatig een pipeline: een tabel laden, metadata ophalen, een view materialiseren of een eigen ADF-/master-pipeline draaien. Links staat de pipeline-lijst (`PipelineList`), rechts de runs van de geselecteerde pipeline met filters op periode en status. Custom ADF-pipelines en master pipelines verschijnen ook in deze lijst.
 
-![Run pipelines: links de pipeline-lijst, rechts de runs met filters en de knop om te starten.](/img/screens/run-pipelines.svg)
+![Run pipelines: links de pipeline-lijst, rechts de runs met filters en de knop om te starten.](/img/screens/run-pipelines.png)
 
 *Het Run pipelines-scherm: kies links een pipeline, filter de runs op periode en status, en start de pipeline rechtsboven.*
 
@@ -48,7 +48,7 @@ Een lopende run kun je stoppen via het stop-icoon. Het daadwerkelijke laden gebe
 
 Plan een pipeline met een herhaalpatroon (een ADF schedule-trigger). Per geselecteerde pipeline zie je de bestaande triggers; je kunt ze starten, stoppen, verwijderen en aanmaken.
 
-![Triggers: links de pipeline-lijst, rechts de triggers-tabel en het aanmaak-formulier.](/img/screens/loadmanagement-triggers.svg)
+![Triggers: links de pipeline-lijst, rechts de triggers-tabel en het aanmaak-formulier.](/img/screens/loadmanagement-triggers.png)
 
 *Het Triggers-scherm: kies een pipeline, bekijk de bestaande triggers en plan een nieuwe met **Create**.*
 
@@ -77,7 +77,7 @@ De interface toont de hint *"Timezone UTC(+1) will be used"*, maar de trigger ge
 
 Bewaak de laadstatus per doeltabel, drill door naar de losse runs en stappen, en rol terug of reset een tabel. De boom links volgt **source → schema → table**; elke tabel toont de laatste laaddatum en status. De **slechtste status bubbelt omhoog** (FAILED > RUNNING > SUCCESS) naar schema- en source-niveau, zodat mislukte loads in één oogopslag zichtbaar zijn.
 
-![Monitoring: links de targets-boom met laadstatus, rechts de runs en het stappen-detail.](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring: links de targets-boom met laadstatus, rechts de runs en het stappen-detail.](/img/screens/loadmanagement-monitoring.png)
 
 *Het Monitoring-scherm: selecteer links een target en bekijk rechts de runs en hun stappen.*
 

@@ -8,7 +8,7 @@ description: Het startscherm van de Yres-webapp — jobs, foutmeldingen, laadsta
 
 Na het inloggen kom je op het **Dashboard**: het overzicht met de belangrijkste metrics van de geselecteerde omgeving. Je ziet hier in één blik welke jobs draaien, welke fouten er recent zijn opgetreden en hoe de loads per bronsysteem ervoor staan. Klik linksboven op het **logo** (dit kan je eigen bedrijfslogo zijn) om vanuit elk scherm terug te keren naar dit Dashboard.
 
-![Dashboard van de Yres-webapp met de quick-nav-tegels, het welkomstblok, mededelingen, de accordions voor monitored jobs en foutmeldingen, en de laadhistorie per bronsysteem.](/img/screens/dashboard.svg)
+![Dashboard van de Yres-webapp met de quick-nav-tegels, het welkomstblok, mededelingen, de accordions voor monitored jobs en foutmeldingen, en de laadhistorie per bronsysteem.](/img/screens/dashboard.png)
 
 De cijfers in de schermafbeelding (1)–(6) verwijzen naar de onderdelen hieronder:
 
@@ -39,7 +39,7 @@ Bij **Load statusses** zie je per bronobject uitsluitend de meest recente load. 
 
 Elk ingelogd scherm — niet alleen het Dashboard — wordt omlijst door dezelfde drie navigatie-elementen: de **bovenbalk**, de **icoonbalk links** (de secties) en de **contextuele sub-links** ernaast.
 
-![De gedeelde chrome van de Yres-webapp: bovenbalk met logo, omgevingsschakelaar en help-knop, de icoonbalk met secties en de uitklapbare sub-link-zijbalk.](/img/screens/dashboard-nav.svg)
+![De gedeelde chrome van de Yres-webapp: bovenbalk met logo, omgevingsschakelaar en help-knop, de icoonbalk met secties en de uitklapbare sub-link-zijbalk.](/img/screens/dashboard.png)
 
 De cijfers (1)–(6) in deze schermafbeelding:
 

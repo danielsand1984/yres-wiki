@@ -20,7 +20,7 @@ The full list of screens with their route and fields is in [Webapp screens](../r
 
 Manually start a pipeline: load a table, fetch metadata, materialize a view or run your own ADF or master pipeline. On the left is the pipeline list (`PipelineList`); on the right are the runs of the selected pipeline, with filters for period and status. Custom ADF pipelines and master pipelines also appear in this list.
 
-![Run pipelines: the pipeline list on the left, the runs with filters and the start button on the right.](/img/screens/run-pipelines.svg)
+![Run pipelines: the pipeline list on the left, the runs with filters and the start button on the right.](/img/screens/run-pipelines.png)
 
 *The Run pipelines screen: pick a pipeline on the left, filter the runs by period and status, and start the pipeline at the top right.*
 
@@ -48,7 +48,7 @@ You can stop a running run via the stop icon. The actual loading happens in Azur
 
 Schedule a pipeline with a recurrence pattern (an ADF schedule trigger). For each selected pipeline you see the existing triggers; you can start, stop, delete and create them.
 
-![Triggers: the pipeline list on the left, the triggers table and the create form on the right.](/img/screens/loadmanagement-triggers.svg)
+![Triggers: the pipeline list on the left, the triggers table and the create form on the right.](/img/screens/loadmanagement-triggers.png)
 
 *The Triggers screen: pick a pipeline, review the existing triggers, and schedule a new one with **Create**.*
 
@@ -77,7 +77,7 @@ The interface shows the hint *"Timezone UTC(+1) will be used"*, but the trigger 
 
 Monitor the load status per target table, drill down into the individual runs and steps, and roll back or reset a table. The tree on the left follows **source → schema → table**; each table shows the last load date and status. The **worst status bubbles up** (FAILED > RUNNING > SUCCESS) to the schema and source level, so failed loads are visible at a glance.
 
-![Monitoring: the targets tree with load status on the left, the runs and step detail on the right.](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring: the targets tree with load status on the left, the runs and step detail on the right.](/img/screens/loadmanagement-monitoring.png)
 
 *The Monitoring screen: select a target on the left and view its runs and their steps on the right.*
 

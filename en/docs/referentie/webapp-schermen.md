@@ -27,7 +27,7 @@ Routes are relative to the org subdomain (e.g. `acme.<host>/admin/announcements`
 
 Every logged-in screen shares the same "shell": a fixed **top bar**, an **icon column** on the left and a contextual **sub-link sidebar**.
 
-![Wireframe of the shared Yres chrome: top bar with logo and environment switcher, the icon column and sub-link sidebar on the left, the dashboard on the right.](/img/screens/dashboard-nav.svg)
+![Wireframe of the shared Yres chrome: top bar with logo and environment switcher, the icon column and sub-link sidebar on the left, the dashboard on the right.](/img/screens/dashboard.png)
 
 *The shared chrome around every screen: top bar, icon column and contextual sub-links. The numbered markers refer to the explanation below.*
 

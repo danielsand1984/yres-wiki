@@ -21,7 +21,7 @@ Both procedures perform `DELETE`/`TRUNCATE` on the history schema (`HIS`/`ODS`).
 
 Rollback and reset are offered in the webapp from the **monitoring screen** (Load management → Monitoring): for each loaded table you can select a specific load and from there start a rollback to that moment, or reset the table in its entirety.
 
-![Monitoring screen showing each table's load history and the rollback and reset actions](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring screen showing each table's load history and the rollback and reset actions](/img/screens/loadmanagement-monitoring.png)
 
 *The monitoring screen shows, per table, the most recent loads, their status, and duration. From here you start a rollback (back to a chosen moment) or a reset (empty the table completely).*
 

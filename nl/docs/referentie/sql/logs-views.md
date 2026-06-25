@@ -111,7 +111,7 @@ als `ProcessLog` beschermt deze tabel.
 
 In de webapp komen deze views samen op het **Monitoring**-scherm.
 
-![Monitoring: links de targets-boom met laadstatus, rechts de runs en het stappen-detail.](/img/screens/loadmanagement-monitoring.svg)
+![Monitoring: links de targets-boom met laadstatus, rechts de runs en het stappen-detail.](/img/screens/loadmanagement-monitoring.png)
 
 *Het Monitoring-scherm leest `vwLoads`/`vwMonitor`: selecteer links een target en bekijk rechts de runs en hun stappen.*
 
