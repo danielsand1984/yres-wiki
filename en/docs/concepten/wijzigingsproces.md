@@ -41,9 +41,9 @@ for who gets how many environments.
 You bundle all your work into two units, so it travels as a whole and stays traceable:
 
 - A **Project** is a container with a name, description and due date — for example *"AFAS expansion Q3"*.
-- A **Change** is the unit you actually release and install. Every edit you make in dev — connecting a
-  source, adding tables, persisting a view, adding a scripted object — is **automatically booked under a
-  Change**. A Change always belongs to a Project.
+- A **Change** is the unit you actually release and promote. Every edit you make in dev — connecting a
+  source, adding tables, persisting a view, adding a scripted object via the Object Explorer — is
+  **automatically booked under a Change**. A Change always belongs to a Project.
 
 So you don't have to track manually what changed: Yres collects it in the Change, and that Change is your
 transport unit to test and prod.
@@ -59,31 +59,39 @@ transport unit to test and prod.
       1–3            4            5                6
 ```
 
+You run this whole journey **from the change itself**: on the **Changes** screen you pick a project and a
+change, and the buttons you see are **contextual to the status** of that change. An open change shows
+**Release**; a released change shows **Import** and **Install** together with the environment hop. So you
+don't go to separate release or install screens.
+
 1. **Plan your work — create a Project.** Give it a name, description and due date. You collect your
    changes under this project.
-2. **Build in dev.** Connect sources, add tables, create persisted views, include scripted objects.
-   Everything you do is recorded under your **Change**. You load and test freely here — this does not
-   touch test or prod.
+2. **Build in dev.** Connect sources, add tables, create persisted views, and add scripted objects via the
+   **Object Explorer** (the object tree under Data Engineering). Everything you do is recorded under your
+   **Change**. You load and test freely here — this does not touch test or prod.
 3. **Review and check the Change.** You see its content as a **diagram** (source → schema → table) or as
    a **table** (per object the load type, the delta column, and what happens if the object already
    exists). That way you know exactly what will travel.
-4. **Release the Change.** This **locks** the change: nothing can be edited anymore and it becomes a
-   sealed, promotable package. Yres first checks the **dependencies** — if your change contains something
-   that relies on another, not-yet-released change, Yres blocks the release and names that other
-   change(s). This way you never accidentally take half-finished work along.
-5. **Promote to test and validate.** Pick the environment hop **dev → test** and install the change. Yres
-   brings your change to test and you verify there that the loads and structures are correct.
+4. **Release the Change.** On the open change you click **Release**. This **locks** the change: nothing can
+   be edited anymore and it becomes a sealed, promotable package. Yres first checks the **dependencies** —
+   if your change contains something that relies on another, not-yet-released change, Yres blocks the
+   release and names that other change(s). This way you never accidentally take half-finished work along.
+5. **Promote to test and validate.** On the released change you pick the environment hop **dev → test** and
+   click **Install**. Yres brings your change to test and you verify there that the loads and structures are
+   correct.
 6. **Promote to production.** Correct in test? Then install the same change from **test → prod**. With
    that, your change is live — tested and confirmed.
 
-![The Install screen: the DTAP flow strip, the list of released changes, the environment hop (from → to) and the Import change and Install change buttons.](/img/screens/changes-release-install.svg)
+![The change detail with inline Release / Import / Install: the DTAP flow strip, the change's status badge, the change content (diagram/table), the environment hop (from → to) and the Import change and Install change buttons.](/img/screens/changes-release-install.svg)
 
-*You promote a released change on the Install screen: pick the environment hop and install. The progress
-appears as a notification, because publishing the pipelines continues in the background.*
+*You release and promote a change from the change itself: on a released change you pick the environment hop
+and click Import or Install. The progress appears as a notification, because publishing the pipelines
+continues in the background.*
 
 ### Import vs. install
 
-When promoting you have two actions:
+On a released change you have two actions — you carry out both **on the change itself**, with the
+environment hop (from → to) next to them:
 
 - **Import change** — brings the change into the **data warehouse** of the target environment only. The
   ADF pipelines are **not** refreshed. Useful when you just want to stage the DWH structure.
@@ -91,7 +99,8 @@ When promoting you have two actions:
   pipelines, so your new source pipelines land in the target environment too. This is the step that brings
   DWH and ADF in sync.
 
-In most cases you choose **Install change**.
+In most cases you choose **Install change**. On an already-installed change you can reimport or reinstall
+through the same buttons.
 
 ## What Yres handles automatically for you
 

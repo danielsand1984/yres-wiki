@@ -64,6 +64,8 @@ The configuration is stored via `MaintainPersistView`; the actual materializatio
 
 The **Object history** screen (`/dataengineering/objecthistory`) shows all database objects — created by a user and by Yres — with their **definition**, **version history** and **dependencies**. You can compare versions, explore dependency trees and add objects to a change.
 
+The object tree on this screen is also the **Object Explorer**: this is where you manage your **scripted/custom objects** (your own tables, views, stored procedures and functions). You browse your DWH objects here and add a custom object — or an existing database object — to a change directly from the explorer via the **Add to change** action. There is no separate "Scripted objects" screen anymore; scripted objects live here in the Object Explorer.
+
 ![Object history screen: on the left a schema and object tree with a right-click context menu, top right the version comparison with a diff of the object definition, and bottom right a dependency tree.](/img/screens/dataengineering-objecthistory.svg)
 
 *The Object history screen: the object tree on the left, the version comparison with diff in the top right, and the dependency graph in the bottom right.*
@@ -83,15 +85,17 @@ The **Object history** screen (`/dataengineering/objecthistory`) shows all datab
 
 ### Adding objects to a change
 
+Select an object in the **Object Explorer** (the tree) and use the **Add to change** action to include it in a change. This is how your scripted/custom objects — your own tables, views, stored procedures and functions — end up in a change, together with existing database objects you want to take along.
+
 Right-click an object in the tree to open the context menu. From there you can:
 
 - **add it to a change with dependencies** — also includes the objects this object depends on;
 - **add it to a change without dependencies** — only the object itself;
-- **add it with content** — including the object content;
+- **add it with content** — including the object content (for a custom table this determines whether the table content travels);
 - **delete it with a change** — record the deletion in a change.
 
 :::note Changes & DTAP
-Adding to a change is part of the [Projects → Changes → Publish](projecten-changes.md) process, which promotes changes through your DTAP environments in a controlled way. This menu is meant for setups with multiple environments.
+Adding to a change is part of the [Projects → Changes](projecten-changes.md) process, which promotes changes through your DTAP environments in a controlled way. This menu is meant for setups with multiple environments.
 :::
 
 ## Further reading

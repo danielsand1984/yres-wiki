@@ -69,7 +69,6 @@ The detail screen `/sources/:sourceId` automatically picks the right view based 
 | Design master pipeline | `/loadmanagement/masterPipelines` | master pipeline design (version ≥1.53) |
 | Master pipeline detail | `/loadmanagement/masterPipelines/:masterPipelineId` | — |
 | Integration runtimes | `/loadmanagement/integration-runtimes` | name · description · type |
-| Scripted objects | `/loadmanagement/scriptedObjects` | — |
 | Datawarehouse processes | `/loadmanagement/datawarehouse-processes` | — |
 | Datawarehouse queries | `/loadmanagement/datawarehouse-queries` | — |
 
@@ -82,7 +81,7 @@ For **Triggers**, the timezone of the logged-in user is used (not a fixed UTC+1)
 | Screen | Route | Key fields |
 |---|---|---|
 | View persistence | `/dataengineering/viewpersistence` | `DestinationSchemaName` · `DestinationTableName` · `Level` · `Delta` · "Run materialize view (all)" |
-| Object history | `/dataengineering/objecthistory` | object history overview |
+| Object Explorer / Object history | `/dataengineering/objecthistory` | DWH object tree · object history · **"Add to change"** to add a scripted/custom object (your own table, view, procedure, function) to a change |
 
 ## Projects & Changes
 
@@ -93,12 +92,10 @@ This entire section is **hidden for a single-environment organization**. Project
 | Screen | Route | Key fields |
 |---|---|---|
 | Projects | `/projects` | `Name` · `Description` · `DueDate` · `Creator` · status text |
-| Changes | `/changes` | project/change selection · changes table (`Name` · `Status` · `Released*`) · "Create change" (only when a project is open) |
-| Release change | `/changes/release` | confirmation to release a change (`POST /changes/release`) |
-| Install change | `/changes/install` | import/install a change to the next environment |
+| Changes | `/changes` | project/change selection · changes table (`Name` · `Status` · `Released*`) · "Create change" (only when a project is open) · **contextual actions on the change itself**: an open change shows **Release**; a released change shows **Import** / **Install** with the environment hop (from → to) |
 
-:::caution Deprecated: PublishChange
-The old **PublishChange** screen (legacy route `…/projects/dictionaryvs`) is **not reachable** in the running app — the route is commented out. In the live app the functionality has been split across **Release change** (`/changes/release`) and **Install change** (`/changes/install`). Use those two.
+:::note Release & Install happen on the Changes screen
+There are no separate "Release change" or "Install change" screens anymore. Release, Import and Install are **actions on the selected change** within the **Changes** screen (`/changes`), contextual to its status: an open change shows **Release** (`[Change].[spRelease]`), a released change shows **Import** (`[Change].[spImport]`, DWH only) and **Install** (`[Change].[spInstall]` + the `publish-datafactory` pipeline, DWH + ADF). You manage scripted/custom objects via the **Object Explorer** in **Data engineering** (`/dataengineering/objecthistory`), where you add an object to a change.
 :::
 
 ## Admin (organization)

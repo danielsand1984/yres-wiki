@@ -41,9 +41,10 @@ voor wie hoeveel omgevingen heeft.
 Al je werk bundel je in twee eenheden, zodat het als geheel reist en traceerbaar blijft:
 
 - Een **Project** is een container met een naam, omschrijving en einddatum — bijvoorbeeld *"AFAS-uitbreiding Q3"*.
-- Een **Change** is de eenheid die je daadwerkelijk releaset en installeert. Elke bewerking die je in dev
-  doet — een bron koppelen, tabellen toevoegen, een view persisteren, een scripted object toevoegen —
-  wordt **automatisch onder een Change geboekt**. Een Change hoort altijd bij een Project.
+- Een **Change** is de eenheid die je daadwerkelijk releaset en promoot. Elke bewerking die je in dev
+  doet — een bron koppelen, tabellen toevoegen, een view persisteren, een scripted object toevoegen via de
+  Object Explorer — wordt **automatisch onder een Change geboekt**. Een Change hoort altijd bij een
+  Project.
 
 Je hoeft dus niet handmatig bij te houden wat er veranderd is: Yres verzamelt het in de Change, en die
 Change is straks je transporteenheid naar test en prod.
@@ -59,31 +60,39 @@ Change is straks je transporteenheid naar test en prod.
       1–3            4            5                6
 ```
 
+Je doorloopt deze hele reis **vanuit de change zelf**: op het **Changes**-scherm kies je een project en een
+change, en de knoppen die je ziet zijn **afhankelijk van de status** van die change. Een open change toont
+**Release**; een gereleasede change toont **Import** en **Install** samen met de omgeving-hop. Je hoeft dus
+niet naar aparte release- of install-schermen.
+
 1. **Plan je werk — maak een Project.** Geef het een naam, omschrijving en einddatum. Onder dit project
    verzamel je je changes.
-2. **Bouw in dev.** Koppel bronnen, voeg tabellen toe, maak persisted views, neem scripted objects op.
-   Alles wat je doet wordt onder je **Change** vastgelegd. Je laadt en test hier vrij — dit raakt test en
-   prod niet.
+2. **Bouw in dev.** Koppel bronnen, voeg tabellen toe, maak persisted views, en voeg scripted objects toe
+   via de **Object Explorer** (de objectboom onder Data Engineering). Alles wat je doet wordt onder je
+   **Change** vastgelegd. Je laadt en test hier vrij — dit raakt test en prod niet.
 3. **Bekijk en controleer de Change.** Je ziet de inhoud als **diagram** (bron → schema → tabel) of als
    **tabel** (per object het load type, de delta-kolom, en wat er gebeurt als het object al bestaat). Zo
    weet je precies wat er straks meereist.
-4. **Release de Change.** Hiermee **vergrendel** je de change: er kan niets meer aan worden bewerkt en hij
-   wordt een verzegeld, promoteerbaar pakket. Yres controleert eerst de **afhankelijkheden** — bevat je
-   change iets dat steunt op een andere, nog niet vrijgegeven change, dan blokkeert Yres de release en
-   noemt die andere change(s). Zo neem je nooit per ongeluk half werk mee.
-5. **Promoot naar test en valideer.** Kies de omgeving-hop **dev → test** en installeer de change. Yres
-   brengt je wijziging naar test en je controleert daar of de loads en structuren kloppen.
+4. **Release de Change.** Op de open change klik je **Release**. Hiermee **vergrendel** je de change: er kan
+   niets meer aan worden bewerkt en hij wordt een verzegeld, promoteerbaar pakket. Yres controleert eerst de
+   **afhankelijkheden** — bevat je change iets dat steunt op een andere, nog niet vrijgegeven change, dan
+   blokkeert Yres de release en noemt die andere change(s). Zo neem je nooit per ongeluk half werk mee.
+5. **Promoot naar test en valideer.** Op de gereleasede change kies je de omgeving-hop **dev → test** en
+   klik je **Install**. Yres brengt je wijziging naar test en je controleert daar of de loads en structuren
+   kloppen.
 6. **Promoot naar productie.** Klopt het in test? Dan installeer je dezelfde change van **test → prod**.
    Daarmee staat je wijziging live — getest en wel.
 
-![Het Install-scherm: de DTAP-flowstrip, de lijst met released changes, de omgeving-hop (van → naar) en de knoppen Import change en Install change.](/img/screens/changes-release-install.svg)
+![De change-detail met inline Release / Import / Install: de DTAP-flowstrip, de status-badge van de change, de change-inhoud (diagram/tabel), de omgeving-hop (van → naar) en de knoppen Import change en Install change.](/img/screens/changes-release-install.svg)
 
-*Je promoot een gereleasede change op het Install-scherm: kies de omgeving-hop en installeer. De
-voortgang verschijnt als melding, omdat het publiceren van de pipelines op de achtergrond doorloopt.*
+*Je releaset en promoot een change vanuit de change zelf: op een gereleasede change kies je de
+omgeving-hop en klik je Import of Install. De voortgang verschijnt als melding, omdat het publiceren van de
+pipelines op de achtergrond doorloopt.*
 
 ### Importeren vs. installeren
 
-Bij het promoten heb je twee acties:
+Op een gereleasede change heb je twee acties — beide werk je uit **op de change zelf**, met de omgeving-hop
+(van → naar) ernaast:
 
 - **Import change** — haalt de change alleen in het **datawarehouse** van de doelomgeving binnen. De
   ADF-pipelines worden hierbij **niet** vernieuwd. Handig als je alleen de DWH-structuur wilt klaarzetten.
@@ -91,7 +100,8 @@ Bij het promoten heb je twee acties:
   publiceren van de ADF-pipelines, zodat ook je nieuwe bron-pijplijnen in de doelomgeving landen. Dit is
   de stap die DWH en ADF synchroon brengt.
 
-In de meeste gevallen kies je **Install change**.
+In de meeste gevallen kies je **Install change**. Op een al geïnstalleerde change kun je via dezelfde
+knoppen opnieuw importeren of installeren.
 
 ## Wat Yres automatisch voor je regelt
 

@@ -29,9 +29,6 @@
   <rect x="74" y="98" width="3" height="26" rx="1.5" fill="#FBAF42"/>
   <text x="90" y="115" font-size="11.5" font-weight="600" fill="#e89a1f">Projects</text>
   <text x="90" y="146" font-size="11.5" fill="#2b2b2e">Changes</text>
-  <text x="90" y="174" font-size="11.5" fill="#2b2b2e">Scripted objects</text>
-  <text x="90" y="202" font-size="11.5" fill="#2b2b2e">Release change</text>
-  <text x="90" y="230" font-size="11.5" fill="#2b2b2e">Install change</text>
 
   <!-- page title -->
   <text x="234" y="92" font-size="20" font-weight="700" fill="#1c1c1e">Projects</text>
@@ -153,7 +150,7 @@
   <g font-size="11" fill="#2b2b2e">
     <text x="234" y="538" font-size="11.5" font-weight="700" fill="#1c1c1e">Annotaties</text>
     <circle cx="244" cy="556" r="9" fill="#FBAF42"/><text x="244" y="560" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">1</text>
-    <text x="262" y="560">Sub-links van de sectie Projects: Projects, Changes, Scripted objects, Release change, Install change.</text>
+    <text x="262" y="560">Sub-links van de sectie Projects: Projects &#183; Changes.</text>
     <circle cx="244" cy="580" r="9" fill="#FBAF42"/><text x="244" y="584" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">2</text>
     <text x="262" y="584">"Create project" &#8212; opent de modal met Name, Description en DueDate.</text>
     <circle cx="244" cy="604" r="9" fill="#FBAF42"/><text x="244" y="608" font-size="11" font-weight="700" fill="#1c1c1e" text-anchor="middle">3</text>

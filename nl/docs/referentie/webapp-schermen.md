@@ -69,7 +69,6 @@ Het detailscherm `/sources/:sourceId` kiest automatisch de juiste weergave op ba
 | Design master pipeline | `/loadmanagement/masterPipelines` | master-pipeline-ontwerp (versie ≥1.53) |
 | Master pipeline detail | `/loadmanagement/masterPipelines/:masterPipelineId` | — |
 | Integration runtimes | `/loadmanagement/integration-runtimes` | name · description · type |
-| Scripted objects | `/loadmanagement/scriptedObjects` | — |
 | Datawarehouse processes | `/loadmanagement/datawarehouse-processes` | — |
 | Datawarehouse queries | `/loadmanagement/datawarehouse-queries` | — |
 
@@ -82,7 +81,7 @@ Bij **Triggers** wordt de timezone van de ingelogde gebruiker gebruikt (niet een
 | Scherm | Route | Belangrijkste velden |
 |---|---|---|
 | View persistence | `/dataengineering/viewpersistence` | `DestinationSchemaName` · `DestinationTableName` · `Level` · `Delta` · "Run materialize view (all)" |
-| Object history | `/dataengineering/objecthistory` | objecthistorie-overzicht |
+| Object Explorer / Object history | `/dataengineering/objecthistory` | objectboom van het DWH · objecthistorie · **"Add to change"** om een scripted/eigen object (eigen tabel, view, procedure, functie) aan een change toe te voegen |
 
 ## Projects & Changes
 
@@ -93,12 +92,10 @@ Deze hele sectie is **verborgen bij een single-environment-organisatie**. Projec
 | Scherm | Route | Belangrijkste velden |
 |---|---|---|
 | Projects | `/projects` | `Name` · `Description` · `DueDate` · `Creator` · status-tekst |
-| Changes | `/changes` | project/change-selectie · changes-tabel (`Name` · `Status` · `Released*`) · "Create change" (alleen bij open project) |
-| Release change | `/changes/release` | bevestiging om een change vrij te geven (`POST /changes/release`) |
-| Install change | `/changes/install` | change importeren/installeren naar de volgende omgeving |
+| Changes | `/changes` | project/change-selectie · changes-tabel (`Name` · `Status` · `Released*`) · "Create change" (alleen bij open project) · **contextuele acties op de change zelf**: een open change toont **Release**; een vrijgegeven change toont **Import** / **Install** met de omgevings-hop (van → naar) |
 
-:::caution Verouderd: PublishChange
-Het oude scherm **PublishChange** (legacy route `…/projects/dictionaryvs`) is **niet bereikbaar** in de draaiende app — de route is uitgecommentarieerd. De functionaliteit is in de live app opgesplitst over **Release change** (`/changes/release`) en **Install change** (`/changes/install`). Gebruik die twee.
+:::note Release & Install gebeuren op de Changes-zelf
+Er zijn geen aparte "Release change"- of "Install change"-schermen meer. Release, Import en Install zijn **acties op de geselecteerde change** binnen het **Changes**-scherm (`/changes`), contextueel op de status: een open change toont **Release** (`[Change].[spRelease]`), een vrijgegeven change toont **Import** (`[Change].[spImport]`, alleen DWH) en **Install** (`[Change].[spInstall]` + de `publish-datafactory`-pipeline, DWH + ADF). Scripted/eigen objecten beheer je via de **Object Explorer** in **Data engineering** (`/dataengineering/objecthistory`), waar je een object aan een change toevoegt.
 :::
 
 ## Admin (organisatie)

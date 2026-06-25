@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: CI/CD & DTAP
-description: How Yres rolls out code and data structures across DTAP — DACPAC deployment, adf_publish, and the Changes › Release › Install flow.
+description: How Yres rolls out code and data structures across DTAP — DACPAC deployment, adf_publish, and the release/install flow driven from the change on the Changes screen.
 ---
 
 # CI/CD & DTAP
@@ -11,7 +11,7 @@ Yres consists of **two repositories with two very different deployment models**,
 - **The data warehouse** (`IRIS_DWH`, Azure SQL) is rolled out with **SSDT/DACPAC** (a schema comparison that creates and alters objects).
 - **The ADF factory** is rolled out via a **Git-integrated publish** to the `adf_publish` branch and from there to the target factory.
 
-On top of that, Yres promotes not only *code* but also *structural changes* between already-running environments via the runtime change management in the `Change` schema — this is what drives the **Changes › Release › Install** screens.
+On top of that, Yres promotes not only *code* but also *structural changes* between already-running environments via the runtime change management in the `Change` schema — you drive this **from the change** on the **Changes** screen (release and install are actions on the change itself, not separate screens).
 
 :::tip Architecture overview first
 This page assumes familiarity with [Architecture (high-level)](./overzicht.md) and [Azure architecture](./azure-architectuur.md). For the corresponding screens in the web app, see [Projects & Changes](../frontend/projecten-changes.md).
@@ -113,16 +113,16 @@ The Key Vault resources are still named `kv-iris-…` in the code (IRIS branding
 
 ## DTAP at the data level — runtime change management
 
-Besides rolling out *code*, Yres also promotes *structural and content changes* between already-running environments. This goes through the **`Change` schema** — exactly what the **Changes / Release / Install** screens in the web app drive.
+Besides rolling out *code*, Yres also promotes *structural and content changes* between already-running environments. This goes through the **`Change` schema** — which you drive **from the change** on the **Changes** screen in the web app. There are no separate Release or Install screens anymore: you pick a project + change on the Changes screen, and the change's actions are **contextual to its status** (an open change shows **Release**; a released change shows **Import** and **Install** with the environment hop).
 
 The path is always **Changes → Release → Install**:
 
-![Wireframe of the Yres screen for installing a released change, showing the DTAP flow strip, the list of released changes, the environment hop, and the Import change and Install change buttons](/img/screens/changes-release-install.svg)
+![Wireframe of the Yres change detail view, showing the DTAP flow strip, the released status badge, the change content, the environment hop, and the inline Import change and Install change buttons](/img/screens/changes-release-install.svg)
 
-*The Install screen shows the released changes, the environment hop (from dev to the next environment), and the two actions: Import change (DWH only) and Install change (DWH + ADF).*
+*The change detail view on the Changes screen shows the change's status and — once it is released — the environment hop (from dev to the next environment) and the two inline actions: Import change (DWH only) and Install change (DWH + ADF). Everything happens from the change itself, not on a separate screen.*
 
 1. **DTAP flow** — a change moves through Change (dev) → Release → Import → Install → `publish-datafactory`.
-2. **Released changes** — only changes with status `released` are available to install; open changes do not appear here.
+2. **Status-contextual actions** — the actions appear on the change itself based on its status: an **open** change shows **Release**; only a change with status `released` shows **Import** and **Install**. (Reimport / reinstall are available the same way on an already-installed change.)
 3. **Environment hop** — choose from which environment to which next environment you publish (the dropdown links each environment to the immediately following one).
 4. **Import change** — copies the change JSON and runs `spImport` in the target environment. This touches **the DWH only** and does **not** publish the ADF factory.
 5. **Install change** — both imports and installs, and then publishes ADF (see below).
@@ -130,10 +130,10 @@ The path is always **Changes → Release → Install**:
 
 ### Changes → Release → Install — step by step
 
-1. **Edit in dev and bundle under a Change.** Every data-plane edit (new tables, scripted objects) is recorded in `Change.ChangeContent` under a **Change**, which belongs to a **Project**.
-2. **Release the change** — `[Change].[spRelease]` validates the dependencies and locks the change (no further edits). Yres blocks releasing if the change contains content that another, not-yet-released change depends on; the error message names that dependent change(s).
-3. **Import to the next environment** — `[Change].[spImport]` imports the released change (as JSON) into the target environment. This is a **DWH-only** step.
-4. **Install** — `[Change].[spInstall]` applies the change (`@Execute`: `1` = execute, `0` = print SQL, `2` = impact analysis). The ADF pipeline **`InstallChange`** is the automation entry point.
+1. **Edit in dev and bundle under a Change.** Every data-plane edit (new tables, scripted objects) is recorded in `Change.ChangeContent` under a **Change**, which belongs to a **Project**. Scripted/custom objects are added to the change from the **Object Explorer** (the object tree under Data Engineering).
+2. **Release the change** — from the open change, **Release** runs `[Change].[spRelease]`, which validates the dependencies and locks the change (no further edits). Yres blocks releasing if the change contains content that another, not-yet-released change depends on; the error message names that dependent change(s).
+3. **Import to the next environment** — the **Import** action on the released change runs `[Change].[spImport]`, which imports the released change (as JSON) into the target environment. This is a **DWH-only** step.
+4. **Install** — the **Install** action on the released change runs `[Change].[spInstall]`, which applies the change (`@Execute`: `1` = execute, `0` = print SQL, `2` = impact analysis). The ADF pipeline **`InstallChange`** is the automation entry point.
 
 **Install does three things in sequence:**
 

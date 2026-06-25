@@ -64,6 +64,8 @@ De configuratie wordt opgeslagen via `MaintainPersistView`; het daadwerkelijke m
 
 Het scherm **Object history** (`/dataengineering/objecthistory`) toont alle database-objecten — door een gebruiker én door Yres gemaakt — met hun **definitie**, **versiehistorie** en **afhankelijkheden**. Je kunt versies vergelijken, dependency-trees verkennen en objecten toevoegen aan een change.
 
+De objectboom op dit scherm is tegelijk de **Object Explorer**: hier beheer je je **scripted/custom objecten** (je eigen tabellen, views, stored procedures en functions). Je bladert er door je DWH-objecten en voegt een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change via de actie **Add to change**. Er is geen apart "Scripted objects"-scherm meer; scripted objecten leven hier in de Object Explorer.
+
 ![Object history-scherm: links een schema- en objectboom met een rechtsklik-contextmenu, rechtsboven de versievergelijking met een diff van de objectdefinitie en rechtsonder een dependency-tree.](/img/screens/dataengineering-objecthistory.svg)
 
 *Het Object history-scherm: de objectboom links, de versievergelijking met diff rechtsboven en de afhankelijkheidsgraaf rechtsonder.*
@@ -83,15 +85,17 @@ Het scherm **Object history** (`/dataengineering/objecthistory`) toont alle data
 
 ### Objecten aan een change toevoegen
 
+Selecteer een object in de **Object Explorer** (de boom) en gebruik de actie **Add to change** om het in een change op te nemen. Zo komen je scripted/custom objecten — je eigen tabellen, views, stored procedures en functions — in een change terecht, samen met bestaande database-objecten die je wilt meenemen.
+
 Rechtsklik op een object in de boom voor het contextmenu. Van daaruit kun je het object:
 
 - **toevoegen aan een change met dependencies** — neemt ook de objecten mee waarvan dit object afhangt;
 - **toevoegen aan een change zonder dependencies** — alleen het object zelf;
-- **toevoegen met content** — inclusief de objectinhoud;
+- **toevoegen met content** — inclusief de objectinhoud (voor een eigen tabel bepaal je zo of de tabelinhoud meereist);
 - **verwijderen met een change** — boek de verwijdering in een change.
 
 :::note Changes & DTAP
-Het toevoegen aan een change hoort bij het [Projects → Changes → Publish](projecten-changes.md)-proces, waarmee wijzigingen gecontroleerd door je DTAP-omgevingen worden gepromoveerd. Dit menu is bedoeld voor omgevingen met meerdere environments.
+Het toevoegen aan een change hoort bij het [Projects → Changes](projecten-changes.md)-proces, waarmee wijzigingen gecontroleerd door je DTAP-omgevingen worden gepromoveerd. Dit menu is bedoeld voor omgevingen met meerdere environments.
 :::
 
 ## Verder lezen

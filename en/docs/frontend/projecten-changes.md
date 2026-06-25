@@ -18,15 +18,15 @@ The full list of app screens with their route and fields is in [Web app screens]
 
 ## The lifecycle in brief
 
-The five steps a change goes through:
+The five steps a change goes through — **you trigger every action from the change itself** on the **Changes** screen; the *Where* column shows which environment the action runs from:
 
-| Step | What | Environment | Behind the scenes |
+| Step | What | Where | Behind the scenes |
 |---|---|---|---|
-| 1 | **Create a change** under a project and book work into it | dev | — |
-| 2 | **Release** — lock the change and make it available to install | dev | `[Change].[spRelease]` |
-| 3 | **Import** — fetch the change JSON in the target environment (DWH only) | test/prod | `[Change].[spImport]` |
-| 4 | **Install** — install the change and publish the ADF factory | test/prod | `[Change].[spInstall]` + `publish-datafactory` |
-| 5 | **publish-datafactory** — new pipelines land in the target factory | test/prod | Azure DevOps pipeline |
+| 1 | **Create a change** under a project and book work into it | from the change · dev | — |
+| 2 | **Release** — lock the change and make it available to install | from the open change · dev | `[Change].[spRelease]` |
+| 3 | **Import** — fetch the change JSON in the target environment (DWH only) | from the released change · env-hop to test/prod | `[Change].[spImport]` |
+| 4 | **Install** — install the change and publish the ADF factory | from the released change · env-hop to test/prod | `[Change].[spInstall]` + `publish-datafactory` |
+| 5 | **publish-datafactory** — new pipelines land in the target factory | target environment (test/prod) | Azure DevOps pipeline |
 
 ## Projects
 
@@ -36,7 +36,7 @@ A **project** groups changes within an environment and gives the work a name, a 
 
 The numbers (1)–(6) in the screenshot refer to:
 
-1. **Sub-links** of the section — *Projects*, *Changes*, *Scripted objects*, *Release change* and *Install change*.
+1. **Sub-links** of the section — *Projects* and *Changes*.
 2. **Create project** — opens the create form with the fields **Name**, **Description** and **DueDate**.
 3. **Projects table** — columns **Name**, **Description**, **DueDate**, **Creator** and **Status**.
 4. **Status** — the status code is translated into text: *1 Open · 2 Closed · 3 released · 9 Deleted · 99 Discontinued*.
@@ -56,18 +56,18 @@ The numbers (1)–(6) in the screenshot refer to:
 
 ## Changes
 
-A **change** categorizes modifications to the data warehouse and is the unit you later release and install. Changes always belong to a project. All data-plane edits in dev are booked under a change (see adding tables in [Data sources](./data-sources.md)), so they travel through the environments together.
+A **change** categorizes modifications to the data warehouse and is the unit you later release and install. Changes always belong to a project. All data-plane edits in dev are booked under a change (see adding tables in [Data sources](./data-sources.md)), so they travel through the environments together. **Every action — create, release, import and install — happens from the change itself on this screen**; which buttons appear depends on the change's status.
 
-![The Changes screen: the project and change selection at the top, the changes table with statuses, the button to create a change and the confirmation dialog for releasing.](/img/screens/changes.svg)
+![The Changes screen: the project and change selection at the top, the changes table with statuses, the button to create a change and the contextual actions on the change itself — an open change shows Release, a released change shows Import and Install with the environment hop.](/img/screens/changes.svg)
 
 The numbers (1)–(6) in the screenshot:
 
 1. **Project/Change selection (ProjectSelection)** — first choose a **project**; the second dropdown optionally filters on a specific change.
 2. **Create change** — appears **only when the selected project has status Open**.
 3. **Changes table** — columns **Name**, **Description**, **Project**, **DueDate**, **Creator**, **Status**, **ReleasedDate** and **ReleasedBy**.
-4. **Status** — *Open* or *released* (same status translation as for projects).
-5. **Released change** — loses its row actions; a released change can no longer be edited.
-6. **Release confirmation** — calls `[Change].[spRelease]`.
+4. **Status** — *Open* or *released* (same status translation as for projects); the status determines which actions the change shows.
+5. **Open change** — shows the **Release** action (and is still editable); a released change loses its edit actions and instead shows **Import** and **Install** with the environment hop.
+6. **Contextual change actions** — from the change itself; **Release** calls `[Change].[spRelease]`, while **Import** and **Install** appear on a released change (see [Releasing](#releasing-a-change) and [Installing](#installing-a-change)).
 
 ### Creating a change
 
@@ -81,20 +81,20 @@ The **DueDate** of a change must be **on or before** the DueDate of the parent p
 
 ## Scripted Objects
 
-Under **Scripted objects** you manage custom SQL objects that were not generated by Yres — your own tables, stored procedures and functions. They are added under a change and therefore travel along when releasing and installing to test and prod.
+Custom SQL objects that were not generated by Yres — your own tables, views, stored procedures and functions — are managed from the **Object Explorer**: the database-object tree under **Data Engineering**. There you browse your DWH objects and **add a custom object — or include an existing database object — into a change directly from the explorer**. There is no separate "Scripted objects" screen anymore; scripted/custom objects live in the Object Explorer and travel via the change when releasing and installing to test and prod.
 
-- Add an object via the **Scripted objects** sub-link, or include existing database objects directly from the object tree into a change.
-- For a **custom table** you choose with the **"With table content?"** option whether the table's content travels along (behind the scenes: `[Change].[spCopyTableContent]`).
+- Under **Data Engineering**, open the **Object Explorer** and right-click an object to add it — with or without dependencies, and optionally with content — to a change. See [Adding objects to a change](./data-engineering.md#adding-objects-to-a-change).
+- For a **custom table** you choose whether the table's content travels along (behind the scenes: `[Change].[spCopyTableContent]`).
 
 ## Release Changes
 
-Releasing makes a change available to be installed on another environment. You do this on the **Release change** screen (route `/changes/release`).
+Releasing makes a change available to be installed on another environment. You do this **from the change itself** on the **Changes** screen: as long as a change is open, it shows the **Release** action.
 
-**How to release a change:**
+### Releasing a change
 
-1. In the **Projects** section, open the **Release change** sub-link.
-2. Select the **project** and the **change** you want to release.
-3. Review the content (see *Viewing change content* below) and confirm the release.
+1. Open the **Changes** sub-link and choose the **project** and the **change** you want to release at the top.
+2. Review the content (see *Viewing change content* below).
+3. On the open change, click **Release** and confirm.
 
 What happens:
 
@@ -115,24 +115,24 @@ Since **v1.53** you can choose to include **dependencies and/or content** when a
 
 ## Install Changes
 
-Installing brings a **released** change to the next environment (e.g. dev → test, or test → prod). This happens on the **Install change** screen (route `/changes/install`).
+Installing brings a **released** change to the next environment (e.g. dev → test, or test → prod). You also do this **from the change itself**: once a change is released, it shows the **Import** and **Install** actions on the **Changes** screen together with the **environment hop** (from → to).
 
-![The Install change screen: the DTAP flow from change to publish-datafactory, the list of released changes, the environment hop and the Import change and Install change buttons.](/img/screens/changes-release-install.svg)
+![A released change with inline actions: the DTAP flow from change to publish-datafactory, the change content, the environment hop and the Import change and Install change buttons — all from the change itself.](/img/screens/changes-release-install.svg)
 
 The numbers (1)–(6) in the screenshot:
 
 1. **DTAP flow** — Change (dev) → Release → Import → Install → `publish-datafactory`.
-2. **Released changes** — only released changes can be installed.
+2. **Released change** — only a released change shows the install actions.
 3. **Environment hop** — choose the **from** (source) and **to** (target) environment; the combinations are consecutive environments.
 4. **Import change** — DWH only; does not publish the ADF factory.
 5. **Install change** — DWH and ADF; also publishes the factory.
 6. **Progress** — a monitor toast shows the status; `publish-datafactory` runs in Azure DevOps and can take a while.
 
-**How to install a change:**
+### Installing a change
 
-1. In the **Projects** section, open the **Install change** sub-link.
-2. Choose the **released** change and the **environment hop** (from → to) at the top.
-3. Choose one of the two actions:
+1. Open the **Changes** sub-link and choose the **project** and the **released** change at the top.
+2. On the change, choose the **environment hop** (from → to).
+3. Choose one of the two actions on the change:
    - **Import change** → calls `[Change].[spImport]`: re-fetches the change and project data (including dependencies and content) in the target environment. This is **DWH only** and does **not** publish the ADF factory.
    - **Install change** → imports and **installs** the change with `[Change].[spInstall]` (via the `InstallChange` pipeline where present) **and publishes the ADF factory** by running the Azure DevOps pipeline `publish-datafactory`, so that new data-source pipelines land in the target factory as well.
 4. Follow the progress in the monitor toast.
@@ -148,6 +148,6 @@ You can reprocess an already installed change:
 - **Reimport** → calls `[Change].[spImport]` and re-fetches the change/project data (including dependencies and content).
 - **Reinstall** → calls `[Change].[spInstall]` and installs the change again on the environment.
 
-:::info One live install screen
-In the current app, installing runs via **Release change** (`/changes/release`) and **Install change** (`/changes/install`). An older, combined *Publish change* screen still exists in the code, but is **no longer reachable** (legacy) and is replaced by these two screens.
+:::info All actions from the change
+Releasing, importing and installing all happen **from the change itself** on the **Changes** screen: an open change shows **Release**, a released change shows **Import** and **Install** with the environment hop. There are no separate *Release change* or *Install change* screens anymore.
 :::
