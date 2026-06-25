@@ -23,7 +23,7 @@ A **persisted (materialized) view** stores the result of a database view in a re
 
 You manage persisted views in the webapp under **Data engineering → View persistence** (`/dataengineering/viewpersistence`). The screen reads from the view **`Loadmanagement.vwViewPersistence`**.
 
-![View persistence screen with the icon bar and sub-links on the left, the persistence table in the main pane (source view to destination table, Level, Delta, dates, Active) and the Create persisted view form below it.](/img/screens/dataengineering-viewpersistence.svg)
+![View persistence screen with the icon bar and sub-links on the left, the persistence table in the main pane (source view to destination table, Level, Delta, dates, Active) and the Create persisted view form below it.](/img/screens/dataengineering-viewpersistence.png)
 
 *The View persistence screen: the persistence table with the creation form (Create persisted view) below it.*
 

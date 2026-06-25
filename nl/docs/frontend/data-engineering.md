@@ -19,7 +19,7 @@ De volledige lijst schermen van de app met hun route en velden staat in [Webapp-
 
 Een **persisted (gematerialiseerde) view** slaat het resultaat van een view-query op in een echte tabel. Zo lezen rapporten direct uit een tabel in plaats van een (mogelijk trage) view telkens opnieuw uit te rekenen. Het scherm leest uit de view **`Loadmanagement.vwViewPersistence`** en laat je de configuratie beheren en de **Materialize View**-pipeline starten.
 
-![View persistence-scherm: een tabel met persisted views (bron-view naar doeltabel, Level, Delta, datums) en een formulier om een nieuwe persisted view aan te maken.](/img/screens/dataengineering-viewpersistence.svg)
+![View persistence-scherm: een tabel met persisted views (bron-view naar doeltabel, Level, Delta, datums) en een formulier om een nieuwe persisted view aan te maken.](/img/screens/dataengineering-viewpersistence.png)
 
 *Het View persistence-scherm: links de sectie-iconenbalk, daarnaast de sub-links, en in het hoofdvenster de persistentietabel met daaronder het aanmaakformulier.*
 

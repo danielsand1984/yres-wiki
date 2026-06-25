@@ -35,6 +35,9 @@ De cijfers in de schermafbeelding (1)–(6) verwijzen naar de onderdelen hierond
 Bij **Load statusses** zie je per bronobject uitsluitend de meest recente load. De volledige geschiedenis van eerdere runs vind je via het log-icoon (ⓘ) en op het scherm [Monitoring](./load-management.md) onder Load management.
 :::
 
+![Pipeline run detail: per stap van een load de status en het tijdstip.](/img/screens/dashboard-pipeline-detail.png)
+*Pipeline run detail — klik op het log-icoon (ⓘ) bij een load om per stap de status en het tijdstip te zien.*
+
 ## De gedeelde chrome (kop, icoonbalk, sub-links)
 
 Elk ingelogd scherm — niet alleen het Dashboard — wordt omlijst door dezelfde drie navigatie-elementen: de **bovenbalk**, de **icoonbalk links** (de secties) en de **contextuele sub-links** ernaast.

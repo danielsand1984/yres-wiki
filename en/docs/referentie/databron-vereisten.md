@@ -27,7 +27,7 @@ and the how-to [Connect a data source](../setup/databron-koppelen.md). This page
 You create every source through the same wizard. Step 1 ("Source") asks for fields that apply to **all**
 source types; step 2 ("Credentials") asks for the source-specific connection details, per environment.
 
-![Wizard 'Create source', step 1: the shared source-definition fields](/img/screens/source-create-wizard.svg)
+![Wizard 'Create source', step 1: the shared source-definition fields](/img/screens/source-create-wizard.png)
 
 *Step 1 of the "Create source" wizard: you first define the source, then enter the credentials per
 environment.*

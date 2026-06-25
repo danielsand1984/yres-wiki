@@ -82,7 +82,7 @@ Bij het opslaan vult Yres een aantal SQL-tabellen met basis-bron-informatie en s
 
 Op de detailpagina van een database-bron staat bovenaan een **metadata-pipelinekaart** met de laatste run van `GetMetaData - <bron>` (laatste run, status, link naar ADF) en de knoppen **Refresh metadata** en **Load data (all)**.
 
-![Used overview van een bron: een metadata-pipelinekaart met laatste run en status plus de knoppen 'Refresh metadata' en 'Load data (all)', daaronder de tabel met geconfigureerde used tables.](/img/screens/source-usedoverview.svg)
+![Used overview van een bron: een metadata-pipelinekaart met laatste run en status plus de knoppen 'Refresh metadata' en 'Load data (all)', daaronder de tabel met geconfigureerde used tables.](/img/screens/source-usedtables.png)
 
 *De Used overview-pagina dispatcht op brontype: database-bronnen tonen Used tables, file-bronnen Used files en REST-bronnen Used REST service.*
 
@@ -104,7 +104,7 @@ Typemapping bepaalt hoe een brondatatype vertaald wordt naar een DWH-datatype (v
 
 ### Per-bron typemapping — `/sources/:sourceId/typemapping`
 
-![Per-bron typemapping: een 'Generate Typemapping'-knop boven een SQL-editor op LoadManagement.TypeMapping, gefilterd op deze bron.](/img/screens/source-typemapping.svg)
+![Per-bron typemapping: een 'Generate Typemapping'-knop boven een SQL-editor op LoadManagement.TypeMapping, gefilterd op deze bron.](/img/screens/source-typemapping.png)
 
 *De per-bron typemapping is een bewerkbare SQL-grid op `LoadManagement.TypeMapping`, gefilterd op `WHERE SourceSystem = '<bron>'` — alleen de regels van déze bron.*
 
@@ -119,7 +119,7 @@ Het typemapping-tabblad/-kolom verschijnt **alleen in de dev-omgeving**. Mapping
 
 De globale typemapping is de organisatiebrede standaard die voor **alle** bronnen en omgevingen geldt, tenzij een per-bron-regel hem overschrijft. Bereikbaar via Admin (of het tandwiel bij Sources).
 
-![Globale typemapping: één SQL-editor op LoadManagement.GlobalTypeMapping zonder bronfilter — de org-brede standaard datatype-map.](/img/screens/admin-globaltypemapping.svg)
+![Globale typemapping: één SQL-editor op LoadManagement.GlobalTypeMapping zonder bronfilter — de org-brede standaard datatype-map.](/img/screens/admin-globaltypemapping.png)
 
 *De globale typemapping is dezelfde soort SQL-grid, maar dan op `LoadManagement.GlobalTypeMapping` en **zonder** bronfilter. Gebruik hem om datatypes/eigenschappen te unificeren die per bron verschillen, zodat views die meerdere brontypes combineren soepeler werken.*
 

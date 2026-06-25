@@ -12,7 +12,7 @@ Je accountinstellingen bereik je via de topbar, op het icoon met je initialen. V
 
 De pagina **Gebruikersinstellingen** (`/user/settings`) bestaat uit twee formulieren onder elkaar: je profiel bijwerken en je wachtwoord wijzigen. De pagina is in elke omgeving beschikbaar.
 
-![Gebruikersinstellingen met profiel- en wachtwoordformulier](/img/screens/user-settings.svg)
+![Gebruikersinstellingen met profiel- en wachtwoordformulier](/img/screens/user-settings.png)
 
 *Twee gestapelde formulieren: bovenaan je profiel (naam, tijdzone, datumformaat, taal), daaronder het wachtwoord wijzigen. De dark-mode-schakelaar zit in dezelfde container.*
 
@@ -77,7 +77,7 @@ Het feedback-mailadres **feedback@yres.app** is door de eigenaar opgegeven en ko
 
 Kun je niet meer inloggen, gebruik dan de herstelflow. Die bestaat uit twee schermen: het aanvragen van een herstelmail (`/forgot-password`) en het instellen van een nieuw wachtwoord via de link uit die mail (`/reset-password/:token`).
 
-![Wachtwoord-vergeten- en reset-scherm naast elkaar](/img/screens/auth-forgot-reset.svg)
+![Wachtwoord-vergeten- en reset-scherm naast elkaar](/img/screens/auth-forgot-reset.png)
 
 *Links: "Forgot password" met één e-mailveld. Rechts: "Reset password" met e-mail, nieuw wachtwoord en bevestiging.*
 

@@ -16,7 +16,7 @@ Je logt in op de Yres-webapp op het scherm **`/login`**. Het is een gecentreerde
 zijbalk (front-scope, niet-geauthenticeerd). Vul je **e-mailadres** en **wachtwoord** in en klik op
 **"Sign in"**.
 
-![Yres-inlogscherm met e-mail- en wachtwoordveld](/img/screens/auth-login.svg)
+![Yres-inlogscherm met e-mail- en wachtwoordveld](/img/screens/auth-login.png)
 
 *Gecentreerde authenticatiekaart op `/login`: e-mail, wachtwoord en een "Sign in"-knop, met onderaan een
 "Forgot password?"-link.*
@@ -39,7 +39,7 @@ Een Yres-account maak je niet zelf aan; je wordt **uitgenodigd**. De installatie
 is geconfigureerd voor de aangeschafte Yres-versie (zie [Licentietiers](#licentietiers-en-omgevingen)).
 De link opent het registratiescherm op **`/register`**.
 
-![Registratiescherm via uitnodiging met één stap "Account"](/img/screens/auth-register.svg)
+![Registratiescherm via uitnodiging met één stap "Account"](/img/screens/auth-register.png)
 
 *Gecentreerde kaart met een meerstapsformulier dat slechts één zichtbare stap ("Account") toont. Het
 e-mailadres is vooringevuld vanuit de uitnodiging en staat vast.*

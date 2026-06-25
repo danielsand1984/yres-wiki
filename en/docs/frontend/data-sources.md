@@ -82,7 +82,7 @@ On saving, Yres fills a number of SQL tables with basic source information and s
 
 On the detail page of a database source there is a **metadata pipeline card** at the top with the latest run of `GetMetaData - <source>` (last run, status, link to ADF) and the buttons **Refresh metadata** and **Load data (all)**.
 
-![Used overview of a source: a metadata pipeline card with last run and status plus the buttons 'Refresh metadata' and 'Load data (all)', and below it the table with the configured used tables.](/img/screens/source-usedoverview.svg)
+![Used overview of a source: a metadata pipeline card with last run and status plus the buttons 'Refresh metadata' and 'Load data (all)', and below it the table with the configured used tables.](/img/screens/source-usedtables.png)
 
 *The Used overview page dispatches on source type: database sources show Used tables, file sources Used files and REST sources Used REST service.*
 
@@ -104,7 +104,7 @@ Type mapping determines how a source data type is translated into a DWH data typ
 
 ### Per-source type mapping — `/sources/:sourceId/typemapping`
 
-![Per-source type mapping: a 'Generate Typemapping' button above a SQL editor on LoadManagement.TypeMapping, filtered on this source.](/img/screens/source-typemapping.svg)
+![Per-source type mapping: a 'Generate Typemapping' button above a SQL editor on LoadManagement.TypeMapping, filtered on this source.](/img/screens/source-typemapping.png)
 
 *The per-source type mapping is an editable SQL grid on `LoadManagement.TypeMapping`, filtered on `WHERE SourceSystem = '<source>'` — only the rows of this source.*
 
@@ -119,7 +119,7 @@ The type-mapping tab/column appears **only in the dev environment**. Mappings ar
 
 The global type mapping is the organization-wide default that applies to **all** sources and environments, unless a per-source rule overrides it. Reachable via Admin (or the gear icon next to Sources).
 
-![Global type mapping: a single SQL editor on LoadManagement.GlobalTypeMapping without a source filter — the org-wide default data-type map.](/img/screens/admin-globaltypemapping.svg)
+![Global type mapping: a single SQL editor on LoadManagement.GlobalTypeMapping without a source filter — the org-wide default data-type map.](/img/screens/admin-globaltypemapping.png)
 
 *The global type mapping is the same kind of SQL grid, but on `LoadManagement.GlobalTypeMapping` and **without** a source filter. Use it to unify data types/properties that differ per source, so that views combining multiple source types work more smoothly.*
 

@@ -144,6 +144,9 @@ With **master pipelines** you build your own flow by combining **nodes** in a vi
 (5) **Color legend** for the three outputs.
 (6) **Save** stores the flow as a draft; **Publish** (only enabled after a Save) converts the flow into an ADF pipeline. The published pipeline becomes visible in the Data Factory after a few minutes.
 
+![Master pipeline builder: the node palette, a selected Load Source Table node and the node properties panel.](/img/screens/loadmanagement-masterpipelines-node.png)
+*Configuring a node: select a node on the canvas and set its properties on the right (here the source, schema and table for a Load Source Table node).*
+
 ### Node types
 
 | Node | Purpose | Notes |

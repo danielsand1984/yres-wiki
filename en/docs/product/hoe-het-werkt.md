@@ -14,7 +14,7 @@ Yres runs entirely within your **own Azure environment** and automates the full 
 
 Native connectors with Exact Online, AFAS, SAP, Salesforce, databases (SQL Server, MySQL, PostgreSQL, Oracle, Snowflake, DB2), OData, REST APIs and more. You add a source through a wizard — no custom work. See the [integration catalog](../integraties/catalogus.md).
 
-![Create source wizard: step 1 of 2 with fields for source name, type, integration runtime and credentials](/img/screens/source-create-wizard.svg)
+![Create source wizard: step 1 of 2 with fields for source name, type, integration runtime and credentials](/img/screens/source-create-wizard.png)
 
 *The "Create source" wizard. You enter *which* source you're connecting; the credentials go straight to your own Azure Key Vault, not to Yres.*
 

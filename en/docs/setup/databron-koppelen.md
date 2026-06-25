@@ -21,7 +21,7 @@ Yres supports, among others, SQL Server, Azure SQL, Oracle, DB2, PostgreSQL, MyS
 
 You always create a source in the **dev** environment; via the [Changes](../frontend/projecten-changes.md) flow you promote it to test/prod later. The *Create source* button therefore only appears on dev.
 
-![The Create source wizard in Yres, step 1 of 2, with fields for source name, type, integration runtime, credentials and tags](/img/screens/source-create-wizard.svg)
+![The Create source wizard in Yres, step 1 of 2, with fields for source name, type, integration runtime, credentials and tags](/img/screens/source-create-wizard.png)
 
 *Step 1 of the Create source wizard: first define the source (name, type, runtime), then enter the credentials per environment.*
 
@@ -88,7 +88,7 @@ Click **Add table** to add a new source table. The wizard runs through seven ste
 
 ![The Add table wizard in Yres on the Columns step, with a step bar and a columns table with RowHash checkboxes and TargetType overrides](/img/screens/source-usedtable-wizard.png)
 
-*The Add table wizard, opened on step 3 (Columns). Load type and key columns follow in the steps after.*
+*The Add table wizard, opened on the Columns step. Load type and key columns follow in the steps after.*
 
 (1) **Step bar** — the seven steps; you are now on *Columns*.
 (2) **Selected source table** — the schema/table you chose in step 2.
@@ -106,6 +106,23 @@ Step by step:
 5. **Key column** — see [configure a load](#4-configure-a-load).
 6. **Options** — extra options depending on the service tier and source type (for example memory-optimized tables, package size, delta overlap). If there are none, you can skip the step.
 7. **Overwrite** — optionally override the physical STAGE/HIS target names. A live preview shows the result, for example `[STAGE].[SOURCE_SCHEMA_TABLE]` and `[ODS].[…]`.
+
+#### The wizard in pictures
+
+![Add table wizard: choose the Project and Change the change is booked under.](/img/screens/source-usedtable-wizard-step2.png)
+*Project & Change — everything you add is booked under the chosen Change (skipped for a single environment).*
+
+![Add table wizard: choose schema, table and the dataplatform.](/img/screens/source-usedtable-wizard-step3.png)
+*Schema, table & dataplatform — Data Warehouse and/or Azure Datalake.*
+
+![Add table wizard: load type DELTA with a delta column.](/img/screens/source-usedtable-wizard-step5.png)
+*Load type — for a DELTA type you choose the delta column for incremental loading.*
+
+![Add table wizard: the key column predicted or chosen manually.](/img/screens/source-usedtable-wizard-step6.png)
+*Key column — let Yres predict the key (predict) or choose manually (manual).*
+
+![Add table wizard, final step: the physical STAGE and HIS target names with the Create button.](/img/screens/source-usedtable-wizard-step7.png)
+*Overwrite — check or override the STAGE/HIS target names and click **Create** to register the table.*
 
 :::note Adding ≠ loading
 Adding a table registers it in `LoadManagement`, books a change under the chosen Change and creates the physical **STAGE** and **HIS** tables. **No data is loaded yet** — you do that afterwards via a [load](../frontend/load-management.md) or a trigger.

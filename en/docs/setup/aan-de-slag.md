@@ -15,7 +15,7 @@ work.
 You log in to the Yres web app on the **`/login`** screen. It is a centered login card without a sidebar
 (front scope, unauthenticated). Enter your **email address** and **password** and click **"Sign in"**.
 
-![Yres login screen with email and password fields](/img/screens/auth-login.svg)
+![Yres login screen with email and password fields](/img/screens/auth-login.png)
 
 *Centered authentication card on `/login`: email, password and a "Sign in" button, with a "Forgot
 password?" link at the bottom.*
@@ -38,7 +38,7 @@ from Plainwater** that is tied to a single Microsoft account, is **usable only o
 the purchased Yres version (see [License tiers](#license-tiers-and-environments)). The link opens the
 registration screen on **`/register`**.
 
-![Registration screen via invitation with a single "Account" step](/img/screens/auth-register.svg)
+![Registration screen via invitation with a single "Account" step](/img/screens/auth-register.png)
 
 *Centered card with a multi-step form that shows only a single visible step ("Account"). The email address
 is pre-filled from the invitation and is fixed.*

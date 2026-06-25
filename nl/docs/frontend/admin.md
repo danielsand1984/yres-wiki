@@ -49,9 +49,23 @@ Het scherm bestaat uit:
 - Aanmaken met **e-mail**, **rol** en of **SSO** verplicht is.
 - De nieuwe gebruiker krijgt een mail met standaardwachtwoord.
 
+![Create user: e-mailadres, rol en of Microsoft Azure SSO verplicht is.](/img/screens/admin-create-user.png)
+*Een nieuwe gebruiker aanmaken: e-mailadres, rol en of Microsoft Azure single sign-on verplicht is.*
+
 ### Roles
 - Standaardrollen plus eigen rollen, doorgaans **CRUD per permissietype**.
 - Permissies buiten CRUD staan onder **"Other"**.
+
+Een eigen rol maak je met de **Create role**-wizard in drie stappen:
+
+![Create role-wizard stap 1: geef de rol een naam.](/img/screens/admin-role-wizard-step1.png)
+*Stap 1 — Name: geef de rol een herkenbare naam.*
+
+![Create role-wizard stap 2: CRUD-permissies per resource.](/img/screens/admin-role-wizard-step2.png)
+*Stap 2 — CRUD: vink per resource (Users, Settings, Datasources, …) Read/Create/Update/Delete aan.*
+
+![Create role-wizard stap 3: overige permissies met Allow-schakelaars.](/img/screens/admin-role-wizard-step3.png)
+*Stap 3 — Other: permissies die niet in CRUD passen (changes releasen, pipelines draaien, bouwen, …).*
 
 ## Announcements
 
@@ -252,6 +266,9 @@ in het datawarehouse.
 4. **Info-icoon** — opent een stappen-modal met de stap-voor-stap-uitvoering van de procedure.
 5. **Mislukte stap** — de modal toont per stap de status en de foutmelding, met een link naar de bijbehorende
    run in Azure Data Factory.
+
+![DWH logs - Log Steps: de stap-voor-stap-uitvoering van een stored procedure met tijdstempels.](/img/screens/admin-dwhlogs-steps.png)
+*De Log Steps-modal: per stap de status en het tijdstip; bij een fout een directe link naar de ADF-run.*
 
 :::note Niet op Development
 Data Warehouse Logs zijn **niet beschikbaar op de Development-omgeving**. Gebruik op dev de logs onder

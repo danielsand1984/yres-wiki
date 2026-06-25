@@ -12,7 +12,7 @@ You reach your account settings from the topbar, via the icon with your initials
 
 The **User settings** page (`/user/settings`) consists of two stacked forms: updating your profile and changing your password. The page is available in every environment.
 
-![User settings with profile and password form](/img/screens/user-settings.svg)
+![User settings with profile and password form](/img/screens/user-settings.png)
 
 *Two stacked forms: your profile at the top (name, time zone, date format, language), the password change below it. The dark-mode toggle sits in the same container.*
 
@@ -77,7 +77,7 @@ The feedback email address **feedback@yres.app** was provided by the owner and d
 
 If you can no longer log in, use the recovery flow. It consists of two screens: requesting a recovery email (`/forgot-password`) and setting a new password via the link in that email (`/reset-password/:token`).
 
-![Forgot-password and reset screens side by side](/img/screens/auth-forgot-reset.svg)
+![Forgot-password and reset screens side by side](/img/screens/auth-forgot-reset.png)
 
 *Left: "Forgot password" with a single email field. Right: "Reset password" with email, new password and confirmation.*
 

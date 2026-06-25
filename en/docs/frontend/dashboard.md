@@ -35,6 +35,9 @@ The numbers in the screenshot (1)–(6) refer to the components below:
 Under **Load statusses** you see only the most recent load per source object. The full history of earlier runs is available via the log icon (ⓘ) and on the [Monitoring](./load-management.md) screen under Load management.
 :::
 
+![Pipeline run detail: the status and timestamp per step of a load.](/img/screens/dashboard-pipeline-detail.png)
+*Pipeline run detail — click the log icon (ⓘ) on a load to see the status and timestamp per step.*
+
 ## The shared chrome (header, icon rail, sub-links)
 
 Every signed-in screen — not just the Dashboard — is framed by the same three navigation elements: the **top bar**, the **icon rail on the left** (the sections) and the **contextual sub-links** next to it.

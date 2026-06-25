@@ -144,6 +144,9 @@ Met **master pipelines** bouw je een eigen flow door **nodes** te combineren in 
 (5) **Kleurlegenda** van de drie uitgangen.
 (6) **Save** bewaart de flow als concept; **Publish** (alleen actief ná een Save) zet de flow om naar een ADF-pipeline. De gepubliceerde pipeline is na enkele minuten zichtbaar in de Data Factory.
 
+![Master pipeline builder: het node-palet, een geselecteerde Load Source Table-node en het node-eigenschappenpaneel.](/img/screens/loadmanagement-masterpipelines-node.png)
+*Een node configureren: selecteer een node op het canvas en stel rechts de eigenschappen in (hier de bron, het schema en de tabel voor een Load Source Table-node).*
+
 ### Node-types
 
 | Node | Doel | Aandachtspunten |

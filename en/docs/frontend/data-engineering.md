@@ -19,7 +19,7 @@ The full list of app screens with their route and fields is in [Web app screens]
 
 A **persisted (materialized) view** stores the result of a view query in an actual table. That way reports read straight from a table instead of recomputing a (potentially slow) view every time. The screen reads from the view **`Loadmanagement.vwViewPersistence`** and lets you manage the configuration and start the **Materialize View** pipeline.
 
-![View persistence screen: a table of persisted views (source view to destination table, Level, Delta, dates) and a form to create a new persisted view.](/img/screens/dataengineering-viewpersistence.svg)
+![View persistence screen: a table of persisted views (source view to destination table, Level, Delta, dates) and a form to create a new persisted view.](/img/screens/dataengineering-viewpersistence.png)
 
 *The View persistence screen: on the left the section icon bar, next to it the sub-links, and in the main pane the persistence table with the create form below it.*
 

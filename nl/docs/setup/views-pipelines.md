@@ -23,7 +23,7 @@ Een **persisted (gematerialiseerde) view** slaat de uitkomst van een databasevie
 
 Je beheert persisted views in de webapp onder **Data engineering → View persistence** (`/dataengineering/viewpersistence`). Het scherm leest uit de view **`Loadmanagement.vwViewPersistence`**.
 
-![View persistence-scherm met links de iconenbalk en sub-links, in het hoofdvenster de persistentietabel (bron-view naar doeltabel, Level, Delta, datums, Active) en daaronder het Create persisted view-formulier.](/img/screens/dataengineering-viewpersistence.svg)
+![View persistence-scherm met links de iconenbalk en sub-links, in het hoofdvenster de persistentietabel (bron-view naar doeltabel, Level, Delta, datums, Active) en daaronder het Create persisted view-formulier.](/img/screens/dataengineering-viewpersistence.png)
 
 *Het View persistence-scherm: de persistentietabel met daaronder het aanmaakformulier (Create persisted view).*
 

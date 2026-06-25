@@ -21,7 +21,7 @@ Yres ondersteunt onder andere SQL Server, Azure SQL, Oracle, DB2, PostgreSQL, My
 
 Een bron maak je altijd aan in de **dev**-omgeving; via de [Changes](../frontend/projecten-changes.md)-flow promoveer je hem later naar test/prod. De *Create source*-knop verschijnt daarom alleen op dev.
 
-![De Create source-wizard in Yres, stap 1 van 2, met velden voor source name, type, integration runtime, credentials en tags](/img/screens/source-create-wizard.svg)
+![De Create source-wizard in Yres, stap 1 van 2, met velden voor source name, type, integration runtime, credentials en tags](/img/screens/source-create-wizard.png)
 
 *Stap 1 van de Create source-wizard: definieer eerst de bron (naam, type, runtime), daarna voer je per omgeving de inloggegevens in.*
 
@@ -88,7 +88,7 @@ Klik op **Add table** om een nieuwe brontabel toe te voegen. De wizard loopt in 
 
 ![De Add table-wizard in Yres op de stap Columns, met een stappenbalk en een kolommentabel met RowHash-selectievakjes en TargetType-overrides](/img/screens/source-usedtable-wizard.png)
 
-*De Add table-wizard, geopend op stap 3 (Columns). Load type en sleutelkolommen volgen in de stappen erna.*
+*De Add table-wizard, geopend op de stap Columns. Load type en sleutelkolommen volgen in de stappen erna.*
 
 (1) **Stappenbalk** — de zeven stappen; je staat nu op *Columns*.
 (2) **Geselecteerde brontabel** — de schema/tabel die je in stap 2 koos.
@@ -106,6 +106,23 @@ Stap voor stap:
 5. **Key column** — zie [een load configureren](#4-een-load-configureren).
 6. **Options** — extra opties afhankelijk van service-tier en brontype (bijvoorbeeld geheugen-geoptimaliseerde tabellen, package size, delta-overlap). Zijn er geen, dan kun je de stap overslaan.
 7. **Overwrite** — optioneel de fysieke STAGE/HIS-doelnamen overschrijven. Een live preview toont het resultaat, bijvoorbeeld `[STAGE].[BRON_SCHEMA_TABEL]` en `[ODS].[…]`.
+
+#### De wizard in beeld
+
+![Add table-wizard: kies het Project en de Change waaronder de wijziging wordt geboekt.](/img/screens/source-usedtable-wizard-step2.png)
+*Project & Change — alles wat je toevoegt wordt onder de gekozen Change geboekt (vervalt bij één omgeving).*
+
+![Add table-wizard: kies schema, tabel en het dataplatform.](/img/screens/source-usedtable-wizard-step3.png)
+*Schema, tabel & dataplatform — Data Warehouse en/of Azure Datalake.*
+
+![Add table-wizard: load type DELTA met een deltakolom.](/img/screens/source-usedtable-wizard-step5.png)
+*Load type — bij een DELTA-type kies je de deltakolom voor incrementeel laden.*
+
+![Add table-wizard: de sleutelkolom voorspeld of handmatig gekozen.](/img/screens/source-usedtable-wizard-step6.png)
+*Key column — laat Yres de sleutel voorspellen (predict) of kies handmatig (manual).*
+
+![Add table-wizard, laatste stap: de fysieke STAGE- en HIS-doelnamen met de knop Create.](/img/screens/source-usedtable-wizard-step7.png)
+*Overwrite — controleer of overschrijf de STAGE/HIS-doelnamen en klik **Create** om de tabel te registreren.*
 
 :::note Toevoegen ≠ laden
 Het toevoegen van een tabel registreert hem in `LoadManagement`, boekt een wijziging onder de gekozen Change en maakt de fysieke **STAGE**- en **HIS**-tabellen aan. **Er wordt nog geen data geladen** — dat doe je daarna via een [load](../frontend/load-management.md) of een trigger.

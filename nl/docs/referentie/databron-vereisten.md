@@ -27,7 +27,7 @@ en de how-to [Databron koppelen](../setup/databron-koppelen.md). Deze pagina bli
 Elke bron maak je aan via dezelfde wizard. Stap 1 ("Source") vraagt om velden die voor **alle** brontypes
 gelden; stap 2 ("Credentials") vraagt de bronspecifieke verbindingsgegevens, per omgeving.
 
-![Wizard 'Create source', stap 1: de gedeelde brondefinitie-velden](/img/screens/source-create-wizard.svg)
+![Wizard 'Create source', stap 1: de gedeelde brondefinitie-velden](/img/screens/source-create-wizard.png)
 
 *Stap 1 van de wizard "Create source": je definieert eerst de bron, daarna voer je per omgeving de
 credentials in.*

@@ -14,7 +14,7 @@ Yres draait volledig binnen je **eigen Azure-omgeving** en automatiseert de hele
 
 Native connectoren met Exact Online, AFAS, SAP, Salesforce, databases (SQL Server, MySQL, PostgreSQL, Oracle, Snowflake, DB2), OData, REST API's en meer. Je voegt een bron toe via een wizard — geen maatwerk. Zie de [integratiecatalogus](../integraties/catalogus.md).
 
-![Create source-wizard: stap 1 van 2 met velden voor bronnaam, type, integration runtime en credentials](/img/screens/source-create-wizard.svg)
+![Create source-wizard: stap 1 van 2 met velden voor bronnaam, type, integration runtime en credentials](/img/screens/source-create-wizard.png)
 
 *De "Create source"-wizard. Je vult in *welke* bron je koppelt; de credentials gaan rechtstreeks naar je eigen Azure Key Vault, niet naar Yres.*
 

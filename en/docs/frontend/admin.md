@@ -49,9 +49,23 @@ The screen consists of:
 - Create with an **email**, **role** and whether **SSO** is required.
 - The new user receives an email with a default password.
 
+![Create user: email address, role and whether Microsoft Azure SSO is required.](/img/screens/admin-create-user.png)
+*Creating a new user: email address, role and whether Microsoft Azure single sign-on is required.*
+
 ### Roles
 - Default roles plus your own roles, typically **CRUD per permission type**.
 - Permissions outside CRUD live under **"Other"**.
+
+You create your own role with the **Create role** wizard in three steps:
+
+![Create role wizard step 1: give the role a name.](/img/screens/admin-role-wizard-step1.png)
+*Step 1 — Name: give the role a recognizable name.*
+
+![Create role wizard step 2: CRUD permissions per resource.](/img/screens/admin-role-wizard-step2.png)
+*Step 2 — CRUD: tick Read/Create/Update/Delete per resource (Users, Settings, Datasources, …).*
+
+![Create role wizard step 3: other permissions with Allow toggles.](/img/screens/admin-role-wizard-step3.png)
+*Step 3 — Other: permissions that don't fit CRUD (release changes, run pipelines, build, …).*
 
 ## Announcements
 
@@ -252,6 +266,9 @@ in the data warehouse.
 4. **Info icon** — opens a steps modal with the step-by-step execution of the procedure.
 5. **Failed step** — the modal shows the status and the error message per step, with a link to the associated
    run in Azure Data Factory.
+
+![DWH logs - Log Steps: the step-by-step execution of a stored procedure with timestamps.](/img/screens/admin-dwhlogs-steps.png)
+*The Log Steps modal: the status and timestamp per step; on failure a direct link to the ADF run.*
 
 :::note Not on Development
 Data Warehouse Logs are **not available on the Development environment**. On dev, use the logs under
