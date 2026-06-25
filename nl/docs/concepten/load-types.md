@@ -115,7 +115,7 @@ Naast de business-kolommen krijgt elke HIS-rij framework-kolommen: `<tabel>_RowI
 
 Je configureert load type en sleutelkolommen in de meerstaps-wizard *Add table*, te bereiken via **Data sources › (bron) › Used tables**. Onderstaande afbeelding toont stap 3 (Columns); load type en sleutel volgen in stap 4 en 5.
 
-![De wizard Add table in Yres, geopend op de stap Columns, met een stappenbalk en een kolommentabel met RowHash-selectievakjes](/img/screens/source-usedtable-wizard.svg)
+![De wizard Add table in Yres, geopend op de stap Columns, met een stappenbalk en een kolommentabel met RowHash-selectievakjes](/img/screens/source-usedtable-wizard.png)
 
 *De wizard Add table loopt door zeven stappen — Project, Schema/table, Columns, Load type, Key column, Options en Overwrite — voordat de tabel wordt geregistreerd. Er wordt nog geen data geladen; de wizard maakt de STAGE- en HIS-tabellen aan en boekt een wijziging.*
 

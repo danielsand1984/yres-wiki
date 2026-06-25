@@ -86,7 +86,7 @@ Klik op **Add table** om een nieuwe brontabel toe te voegen. De wizard loopt in 
 
 `Project → Schema/table → Columns → Load type → Key column → Options → Overwrite`
 
-![De Add table-wizard in Yres op de stap Columns, met een stappenbalk en een kolommentabel met RowHash-selectievakjes en TargetType-overrides](/img/screens/source-usedtable-wizard.svg)
+![De Add table-wizard in Yres op de stap Columns, met een stappenbalk en een kolommentabel met RowHash-selectievakjes en TargetType-overrides](/img/screens/source-usedtable-wizard.png)
 
 *De Add table-wizard, geopend op stap 3 (Columns). Load type en sleutelkolommen volgen in de stappen erna.*
 

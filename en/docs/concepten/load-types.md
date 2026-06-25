@@ -115,7 +115,7 @@ Besides the business columns, each HIS row gets framework columns: `<table>_RowI
 
 You configure the load type and key columns in the multi-step *Add table* wizard, reachable via **Data sources › (source) › Used tables**. The image below shows step 3 (Columns); load type and key follow in steps 4 and 5.
 
-![The Add table wizard in Yres, opened on the Columns step, with a step bar and a column table with RowHash checkboxes](/img/screens/source-usedtable-wizard.svg)
+![The Add table wizard in Yres, opened on the Columns step, with a step bar and a column table with RowHash checkboxes](/img/screens/source-usedtable-wizard.png)
 
 *The Add table wizard runs through seven steps — Project, Schema/table, Columns, Load type, Key column, Options and Overwrite — before the table is registered. No data is loaded yet; the wizard creates the STAGE and HIS tables and records a change.*
 

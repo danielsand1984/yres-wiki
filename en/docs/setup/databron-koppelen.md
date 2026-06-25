@@ -86,7 +86,7 @@ Click **Add table** to add a new source table. The wizard runs through seven ste
 
 `Project → Schema/table → Columns → Load type → Key column → Options → Overwrite`
 
-![The Add table wizard in Yres on the Columns step, with a step bar and a columns table with RowHash checkboxes and TargetType overrides](/img/screens/source-usedtable-wizard.svg)
+![The Add table wizard in Yres on the Columns step, with a step bar and a columns table with RowHash checkboxes and TargetType overrides](/img/screens/source-usedtable-wizard.png)
 
 *The Add table wizard, opened on step 3 (Columns). Load type and key columns follow in the steps after.*
 
