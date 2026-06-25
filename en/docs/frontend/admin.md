@@ -84,6 +84,10 @@ user actions across the whole organization are traceable.
 Route: `/admin/databases`. View all databases that the organization uses. If you have added a custom
 database, you update it here directly.
 
+![Database(s): the Azure SQL databases per environment with host, port, server and database name.](/img/screens/admin-databases.png)
+
+*The Azure SQL databases per environment, with host, port, server and database name.*
+
 ## Firewall
 
 Route: `/admin/firewall`. Allow or deny access per IP address, so admins decide from where Yres
@@ -100,6 +104,10 @@ may be accessed. This improves security by restricting network access.
 Route: `/admin/powerBiCredentials` (and the models view). Manage unified models per environment, so the
 right models are called — for example during a refresh via the master pipeline.
 
+![Power BI models: link Power BI workspaces and models per environment via an app registration for the embedded BI dashboard.](/img/screens/admin-powerbi-models.png)
+
+*Link Power BI workspaces and models per environment via an app registration, for the embedded BI dashboard.*
+
 **Setup:** first add a data source of type **PowerBI** (see
 [data source requirements](../referentie/databron-vereisten.md)). After that the tenant appears in the
 tenants section and you can retrieve the associated workspaces and models. The expiry date is shown
@@ -109,6 +117,13 @@ per credential set.
 
 Route: `/admin/rebuild`. Reset data to factory settings — for the entire organization or only the Azure
 Data Factory.
+
+![Rebuild: two actions, "Rebuild All" (organization) and "Rebuild ADF" (data factory), to repair drift.](/img/screens/admin-rebuild.png)
+
+*Two actions: **Rebuild All** resets the whole organization and **Rebuild ADF** resets only the data factory.*
+
+Use **Rebuild ADF** when someone manually edited or deleted ADF code: Yres rebuilds the data factory from the
+known configuration and so repairs the drift.
 
 :::warning Irreversible
 Rebuild **overwrites all configuration that was not done via the Yres frontend**. Use this with great
@@ -120,6 +135,13 @@ care.
 Route: `/admin/settings`. Applies to **all environments** of the organization. Includes, among other things, the number of
 **parallel processes** with which sources are loaded into the database and/or the Data Lake (an integer
 between **1 and 50**).
+
+![Settings: tunable values (Label/Value) such as the Dynamic Workflow batch count and the ADF publish filter, plus a Danger Zone.](/img/screens/admin-settings.png)
+
+*Organization-wide, tunable values (Label/Value) such as the **Dynamic Workflow batch count** and the **ADF publish filter text**, plus a Danger Zone for destructive actions.*
+
+Each setting is a **Label/Value** pair — among others the batch count for the Dynamic Workflow and the
+publish filter text Yres uses to decide which ADF objects get published.
 
 Below the settings is the **Danger Zone**. Here you cancel the subscription by deleting the organization.
 This does not affect your Azure environment — it only removes the organization from the Yres portal.
@@ -147,6 +169,10 @@ Route: `/admin/shared-integration-runtimes` (available from version **1.55**). M
 integration runtimes for ADF. An IR requires a **name** and **description**. After creating it, you download
 the Microsoft IR tool via the info icon and register the runtime with the keys shown.
 
+![Shared Integration Runtimes: self-hosted IRs shared across environments and sources.](/img/screens/admin-shared-integration-runtimes.png)
+
+*Self-hosted integration runtimes shared across environments and sources.*
+
 :::warning Irreversible
 Creating a shared integration runtime cannot be undone.
 :::
@@ -155,8 +181,6 @@ Creating a shared integration runtime cannot be undone.
 
 Route: `/admin/environments`. Update each environment to the latest Yres version. This starts a deployment
 (CI/CD pipeline) for the selected environment.
-
-![Update environments: one card per environment (dev/test/prod) with version, last CI/CD result and a deploy confirmation.](/img/screens/admin-environments.svg)
 
 ![Update environment: per-environment cards (dev/prd) showing the current YRES DWH version and an "Already up to date" state.](/img/screens/admin-update-environment.png)
 
@@ -175,6 +199,15 @@ the **"Already up to date"** state. Updating updates the DWH and republishes the
 Test a new version first on `dev` (and possibly `test`) before updating `prod`. See the
 [release notes](../referentie/release-notes.md) for the contents of an update.
 :::
+
+## Theme
+
+Route: `/admin/theme`. White-label Yres per organization: upload a custom icon and login background, choose a
+brand color, set blur and pick the default mode (light / dark / system).
+
+![Theme: upload a custom icon and login background, choose a brand color, blur and light/dark/system mode, with a live login preview.](/img/screens/admin-theme.png)
+
+*Upload a custom icon + login background, set a brand color, blur and light/dark/system mode; a live preview of the login page shows the result. Per-organization white-labeling.*
 
 ## Environment admin (environment-specific)
 
@@ -195,6 +228,10 @@ The table shows the provisioned Azure resources for the environment — **Data F
 
 Route: `/admin/changeoverwrites` (only for organizations with multiple environments). Translate object names
 between environments, for example `ERP_DEV.Product` (dev) → `ERP_TST.Product` (test) → `ERP.Product` (prod).
+
+![Change deployment rules: map object names between environments (OLD → NEW: source/schema/table), e.g. CRM_DEV → CRM_PRD.](/img/screens/admin-changeoverwrites.png)
+
+*Map object names between environments (OLD → NEW: source/schema/table), e.g. `CRM_DEV` → `CRM_PRD`, so a change targets the right physical objects per environment.*
 
 Apply these rules **before** importing a change into the target environment. Often combined with
 Source/Schema/Table overwrite so the table name stays stable across all environments.

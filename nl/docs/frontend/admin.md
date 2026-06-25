@@ -84,6 +84,10 @@ gebruikersacties binnen de hele organisatie traceerbaar zijn.
 Route: `/admin/databases`. Bekijk alle databases die de organisatie gebruikt. Heb je een eigen (custom)
 database toegevoegd, dan werk je die hier direct bij.
 
+![Database(s): de Azure SQL-databases per omgeving met host, poort, server en database-naam.](/img/screens/admin-databases.png)
+
+*De Azure SQL-databases per omgeving met host, poort, server en database-naam.*
+
 ## Firewall
 
 Route: `/admin/firewall`. Sta toe of weiger toegang per IP-adres, zodat admins bepalen vanaf waar Yres
@@ -100,6 +104,10 @@ benaderd mag worden. Dit verhoogt de beveiliging door netwerktoegang te beperken
 Route: `/admin/powerBiCredentials` (en de modellen-weergave). Beheer unified models per omgeving, zodat de
 juiste modellen worden aangeroepen — bijvoorbeeld bij een refresh via de master pipeline.
 
+![Power BI models: koppel Power BI-workspaces en -modellen per omgeving via een app-registratie voor het embedded BI-dashboard.](/img/screens/admin-powerbi-models.png)
+
+*Koppel Power BI-workspaces en -modellen per omgeving via een app-registratie, voor het embedded BI-dashboard.*
+
 **Setup:** voeg eerst een databron van type **PowerBI** toe (zie
 [databron-vereisten](../referentie/databron-vereisten.md)). Daarna verschijnt de tenant in de
 tenants-sectie en kun je de bijbehorende workspaces en modellen ophalen. Per credential-set wordt de
@@ -109,6 +117,13 @@ vervaldatum getoond.
 
 Route: `/admin/rebuild`. Reset data naar fabrieksinstellingen — voor de hele organisatie óf alleen de Azure
 Data Factory.
+
+![Rebuild: twee acties, "Rebuild All" (organisatie) en "Rebuild ADF" (data factory), om drift te herstellen.](/img/screens/admin-rebuild.png)
+
+*Twee acties: **Rebuild All** zet de hele organisatie terug en **Rebuild ADF** alleen de data factory.*
+
+Gebruik **Rebuild ADF** wanneer iemand handmatig ADF-code heeft aangepast of verwijderd: Yres herbouwt de
+data factory vanuit de bekende configuratie en herstelt zo de drift.
 
 :::warning Onomkeerbaar
 Rebuild **overschrijft alle configuratie die niet via de Yres-frontend is gedaan**. Gebruik dit met grote
@@ -120,6 +135,13 @@ voorzichtigheid.
 Route: `/admin/settings`. Geldt voor **álle omgevingen** van de organisatie. Bevat onder andere het aantal
 **parallelle processen** waarmee bronnen in de database en/of de Data Lake geladen worden (een geheel getal
 tussen **1 en 50**).
+
+![Settings: instelbare waarden (Label/Value) zoals de Dynamic Workflow batch count en de ADF publish-filter, plus een Danger Zone.](/img/screens/admin-settings.png)
+
+*Organisatiebrede, instelbare waarden (Label/Value) zoals de **Dynamic Workflow batch count** en de **ADF publish-filtertekst**, plus een Danger Zone voor destructieve acties.*
+
+Elke instelling is een **Label/Value**-paar — onder andere het aantal batches voor de Dynamic Workflow en de
+publish-filtertekst waarmee Yres bepaalt welke ADF-objecten gepubliceerd worden.
 
 Onder de instellingen staat de **Danger Zone**. Hier zeg je het abonnement op door de organisatie te
 verwijderen. Dit raakt je Azure-omgeving niet — het verwijdert alleen de organisatie uit de Yres-portal.
@@ -147,6 +169,10 @@ Route: `/admin/shared-integration-runtimes` (beschikbaar vanaf versie **1.55**).
 integration runtimes voor ADF. Een IR vereist een **naam** en **beschrijving**. Na het aanmaken download je
 via het info-icoon de Microsoft IR-tool en registreer je de runtime met de getoonde keys.
 
+![Shared Integration Runtimes: self-hosted IR's die gedeeld worden over omgevingen en bronnen.](/img/screens/admin-shared-integration-runtimes.png)
+
+*Self-hosted integration runtimes die gedeeld worden over omgevingen en bronnen.*
+
 :::warning Onomkeerbaar
 Het aanmaken van een shared integration runtime kan niet ongedaan gemaakt worden.
 :::
@@ -155,8 +181,6 @@ Het aanmaken van een shared integration runtime kan niet ongedaan gemaakt worden
 
 Route: `/admin/environments`. Werk elke omgeving bij naar de laatste Yres-versie. Dit start een deployment
 (CI/CD-pipeline) voor de gekozen omgeving.
-
-![Update environments: één kaart per omgeving (dev/test/prod) met versie, laatste CI/CD-resultaat en een deploy-bevestiging.](/img/screens/admin-environments.svg)
 
 ![Update environment: kaarten per omgeving (dev/prd) met de huidige YRES DWH-versie en een "Already up to date"-status.](/img/screens/admin-update-environment.png)
 
@@ -175,6 +199,15 @@ Per omgeving (dev / prd) een kaart met de huidige **YRES DWH-versie** en, als er
 Test een nieuwe versie eerst op `dev` (en eventueel `test`) voordat je `prod` bijwerkt. Zie de
 [release notes](../referentie/release-notes.md) voor de inhoud van een update.
 :::
+
+## Theme
+
+Route: `/admin/theme`. White-label Yres per organisatie: upload een eigen icoon en login-achtergrond, kies
+een merkkleur, stel blur in en bepaal de standaardmodus (licht / donker / systeem).
+
+![Theme: upload een eigen icoon en login-achtergrond, kies een merkkleur, blur en licht/donker/systeem-modus, met een live login-preview.](/img/screens/admin-theme.png)
+
+*Upload een eigen icoon + login-achtergrond, stel een merkkleur, blur en licht/donker/systeem-modus in; een live preview van de login-pagina toont het resultaat. White-labeling per organisatie.*
 
 ## Environment admin (omgevingsspecifiek)
 
@@ -195,6 +228,10 @@ De tabel toont de geprovisionde Azure-resources voor de omgeving — **Data Fact
 
 Route: `/admin/changeoverwrites` (alleen voor organisaties met meerdere omgevingen). Vertaal objectnamen
 tussen omgevingen, bijvoorbeeld `ERP_DEV.Product` (dev) → `ERP_TST.Product` (test) → `ERP.Product` (prod).
+
+![Change deployment rules: objectnamen mappen tussen omgevingen (OLD → NEW: source/schema/table), bijv. CRM_DEV → CRM_PRD.](/img/screens/admin-changeoverwrites.png)
+
+*Map objectnamen tussen omgevingen (OLD → NEW: source/schema/table), bijv. `CRM_DEV` → `CRM_PRD`, zodat een change per omgeving de juiste fysieke objecten raakt.*
 
 Pas deze regels toe **vóór** het importeren van een change in de doelomgeving. Vaak gecombineerd met
 Source/Schema/Table-overwrite zodat de tabelnaam in alle omgevingen stabiel blijft.
