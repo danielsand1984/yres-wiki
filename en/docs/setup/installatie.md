@@ -12,10 +12,10 @@ The installation proceeds in three steps, in this order:
 
 1. Create an **App Registration** in Microsoft Entra (the identity Yres uses to manage your Azure).
 2. Prepare the **subscription(s) and resource groups** and assign the app as **Owner**.
-3. **Create the organization** in the Yres web app (SuperAdmin), which actually rolls out the resources.
+3. **Hand over the values** to Yres/Plainwater, who use them to create your organization and environments and roll out the resources.
 
-:::info Who performs the installation
-Creating an organization happens in the **SuperAdmin panel** of the Yres web app. This is reserved for the Yres/Plainwater administrator. As a customer you prepare steps 1 and 2 (App Registration and Azure permissions) yourself; the values they produce are what you hand over for step 3.
+:::info What you do, what Yres does
+As a customer you prepare steps 1 and 2 (App Registration and Azure permissions) yourself. You hand over the values they produce; actually creating your organization and rolling out the resources happens on the Yres/Plainwater side (step 3).
 :::
 
 ## 1. Preparation — App Registration
@@ -62,59 +62,22 @@ Then work through the following points:
 The App Registration needs **Owner** permissions, not just Contributor. During installation, Yres must **assign roles to the managed identities** of the resources it creates (e.g. the Data Factory that needs access to the Key Vault and the SQL database). Only an Owner may make role assignments. Grant Owner at the **resource-group level** (recommended) or the **subscription level**.
 :::
 
-## 3. Installation in the web app
+## 3. Rollout by Yres
 
-With the values from step 1 and the permissions from step 2, you create a new organization in the Yres web app. This happens in the **SuperAdmin panel**.
+Yres/Plainwater uses the values you hand over to create your organization and environments (this happens on the Yres side). You do not have to set anything up yourself for this; you only provide the values from steps 1 and 2.
 
-### 3.1 SuperAdmin — Organizations
+What you hand over:
 
-Open the SuperAdmin panel. The **Organizations** overview shows all existing organizations (name, creation date, whether they are published, and the infrastructure). From here you start a new installation with **Add organization**.
+- The **Azure values** from the preparation (step 1): Directory (Tenant) ID, Object ID of the Managed Application, Application (client) ID and the client secret.
+- The **subscription(s)** and **resource groups** from step 2, with the App Registration as **Owner**. With multiple subscriptions you provide the subscription ID per environment; with a single subscription the one from `dev` is used for the other environments.
+- The desired **organization name** (at least 2 characters, letters and spaces only) and the **environments** you want (at least `dev` and `prod`, with `test`, `acceptance` or `quality` in between depending on your license).
 
-![SuperAdmin overview with the Organizations table on the left (name, created, published, infrastructure) and an Add-organization button, and the Users table on the right with role badge and SSO status.](/img/screens/superadmin-organizations.svg)
-
-The SuperAdmin overview: managing organizations and starting a new one.
-
-1. **Organizations table** — name, creation date, published status and infrastructure per organization.
-2. **Add organization** — opens the creation wizard (see below).
-3. **Delete** — you can delete an organization here (confirmation modal).
-4. **Users table** — users per organization with role badge and whether SSO is enabled.
-
-### 3.2 Create organization (wizard)
-
-Click **Add organization**. The creation wizard takes you step by step through all the data needed to roll out the tenant.
-
-![Creation wizard for a new organization with a step bar at the top and a form per step: organization and project, plan and version, environments, database, resource names, and the Azure app with permissions.](/img/screens/superadmin-create-organization.svg)
-
-The creation wizard for a new organization, with the step bar and the Azure steps at the bottom.
-
-1. **Step bar** — shows your progress through the wizard.
-2. **Organization and project** — organization name and the first project.
-3. **Plan and version** — the license (plan) and the Yres version that is rolled out.
-4. **Environments** — `dev` and `prod` required; up to 6 environments.
-5. **Resource names** — the naming with the `$` convention for the environment.
-6. **Azure app + permissions** — the App Registration values and the role assignments on the resource groups.
-
-Work through the wizard as follows:
-
-1. **Organization and project** — enter the **organization name**: at least 2 characters, letters and spaces only (`/^[a-zA-Z ]*$/`). Also specify the first project.
-2. **Plan and version** — choose the **license (plan)** and the **Yres version** that is rolled out.
-3. **Environments** — at least **`dev`** and **`prod`** (depending on the license there can be environments in between, e.g. `test`, `acceptance`). Up to 6 environments.
-4. **Resource names** — fully or semi-generated:
-   - *Full*: names following the Microsoft naming convention; a unique postfix is added on conflict.
-   - *Semi*: always use the **`$`** in the name (it is replaced by the environment name). E.g. a key vault in the dev resource group = `company-keyvault-$`, in prod that becomes `company-keyvault-prod`. Without an environment in the name, conflicts arise (automatically resolved with a postfix, but harder to recognize).
-   - Have you already created the resource groups yourself in step 2? Then make sure the names **match** them.
-5. **Custom database** — any database-specific settings for `IRIS_DWH`.
-6. **Fill in Azure values** (from the preparation in step 1):
-   - Active Directory ID → **Directory (Tenant) ID**
-   - Application Object ID → **Object ID** of the Managed Application
-   - Client ID → **Application (client) ID**
-   - Client secret → the **secret value**
-7. **Subscriptions** — choose **single** or **multiple**. For *multiple*, you enter the **subscription ID** per environment; for *single*, the subscription from `dev` is copied to the other environments.
-8. **Check permissions** — the last step shows the resource groups and the role assignments. Verify that the App Registration is **Owner** everywhere.
-9. Click **Submit**. A status screen shows the progress of the rollout; afterwards you are taken to the deployments page.
+:::tip Resource names — align the naming
+Have you already created the resource groups yourself in step 2? Then pass on the exact names so the rollout **matches** them. In the naming, the **`$`** is replaced by the environment name: a key vault `company-keyvault-$` becomes `company-keyvault-prod` in prod, for example. Without an environment in the name, conflicts arise (automatically resolved with a postfix, but harder to recognize).
+:::
 
 :::note Rollout takes time
-Creating a new organization can take a while — the Azure resources are actually provisioned. Some frontend components only work correctly once that rollout is finished. A typical installation takes on the order of **~20 minutes**.
+Creating a new organization can take a while — the Azure resources are actually provisioned. A typical installation takes on the order of **~20 minutes**.
 :::
 
 ## What has been created after installation?

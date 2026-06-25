@@ -10,12 +10,11 @@ Overzicht van de schermen in de Yres-webapp, met de **werkelijke route** en de b
 
 ## Hoe de routering werkt
 
-De Yres-webapp kiest zijn navigatie op basis van het **(sub)domein** waarop je inlogt. Eén codebasis bedient drie *scopes*:
+De Yres-webapp kiest zijn navigatie op basis van het **(sub)domein** waarop je inlogt. Eén codebasis bedient meerdere *scopes*:
 
 | Scope | Wanneer | Voorbeeld-host |
 |---|---|---|
 | **organization** | een klant-subdomein | `acme.<host>` |
-| **superadmin** | de admin-host | `admin.<host>` |
 | **front** | accountkeuze / uitgelogd | de front-host |
 
 Omdat de organisatie al door het subdomein bepaald wordt, gebruiken alle org-schermen **kale paden** zonder organisatie-id: `/sources`, `/loadmanagement/monitoring`, `/admin/panel`, enzovoort. Je vindt deze route niet terug als `/organizations/:organizationId/...` — dat is een **verouderde** routevariant die niet meer draait.
@@ -32,9 +31,9 @@ Elk ingelogd scherm deelt dezelfde "schil": een vaste **bovenbalk**, een **icoon
 
 *De gedeelde chrome rond elk scherm: bovenbalk, icoonkolom en contextuele sub-links. De genummerde markeringen verwijzen naar de uitleg hieronder.*
 
-1. **Logo + organisatietitel** — toont de organisatienaam; klikken brengt je naar Home (`/`). In de superadmin-scope luidt de titel "SuperAdmin Yres".
+1. **Logo + organisatietitel** — toont de organisatienaam; klikken brengt je naar Home (`/`).
 2. **Omgevingswisselaar** — alleen zichtbaar bij **meer dan één omgeving**; wisselt tussen Development / Test / Production. De wisselaar is uitgeschakeld op niet-omgevingsgebonden routes en springt dan terug naar `dev`.
-3. **Help "?"** — opent de Yres-wiki op `wiki.yres-dwh.app` (verborgen voor superadmin).
+3. **Help "?"** — opent de Yres-wiki op `wiki.yres-dwh.app`.
 4. **Icoonkolom** — de hoofdsecties: Home, Admin, Projects, Data sources, Load management, Data engineering. Permissie- en versie-gated; **Projects is verborgen bij een single-environment-organisatie**.
 5. **Sub-link-zijbalk** — de schermen binnen de gekozen sectie (resizable, sleep aan de rechterrand).
 6. **Acties rechts** — Refresh, monitored jobs, notificaties en het gebruikersmenu.
@@ -146,15 +145,6 @@ Het scherm **Upgrade** (`/admin/upgrade`, voor het ophogen van de webapp-major-v
 | User settings | `/user/settings` | Name · Timezone · Date format · Language · wachtwoord wijzigen |
 | DWH logs (per gebruiker) | `/user/logs` | datumbereik · stored-procedure-filter · log level · "Clear error count" |
 | Feedback | `/user/feedback` | feedback indienen |
-
-## Superadmin (`admin.<host>`)
-
-| Scherm | Route | Belangrijkste velden |
-|---|---|---|
-| Admin panel | `/adminpanel/general` | organisaties-tabel · users-tabel · "Add organization" |
-| Organisaties (accountkeuze) | `/organizations` | pending invitations · org-kaarten |
-| Create organization (7-staps wizard) | `/adminpanel/organizations/create` | org+project · plan/versie · omgevingen (dev+prod vereist, max 6) · database · resource-namen · Azure-app + permissies |
-| Release updates | `/adminpanel/releaseUpdates` | versiekaarten (dev→test / test→prod) · bevestiging |
 
 :::info Onderhoud
 Dit overzicht is afgeleid uit de live webapp-code (`yres_frontend`). Schermen, routes en velden kunnen per release wijzigen, en de webapp is buiten scope van deze datawarehouse-documentatie. Beschouw deze pagina als referentie; bij twijfel telt wat de app daadwerkelijk toont. Leg opnieuw vast met de tool in `tools/playwright-capture/` als de app is gewijzigd.

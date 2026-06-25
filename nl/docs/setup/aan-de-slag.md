@@ -51,7 +51,7 @@ e-mailadres is vooringevuld vanuit de uitnodiging en staat vast.*
 3. **E-mail** — vooringevuld vanuit de uitnodiging en alleen-lezen (gekoppeld aan de uitnodiging).
 4. **Naam** — je eigen naam (verplicht).
 5. **Wachtwoord** — minimaal 12 tekens, met hoofd- en kleine letters, een cijfer en een speciaal teken.
-6. **"Continue"** — maakt het account aan en leidt je vervolgens naar het aanmaken van de organisatie.
+6. **"Continue"** — maakt het account aan en logt je in op de Yres-webapp.
 
 :::info Te bevestigen
 De **hostingtype**-keuze in de uitnodiging (in eigen Azure-tenant versus een door Yres gehoste optie) is
@@ -68,37 +68,10 @@ naam**; daarnaast wordt een **secundaire naam** automatisch gegenereerd met alle
 naamgeving van Azure- en DevOps-resources. Organisatienamen mogen **geen niet-alfanumerieke tekens**
 bevatten (afgedwongen door `[dbo].[fxRemoveNonAlphaCharacters]`).
 
-### Een organisatie aanmaken (SuperAdmin)
-
-Een nieuwe organisatie maak je in het **SuperAdmin-paneel** via de 7-stappenwizard op
-`/adminpanel/organizations/create`:
-
-1. **Organization and project** — naam van de organisatie en het eerste project.
-2. **Plan and version** — kies het plan (de licentietier) en de Yres-versie die je uitrolt.
-3. **UpdateEnvironments** — voeg de omgevingen toe. De eerste omgeving is **altijd `dev`**; `prod` is voor de
-   meeste organisaties aan te raden (maximaal 6 omgevingen).
-4. **Custom Database** — databaseconfiguratie.
-5. **Resource names** — genereer de resourcenamen. Let op de `$`-conventie: vul `$` in op de plek waar de
-   omgevingsnaam komt (bijvoorbeeld `sqlsrv-xxx-dwh-$` → `sqlsrv-xxx-dwh-dev`). Dit kan handmatig of
-   automatisch.
-6. **Setup azure** — een Entra-ID (Azure AD) app-registratie met de permissies **DevOps**,
-   **ServiceManagement** en **KeyVault**: tenant-ID, subscription-ID, application object-ID, client-ID +
-   secret.
-7. **Setup azure 2: permissions** — Azure-permissies opzetten via de resource group(s). Rolgroepen voor de
-   omgevingen worden gegenereerd op basis van de resource group (bijvoorbeeld `rg-Yres-dev` /
-   `rg-Yres-prod`).
-
-Bij het afronden wordt de tenant geprovisioneerd en kom je op het deployment-overzicht.
-
 ## Gebruikers beheren
 
-Gebruikers voeg je toe vanuit twee plekken:
-
-- In het **SuperAdmin-paneel** (`/adminpanel/general`) — kies organisatie, naam, e-mail en rol. Aangemaakte
-  gebruikers verschijnen óók in het Admin-paneel van de betreffende organisatie.
-- In het **Admin-paneel** van een organisatie (`/admin/panel`) — voor gebruikers binnen de eigen
-  organisatie. Hier staan twee tabellen naast elkaar: **Users** (zichtbare kolommen: naam, e-mail, rol, SSO)
-  en **Roles**.
+Gebruikers van je eigen organisatie beheer je in het **Admin-paneel** (`/admin/panel`). Hier staan twee
+tabellen naast elkaar: **Users** (zichtbare kolommen: naam, e-mail, rol, SSO) en **Roles**.
 
 Gebruikers worden uitgenodigd via een e-mail; de uitgenodigde maakt zelf een account aan via
 [`/register`](#registreren-via-uitnodiging).
@@ -107,9 +80,8 @@ Gebruikers worden uitgenodigd via een e-mail; de uitgenodigde maakt zelf een acc
 
 | Niveau | Rechten |
 |---|---|
-| **User** | Geen toegang tot het Admin- of SuperAdmin-paneel; alleen de functies die via rollen zijn toegekend. |
+| **User** | Geen toegang tot het Admin-paneel; alleen de functies die via rollen zijn toegekend. |
 | **Organization Admin** | Adminrechten binnen de eigen organisatie; toegang tot het Admin-paneel. |
-| **System Admin** | Adminrechten over álle organisaties; toegang tot het SuperAdmin-paneel. |
 
 ## Rollen beheren
 

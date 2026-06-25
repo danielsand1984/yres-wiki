@@ -80,9 +80,7 @@ De kostenbesparing komt uit **automatische database-schaling** (instellingen `Au
 
 ## Herkenbaar uit de praktijk
 
-:::info Te bevestigen
-De onderstaande klantvoorbeelden zijn aangeleverd door Yres/Plainwater en komen **niet** uit de officiële productdocumentatie. Controleer namen, details en toestemming (privacy/consent) voordat je ze extern publiceert.
-:::
+De volgende scenario's zijn illustratief en laten zien hoe Yres in uiteenlopende situaties helpt:
 
-- **Paragon** migreerde van een on-premise datawarehouse naar Azure en moest de volledige koppelingsstructuur opnieuw inrichten. Voorheen werd elke applicatie anders aangesloten; met Yres is dit gestandaardiseerd. → [Lees de case](../klanten/paragon.md)
-- **Woonstichting 'thuis** worstelde met rapportages die niet goed werkten en een lange "time to repair". Met Yres: snellere foutopsporing, kortere oplostijd en altijd actuele data. → [Lees de case](../klanten/thuis.md)
+- Een **productiebedrijf** migreerde van een on-premise datawarehouse naar Azure en moest de volledige koppelingsstructuur opnieuw inrichten. Voorheen werd elke applicatie anders aangesloten; met Yres is dit gestandaardiseerd.
+- Een **woningcorporatie** worstelde met rapportages die niet goed werkten en een lange "time to repair". Met Yres: snellere foutopsporing, kortere oplostijd en altijd actuele data.

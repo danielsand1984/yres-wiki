@@ -80,9 +80,7 @@ The cost savings come from **automatic database scaling** (settings `AutomaticDa
 
 ## Recognizable from practice
 
-:::info To be confirmed
-The customer examples below were provided by Yres/Plainwater and do **not** come from the official product documentation. Verify names, details, and consent (privacy/consent) before publishing them externally.
-:::
+The following scenarios are illustrative and show how Yres helps in a range of situations:
 
-- **Paragon** migrated from an on-premise data warehouse to Azure and had to redesign its entire connection structure. Previously every application was connected differently; with Yres this is standardized. → [Read the case](../klanten/paragon.md)
-- **Woonstichting 'thuis** struggled with reports that didn't work well and a long "time to repair." With Yres: faster troubleshooting, shorter resolution time, and always up-to-date data. → [Read the case](../klanten/thuis.md)
+- A **manufacturing company** migrated from an on-premise data warehouse to Azure and had to redesign its entire connection structure. Previously every application was connected differently; with Yres this is standardized.
+- A **housing association** struggled with reports that didn't work well and a long "time to repair." With Yres: faster troubleshooting, shorter resolution time, and always up-to-date data.

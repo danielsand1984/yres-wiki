@@ -12,10 +12,10 @@ De installatie verloopt in drie stappen, in deze volgorde:
 
 1. **App Registration** aanmaken in Microsoft Entra (de identiteit waarmee Yres jouw Azure beheert).
 2. **Abonnement(en) en resource groups** klaarzetten en de app als **Owner** toewijzen.
-3. **Organisatie aanmaken** in de Yres-webapp (SuperAdmin), waarmee de resources daadwerkelijk worden uitgerold.
+3. **Waarden aanleveren** aan Yres/Plainwater, die op basis daarvan je organisatie en omgevingen aanmaakt en de resources uitrolt.
 
-:::info Wie voert de installatie uit
-Het aanmaken van een organisatie gebeurt in het **SuperAdmin-paneel** van de Yres-webapp. Dat is voorbehouden aan de Yres-/Plainwater-beheerder. Stappen 1 en 2 (App Registration en Azure-rechten) bereid je als klant zelf voor; de waarden die daaruit komen lever je aan voor stap 3.
+:::info Wat doe je zelf, wat doet Yres
+Stappen 1 en 2 (App Registration en Azure-rechten) bereid je als klant zelf voor. De waarden die daaruit komen lever je aan; het daadwerkelijk aanmaken van je organisatie en het uitrollen van de resources gebeurt aan de Yres-/Plainwater-kant (stap 3).
 :::
 
 ## 1. Voorbereiding — App Registration
@@ -62,59 +62,22 @@ Werk daarna de volgende punten af:
 De App Registration heeft **Owner**-rechten nodig, niet alleen Contributor. Yres moet tijdens de installatie namelijk **rollen toewijzen aan de managed identities** van de aangemaakte resources (bv. de Data Factory die de Key Vault en de SQL-database mag benaderen). Alleen een Owner mag roltoewijzingen maken. Verleen Owner op **resource-group-niveau** (aanbevolen) of op **subscription-niveau**.
 :::
 
-## 3. Installatie in de webapp
+## 3. Uitrol door Yres
 
-Met de waarden uit stap 1 en de rechten uit stap 2 maak je in de Yres-webapp een nieuwe organisatie aan. Dat gebeurt in het **SuperAdmin-paneel**.
+Yres/Plainwater maakt op basis van de aangeleverde waarden je organisatie en omgevingen aan (dit gebeurt aan de Yres-kant). Je hoeft hiervoor zelf niets in te richten; je levert alleen de gegevens uit stap 1 en 2 aan.
 
-### 3.1 SuperAdmin — Organisaties
+Wat je aanlevert:
 
-Open het SuperAdmin-paneel. Het **Organisaties**-overzicht toont alle bestaande organisaties (naam, aanmaakdatum, of ze gepubliceerd zijn, en de infrastructuur). Hiervandaan start je een nieuwe installatie met **Add organization**.
+- De **Azure-waarden** uit de voorbereiding (stap 1): Directory (Tenant) ID, Object ID van de Managed Application, Application (client) ID en de client secret.
+- De **abonnement(en)** en **resource groups** uit stap 2, met de App Registration als **Owner**. Bij meerdere abonnementen lever je per omgeving het subscription-ID aan; bij één abonnement wordt dat van `dev` voor de overige omgevingen gebruikt.
+- De gewenste **organisatienaam** (minimaal 2 tekens, alleen letters en spaties) en de **omgevingen** die je wilt (minimaal `dev` en `prod`, afhankelijk van je licentie eventueel `test`, `acceptance`, `quality` ertussen).
 
-![SuperAdmin-overzicht met links de Organisaties-tabel (naam, aangemaakt, gepubliceerd, infrastructuur) met een Add-organization-knop, en rechts de Gebruikers-tabel met rolbadge en SSO-status.](/img/screens/superadmin-organizations.svg)
-
-Het SuperAdmin-overzicht: organisaties beheren en een nieuwe organisatie starten.
-
-1. **Organisaties-tabel** — naam, aanmaakdatum, gepubliceerd-status en infrastructuur per organisatie.
-2. **Add organization** — opent de aanmaakwizard (zie hieronder).
-3. **Verwijderen** — een organisatie kun je hier verwijderen (bevestigingsmodal).
-4. **Gebruikers-tabel** — gebruikers per organisatie met rolbadge en of SSO aanstaat.
-
-### 3.2 Organisatie aanmaken (wizard)
-
-Klik op **Add organization**. De aanmaakwizard leidt je in stappen langs alle gegevens die nodig zijn om de tenant uit te rollen.
-
-![Aanmaakwizard voor een nieuwe organisatie met bovenaan een stappenbalk en per stap een formulier: organisatie en project, plan en versie, omgevingen, database, resourcenamen, en de Azure-app met permissies.](/img/screens/superadmin-create-organization.svg)
-
-De aanmaakwizard voor een nieuwe organisatie, met de stappenbalk en de Azure-stappen onderaan.
-
-1. **Stappenbalk** — toont de voortgang door de wizard.
-2. **Organisatie en project** — organisatienaam en het eerste project.
-3. **Plan en versie** — de licentie (plan) en de Yres-versie die wordt uitgerold.
-4. **Omgevingen** — `dev` en `prod` verplicht; maximaal 6 omgevingen.
-5. **Resourcenamen** — de naamgeving met de `$`-conventie voor de omgeving.
-6. **Azure-app + permissies** — de App-Registration-waarden en de roltoewijzingen op de resource groups.
-
-Doorloop de wizard als volgt:
-
-1. **Organisatie en project** — vul de **organisatienaam** in: minimaal 2 tekens, alleen letters en spaties (`/^[a-zA-Z ]*$/`). Geef ook het eerste project op.
-2. **Plan en versie** — kies de **licentie (plan)** en de **Yres-versie** die wordt uitgerold.
-3. **Omgevingen** — minimaal **`dev`** en **`prod`** (afhankelijk van de licentie kunnen er omgevingen tussen, bv. `test`, `acceptance`). Maximaal 6 omgevingen.
-4. **Resourcenamen** — volledig of semi-gegenereerd:
-   - *Volledig*: namen volgens de Microsoft naming convention; bij een conflict wordt een unieke postfix toegevoegd.
-   - *Semi*: gebruik altijd de **`$`** in de naam (die wordt vervangen door de omgevingsnaam). Bv. een keyvault in de dev-resourcegroup = `company-keyvault-$`, in prod wordt dat `company-keyvault-prod`. Zonder omgeving in de naam ontstaan conflicten (automatisch opgelost met een postfix, maar slechter herkenbaar).
-   - Heb je de resource groups in stap 2 al zelf aangemaakt? Zorg dan dat de namen hiermee **matchen**.
-5. **Custom database** — eventuele database-specifieke instellingen voor `IRIS_DWH`.
-6. **Azure-waarden invullen** (uit de voorbereiding in stap 1):
-   - Active Directory ID → **Directory (Tenant) ID**
-   - Application Object ID → **Object ID** van de Managed Application
-   - Client ID → **Application (client) ID**
-   - Client secret → de **secret-waarde**
-7. **Abonnementen** — kies **single** of **multiple**. Bij *multiple* vul je per omgeving het **subscription-ID** in; bij *single* wordt het abonnement van `dev` gekopieerd naar de overige omgevingen.
-8. **Permissies controleren** — de laatste stap toont de resource groups en de roltoewijzingen. Controleer dat de App Registration overal **Owner** is.
-9. Klik **Submit**. Een statusscherm toont de voortgang van de uitrol; daarna word je naar de deployments-pagina geleid.
+:::tip Resourcenamen — stem de naamgeving af
+Heb je de resource groups in stap 2 al zelf aangemaakt? Geef dan de exacte namen door, zodat de uitrol hiermee **matcht**. In de naamgeving wordt de **`$`** vervangen door de omgevingsnaam: een keyvault `company-keyvault-$` wordt in prod bijvoorbeeld `company-keyvault-prod`. Zonder omgeving in de naam ontstaan conflicten (automatisch opgelost met een postfix, maar slechter herkenbaar).
+:::
 
 :::note Uitrol kost tijd
-Een nieuwe organisatie aanmaken kan even duren — de Azure-resources worden daadwerkelijk geprovisioneerd. Sommige frontend-onderdelen werken pas correct als die uitrol klaar is. Een typische installatie duurt in de orde van **~20 minuten**.
+Een nieuwe organisatie aanmaken kan even duren — de Azure-resources worden daadwerkelijk geprovisioneerd. Een typische installatie duurt in de orde van **~20 minuten**.
 :::
 
 ## Wat is er na de installatie aangemaakt?

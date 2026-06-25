@@ -10,12 +10,11 @@ Overview of the screens in the Yres web app, with the **actual route** and the m
 
 ## How routing works
 
-The Yres web app chooses its navigation based on the **(sub)domain** you log in to. A single codebase serves three *scopes*:
+The Yres web app chooses its navigation based on the **(sub)domain** you log in to. A single codebase serves multiple *scopes*:
 
 | Scope | When | Example host |
 |---|---|---|
 | **organization** | a customer subdomain | `acme.<host>` |
-| **superadmin** | the admin host | `admin.<host>` |
 | **front** | account selection / logged out | the front host |
 
 Because the organization is already determined by the subdomain, all org screens use **bare paths** without an organization id: `/sources`, `/loadmanagement/monitoring`, `/admin/panel`, and so on. You won't find these routes as `/organizations/:organizationId/...` — that is a **deprecated** route variant that is no longer in use.
@@ -32,9 +31,9 @@ Every logged-in screen shares the same "shell": a fixed **top bar**, an **icon c
 
 *The shared chrome around every screen: top bar, icon column and contextual sub-links. The numbered markers refer to the explanation below.*
 
-1. **Logo + organization title** — shows the organization name; clicking it takes you to Home (`/`). In the superadmin scope the title reads "SuperAdmin Yres".
+1. **Logo + organization title** — shows the organization name; clicking it takes you to Home (`/`).
 2. **Environment switcher** — only visible with **more than one environment**; switches between Development / Test / Production. The switcher is disabled on non-environment-bound routes and then snaps back to `dev`.
-3. **Help "?"** — opens the Yres wiki at `wiki.yres-dwh.app` (hidden for superadmin).
+3. **Help "?"** — opens the Yres wiki at `wiki.yres-dwh.app`.
 4. **Icon column** — the main sections: Home, Admin, Projects, Data sources, Load management, Data engineering. Permission- and version-gated; **Projects is hidden for a single-environment organization**.
 5. **Sub-link sidebar** — the screens within the selected section (resizable, drag the right edge).
 6. **Actions on the right** — Refresh, monitored jobs, notifications and the user menu.
@@ -146,15 +145,6 @@ The **Upgrade** screen (`/admin/upgrade`, for bumping the web app major version)
 | User settings | `/user/settings` | Name · Timezone · Date format · Language · change password |
 | DWH logs (per user) | `/user/logs` | date range · stored procedure filter · log level · "Clear error count" |
 | Feedback | `/user/feedback` | submit feedback |
-
-## Superadmin (`admin.<host>`)
-
-| Screen | Route | Key fields |
-|---|---|---|
-| Admin panel | `/adminpanel/general` | organizations table · users table · "Add organization" |
-| Organizations (account selection) | `/organizations` | pending invitations · org cards |
-| Create organization (7-step wizard) | `/adminpanel/organizations/create` | org+project · plan/version · environments (dev+prod required, max 6) · database · resource names · Azure app + permissions |
-| Release updates | `/adminpanel/releaseUpdates` | version cards (dev→test / test→prod) · confirmation |
 
 :::info Maintenance
 This overview is derived from the live web app code (`yres_frontend`). Screens, routes and fields may change per release, and the web app is out of scope for this data warehouse documentation. Treat this page as reference; when in doubt, what the app actually shows takes precedence. Re-capture with the tool in `tools/playwright-capture/` if the app has changed.

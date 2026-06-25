@@ -50,7 +50,7 @@ is pre-filled from the invitation and is fixed.*
 4. **Name** — your own name (required).
 5. **Password** — at least 12 characters, with uppercase and lowercase letters, a digit and a special
    character.
-6. **"Continue"** — creates the account and then takes you to creating the organization.
+6. **"Continue"** — creates the account and logs you in to the Yres web app.
 
 :::info To be confirmed
 The **hosting type** choice in the invitation (in your own Azure tenant versus a Yres-hosted option) is to
@@ -67,34 +67,10 @@ chosen name**; in addition, a **secondary name** is generated automatically usin
 allowed for naming Azure and DevOps resources. Organization names may **not contain non-alphanumeric
 characters** (enforced by `[dbo].[fxRemoveNonAlphaCharacters]`).
 
-### Creating an organization (SuperAdmin)
-
-You create a new organization in the **SuperAdmin panel** via the 7-step wizard at
-`/adminpanel/organizations/create`:
-
-1. **Organization and project** — name of the organization and the first project.
-2. **Plan and version** — choose the plan (the license tier) and the Yres version you are rolling out.
-3. **UpdateEnvironments** — add the environments. The first environment is **always `dev`**; `prod` is
-   recommended for most organizations (maximum 6 environments).
-4. **Custom Database** — database configuration.
-5. **Resource names** — generate the resource names. Note the `$` convention: enter `$` at the spot where
-   the environment name goes (for example `sqlsrv-xxx-dwh-$` → `sqlsrv-xxx-dwh-dev`). This can be done
-   manually or automatically.
-6. **Setup azure** — an Entra ID (Azure AD) app registration with the **DevOps**, **ServiceManagement** and
-   **KeyVault** permissions: tenant ID, subscription ID, application object ID, client ID + secret.
-7. **Setup azure 2: permissions** — set up Azure permissions via the resource group(s). Role groups for the
-   environments are generated based on the resource group (for example `rg-Yres-dev` / `rg-Yres-prod`).
-
-On completion, the tenant is provisioned and you land on the deployment overview.
-
 ## Managing users
 
-You add users from two places:
-
-- In the **SuperAdmin panel** (`/adminpanel/general`) — choose organization, name, email and role. Created
-  users also appear in the Admin panel of the relevant organization.
-- In the **Admin panel** of an organization (`/admin/panel`) — for users within your own organization. Here
-  two tables sit side by side: **Users** (visible columns: name, email, role, SSO) and **Roles**.
+You manage users of your own organization in the **Admin panel** (`/admin/panel`). Here two tables sit side
+by side: **Users** (visible columns: name, email, role, SSO) and **Roles**.
 
 Users are invited via an email; the invitee creates an account themselves via
 [`/register`](#registering-via-invitation).
@@ -103,9 +79,8 @@ Users are invited via an email; the invitee creates an account themselves via
 
 | Level | Permissions |
 |---|---|
-| **User** | No access to the Admin or SuperAdmin panel; only the features granted via roles. |
+| **User** | No access to the Admin panel; only the features granted via roles. |
 | **Organization Admin** | Admin rights within their own organization; access to the Admin panel. |
-| **System Admin** | Admin rights over all organizations; access to the SuperAdmin panel. |
 
 ## Managing roles
 

@@ -78,4 +78,4 @@ Kernfeatures: **SSO** (Azure), **Log Management**, **Life Cycle Management** (wi
 | **Setup & installatie** | Yres installeren in een Azure-tenant |
 | **Integraties** | Bronnen + verbindingseisen per bron |
 | **Referentie** | SQL-interaction, release notes |
-| **Prijzen · Klanten · FAQ · Troubleshooting · Team** | Overig |
+| **Prijzen · FAQ · Troubleshooting** | Overig |

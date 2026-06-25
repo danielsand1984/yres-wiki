@@ -78,4 +78,4 @@ Core features: **SSO** (Azure), **Log Management**, **Life Cycle Management** (c
 | **Setup & installation** | Installing Yres in an Azure tenant |
 | **Integrations** | Sources + connection requirements per source |
 | **Reference** | SQL interaction, release notes |
-| **Pricing · Customers · FAQ · Troubleshooting · Team** | Other |
+| **Pricing · FAQ · Troubleshooting** | Other |

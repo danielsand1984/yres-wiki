@@ -20,8 +20,6 @@ export const SECTIONS = {
   'integraties/bronnen': { nl: 'Bronnen (A–Z)', en: 'Sources (A–Z)', position: 3 },
   referentie: { nl: 'Referentie', en: 'Reference', position: 8 },
   'referentie/sql': { nl: 'SQL Interaction', en: 'SQL Interaction', position: 9 },
-  klanten: { nl: 'Klanten', en: 'Customers', position: 10 },
-  team: { nl: 'Team & processen', en: 'Team & processes', position: 13 },
 };
 
 /** Stable CMS collection name for a folder (relative to <locale>/docs). */

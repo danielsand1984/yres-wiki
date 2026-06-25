@@ -68,11 +68,6 @@ homepage en zijn handig voor bijvoorbeeld gepland onderhoud of een aankomende re
 4. **Notify Users** — toont de melding ook in de notificatie-tab bovenin de topbar.
 5. **Priority** — zet de mededeling bovenaan de lijst op de homepage.
 
-:::info Bereik
-Announcements zijn ook bereikbaar via het Superadmin-paneel. Een Yres-superadmin kan een mededeling naar
-álle organisaties sturen; een organisatie-admin alleen naar de eigen organisatie.
-:::
-
 ## Audit Logs
 
 Route: `/admin/auditlogs`. Monitor acties van organisatiegebruikers: user-agent, client-IP en extra

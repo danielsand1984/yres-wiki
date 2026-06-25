@@ -68,11 +68,6 @@ homepage and are handy for, for example, scheduled maintenance or an upcoming re
 4. **Notify Users** — also shows the announcement in the notification tab at the top of the topbar.
 5. **Priority** — puts the announcement at the top of the list on the homepage.
 
-:::info Reach
-Announcements are also reachable via the Superadmin panel. A Yres superadmin can send an announcement to
-all organizations; an organization admin only to their own organization.
-:::
-
 ## Audit Logs
 
 Route: `/admin/auditlogs`. Monitor actions of organization users: user-agent, client IP and extra
