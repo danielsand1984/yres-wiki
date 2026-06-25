@@ -83,7 +83,7 @@ niet naar aparte release- of install-schermen.
 6. **Promoot naar productie.** Klopt het in test? Dan installeer je dezelfde change van **test → prod**.
    Daarmee staat je wijziging live — getest en wel.
 
-![De change-detail met inline Release / Import / Install: de DTAP-flowstrip, de status-badge van de change, de change-inhoud (diagram/tabel), de omgeving-hop (van → naar) en de knoppen Import change en Install change.](/img/screens/changes-release-install.svg)
+![De change-detail met inline Release / Import / Install: de DTAP-flowstrip, de status-badge van de change, de change-inhoud (diagram/tabel), de omgeving-hop (van → naar) en de knoppen Import change en Install change.](/img/screens/changes-release-install.png)
 
 *Je releaset en promoot een change vanuit de change zelf: op een gereleasede change kies je de
 omgeving-hop en klik je Import of Install. De voortgang verschijnt als melding, omdat het publiceren van de

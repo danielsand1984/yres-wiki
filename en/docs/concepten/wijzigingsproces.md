@@ -82,7 +82,7 @@ don't go to separate release or install screens.
 6. **Promote to production.** Correct in test? Then install the same change from **test → prod**. With
    that, your change is live — tested and confirmed.
 
-![The change detail with inline Release / Import / Install: the DTAP flow strip, the change's status badge, the change content (diagram/table), the environment hop (from → to) and the Import change and Install change buttons.](/img/screens/changes-release-install.svg)
+![The change detail with inline Release / Import / Install: the DTAP flow strip, the change's status badge, the change content (diagram/table), the environment hop (from → to) and the Import change and Install change buttons.](/img/screens/changes-release-install.png)
 
 *You release and promote a change from the change itself: on a released change you pick the environment hop
 and click Import or Install. The progress appears as a notification, because publishing the pipelines

@@ -102,7 +102,7 @@ Staat dit aan, dan voegt de engine na de insert per nieuwe rij `(RowId, Keyhash,
 
 In de frontend bekijk je de versiehistorie van database-objecten via **Data Engineering → Object history** (`/dataengineering/objecthistory`). Dit scherm toont de structuur van de database, niet de SCD2-rijhistorie zelf — gebruik het om te zien hoe een object (tabel, view, procedure) over changes heen is gewijzigd.
 
-![Object history-scherm met bovenaan een vergelijkingskeuze en links de schemaboom van de database (CustomIris, CustomYres, dbo, Dim, ODS, STAGE); het rechterpaneel toont de objectdefinitie zodra je een object selecteert.](/img/screens/dataengineering-objecthistory.svg)
+![Object history-scherm met bovenaan een vergelijkingskeuze en links de schemaboom van de database (CustomIris, CustomYres, dbo, Dim, ODS, STAGE); het rechterpaneel toont de objectdefinitie zodra je een object selecteert.](/img/screens/dataengineering-objecthistory.png)
 
 *Object history toont per object de huidige definitie plus de versiehistorie; via de vergelijkingskeuze zet je twee versies naast elkaar.*
 

@@ -66,7 +66,7 @@ The **Object history** screen (`/dataengineering/objecthistory`) shows all datab
 
 The object tree on this screen is also the **Object Explorer**: this is where you manage your **scripted/custom objects** (your own tables, views, stored procedures and functions). You browse your DWH objects here and add a custom object — or an existing database object — to a change directly from the explorer via the **Add to change** action. There is no separate "Scripted objects" screen anymore; scripted objects live here in the Object Explorer.
 
-![Object history screen: on the left a schema and object tree with a right-click context menu, top right the version comparison with a diff of the object definition, and bottom right a dependency tree.](/img/screens/dataengineering-objecthistory.svg)
+![Object history screen: on the left a schema and object tree with a right-click context menu, top right the version comparison with a diff of the object definition, and bottom right a dependency tree.](/img/screens/dataengineering-objecthistory.png)
 
 *The Object history screen: the object tree on the left, the version comparison with diff in the top right, and the dependency graph in the bottom right.*
 

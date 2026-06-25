@@ -117,7 +117,7 @@ Besides rolling out *code*, Yres also promotes *structural and content changes* 
 
 The path is always **Changes → Release → Install**:
 
-![Wireframe of the Yres change detail view, showing the DTAP flow strip, the released status badge, the change content, the environment hop, and the inline Import change and Install change buttons](/img/screens/changes-release-install.svg)
+![Screenshot of the Yres change detail view, showing the DTAP flow strip, the released status badge, the change content, the environment hop, and the inline Import change and Install change buttons](/img/screens/changes-release-install.png)
 
 *The change detail view on the Changes screen shows the change's status and — once it is released — the environment hop (from dev to the next environment) and the two inline actions: Import change (DWH only) and Install change (DWH + ADF). Everything happens from the change itself, not on a separate screen.*
 

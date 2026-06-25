@@ -32,7 +32,7 @@ The five steps a change goes through — **you trigger every action from the cha
 
 A **project** groups changes within an environment and gives the work a name, a description and a due date.
 
-![The Projects screen: a table of projects with their status, the button to create a project, and the warning that the section is only available with multiple environments.](/img/screens/projects.svg)
+![The Projects screen: a table of projects with their status, the button to create a project, and the warning that the section is only available with multiple environments.](/img/screens/projects.png)
 
 The numbers (1)–(6) in the screenshot refer to:
 
@@ -58,7 +58,7 @@ The numbers (1)–(6) in the screenshot refer to:
 
 A **change** categorizes modifications to the data warehouse and is the unit you later release and install. Changes always belong to a project. All data-plane edits in dev are booked under a change (see adding tables in [Data sources](./data-sources.md)), so they travel through the environments together. **Every action — create, release, import and install — happens from the change itself on this screen**; which buttons appear depends on the change's status.
 
-![The Changes screen: the project and change selection at the top, the changes table with statuses, the button to create a change and the contextual actions on the change itself — an open change shows Release, a released change shows Import and Install with the environment hop.](/img/screens/changes.svg)
+![The Changes screen: the project and change selection at the top, the changes table with statuses, the button to create a change and the contextual actions on the change itself — an open change shows Release, a released change shows Import and Install with the environment hop.](/img/screens/changes.png)
 
 The numbers (1)–(6) in the screenshot:
 
@@ -117,7 +117,7 @@ Since **v1.53** you can choose to include **dependencies and/or content** when a
 
 Installing brings a **released** change to the next environment (e.g. dev → test, or test → prod). You also do this **from the change itself**: once a change is released, it shows the **Import** and **Install** actions on the **Changes** screen together with the **environment hop** (from → to).
 
-![A released change with inline actions: the DTAP flow from change to publish-datafactory, the change content, the environment hop and the Import change and Install change buttons — all from the change itself.](/img/screens/changes-release-install.svg)
+![A released change with inline actions: the DTAP flow from change to publish-datafactory, the change content, the environment hop and the Import change and Install change buttons — all from the change itself.](/img/screens/changes-release-install.png)
 
 The numbers (1)–(6) in the screenshot:
 

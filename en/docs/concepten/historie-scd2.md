@@ -102,7 +102,7 @@ When this is enabled, after the insert the engine adds `(RowId, Keyhash, <key co
 
 In the frontend you view the version history of database objects via **Data Engineering → Object history** (`/dataengineering/objecthistory`). This screen shows the structure of the database, not the SCD2 row history itself — use it to see how an object (table, view, procedure) has changed across changes.
 
-![Object history screen with a comparison selector at the top and the database schema tree on the left (CustomIris, CustomYres, dbo, Dim, ODS, STAGE); the right-hand panel shows the object definition once you select an object.](/img/screens/dataengineering-objecthistory.svg)
+![Object history screen with a comparison selector at the top and the database schema tree on the left (CustomIris, CustomYres, dbo, Dim, ODS, STAGE); the right-hand panel shows the object definition once you select an object.](/img/screens/dataengineering-objecthistory.png)
 
 *Object history shows the current definition plus the version history for each object; use the comparison selector to place two versions side by side.*
 

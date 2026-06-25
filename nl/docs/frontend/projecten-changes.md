@@ -32,7 +32,7 @@ De vijf stappen die een wijziging doorloopt — **alle acties voer je uit vanuit
 
 Een **project** groepeert changes binnen een omgeving en geeft het werk een naam, een beschrijving en een einddatum.
 
-![Het Projects-scherm: een tabel met projecten en hun status, de knop om een project aan te maken, en de waarschuwing dat de sectie alleen bij meerdere omgevingen beschikbaar is.](/img/screens/projects.svg)
+![Het Projects-scherm: een tabel met projecten en hun status, de knop om een project aan te maken, en de waarschuwing dat de sectie alleen bij meerdere omgevingen beschikbaar is.](/img/screens/projects.png)
 
 De cijfers (1)–(6) in de schermafbeelding verwijzen naar:
 
@@ -58,7 +58,7 @@ De cijfers (1)–(6) in de schermafbeelding verwijzen naar:
 
 Een **change** categoriseert bewerkingen aan het datawarehouse en is de eenheid die je later releaset en installeert. Changes horen altijd bij een project. Alle data-plane-edits in dev worden onder een change geboekt (zie het toevoegen van tabellen in [Data sources](./data-sources.md)), zodat ze samen door de omgevingen reizen. **Alle acties — aanmaken, releasen, importeren en installeren — voer je vanuit de change zelf uit op dit scherm**; welke knoppen verschijnen hangt af van de status van de change.
 
-![Het Changes-scherm: de project- en change-selectie bovenaan, de changes-tabel met statussen, de knop om een change aan te maken en de contextuele acties op de change zelf — een open change toont Release, een gereleasede change toont Import en Install met de omgeving-hop.](/img/screens/changes.svg)
+![Het Changes-scherm: de project- en change-selectie bovenaan, de changes-tabel met statussen, de knop om een change aan te maken en de contextuele acties op de change zelf — een open change toont Release, een gereleasede change toont Import en Install met de omgeving-hop.](/img/screens/changes.png)
 
 De cijfers (1)–(6) in de schermafbeelding:
 
@@ -117,7 +117,7 @@ Sinds **v1.53** kun je bij het toevoegen aan een change kiezen om **dependencies
 
 Installeren brengt een **gereleasede** change naar de volgende omgeving (bv. dev → test, of test → prod). Ook dit doe je **vanuit de change zelf**: zodra een change gereleased is, toont hij op het **Changes**-scherm de acties **Import** en **Install** samen met de **omgeving-hop** (van → naar).
 
-![Een gereleasede change met inline acties: de DTAP-flow van change tot publish-datafactory, de change-inhoud, de omgeving-hop en de knoppen Import change en Install change — allemaal vanuit de change zelf.](/img/screens/changes-release-install.svg)
+![Een gereleasede change met inline acties: de DTAP-flow van change tot publish-datafactory, de change-inhoud, de omgeving-hop en de knoppen Import change en Install change — allemaal vanuit de change zelf.](/img/screens/changes-release-install.png)
 
 De cijfers (1)–(6) in de schermafbeelding:
 

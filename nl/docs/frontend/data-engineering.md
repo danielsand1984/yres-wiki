@@ -66,7 +66,7 @@ Het scherm **Object history** (`/dataengineering/objecthistory`) toont alle data
 
 De objectboom op dit scherm is tegelijk de **Object Explorer**: hier beheer je je **scripted/custom objecten** (je eigen tabellen, views, stored procedures en functions). Je bladert er door je DWH-objecten en voegt een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change via de actie **Add to change**. Er is geen apart "Scripted objects"-scherm meer; scripted objecten leven hier in de Object Explorer.
 
-![Object history-scherm: links een schema- en objectboom met een rechtsklik-contextmenu, rechtsboven de versievergelijking met een diff van de objectdefinitie en rechtsonder een dependency-tree.](/img/screens/dataengineering-objecthistory.svg)
+![Object history-scherm: links een schema- en objectboom met een rechtsklik-contextmenu, rechtsboven de versievergelijking met een diff van de objectdefinitie en rechtsonder een dependency-tree.](/img/screens/dataengineering-objecthistory.png)
 
 *Het Object history-scherm: de objectboom links, de versievergelijking met diff rechtsboven en de afhankelijkheidsgraaf rechtsonder.*
 

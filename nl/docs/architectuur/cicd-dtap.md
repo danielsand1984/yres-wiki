@@ -117,7 +117,7 @@ Naast het uitrollen van *code* promoot Yres ook *structuur- en inhoudswijziginge
 
 Het pad is altijd **Changes → Release → Install**:
 
-![Wireframe van het Yres-scherm met de change-detailweergave, met de DTAP-flowstrip, de status-badge released, de change-content, de omgeving-hop en de inline knoppen Import change en Install change](/img/screens/changes-release-install.svg)
+![Schermafbeelding van het Yres-scherm met de change-detailweergave, met de DTAP-flowstrip, de status-badge released, de change-content, de omgeving-hop en de inline knoppen Import change en Install change](/img/screens/changes-release-install.png)
 
 *De change-detailweergave op het Changes-scherm laat de status van de change zien en — zodra die released is — de omgeving-hop (van dev naar de volgende omgeving) en de twee inline acties: Import change (alleen DWH) en Install change (DWH + ADF). Alles gebeurt vanuit de change zelf, niet op een apart scherm.*
 
