@@ -16,48 +16,16 @@ order as decimal fractions — so **1.9 comes after 1.55, and 1.56 before it** �
 
 ## v1.56 — in testing
 
-:::note Compiled from the repository history (release candidate in testing)
-Unlike the older versions (taken from _Yres Documentation 1.55_), this list was compiled from the commit and
-PR history of the **`test` branch** of `yres_backend` and `yres_frontend` — the release candidate currently
-being tested for 1.56 — from **1 October 2025** onward. The grouping and wording are derived from that
-history; the final contents and release date may still change.
-:::
-
-- **Branding — IRIS is now Yres:** the product-wide rename **IRIS → Yres** was rolled out across the whole
-  web app (emails, UI texts, translations). Updating to 1.56 additionally cleans up old triggers carrying the
-  legacy brand name (with a warning beforehand). (In code, Azure resources, and `IRIS_DWH`, many places still
-  read "IRIS".)
-- **Projects & changes — redesigned changes table:** the change-management table was redesigned, including
-  **environment entries** per change; (soft-)deleted changes are no longer shown; from the **object viewer**
-  you can see an object's related changes and click through to /changes; project filters (behind a feature
-  flag).
-- **Multi-tenancy & subdomains:** **subdomain per organization** (prepared in 1.55, now rolled out) with
-  OAuth redirects (e.g. Exact Online) to the correct subdomain incl. the organization UUID; **Azure SSO**
-  redirects to the correct organization; the **number of environments** is tied to the subscription (plan
-  type); a message when a source is not installed in an environment. Organization images in blob storage,
-  **login theming**, and **favicons per environment**; create/update organizations through a background job
-  with deploy-status display.
-- **Sources & connectivity:** **Oracle** as a new source system; **MySQL** connectable without a connection
-  string and with enforced **SSL**; new **REST service presets** plus help text for the API specification;
-  refined **REST pagination** (offset object) and support for **auth headers with underscores**; **Test
-  connectivity** to test a connection directly from the web app; Snowflake fixes (auth/type mapping).
-- **Monitoring & health:** new **health bar** with DWH statistics (including the number of active users);
-  **pipeline-runs UI** with filters; AdaptiveIndexDefragmentation pipeline added to the pipeline list;
-  option to **disable rebuilding**.
-- **Management & security:** **admin secrets view** (inspect secrets from administration);
-  **credential-expiry notifications** for credentials about to expire; **encryption** of cached credentials,
-  cache values, and jobs; **Azure Redis cache** (with TLS); more robust **Azure DevOps integration**
-  (recreate resources when they are not owned by the PAT user, mask the DevOps token, better exception
-  handling); remote-URL validation; CORS fix.
-- **Feedback & internationalization:** the feedback form sends to **feedback@yres.app**; translations via a
-  **translations API** for the UI (updatable live).
-- **Data engineering & object viewer:** **git diff and syntax highlighting** in the object viewer; richer
-  **mapping of scripted objects**. UsedTables wizard: **search in dropdowns**, **sort by column**, block
-  certain **column names**, block overwrite on edit, show all nullable key columns on update, and extra
-  **load types for file sources**; `rowhash` tooltip and a clear **keepStage warning**.
-- **Data & loading (data plane):** the metadata refresh was made **transactional** — a failed or partial
-  refresh no longer wipes your existing columns (stage → atomic swap, per part for ExactOnline/AFAS/SAC).
-  See [Refreshing metadata](../frontend/data-sources.md#refreshing-metadata-refresh-metadata).
+- **Branding:** IRIS is now **Yres** across the whole web app (emails, UI, translations); updating to 1.56 cleans up old triggers carrying the legacy brand name.
+- **Projects & changes:** redesigned changes table with environment entries per change; an object's related changes are visible from the object viewer. → [Change process](../concepten/wijzigingsproces.md), [Projects & changes](../frontend/projecten-changes.md)
+- **Multi-tenancy:** subdomain per organization, Azure SSO redirect to the correct organization, and the number of environments tied to the subscription. → [Admin](../frontend/admin.md)
+- **New sources:** **Oracle** and **MySQL** (without a connection string, with SSL). → [Oracle](../integraties/bronnen/oracle.md), [MySQL](../integraties/bronnen/mysql.md)
+- **Sources & connectivity:** new REST service presets, refined REST pagination, and **Test connectivity** from the web app. → [Integrations](../integraties/overzicht.md)
+- **Monitoring & health:** new health bar with DWH statistics; pipeline runs with filters. → [Monitoring & logging](./monitoring-logging.md)
+- **Data engineering & object viewer:** git diff and syntax highlighting, richer mapping of scripted objects, and wizard improvements. → [Data engineering](../frontend/data-engineering.md)
+- **Management & security:** admin secrets view, credential-expiry notifications, encryption of credentials and jobs, Azure Redis cache, and more robust Azure DevOps integration.
+- **Feedback & translations:** feedback form to feedback@yres.app; UI translations updatable live.
+- **Data & loading:** the metadata refresh is now transactional — a failed refresh no longer wipes your columns. → [Refreshing metadata](../frontend/data-sources.md#refreshing-metadata-refresh-metadata)
 
 ## v1.55 — September 2025
 
