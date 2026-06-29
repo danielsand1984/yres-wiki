@@ -8,7 +8,7 @@ description: Reference for the stored procedures in the IRIS_DWH database, per s
 
 This page describes the stored procedures in the data-plane database **`IRIS_DWH`**. The names are taken verbatim from the live repository; in code, the product is still called **IRIS** in many places. The content was regenerated from the source code (the code takes precedence over older documentation).
 
-The live database contains **102 stored procedures, 56 functions, and 41 views**. Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
+The live database contains **108 stored procedures, 56 functions, and 41 views**. Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
 
 :::note Schema overview
 The procedures are spread across the schemas `LoadManagement` (the load engine), `Config` (settings, logging, DB tuning), `Change` (DTAP change management), `Monitoring` (load-status logging), `Maintenance` (maintenance, health checks), `Expose` (reporting RBAC), and `dbo` (helper procedures).
@@ -172,7 +172,7 @@ Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagi
 
 ### `[LoadManagement].[spFillDictionary_AFAS]` / `[spFillDictionary_oDATA]`
 
-**Purpose:** Import metadata from an AFAS or OData source, respectively, into `LoadManagement.Dictionary` (columns + data types).
+**Purpose:** Import metadata from an AFAS or OData source, respectively (columns + data types). Since the June 2026 hardening they write into the staging table **`LoadManagement.Dictionary_Stage`**; a separate swap step atomically promotes those rows into the live `Dictionary` (see [Metadata staging](#metadata-staging-stage-swap-and-finalize)).
 
 **Parameters (AFAS):** `@input (ttDictionary_AFAS READONLY)`, `@source (NVARCHAR(1024))`, `@EXECUTE (BIT, default 1)`. **OData** adds `@schema (NVARCHAR(1024), default 'API')`.
 
@@ -202,6 +202,23 @@ These procedures write the metadata that drives the load engine (in `LoadManagem
 | `[LoadManagement].[spMaintainPersistView]` | Manages view persistence in `ViewPersistence`. |
 | `[LoadManagement].[spMaintainFilesInDictionary]` | Manages file metadata in `Dictionary`/`UsedColumns`. |
 | `[LoadManagement].[spMaintainRestInDictionary]` | Manages REST metadata in the dictionary. |
+
+### Metadata staging: stage, swap, and finalize
+
+The `GetMetaData - <source>` pipelines refresh the source metadata: the columns (the **dictionary**) and — for SAC — the **services**. Since the June 2026 hardening, the fill procedures (`spFillDictionary_oDATA`/`_AFAS`, `spFillServices_SAC`) no longer write straight into the live table, but first into a **staging table** (`LoadManagement.Dictionary_Stage`, `Config.Services_Stage`). Only after a successful, non-empty Copy is the live partition **atomically swapped**. Benefits: a failed or partial refresh leaves the existing metadata intact (no more empty columns), and the same refresh can never half-overwrite the live table.
+
+| Procedure | Purpose |
+|---|---|
+| `[LoadManagement].[spClearDictionaryStage]` | Empties `Dictionary_Stage` for a source before the Copy. Params: `@Source`, `@SourceSchema (default NULL)`, `@SourceTable (default NULL)`. |
+| `[LoadManagement].[spSwapDictionary]` | After the Copy, atomically replaces the source's live `Dictionary` rows (`XACT_ABORT` + `TRAN`) from stage. **Zero-row guard:** with 0 staged rows the swap is skipped and a `WARNING` is logged; live is left untouched. Params: `@Source`, `@PipelineID (default NULL)`, `@SourceSchema (default NULL)`, `@SourceTable (default NULL)`. |
+| `[LoadManagement].[spFinalizeDictionary]` | Finalizes a per-part load: removes live rows whose `(SourceSchema, SourceTable)` combination no longer appears in stage (vanished parts), then clears the stage partition. Param: `@Source`. |
+| `[Config].[spClearServicesStage]` | Like `spClearDictionaryStage`, but for `Services_Stage` (SAC). Params: `@SourceSystem`, `@ServiceNamePrefix (default NULL)`. |
+| `[Config].[spSwapServices]` | Swaps the live `Config.Services` rows from stage; same zero-row guard and transaction. Params: `@SourceSystem`, `@PipelineID (default NULL)`, `@ServiceNamePrefix (default NULL)` (namespace scope). |
+| `[Config].[spFinalizeServices]` | Finalizes a per-namespace SAC load: removes vanished `ServiceName` rows and clears stage. Param: `@SourceSystem`. |
+
+:::note Whole source vs. per part (per-part)
+Call `spSwapDictionary`/`spSwapServices` **without** scope parameters and the whole source is swapped in one go and stage is cleared. Pass a `@SourceSchema`/`@SourceTable` (or `@ServiceNamePrefix`) and **only that partition** is swapped, with stage left in place for the closing `Finalize` step. The seven loop-oriented GetMetaData pipelines (ExactOnline, AFAS, SAC, NetSuite, Monday, SAP_BDC, Salesforce) use that per-part variant: they swap **per loop iteration**, so one failing partial extraction no longer blocks the entire metadata refresh — the successful parts land in live immediately. The swap procedures **surface errors to ADF**: unlike most DWH procedures, they roll back the live table and let the pipeline fail.
+:::
 
 ---
 
@@ -261,7 +278,7 @@ These procedures write the metadata that drives the load engine (in `LoadManagem
 
 ### `[Config].[spFillServices_SAC]`
 
-**Purpose:** Imports SAC (SAP Analytics Cloud) providers into the services table.
+**Purpose:** Imports SAC (SAP Analytics Cloud) providers into the **staging table `Config.Services_Stage`**; a swap step promotes them into the live `Config.Services` (see [Metadata staging](#metadata-staging-stage-swap-and-finalize)).
 
 **Parameters:** `@input (ttServices_SAC READONLY)`, `@source (NVARCHAR(1024))`, `@Execute (BIT, default 1)`.
 

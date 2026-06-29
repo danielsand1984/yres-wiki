@@ -8,7 +8,7 @@ description: Referentie van de stored procedures in de IRIS_DWH-database, per sc
 
 Deze pagina beschrijft de stored procedures in de data-plane database **`IRIS_DWH`**. De namen zijn letterlijk uit de live repository overgenomen; in code heet het product nog op veel plaatsen **IRIS**. De inhoud is geregenereerd uit de broncode (de code is leidend boven oudere documentatie).
 
-De live database telt **102 stored procedures, 56 functions en 41 views**. Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
+De live database telt **108 stored procedures, 56 functions en 41 views**. Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
 
 :::note Schema-overzicht
 De procedures zijn verdeeld over de schema's `LoadManagement` (de laadmachine), `Config` (instellingen, logging, DB-tuning), `Change` (DTAP-wijzigingsbeheer), `Monitoring` (laadstatus-logging), `Maintenance` (onderhoud, health checks), `Expose` (rapportage-RBAC) en `dbo` (hulpprocedures).
@@ -172,7 +172,7 @@ Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePa
 
 ### `[LoadManagement].[spFillDictionary_AFAS]` / `[spFillDictionary_oDATA]`
 
-**Doel:** Importeren metadata van een AFAS- respectievelijk OData-bron in `LoadManagement.Dictionary` (kolommen + datatypes).
+**Doel:** Importeren metadata van een AFAS- respectievelijk OData-bron (kolommen + datatypes). Sinds de hardening van juni 2026 schrijven ze naar de stagingtabel **`LoadManagement.Dictionary_Stage`**; een aparte swap-stap promoveert die rijen atomisch naar de live `Dictionary` (zie [Metadata-staging](#metadata-staging-stage-swap-en-finalize)).
 
 **Parameters (AFAS):** `@input (ttDictionary_AFAS READONLY)`, `@source (NVARCHAR(1024))`, `@EXECUTE (BIT, default 1)`. **OData** voegt `@schema (NVARCHAR(1024), default 'API')` toe.
 
@@ -202,6 +202,23 @@ Deze procedures schrijven de metadata waarmee de laadmachine werkt (in `LoadMana
 | `[LoadManagement].[spMaintainPersistView]` | Beheert view-persistentie in `ViewPersistence`. |
 | `[LoadManagement].[spMaintainFilesInDictionary]` | Beheert bestand-metadata in `Dictionary`/`UsedColumns`. |
 | `[LoadManagement].[spMaintainRestInDictionary]` | Beheert REST-metadata in de dictionary. |
+
+### Metadata-staging: stage, swap en finalize
+
+De `GetMetaData - <bron>`-pipelines vernieuwen de bron-metadata: de kolommen (de **dictionary**) en — voor SAC — de **services**. Sinds de hardening van juni 2026 schrijven de fill-procedures (`spFillDictionary_oDATA`/`_AFAS`, `spFillServices_SAC`) niet meer rechtstreeks naar de live tabel, maar eerst naar een **stagingtabel** (`LoadManagement.Dictionary_Stage`, `Config.Services_Stage`). Pas na een geslaagde, niet-lege Copy wordt de live partitie **atomisch omgewisseld**. Voordelen: een mislukte of halve refresh laat de bestaande metadata intact (geen lege kolommen meer), en dezelfde refresh kan de live-tabel nooit half overschrijven.
+
+| Procedure | Doel |
+|---|---|
+| `[LoadManagement].[spClearDictionaryStage]` | Leegt `Dictionary_Stage` voor een bron vóór de Copy. Params: `@Source`, `@SourceSchema (default NULL)`, `@SourceTable (default NULL)`. |
+| `[LoadManagement].[spSwapDictionary]` | Vervangt na de Copy de live `Dictionary`-rijen van de bron atomisch (`XACT_ABORT` + `TRAN`) uit stage. **Zero-row-guard:** bij 0 gestagede rijen slaat de swap over en logt een `WARNING`; live blijft staan. Params: `@Source`, `@PipelineID (default NULL)`, `@SourceSchema (default NULL)`, `@SourceTable (default NULL)`. |
+| `[LoadManagement].[spFinalizeDictionary]` | Sluit een per-part load af: verwijdert live rijen waarvan de `(SourceSchema, SourceTable)`-combinatie niet meer in stage staat (verdwenen onderdelen) en leegt daarna de stage-partitie. Param: `@Source`. |
+| `[Config].[spClearServicesStage]` | Als `spClearDictionaryStage`, maar voor `Services_Stage` (SAC). Params: `@SourceSystem`, `@ServiceNamePrefix (default NULL)`. |
+| `[Config].[spSwapServices]` | Wisselt de live `Config.Services`-rijen om uit stage; zelfde zero-row-guard en transactie. Params: `@SourceSystem`, `@PipelineID (default NULL)`, `@ServiceNamePrefix (default NULL)` (scope op namespace). |
+| `[Config].[spFinalizeServices]` | Sluit een per-namespace SAC-load af: verwijdert verdwenen `ServiceName`-rijen en leegt stage. Param: `@SourceSystem`. |
+
+:::note Hele bron vs. per onderdeel (per-part)
+Roep je `spSwapDictionary`/`spSwapServices` **zonder** scope-parameters aan, dan wordt de hele bron in één keer omgewisseld én wordt stage geleegd. Geef je wél een `@SourceSchema`/`@SourceTable` (of `@ServiceNamePrefix`) mee, dan wordt **alleen die partitie** omgewisseld en blijft stage staan voor de afsluitende `Finalize`-stap. De zeven loop-georiënteerde GetMetaData-pipelines (ExactOnline, AFAS, SAC, NetSuite, Monday, SAP_BDC, Salesforce) gebruiken die per-part-variant: ze wisselen **per loop-iteratie** om, zodat één falende deel-extractie niet langer de hele metadata-refresh blokkeert — de geslaagde delen landen meteen in live. De swap-procedures **geven fouten door aan ADF**: anders dan de meeste DWH-procedures rollen ze de live-tabel terug en laten ze de pipeline falen.
+:::
 
 ---
 
@@ -261,7 +278,7 @@ Deze procedures schrijven de metadata waarmee de laadmachine werkt (in `LoadMana
 
 ### `[Config].[spFillServices_SAC]`
 
-**Doel:** Importeert SAC (SAP Analytics Cloud)-providers in de services-tabel.
+**Doel:** Importeert SAC (SAP Analytics Cloud)-providers in de **stagingtabel `Config.Services_Stage`**; een swap-stap promoveert ze naar de live `Config.Services` (zie [Metadata-staging](#metadata-staging-stage-swap-en-finalize)).
 
 **Parameters:** `@input (ttServices_SAC READONLY)`, `@source (NVARCHAR(1024))`, `@Execute (BIT, default 1)`.
 

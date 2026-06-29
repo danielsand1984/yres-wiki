@@ -232,6 +232,15 @@ The column-level metadata join used throughout the engine.
 `LoadType` (default `'FULL'`), `deltaColumn`, `TargetSource`, `TargetSchema`, `TargetTable`,
 `ActualTableName`, `ActualStageSchema`, `ActualHisSchema`, `keepStage`.
 
+### Staging tables `Dictionary_Stage` / `Services_Stage`
+
+Since June 2026 the metadata refresh (`GetMetaData - <source>`) no longer fills the live
+`Dictionary`/`Config.Services` directly, but first two **staging tables** with the same columns:
+`[LoadManagement].[Dictionary_Stage]` and `[Config].[Services_Stage]`. An atomic swap promotes
+stage → live; with 0 staged rows the live metadata is left in place. The mechanism and its
+procedures (`spSwapDictionary`, `spClearDictionaryStage`, `spFinalizeDictionary` and their `Services`
+variants) are described under [Stored procedures → Metadata staging](stored-procedures.md#metadata-staging-stage-swap-and-finalize).
+
 ### `[LoadManagement].[vwArchivingExtractor]`
 
 Generates SQL scripts for archiving data based on load type and delta columns. Drives the

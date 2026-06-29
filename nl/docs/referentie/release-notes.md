@@ -1,7 +1,7 @@
 ---
 title: Release notes
 sidebar_position: 3
-description: Versiehistorie van Yres DWH (v1.47 t/m v1.55), met breaking changes en nieuwe bronnen.
+description: Versiehistorie van Yres DWH (v1.47 t/m v1.56), met breaking changes en nieuwe bronnen.
 ---
 
 # Release notes
@@ -13,6 +13,53 @@ naslag. Per versie staan de nieuwe features, verbeteringen en eventuele breaking
 De datums per versie hieronder komen uit _Yres Documentation 1.55_ (release-notes-sectie). Yres-versies
 ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — niet als semver.
 :::
+
+## v1.56 — in test
+
+:::note Samengesteld uit de repository-historie (release-candidate in test)
+Anders dan de oudere versies (overgenomen uit _Yres Documentation 1.55_) is deze lijst samengesteld uit de
+commit- en PR-historie van de **`test`-branch** van `yres_backend` en `yres_frontend` — de release-candidate
+die op dit moment voor 1.56 wordt getest — vanaf **1 oktober 2025**. Groepering en formulering zijn afgeleid
+uit die historie; de definitieve inhoud en releasedatum kunnen nog wijzigen.
+:::
+
+- **Branding — IRIS heet voortaan Yres:** de productbrede hernoeming **IRIS → Yres** is in de hele webapp
+  doorgevoerd (e-mails, UI-teksten, vertalingen). Bij het updaten naar 1.56 worden bovendien oude triggers
+  met de legacy-merknaam opgeruimd (met een waarschuwing vooraf). (In code, Azure-resources en `IRIS_DWH`
+  staat op veel plaatsen nog "IRIS".)
+- **Projects & changes — herontworpen changes-tabel:** de change-managementtabel is opnieuw vormgegeven, met
+  o.a. **environment-entries** per change; (soft-)verwijderde changes worden niet meer getoond; vanuit de
+  **object viewer** zie je de gerelateerde changes van een object en klik je door naar /changes;
+  projectfilters (achter een feature flag).
+- **Multi-tenancy & subdomeinen:** **subdomein per organisatie** (in 1.55 voorbereid, nu uitgerold) met
+  OAuth-redirects (o.a. Exact Online) naar het juiste subdomein incl. organisatie-UUID; **Azure SSO** leidt
+  door naar de juiste organisatie; het **aantal omgevingen** is gekoppeld aan het abonnement (plan type);
+  melding wanneer een bron niet in een omgeving is geïnstalleerd. Organisatie-afbeeldingen in blob storage,
+  **login-theming** en **favicons per omgeving**; organisaties aanmaken/bijwerken via een achtergrond-job
+  met deploy-statusweergave.
+- **Bronnen & connectiviteit:** **Oracle** als nieuw bronsysteem; **MySQL** koppelbaar zonder connection
+  string en met afgedwongen **SSL**; nieuwe **REST-service-presets** plus help bij de API-specificatie;
+  verfijnde **REST-paginering** (offset-object) en ondersteuning voor **auth-headers met underscores**;
+  **Test connectivity** om een verbinding rechtstreeks vanuit de webapp te testen; Snowflake-fixes
+  (auth/typemapping).
+- **Monitoring & health:** nieuwe **health bar** met DWH-statistieken (waaronder het aantal actieve
+  gebruikers); **pipeline-runs-UI** met filters; AdaptiveIndexDefragmentation-pipeline opgenomen in de
+  pipelinelijst; optie om **rebuilding uit te schakelen**.
+- **Beheer & beveiliging:** **admin secrets-view** (secrets inzien vanuit het beheer);
+  **credential-vervalnotificaties** voor verlopende credentials; **encryptie** van gecachte credentials,
+  cache-waarden en jobs; **Azure Redis-cache** (met TLS); robuustere **Azure DevOps-integratie** (resources
+  opnieuw aanmaken als ze niet van de PAT-gebruiker zijn, DevOps-token maskeren, betere foutafhandeling);
+  validatie van remote URL's; CORS-fix.
+- **Feedback & internationalisatie:** het feedbackformulier stuurt naar **feedback@yres.app**; vertalingen
+  via een **translations-API** voor de UI (live bij te werken).
+- **Data engineering & object viewer:** **git-diff en syntax highlighting** in de object viewer;
+  uitgebreidere **mapping van scripted objects**. UsedTables-wizard: **zoeken in dropdowns**, **sorteren per
+  kolom**, bepaalde **kolomnamen blokkeren**, overschrijven bij edit blokkeren, alle nullable key-kolommen
+  tonen bij update en extra **laadtypes voor file-bronnen**; `rowhash`-tooltip en een duidelijke
+  **keepStage-waarschuwing**.
+- **Data & loading (data-plane):** de metadata-refresh is **transactioneel** gemaakt — een mislukte of halve
+  refresh wist je bestaande kolommen niet meer (stage → atomische swap, per onderdeel bij
+  ExactOnline/AFAS/SAC). Zie [Metadata verversen](../frontend/data-sources.md#metadata-verversen-refresh-metadata).
 
 ## v1.55 — september 2025
 
