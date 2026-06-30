@@ -129,8 +129,8 @@ webapp; for Datasphere the same SAS input is used.
 
 :::note Not a separate wizard choice
 **Azure Data Lake** and **SAP Datasphere** do have an ADF template (`AzureBlobFS`), but are **not a
-separate option** in the source wizard (`SourceField.tsx`). Azure Data Lake is internal Yres
-infrastructure (staging/output); SAP Datasphere is connected via the **SAP_BDC** form.
+separate option** in the source wizard (`SourceField.tsx`). To ingest data from a Data Lake, connect it as
+an **Azure Blob Storage** source; SAP Datasphere is connected via the **SAP_BDC** form.
 :::
 
 ## Custom

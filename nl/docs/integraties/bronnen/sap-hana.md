@@ -49,11 +49,10 @@ service-URL in:
 **Integration runtime:** **`AutoResolveIntegrationRuntime`** (cloud) als de OData-service via internet
 bereikbaar is; een self-hosted integration runtime als de service achter een firewall staat.
 
-:::note Geen eigen brontype — generieke route
-SAP HANA heeft **geen eigen wizard-formulier en geen eigen linked-service-sjabloon** in Yres
-(bronpicker `SourceField.tsx`): de verbinding wordt opgezet als een generiek databasetype (ODBC-route) of
-als een OData-bron (XS OData-route). Welke route past, hangt af van hoe je HANA-omgeving data ontsluit;
-stem de route, poort en het schema af met je SAP-/HANA-beheerder.
+:::note Geen eigen brontype — via SAP_BDC of OData
+SAP HANA heeft **geen eigen wizard-formulier** in Yres (bronpicker `SourceField.tsx`). Afhankelijk van de
+use-case koppel je HANA via **SAP_BDC** of via **OData** (XS OData / SAP Gateway). Welke route past, hangt
+af van hoe je HANA-omgeving data ontsluit; stem dit af met je SAP-/HANA-beheerder.
 :::
 
 :::note Hoe Yres credentials opslaat

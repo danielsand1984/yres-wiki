@@ -129,8 +129,8 @@ webapp; voor Datasphere wordt dezelfde SAS-invoer gebruikt.
 
 :::note Geen losse wizard-keuze
 **Azure Data Lake** en **SAP Datasphere** hebben wel een ADF-template (`AzureBlobFS`), maar zijn **geen
-losse keuze** in de bron-wizard (`SourceField.tsx`). Azure Data Lake is interne Yres-infrastructuur
-(staging/uitvoer); SAP Datasphere koppel je via het **SAP_BDC**-formulier.
+losse keuze** in de bron-wizard (`SourceField.tsx`). Wil je data uit een Data Lake ophalen, koppel die dan
+als **Azure Blob Storage**-bron; SAP Datasphere koppel je via het **SAP_BDC**-formulier.
 :::
 
 ## Custom

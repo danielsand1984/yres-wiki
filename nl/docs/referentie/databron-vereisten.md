@@ -103,9 +103,10 @@ Het Data Lake (`AzureBlobFS`, SAS-authenticatie) is primair Yres' **eigen** stag
 standaard een door de gebruiker toegevoegde bron. Wanneer het als bron wordt gebruikt, volgt het hetzelfde
 **SAS-patroon** als Azure Blob Storage / SAP_BDC.
 
-:::note Geen selecteerbare bron
-Azure Data Lake is **geen** afzonderlijk te kiezen bron in de bronpicker (`SourceField.tsx`): er is wel
-een `AzureBlobFS`-template maar geen picker-keuze. Het is interne Yres-staging-/uitvoeropslag.
+:::note Koppelen via Azure Blob Storage
+Azure Data Lake heeft **geen** eigen keuze in de bronpicker (`SourceField.tsx`). Wil je er data uit ophalen,
+koppel de Data Lake dan als **Azure Blob Storage**-bron (zelfde `AzureBlobFS`/SAS-vorm). Daarnaast dient een
+Data Lake als interne Yres-staging-/uitvoeropslag.
 :::
 
 ### SharePoint

@@ -103,9 +103,10 @@ The Data Lake (`AzureBlobFS`, SAS authentication) is primarily Yres' **own** sta
 by default a user-added source. When it is used as a source, it follows the same
 **SAS pattern** as Azure Blob Storage / SAP_BDC.
 
-:::note Not a selectable source
-Azure Data Lake is **not** a separately selectable source in the source picker (`SourceField.tsx`): there
-is an `AzureBlobFS` template but no picker choice. It is internal Yres staging/output storage.
+:::note Connect via Azure Blob Storage
+Azure Data Lake has **no** choice of its own in the source picker (`SourceField.tsx`). To ingest data from
+it, connect the Data Lake as an **Azure Blob Storage** source (same `AzureBlobFS`/SAS form). In addition, a
+Data Lake serves as internal Yres staging/output storage.
 :::
 
 ### SharePoint
