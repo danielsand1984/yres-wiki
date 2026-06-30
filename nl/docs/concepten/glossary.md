@@ -37,11 +37,6 @@ De load engine, SCD2-historie en de zeven load types worden uitgebreid behandeld
 | **Control plane** | De multi-tenant SaaS-webapp van Plainwater (één deployment voor alle klanten). Beheert organisaties, gebruikers, environments en facturatie in een PostgreSQL-database. **Bevat nooit klantdata** — het provisioneert en bestuurt elke data plane via de Azure Management-, ADF-, Key Vault- en Azure DevOps-API's en een directe SQL-verbinding. |
 | **Data plane** | Eén ADF-factory + één `IRIS_DWH` Azure SQL-database **per organisatie × environment**, draaiend binnen de **eigen Azure-tenant van de klant**. Hier verplaatst de data daadwerkelijk. Dit is waar de load engine leeft. |
 
-:::info Te bevestigen
-Eigenaar-input: of er naast "draaien in de eigen Azure-tenant van de klant" ook een door Yres
-gehoste optie bestaat. De productdocumentatie benadrukt juist dat alles 100% in de eigen
-Azure-omgeving van de klant draait (geen vendor lock-in).
-:::
 
 ## Bronnen en metadata
 

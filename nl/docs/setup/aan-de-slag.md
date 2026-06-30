@@ -53,13 +53,6 @@ e-mailadres is vooringevuld vanuit de uitnodiging en staat vast.*
 5. **Wachtwoord** — minimaal 12 tekens, met hoofd- en kleine letters, een cijfer en een speciaal teken.
 6. **"Continue"** — maakt het account aan en logt je in op de Yres-webapp.
 
-:::info Te bevestigen
-De **hostingtype**-keuze in de uitnodiging (in eigen Azure-tenant versus een door Yres gehoste optie) is
-door de eigenaar in te vullen: de officiële productdocumentatie benadrukt dat Yres **volledig in de eigen
-Azure-tenant van de klant** draait, zonder vendor lock-in. Bevestig de exacte hostingbewoording voordat je
-deze publiceert.
-:::
-
 ## Organisaties
 
 Organisaties zijn de basis van Yres: een afgeschermde ruimte met één of meer omgevingen, zodat ontwikkeling
@@ -118,13 +111,6 @@ Belangrijke gevolgen:
   dev → test → prod).
 
 De licentie is gekoppeld aan één Microsoft-account, eenmalig bruikbaar en wordt in de database afgedwongen.
-
-:::info Te bevestigen
-De **prijzen** per tier en de **per-tier toewijzing van losse features** (zoals het Changes-systeem,
-automatisch schalen, firewall of VPN) zijn commerciële afspraken die door de eigenaar bevestigd moeten
-worden; ze staan niet in de productdocumentatie. De tabel hierboven (aantal bronnen en omgevingen per tier)
-is wél geverifieerd.
-:::
 
 ### Omgevingen bijwerken en beheren
 

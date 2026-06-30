@@ -72,6 +72,3 @@ Met andere woorden: niet het Yres-bedrijf reikt in je systemen, maar de automati
 Het Yres-platform heeft **nooit directe toegang tot de databronnen** van de klant; de data verlaat de eigen Azure-omgeving niet. Alle geconfigureerde dataflows blijven daar werken — ook zonder Yres.
 :::
 
-:::info Te bevestigen
-Sommige verkoopmaterialen noemen een door Yres gehoste optie naast "eigen Azure-tenant". Dat staat op gespannen voet met de centrale boodschap dat alles 100% in de eigen Azure-omgeving van de klant draait. Laat de producteigenaar de exacte hostingopties en bewoording bevestigen voordat dit extern wordt gecommuniceerd.
-:::

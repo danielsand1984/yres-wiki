@@ -37,22 +37,14 @@ De licentie zelf is gebonden aan een **eenmalig te gebruiken uitnodigingslink** 
 
 De verdeling **bronsystemen / omgevingen** per pakket (2 / 1 · 5 / 2 · onbeperkt / onbeperkt) ligt vast in de licentie. Tabellen zijn niet gelimiteerd: dat zijn configuratierijen, geen gelicentieerde objecten.
 
-:::info Te bevestigen
-De **maandprijzen** (€350 / €674 / €997) zijn commerciële tarieven die niet in de productdocumentatie staan en door de eigenaar bevestigd moeten worden voordat ze gepubliceerd worden. De **pakketstructuur** zelf — Essentials = 2 bronsystemen / 1 omgeving, Advanced = 5 bronsystemen / 2 omgevingen, Ultimate = onbeperkt — is wél geverifieerd.
+
+:::note Feature-toewijzing per pakket
+Yres dwingt feature-gating op dit moment **niet actief af**; de toewijzing hierboven is de bedoelde indeling en kan via de **licentie** worden afgedwongen. Twee bijzonderheden:
+
+- De **web application firewall** zit in **alle** pakketten.
+- **Site-to-site VPN** richten we **los** in als consultancy (**€150/uur**; het aantal uren hangt af van je wensen) — dus niet pakketgebonden.
 :::
 
-:::info Te bevestigen
-De **koppeling van functies aan pakketten** (changes-systeem, automatisch schalen, web application firewall, site-to-site VPN, lokale netwerken via IR) is nog niet bevestigd. De functies bestaan allemaal, maar de productdocumentatie verbindt ze niet aan een specifiek pakket. Twee aandachtspunten:
-
-- **Site-to-site VPN** wordt op aanvraag geconfigureerd en is dus niet vanzelfsprekend Ultimate-only.
-- Het **changes-systeem** is technisch in elke data-warehouse aanwezig; of het commercieel tot Advanced/Ultimate beperkt is, moet bevestigd worden.
-
-Laat de eigenaar de tier-toewijzing per functie controleren.
-:::
-
-:::info Te bevestigen
-De optie om Yres **door Plainwater te laten hosten** in plaats van in je eigen Azure tenant staat niet in de productdocumentatie en staat op gespannen voet met de kernboodschap dat alles **100% binnen je eigen Azure tenant** draait (geen vendor lock-in). In de tabel hierboven is daarom voorlopig alleen "Eigen Azure tenant" opgenomen. Bevestig of de Yres-gehoste variant aangeboden wordt en op welke pakketten.
-:::
 
 ## Wat zit er in elk pakket?
 
@@ -76,8 +68,8 @@ De eerste omgeving heet altijd **dev** en is verplicht. Een tweede omgeving (bij
 **Kunnen we later opschalen?**
 Ja. Je stapt op elk moment over naar een groter pakket. We regelen de migratie zonder dat je omgeving offline gaat.
 
-:::info Te bevestigen
-Het opschalen zonder downtime is een commerciële toezegging die niet in de productdocumentatie is terug te vinden. Bevestig de exacte voorwaarden.
+:::note Schalen zonder downtime
+Opschalen gebeurt **zonder downtime**. Lopende query's kunnen er wel **kortstondig hinder** van ondervinden.
 :::
 
 **Draaien onze data en pipelines op jullie infrastructuur?**

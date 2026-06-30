@@ -35,8 +35,8 @@ Yres heeft **geen visuele pipeline-designer** waarin je componenten op een canva
 Een bron of tabel toevoegen is metadata invoeren. Yres vertaalt die metadata naar ADF-pipelines — jij hoeft geen pipeline te bouwen of te onderhouden. De rode draad onder dit alles staat in [Gegevensstroom](../concepten/gegevensstroom.md).
 :::
 
-:::info Te bevestigen
-"Bestaande handmatige ADF-pipelines blijven naast Yres draaien" is aannemelijk (Yres voegt zijn eigen pipelines en linked services toe), maar staat niet expliciet in de productdocumentatie. Laat de eigenaar dit bevestigen.
+:::note Eigen ADF-pipelines blijven werken
+Bestaande, handmatig gemaakte ADF-pipelines blijven naast Yres draaien. Voor eigen pipelines is er een map **`custom pipelines`** waarin klanten hun eigen pipelines onderhouden.
 :::
 
 ## 3. Automatische health checks en monitoring
@@ -46,8 +46,8 @@ Yres geeft inzicht in je laadprocessen: per-pipeline timelines, per-stap status 
 - **Monitoring** — laadstatus, doorlooptijden en aantallen verwerkte rijen, per run en per stap. Zie [Load Management](../frontend/load-management.md).
 - **Health checks** — periodieke controles op je omgeving en instellingen, zodat afwijkingen vroeg zichtbaar worden.
 
-:::info Te bevestigen
-Eerdere versies van deze pagina noemden "kostenmonitoring" als productfeature. Er is geen kostenmonitoring-scherm of -functie gedocumenteerd; de documentatie waarschuwt alleen dat opschalen je Azure-kosten beïnvloedt. Laat de eigenaar bevestigen of er een kostenmonitoring-functie bestaat voordat dit als feature wordt vermeld.
+:::note Kostenmonitoring
+Yres heeft **geen ingebouwde kostenmonitoring**. Omdat elke organisatie × omgeving een **eigen Azure-resourcegroup** heeft, volg je de kosten eenvoudig **per resourcegroup** in Azure.
 :::
 
 ---
@@ -64,6 +64,3 @@ Geen standaard sales-demo. In een vrijblijvend gesprek met een data-architect ki
 
 > Binnen 30 minuten weet je of Yres bij je past.
 
-:::info Te bevestigen
-De demo-opzet en de toezegging "binnen 30 minuten weet je of Yres past" zijn sales-framing en staan niet in de officiële productdocumentatie. Laat de eigenaar de exacte demo-belofte bevestigen.
-:::

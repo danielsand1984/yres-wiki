@@ -96,8 +96,8 @@ Belangrijkste regels in het kort:
 - Alle network rules worden ondersteund, mits resources elkaar én de webapp kunnen bereiken.
 - **VPN-toegang** voor de webapp is op aanvraag mogelijk; de webapp heeft zelf ook een firewall om toegang per locatie te beperken.
 
-:::info Te bevestigen
-Of **site-to-site VPN** en **web application firewall** aan specifieke licentieversies gekoppeld zijn, staat niet vast in de productdocumentatie. VPN is volgens de documentatie "op aanvraag" configureerbaar. Bevestig de exacte voorwaarden bij Plainwater voordat je dit als versie-gebonden feature communiceert.
+:::note VPN & web application firewall
+De **web application firewall** zit in **alle** tiers. **Site-to-site VPN** richten we **los** in als consultancy (**€150/uur**; het aantal uren hangt af van je exacte wensen) — niet versie-gebonden.
 :::
 
 ## Schalen
@@ -116,6 +116,3 @@ Installeren vereist een **invitation link van Plainwater**: gekoppeld aan één 
 | **Advanced** | 5 | 2 |
 | **Ultimate** | Onbeperkt | Onbeperkt |
 
-:::info Te bevestigen
-De licentie-**structuur** hierboven (aantal bronnen en omgevingen per versie) is geverifieerd. Eventuele **prijzen** en de koppeling van losse features aan een versie zijn commerciële voorwaarden die door Plainwater bevestigd moeten worden en niet uit de productdocumentatie volgen.
-:::

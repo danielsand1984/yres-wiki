@@ -39,9 +39,6 @@ De control plane **provisiont en bestuurt** elke data plane via de Azure Managem
 
 Standaard draait Yres volledig binnen de **eigen Azure tenant** van de klant — data, infrastructuur en kosten blijven van de klant. Dat is een bewuste keuze: geen vendor lock-in en volledige controle over je eigen data.
 
-:::info Te bevestigen
-De wiki noemde eerder ook hosting *door Yres* als expliciete optie. Beide Yres-bronnen benadrukken juist consequent dat alles 100% in de eigen Azure tenant van de klant draait. Of een door Yres gehoste variant wordt aangeboden, en op welke voorwaarden, is een commerciële keuze die de eigenaar moet bevestigen voordat dit wordt gepubliceerd.
-:::
 
 ## Het kernidee: metadata stuurt, ADF voert uit
 

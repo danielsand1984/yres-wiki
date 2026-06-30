@@ -51,9 +51,6 @@ With Yres you centralize data sources, data flows and management within one Azur
 
 Yres runs entirely within your **own Azure tenant**. You retain ownership of your data, infrastructure and costs. Yres never has direct access to your sources, and all processes keep running — even if you stop using Yres. No vendor lock-in.
 
-:::info To be confirmed
-The option to have Yres host the environment is a commercial choice that is not part of the product documentation; the documentation instead emphasizes that everything runs 100% in your own Azure tenant. Have the owner confirm whether, and on what terms, a Yres-hosted variant is offered.
-:::
 
 ### Less dependent on standalone scripts and specific knowledge
 
@@ -71,6 +68,3 @@ With Yres you add data sources without building up extra management overhead or 
 
 A complete Yres environment is typically operational **within an hour** — no lengthy implementation project, no external consultants for the setup. A typical installation takes about **20 minutes**, depending on the number of environments.
 
-:::info To be confirmed
-The guideline "you connect a new source in about five minutes" does not appear in the official product documentation. Have the owner confirm or replace this figure before it is published externally.
-:::

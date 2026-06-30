@@ -63,13 +63,11 @@ Wordt data via SAP BDC als bestand (Azure Blob FS / Data Lake) aangeboden, dan k
 **SAP_BDC**-formulier met een **SAS uri**, **container** en **SAS token**. Dit is een aparte route met eigen
 authenticatie (SAS) en draait op de cloud integration runtime.
 
-:::note Geen eigen brontype — generieke route
-SAP S/4HANA heeft in `CreateSource.tsx` geen eigen brontype of invulformulier; in de code bestaan alleen de
-generieke `OData`/`ODataoAuth`-, HANA-database- en `SAP_BDC`-routes (geen `Datasphere.json`-style of
-`SapTable`-connector). Welke route in jouw situatie de juiste is — OData via de SAP Gateway, een directe
-HANA-verbinding, of SAP_BDC — hangt af van hoe de SAP-omgeving data ontsluit. Stem dit af met je
-SAP-/Basis-beheerder. De afbeeldingen `saphana`/`saptable` in de webapp zijn alleen iconen, geen aparte
-connectors.
+:::note Geen eigen brontype — via SAP_BDC of OData
+SAP S/4HANA heeft in `CreateSource.tsx` geen eigen brontype of invulformulier. Afhankelijk van de use-case
+koppel je S/4HANA via **SAP_BDC** of via **OData** (SAP Gateway). Welke route past, hangt af van hoe de
+SAP-omgeving data ontsluit; stem dit af met je SAP-/Basis-beheerder. De afbeeldingen `saphana`/`saptable`
+in de webapp zijn alleen iconen, geen aparte connectors.
 :::
 
 ## Gegevens ophalen

@@ -35,8 +35,8 @@ Yres has **no visual pipeline designer** in which you draw components on a canva
 Adding a source or table is a matter of entering metadata. Yres translates that metadata into ADF pipelines — you don't have to build or maintain a pipeline. The common thread underlying all of this is described in [Data flow](../concepten/gegevensstroom.md).
 :::
 
-:::info To be confirmed
-"Existing manual ADF pipelines keep running alongside Yres" is plausible (Yres adds its own pipelines and linked services), but it is not stated explicitly in the product documentation. Have the owner confirm this.
+:::note Your own ADF pipelines keep working
+Existing, manually created ADF pipelines keep running alongside Yres. For your own pipelines there is a **`custom pipelines`** folder where customers maintain their own pipelines.
 :::
 
 ## 3. Automatic health checks and monitoring
@@ -46,8 +46,8 @@ Yres provides insight into your load processes: per-pipeline timelines, per-step
 - **Monitoring** — load status, run times and counts of processed rows, per run and per step. See [Load Management](../frontend/load-management.md).
 - **Health checks** — periodic checks on your environment and settings, so anomalies surface early.
 
-:::info To be confirmed
-Earlier versions of this page mentioned "cost monitoring" as a product feature. No cost-monitoring screen or function is documented; the documentation only warns that scaling up affects your Azure costs. Have the owner confirm whether a cost-monitoring function exists before listing it as a feature.
+:::note Cost monitoring
+Yres has **no built-in cost monitoring**. Because each organization × environment has its **own Azure resource group**, you can easily track costs **per resource group** in Azure.
 :::
 
 ---
@@ -64,6 +64,3 @@ Not a standard sales demo. In a no-obligation conversation with a data architect
 
 > Within 30 minutes you'll know whether Yres is a fit for you.
 
-:::info To be confirmed
-The demo setup and the promise "within 30 minutes you'll know whether Yres is a fit" are sales framing and are not in the official product documentation. Have the owner confirm the exact demo promise.
-:::

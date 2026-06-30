@@ -37,11 +37,6 @@ The load engine, SCD2 history and the seven load types are covered in detail in
 | **Control plane** | Plainwater's multi-tenant SaaS web app (one deployment for all customers). Manages organizations, users, environments and billing in a PostgreSQL database. **Never holds customer data** — it provisions and drives each data plane via the Azure Management, ADF, Key Vault and Azure DevOps APIs and a direct SQL connection. |
 | **Data plane** | One ADF factory + one `IRIS_DWH` Azure SQL database **per organization × environment**, running inside the customer's **own Azure tenant**. This is where the data actually moves. This is where the load engine lives. |
 
-:::info To be confirmed
-Owner input needed: whether, alongside "running in the customer's own Azure tenant", a Yres-hosted
-option also exists. The product documentation specifically emphasizes that everything runs 100% in the
-customer's own Azure environment (no vendor lock-in).
-:::
 
 ## Sources and metadata
 

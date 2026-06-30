@@ -13,9 +13,6 @@ Deze pagina legt twee dingen uit:
 1. De **commerciële tiers** (Essentials, Advanced, Ultimate) en hoe een licentie wordt uitgegeven.
 2. De **technische afdwinging** in `IRIS_DWH`: het `LicenseKey`-veld en de functies `Config.fxCheckLicense` en `Config.fxCheckSystem`.
 
-:::info Te bevestigen
-De **euro-prijzen** per tier en eventuele **per-tier feature-gating** (welke functies bij welk pakket horen) staan niet in de officiële productdocumentatie en zijn commerciële afspraken. Zie de [Prijzen](../prijzen.md)-pagina; verifieer de bedragen en feature-toewijzing bij de productowner voordat je ze extern publiceert.
-:::
 
 ## De tiers
 

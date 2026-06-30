@@ -51,9 +51,6 @@ Met Yres centraliseer je databronnen, datastromen en beheer binnen één Azure-o
 
 Yres draait volledig binnen je **eigen Azure tenant**. Je houdt eigenaarschap over je data, infrastructuur en kosten. Yres heeft nooit directe toegang tot je bronnen, en alle processen blijven werken — ook als je Yres niet meer gebruikt. Geen vendor lock-in.
 
-:::info Te bevestigen
-De optie om de omgeving door Yres te laten hosten is een commerciële keuze die niet in de productdocumentatie staat; de documentatie benadrukt juist dat alles 100% in je eigen Azure tenant draait. Laat de eigenaar bevestigen of, en op welke voorwaarden, een door-Yres-gehoste variant wordt aangeboden.
-:::
 
 ### Minder afhankelijk van losse scripts en specifieke kennis
 
@@ -71,6 +68,3 @@ Met Yres voeg je databronnen toe zonder extra beheerlast of technische schuld op
 
 Een complete Yres-omgeving is doorgaans **binnen een uur** operationeel — geen langdurig implementatietraject, geen externe consultants voor de inrichting. Een typische installatie neemt ongeveer **20 minuten** in beslag, afhankelijk van het aantal omgevingen.
 
-:::info Te bevestigen
-De richtlijn "een nieuwe bron sluit je aan in zo'n vijf minuten" staat niet in de officiële productdocumentatie. Laat de eigenaar dit cijfer bevestigen of vervangen voordat het extern wordt gepubliceerd.
-:::

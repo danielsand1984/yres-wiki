@@ -39,9 +39,6 @@ The control plane **provisions and drives** each data plane via the Azure Manage
 
 By default Yres runs entirely within the customer's **own Azure tenant** — data, infrastructure and costs stay with the customer. This is a deliberate choice: no vendor lock-in and full control over your own data.
 
-:::info To be confirmed
-The wiki previously also mentioned hosting *by Yres* as an explicit option. Both Yres sources, however, consistently emphasize that everything runs 100% within the customer's own Azure tenant. Whether a Yres-hosted variant is offered, and under what conditions, is a commercial decision that the owner must confirm before this is published.
-:::
 
 ## The core idea: metadata drives, ADF executes
 

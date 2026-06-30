@@ -52,13 +52,6 @@ is pre-filled from the invitation and is fixed.*
    character.
 6. **"Continue"** — creates the account and logs you in to the Yres web app.
 
-:::info To be confirmed
-The **hosting type** choice in the invitation (in your own Azure tenant versus a Yres-hosted option) is to
-be filled in by the owner: the official product documentation emphasizes that Yres runs **entirely in the
-customer's own Azure tenant**, without vendor lock-in. Confirm the exact hosting wording before publishing
-this.
-:::
-
 ## Organizations
 
 Organizations are the foundation of Yres: a partitioned space with one or more environments, so that
@@ -116,13 +109,6 @@ Important implications:
   dev → test → prod).
 
 The license is tied to a single Microsoft account, usable only once, and is enforced in the database.
-
-:::info To be confirmed
-The **prices** per tier and the **per-tier allocation of individual features** (such as the Changes system,
-automatic scaling, firewall or VPN) are commercial agreements that must be confirmed by the owner; they are
-not in the product documentation. The table above (number of sources and environments per tier) has been
-verified.
-:::
 
 ### Updating and managing environments
 

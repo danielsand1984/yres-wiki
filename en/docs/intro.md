@@ -39,17 +39,11 @@ Organizations working with **Microsoft Azure** and **Power BI** that want contro
 
 The product used to be called **Iris** and is now called **Yres**. You will still come across "Iris" in older sources, Azure resource names, Confluence spaces (`spaceKey=IRIS`) and internal identifiers — that is the same product. In the code you'll see this reflected in names like `IRIS_DWH`, `Dynamic Workflow IRIS`, `IRIS_VERSION` and Key Vault names `kv-iris-…`. Those identifiers stay unchanged; in the wiki we refer to **Yres**.
 
-## Domains & endpoints
+## Contact & feedback
 
-:::info To be confirmed
-The addresses below come from the existing wiki and marketing site. The official product documentation describes only the **feedback flow** (the in-app feedback forms Bug report / Feature request / Feedback, with a reply to your account email), not the literal addresses. Have the product owner confirm the exact domains before they are published externally.
-:::
+For **feedback, questions or a demo request**, email **feedback@yres.app** — you'll get a reply at your own account address. The in-app feedback forms (Bug report / Feature request / Feedback) arrive at the same address.
 
-| Purpose | URL |
-|---|---|
-| Marketing site | https://oogopdata.nl |
-| Web app | https://www.yres.app |
-| Feedback mailbox | feedback@yres.app |
+The **web app runs on a per-organization subdomain**; there is therefore no fixed web-app address to list here.
 
 ## Core concepts
 

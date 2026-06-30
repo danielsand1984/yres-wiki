@@ -37,22 +37,14 @@ The license itself is tied to a **single-use invitation link** from Plainwater: 
 
 The **source systems / environments** split per package (2 / 1 · 5 / 2 · unlimited / unlimited) is fixed in the license. Tables are not limited: these are configuration rows, not licensed objects.
 
-:::info To be confirmed
-The **monthly prices** (€350 / €674 / €997) are commercial rates that don't appear in the product documentation and must be confirmed by the owner before they're published. The **package structure** itself — Essentials = 2 source systems / 1 environment, Advanced = 5 source systems / 2 environments, Ultimate = unlimited — has been verified.
+
+:::note Feature allocation per package
+Yres does **not actively enforce** feature gating at this time; the allocation above is the intended split and can be enforced via the **license**. Two specifics:
+
+- The **web application firewall** is included in **all** packages.
+- **Site-to-site VPN** is set up **separately** as consultancy (**€150/hour**; the number of hours depends on your requirements) — so it is not package-bound.
 :::
 
-:::info To be confirmed
-The **mapping of features to packages** (changes system, automatic scaling, web application firewall, site-to-site VPN, local networks via IR) has not yet been confirmed. The features all exist, but the product documentation doesn't tie them to a specific package. Two points to watch:
-
-- **Site-to-site VPN** is configured on request and is therefore not necessarily Ultimate-only.
-- The **changes system** is technically present in every data warehouse; whether it's commercially restricted to Advanced/Ultimate needs to be confirmed.
-
-Have the owner verify the tier assignment per feature.
-:::
-
-:::info To be confirmed
-The option to have Yres **hosted by Plainwater** instead of in your own Azure tenant doesn't appear in the product documentation and is at odds with the core message that everything runs **100% within your own Azure tenant** (no vendor lock-in). For now, the table above therefore lists only "Your own Azure tenant". Confirm whether the Yres-hosted variant is offered and on which packages.
-:::
 
 ## What's in each package?
 
@@ -76,8 +68,8 @@ The first environment is always called **dev** and is mandatory. A second enviro
 **Can we scale up later?**
 Yes. You can move to a larger package at any time. We handle the migration without your environment going offline.
 
-:::info To be confirmed
-Scaling up without downtime is a commercial commitment that can't be found in the product documentation. Confirm the exact conditions.
+:::note Scaling without downtime
+Scaling happens **without downtime**. Running queries may experience **brief disruption**, though.
 :::
 
 **Do our data and pipelines run on your infrastructure?**

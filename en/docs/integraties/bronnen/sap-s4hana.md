@@ -64,12 +64,11 @@ If data is delivered via SAP BDC as files (Azure Blob FS / Data Lake), you conne
 **SAP_BDC** form with a **SAS uri**, **container** and **SAS token**. This is a separate route with its own
 authentication (SAS) and runs on the cloud integration runtime.
 
-:::note No dedicated source type — generic route
-SAP S/4HANA has no dedicated source type or form in `CreateSource.tsx`; the code only contains the generic
-`OData`/`ODataoAuth`, HANA database and `SAP_BDC` routes (no `Datasphere.json`-style or `SapTable`
-connector). Which route is right in your situation — OData via the SAP Gateway, a direct HANA connection, or
-SAP_BDC — depends on how the SAP environment exposes its data. Coordinate this with your SAP/Basis
-administrator. The `saphana`/`saptable` images in the webapp are just icons, not separate connectors.
+:::note No dedicated source type — via SAP_BDC or OData
+SAP S/4HANA has no dedicated source type or form in `CreateSource.tsx`. Depending on the use case, you
+connect S/4HANA via **SAP_BDC** or via **OData** (SAP Gateway). Which route fits depends on how the SAP
+environment exposes its data; coordinate this with your SAP/Basis administrator. The `saphana`/`saptable`
+images in the webapp are just icons, not separate connectors.
 :::
 
 ## Where to find these

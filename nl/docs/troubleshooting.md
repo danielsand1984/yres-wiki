@@ -132,12 +132,6 @@ een eenmalige uitnodigingslink en wordt in de database afgedwongen.
 2. Verwijder of deactiveer bronnen/tabellen die je niet meer nodig hebt, of ruim historie op.
 3. Heb je structureel meer nodig, upgrade dan naar een hogere tier (meer bronnen/omgevingen).
 
-:::info Te bevestigen
-De exacte feature-gating en limieten per tier (en de bijbehorende prijzen) zijn commercieel en niet uit de
-code/PDF's te verifiëren — bevestig deze met Yres vóór publicatie. De *structuur* van de tiers
-(Essentials = 2 bronnen / 1 omgeving, Advanced = 5 / 2, Ultimate = ongelimiteerd) is wel geverifieerd.
-:::
-
 ## Health checks
 
 Voor DWH-issues toont het [Health checks-scherm](./frontend/admin.md) (route `/admin/healthchecks`,

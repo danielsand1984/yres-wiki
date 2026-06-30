@@ -17,8 +17,8 @@ We bieden geen zelfbediening-trial, maar wel een persoonlijke demo waarin we jou
 **Wat is het verschil met TimeXtender of AnalyticsCreator?**
 Yres onderscheidt zich door native Nederlandse ERP-koppelingen (Exact, AFAS), preset NL databronnen (zoals CBS, Tweede Kamer en Simplicate), een wizard-gestuurde no-code aanpak die automatisch ADF-pipelines genereert, en geautomatiseerde health checks. Elke tool heeft eigen sterktes — neem contact op voor een eerlijke vergelijking.
 
-:::info Te bevestigen
-De claim "transparante vaste pricing" en de directe vergelijking met specifieke concurrenten zijn commerciële uitspraken die door het team bevestigd moeten worden voordat ze extern gepubliceerd worden. De technische onderscheidende punten hierboven zijn wel geverifieerd.
+:::note Pricing-communicatie
+De **transparante vaste pricing** mag je communiceren. Waar het toegevoegde waarde heeft, mag je vermelden dat Yres een **eerlijke, lage prijs** hanteert en in de praktijk bijna altijd goedkoper is dan concurrenten — houd directe vergelijkingen feitelijk en netjes.
 :::
 
 ## Technisch
@@ -51,15 +51,12 @@ Via database-, OData- en REST-integraties ondersteunen we veel meer dan we tonen
 **Draaien onze data en pipelines op jullie infrastructuur?**
 Nee. Yres draait **volledig binnen jouw eigen Azure tenant**; je data verlaat jouw omgeving niet. Yres heeft nooit directe toegang tot je bronnen, en alle processen blijven werken — ook als je Yres niet langer gebruikt (geen vendor lock-in).
 
-:::info Te bevestigen
-De optie "hosting door Yres" wordt op de marketingsite genoemd, maar staat niet in de officiële productdocumentatie en staat op gespannen voet met de herhaalde belofte "100% in je eigen Azure tenant". Laat het team de exacte formulering van een eventueel Yres-gehoste variant bevestigen.
-:::
 
 **Hoe zit het met toegang?**
 Azure SSO en rolgebaseerde rechten (RBAC), aansluitend op je bestaande security-omgeving. SSO kan per gebruiker worden afgedwongen.
 
-:::info In te vullen
-ISO 27001 / certificeringen, data residency-details en een verwerkersovereenkomst zijn nog niet bevestigd. Deze antwoorden moeten door het team worden aangevuld (zie intern → security).
+:::note Beveiliging & compliance
+Yres is **ISO 27001-gecertificeerd**. De **webapp-data** (alleen instellingen en inrichting — nooit klantdata of credentials) staat bij **Hetzner in Duitsland**. Je **eigen data blijft in je eigen Azure-omgeving**: je kiest zelf de regio/het datacenter door de resource group daar aan te maken, en Yres volgt de instellingen van die group. Een **verwerkersovereenkomst is niet nodig**, omdat Yres nooit klantdata in de webapp toont of opslaat — alleen de configuratiegegevens in PostgreSQL, en nooit credentials.
 :::
 
 ## Implementatie
@@ -67,13 +64,7 @@ ISO 27001 / certificeringen, data residency-details en een verwerkersovereenkoms
 **Hoe snel zijn we live?**
 Een complete Yres-omgeving is doorgaans snel operationeel: een typische installatie duurt ongeveer 20 minuten, afhankelijk van het aantal omgevingen.
 
-:::info Te bevestigen
-De claim "een nieuwe bron sluit je aan in ~5 minuten" komt uit de marketingteksten en staat niet in de officiële documentatie. Laat het team deze doorlooptijd bevestigen.
-:::
 
 **Kunnen we later opschalen?**
 Ja, op elk moment, zonder dat je omgeving offline gaat. Het toevoegen van bronnen, tabellen of omgevingen gebeurt binnen je bestaande licentiegrenzen.
 
-:::info Te bevestigen
-De exacte schaalbaarheid per licentietier (aantal bronnen en omgevingen) en eventuele commerciële voorwaarden zijn owner-input; zie [Prijzen](./prijzen.md).
-:::

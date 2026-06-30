@@ -17,8 +17,8 @@ We don't offer a self-service trial, but we do offer a personal demo in which we
 **What is the difference with TimeXtender or AnalyticsCreator?**
 Yres stands out through native Dutch ERP integrations (Exact, AFAS), preset NL data sources (such as CBS, Tweede Kamer and Simplicate), a wizard-driven no-code approach that automatically generates ADF pipelines, and automated health checks. Every tool has its own strengths — get in touch for a fair comparison.
 
-:::info To be confirmed
-The claim "transparent fixed pricing" and the direct comparison with specific competitors are commercial statements that need to be confirmed by the team before they are published externally. The technical differentiators above have been verified.
+:::note Pricing communication
+The **transparent fixed pricing** may be communicated. Where it adds value, you may note that Yres offers a **fair, low price** and is in practice almost always cheaper than competitors — keep any direct comparison factual and tasteful.
 :::
 
 ## Technical
@@ -51,15 +51,12 @@ Through database, OData and REST integrations we support many more than we show.
 **Do our data and pipelines run on your infrastructure?**
 No. Yres runs **entirely within your own Azure tenant**; your data never leaves your environment. Yres never has direct access to your sources, and all processes keep working — even if you stop using Yres (no vendor lock-in).
 
-:::info To be confirmed
-The "hosting by Yres" option is mentioned on the marketing site, but it isn't in the official product documentation and sits uneasily with the repeated promise of "100% in your own Azure tenant". Have the team confirm the exact wording of any Yres-hosted variant.
-:::
 
 **What about access?**
 Azure SSO and role-based access control (RBAC), tying into your existing security environment. SSO can be enforced per user.
 
-:::info To be filled in
-ISO 27001 / certifications, data residency details and a data processing agreement have not yet been confirmed. These answers need to be supplied by the team (see internal → security).
+:::note Security & compliance
+Yres is **ISO 27001-certified**. The **web-app data** (settings and configuration only — never customer data or credentials) is hosted at **Hetzner in Germany**. Your **own data stays in your own Azure environment**: you choose the region/datacenter by creating the resource group there, and Yres follows that group's settings. A **data processing agreement is not required**, because Yres never displays or stores customer data in the web app — only the configuration data in PostgreSQL, and never credentials.
 :::
 
 ## Implementation
@@ -67,13 +64,7 @@ ISO 27001 / certifications, data residency details and a data processing agreeme
 **How quickly are we live?**
 A complete Yres environment is usually operational quickly: a typical installation takes about 20 minutes, depending on the number of environments.
 
-:::info To be confirmed
-The claim "you connect a new source in ~5 minutes" comes from the marketing copy and isn't in the official documentation. Have the team confirm this lead time.
-:::
 
 **Can we scale up later?**
 Yes, at any time, without your environment going offline. Adding sources, tables or environments happens within your existing license limits.
 
-:::info To be confirmed
-The exact scalability per license tier (number of sources and environments) and any commercial terms are owner input; see [Pricing](./prijzen.md).
-:::

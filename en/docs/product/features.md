@@ -89,8 +89,8 @@ Azure resources are automatically provisioned, scaled and maintained within your
 
 **Automatic scaling** saves costs: via the `AutomaticDatabaseScaling` setting (with `DefaultServiceTier` and `HighServiceTier`), the database scales up during heavy processing and then back down again. That way you only pay for extra capacity when you actually need it.
 
-:::info To be confirmed
-Assigning specific features (changes system, automatic scaling, firewall, site-to-site VPN, local networks via IR) to particular licence tiers is a commercial decision that needs to be confirmed by the owner; the product documentation does not tie these features to a tier. VPN is configured "on request".
+:::note Feature allocation per tier
+Yres does **not actively enforce** feature gating today; the tier split is the intended setup and is enforceable via the **license**. The **web application firewall** is in all tiers; **site-to-site VPN** is set up separately as consultancy (**€150/hour**, as required).
 :::
 
 ## 7. Stay in control of access and usage
@@ -106,9 +106,5 @@ Because everything runs in your own Azure tenant, your data never leaves your en
 - **Your data, your environment** — by default the platform runs entirely in your own Azure tenant.
 - **Fast onboarding** — a typical installation takes around 20 minutes, depending on the number of environments.
 - **A professional way of working** — separate dev, test and production environments (from Advanced onwards; Essentials has a single environment).
-
-:::info To be confirmed
-The option to have us host Yres for you, and the exact onboarding speed per source, are not in the product documentation. The documentation in fact emphasises that everything runs in your own Azure tenant. Have the owner confirm these points before publishing them.
-:::
 
 See [Pricing](../prijzen.md) for what is included in each package.

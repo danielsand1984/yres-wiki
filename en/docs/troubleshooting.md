@@ -132,12 +132,6 @@ a one-time invitation link and is enforced in the database.
 2. Remove or deactivate sources/tables you no longer need, or clean up history.
 3. If you structurally need more, upgrade to a higher tier (more sources/environments).
 
-:::info To be confirmed
-The exact feature gating and limits per tier (and the associated prices) are commercial and cannot be
-verified from the code/PDFs — confirm these with Yres before publication. The *structure* of the tiers
-(Essentials = 2 sources / 1 environment, Advanced = 5 / 2, Ultimate = unlimited) has been verified.
-:::
-
 ## Health checks
 
 For DWH issues, the [Health checks screen](./frontend/admin.md) (route `/admin/healthchecks`,

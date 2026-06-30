@@ -72,6 +72,3 @@ In other words: it's not the Yres company reaching into your systems, but the au
 The Yres platform **never has direct access to the customer's data sources**; the data never leaves the customer's own Azure environment. All configured data flows keep working there — even without Yres.
 :::
 
-:::info To be confirmed
-Some sales materials mention a Yres-hosted option alongside "own Azure tenant". That sits uneasily with the central message that everything runs 100% in the customer's own Azure environment. Have the product owner confirm the exact hosting options and wording before this is communicated externally.
-:::

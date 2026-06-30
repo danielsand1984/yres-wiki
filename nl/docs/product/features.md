@@ -89,8 +89,8 @@ Azure-resources worden automatisch ingericht, geschaald en onderhouden binnen je
 
 **Automatisch schalen** bespaart kosten: via de instelling `AutomaticDatabaseScaling` (met `DefaultServiceTier` en `HighServiceTier`) schaalt de database op tijdens zware verwerking en daarna weer terug. Zo betaal je alleen voor extra capaciteit wanneer je die echt nodig hebt.
 
-:::info Te bevestigen
-Het toewijzen van specifieke features (changes-systeem, automatisch schalen, firewall, site-to-site VPN, lokale netwerken via IR) aan bepaalde licentietiers is een commerciële keuze die door de eigenaar bevestigd moet worden; de productdocumentatie koppelt deze functies niet aan een tier. VPN wordt "op aanvraag" geconfigureerd.
+:::note Feature-toewijzing per tier
+Yres dwingt feature-gating nu **niet actief af**; de tier-indeling is de bedoelde opzet en is via de **licentie** afdwingbaar. De **web application firewall** zit in alle tiers; **site-to-site VPN** richten we los in als consultancy (**€150/uur**, naar wens).
 :::
 
 ## 7. Houd controle over toegang en gebruik
@@ -106,9 +106,5 @@ Omdat alles in jouw eigen Azure-tenant draait, verlaat je data je omgeving niet.
 - **Jouw data, jouw omgeving** — het platform draait standaard volledig in je eigen Azure-tenant.
 - **Snelle onboarding** — een typische installatie duurt ongeveer 20 minuten, afhankelijk van het aantal omgevingen.
 - **Professionele werkwijze** — gescheiden dev-, test- en productie-omgevingen (vanaf Advanced; Essentials heeft één omgeving).
-
-:::info Te bevestigen
-De optie om Yres door ons te laten hosten en de exacte onboardingssnelheid per bron staan niet in de productdocumentatie. De documentatie benadrukt juist dat alles in je eigen Azure-tenant draait. Laat de eigenaar deze punten bevestigen voordat je ze publiceert.
-:::
 
 Zie [Prijzen](../prijzen.md) voor wat per pakket is inbegrepen.

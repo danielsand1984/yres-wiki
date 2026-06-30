@@ -96,8 +96,8 @@ The key rules in brief:
 - All network rules are supported, provided resources can reach each other and the web app.
 - **VPN access** for the web app is available on request; the web app itself also has a firewall to restrict access by location.
 
-:::info To be confirmed
-Whether **site-to-site VPN** and a **web application firewall** are tied to specific license versions is not established in the product documentation. According to the documentation, VPN is configurable "on request". Confirm the exact terms with Plainwater before communicating this as a version-bound feature.
+:::note VPN & web application firewall
+The **web application firewall** is included in **all** tiers. **Site-to-site VPN** is set up **separately** as consultancy (**€150/hour**; the number of hours depends on your exact requirements) — not version-bound.
 :::
 
 ## Scaling
@@ -116,6 +116,3 @@ Installing requires an **invitation link from Plainwater**: tied to a single Mic
 | **Advanced** | 5 | 2 |
 | **Ultimate** | Unlimited | Unlimited |
 
-:::info To be confirmed
-The license **structure** above (number of sources and environments per version) has been verified. Any **prices** and the binding of individual features to a version are commercial terms that must be confirmed by Plainwater and do not follow from the product documentation.
-:::
