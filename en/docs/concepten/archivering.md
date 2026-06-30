@@ -68,8 +68,8 @@ This way you can enable archiving broadly with two settings (which load types, f
 
 Both settings are **read** in the data warehouse code (by `vwArchivingExtractor`), but they are not part of the default seed (`Script.PostDeployment.sql`) and not in the user manual. They are expected to be populated by the webapp (control plane).
 
-:::info To be confirmed
-Who fills in `DefaultArchivingDate` and `DefaultArchivingLoadtypes`, and when, cannot be determined from the data warehouse repository: the values are *read* in the database but not *seeded* there. This presumably happens from the webapp during provisioning or configuration. Confirm the exact origin and the management process before instructing customers to adjust these settings themselves.
+:::note Settings are not seeded automatically
+`DefaultArchivingDate` and `DefaultArchivingLoadtypes` are *read* by `vwArchivingExtractor`, but seeded by neither the DWH deploy nor the webapp provisioning (the backend only updates settings that already exist). Set them explicitly (via the settings or SQL) before archiving runs according to your configuration.
 :::
 
 ## What lands in the Data Lake

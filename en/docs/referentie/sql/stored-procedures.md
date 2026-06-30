@@ -33,7 +33,7 @@ The `LoadManagement` schema contains the core of Yres: the procedures that merge
 - `@TableLoadType (NVARCHAR(MAX), default NULL)`: The load type (e.g. `FULL`, `DELTA`).
 
 :::warning No separate end-dating anymore
-Older documentation states that `spLoadDWH` *also* calls `[LoadManagement].[spUpdateETL_EndDate]`. That second call is **commented out** ("Update ETL Enddate not required anymore"). End-dating of rows now happens inside `spHIS_InsertAndUpdate` itself, in the `@LatestRecord` UPDATE block. So `spLoadDWH` does nothing other than pass through to `spHIS_InsertAndUpdate`.
+`spLoadDWH` does **not** call `[LoadManagement].[spUpdateETL_EndDate]` (anymore): that second call is **commented out** ("Update ETL Enddate not required anymore"). End-dating of rows now happens inside `spHIS_InsertAndUpdate` itself, in the `@LatestRecord` UPDATE block. So `spLoadDWH` does nothing other than pass through to `spHIS_InsertAndUpdate`.
 :::
 
 ### `[LoadManagement].[spHIS_InsertAndUpdate]`
@@ -55,7 +55,7 @@ Older documentation states that `spLoadDWH` *also* calls `[LoadManagement].[spUp
 | `ADDITIONAL` | Pure append; also updates `LatestRecord` | kept |
 
 :::danger Don't confuse OVERWRITE and RELOAD
-Only **`OVERWRITE` deletes history** (truncate, RowId restarts). **`RELOAD` keeps history** (close-then-insert: the old generation is closed off, then the new rows are added). **`FULL` also keeps the full SCD2 history** — only `OVERWRITE` truncates. Older documentation swapped OVERWRITE and RELOAD; that is incorrect.
+Only **`OVERWRITE` deletes history** (truncate, RowId restarts). **`RELOAD` keeps history** (close-then-insert: the old generation is closed off, then the new rows are added). **`FULL` also keeps the full SCD2 history** — only `OVERWRITE` truncates.
 :::
 
 Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — with the literal `OPTIMAL` → `fxGetOptimalPageSize` — and `'retryCount'`, default 3 in the proc). When `fxGetSurrogate(@Target)=1`, surrogate keys are inserted into `LoadManagement.SurrogateKeys`. With a memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`), `spUpdateKeyAndRowHash` runs first. Every micro-step writes a row to `[Monitoring].[LS_Trans]` (e.g. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
@@ -312,10 +312,6 @@ All of the below write to `Config.ProcessLog`. The "message-class" writers (`spW
 - `@message3 (NVARCHAR(4000), default NULL)`
 - `@message4 (NVARCHAR(4000), default NULL)`
 - `@dbRequest (NVARCHAR(MAX), default NULL)`
-
-:::info One `spWriteMessage`, not two
-Older documentation contained two contradictory descriptions of `spWriteMessage` (a 6-param and a 10-param version). The live procedure has the **10-parameter block** above.
-:::
 
 #### `[Config].[spWriteError]`
 

@@ -31,8 +31,8 @@ Rollback and reset are offered in the webapp from the **monitoring screen** (Loa
 
 Behind the scenes the webapp starts an **ADF pipeline** for this (`Rollback` or `Reset`); you can track the progress in the **Job Monitor** at the top right, alongside the other system tasks (loads, metadata refreshes, view persistence).
 
-:::info To be confirmed
-The exact placement of the rollback and reset buttons in the monitoring screen and the precise click sequence belong to the webapp (control plane) and cannot be verified from the data warehouse or ADF repository. The described *behavior* of `spRollback`/`spReset` and the ADF pipelines `Rollback`/`Reset` has been verified against the code. Confirm the screen details before you base exact UI steps on this.
+:::note
+The described *behavior* of `spRollback`/`spReset` and the ADF pipelines `Rollback`/`Reset` has been verified against the code. You find the buttons in the **Monitoring** screen (see the screenshots in [Load management](../frontend/load-management.md)).
 :::
 
 ## Rollback — back to a point in time

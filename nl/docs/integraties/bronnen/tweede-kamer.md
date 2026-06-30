@@ -45,10 +45,6 @@ De Tweede Kamer-feed levert data in JSON via OData v4. Via entiteiten, attribute
 
 Zie de officiële documentatie: [OData API — Open Data Portaal](https://opendata.tweedekamer.nl/documentatie/odata-api).
 
-:::info Te bevestigen
-De Tweede Kamer-bron wordt opgeslagen als brontype `OData`. Voor presets die als `OData` worden opgeslagen, is het exacte deploy-pad naar de ADF linked service (modern builder vs. de oudere `SourceSystemManager`) niet volledig vast te stellen uit de geanalyseerde code. De verwachte input voor de gebruiker (geen credentials, cloud-IR, vaste feed-URL) verandert hierdoor niet.
-:::
-
 ---
 
 **Zie ook:** [Integratiecatalogus](../catalogus.md) · [Alle databron-vereisten](../../referentie/databron-vereisten.md) · [Integraties — overzicht](../overzicht.md)

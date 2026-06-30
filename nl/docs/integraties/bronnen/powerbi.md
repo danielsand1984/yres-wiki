@@ -17,12 +17,10 @@ te halen en die modellen tijdens loads (via de Master pipeline) te **verversen**
 De geregistreerde tenant verschijnt vervolgens op de pagina **PowerBI Models**, waar je
 per Yres-omgeving het juiste model koppelt dat bij een actie wordt aangeroepen.
 
-:::info Te bevestigen
-Het **ingebedde dashboard** in de Yres-webapp (tab *PowerBI Dashboard*) staat los van dit
-brontype. Dat dashboard wordt geconfigureerd met de instellingen `BiDashboardUrl` (de
-embed-URL van een Power BI-rapport) en `BiDashboardHeight` (hoogte), niet via deze
-bronkoppeling. Deze instellingen worden door de webapp beheerd — controleer de exacte
-werkwijze met de eigenaar.
+:::note Ingebed dashboard ≠ dit brontype
+Het **ingebedde dashboard** in de Yres-webapp (admin-tab *PowerBI Dashboard*) staat los van dit
+brontype. Dat dashboard wordt geconfigureerd met de instellingen `BiDashboardUrl` (de embed-URL van een
+Power BI-rapport) en `BiDashboardHeight` (hoogte), niet via deze bronkoppeling.
 :::
 
 ## Verwachte input
@@ -43,10 +41,9 @@ de volgende Power BI-specifieke velden:
   geen linked service aangemaakt; de tenant wordt rechtstreeks via de **Power BI API**
   benaderd. Een self-hosted integration runtime is hier niet nodig.
 
-:::info Te bevestigen
-Of de wizard voor het brontype PowerBI een integration-runtime-keuze tóónt (en zo ja met
-welke standaardwaarde) is afhankelijk van de webapp en niet uit de broncode te herleiden.
-Functioneel is de runtime niet van toepassing omdat er geen ADF-copy plaatsvindt.
+:::note Geen integration-runtime-keuze
+Het PowerBI-bronformulier toont **geen** integration-runtime-keuze (alleen Tenant Id, Client Id en Client
+Secret). Functioneel is de runtime ook niet van toepassing, omdat er geen ADF-copy plaatsvindt.
 :::
 
 ## Vereisten

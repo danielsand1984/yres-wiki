@@ -38,11 +38,10 @@ is.
   **"Allow Azure services and resources to access this server"** aan op de Azure SQL-server, zodat de
   cloud Integration Runtime de database kan bereiken.
 
-:::info Te bevestigen
+:::note Eén connectionstring-secret in de Key Vault
 Yres slaat de inloggegevens niet zelf op: de verbinding wordt als één secret
 **`adf-{bronnaam}-connectionstring`** in de Azure Key Vault van de klant geplaatst en daar door de
-linked service (`type: AzureSqlDatabase`) uit gelezen. De exacte secret-naamgeving en het wegschrijven
-naar Key Vault gebeuren in de (off-limits) webapp/provisioning-laag.
+linked service (`type: AzureSqlDatabase`) uit gelezen.
 :::
 
 ## Gegevens ophalen

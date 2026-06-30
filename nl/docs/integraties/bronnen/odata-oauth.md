@@ -69,11 +69,11 @@ bereikbaar is. Yres schrijft de gekozen IR via `connectVia` naar beide linked se
 - Raadpleeg de API- en OAuth-documentatie van de aanbieder voor de exacte service-root, scope-namen
   en het token-endpoint.
 
-:::info Te bevestigen
+:::tip Gebruik de presetpagina voor die diensten
 Een aantal vaste presets (Microsoft Graph, Dynamics 365, Intune Data Warehouse) gebruikt onder water
-hetzelfde OData-OAuth-mechanisme maar wordt als backend-type `OData` opgeslagen. Of die presets bij
-het uitrollen daadwerkelijk via de OData-OAuth-bouwer lopen, is niet uit de data-plane te bevestigen.
-Voor die diensten gebruik je de betreffende presetpagina in plaats van deze generieke OData-OAuth-bron.
+hetzelfde OData-OAuth-mechanisme maar wordt als backend-type `OData` opgeslagen (en via de standaard
+OData-bouwer uitgerold). Voor die diensten gebruik je de betreffende presetpagina in plaats van deze
+generieke OData-OAuth-bron.
 :::
 
 ## Load types en delta

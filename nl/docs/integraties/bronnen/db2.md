@@ -52,11 +52,10 @@ De labels hieronder zijn exact zoals ze in het formulier staan:
   betreffende database, in plaats van een persoonlijk of admin-account.
 - Een werkende self-hosted IR — zie [Databron koppelen](../../setup/databron-koppelen.md).
 
-:::info Te bevestigen
-Db2 heeft geen eigen backend-builder; de bron wordt aangemaakt via het oudere
-deploy-pad (`SourceSystemManager`), dat één gecombineerde `adf-{bronnaam}-connectionstring`-secret
-wegschrijft. De exacte opbouw van de connectionstring bij provisioning is niet uit de code te
-verifiëren.
+:::note Oudere deploy-route met één connectionstring-secret
+Db2 heeft geen eigen backend-builder; de bron wordt aangemaakt via het oudere deploy-pad
+(`SourceSystemManager`/`AddLinkedService`), dat één gecombineerde secret **`adf-{bronnaam}-connectionstring`**
+in de Key Vault wegschrijft.
 :::
 
 ## Gegevens ophalen

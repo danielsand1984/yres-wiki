@@ -33,8 +33,8 @@ Pas de volgende velden aan en klik op **Update**:
 | **Datumformaat** | Hoe datums in de applicatie worden getoond; dit wordt ook in je sessie opgeslagen. |
 | **Taal** | Interfacetaal: `en`, `nl` of `de`. |
 
-:::info Te bevestigen
-Het **e-mailadres** dat aan je account is gekoppeld, wordt gebruikt voor wachtwoord-herstel en als reply-to bij feedback. Of je dit adres zelf vanuit deze pagina kunt wijzigen (versus via een beheerder/uitnodiging), is niet uit de data-plane te verifiëren — bevestig dit vóór publicatie.
+:::note E-mailadres niet zelf te wijzigen
+Het **e-mailadres** dat aan je account is gekoppeld, wordt gebruikt voor wachtwoord-herstel en als reply-to bij feedback. Je kunt dit adres **niet zelf** op deze pagina wijzigen: het instellingenscherm (`UserSettings`) bevat alleen naam, tijdzone, datumnotatie en taal. Een e-mailwijziging loopt via een beheerder/uitnodiging.
 :::
 
 ### Wachtwoord wijzigen
@@ -69,8 +69,8 @@ Feedback is opgesplitst in drie categorieën:
 - **Feature request** — nieuwe of verbeterde functies aanvragen.
 - **Feedback** — algemene feedback op Yres of op processen.
 
-:::info Te bevestigen
-Het feedback-mailadres **feedback@yres.app** is door de eigenaar opgegeven en komt niet uit de data-plane-code; alleen de feedback-flow (drie categorieën, reply naar je accountadres) is verifieerbaar. Bevestig het exacte adres vóór publicatie.
+:::note Feedback-mailadres
+Feedback uit de drie in-app categorieën gaat naar **feedback@yres.app** (vanaf versie 1.56; daarvoor `Feedback@iris-dwh.nl`), met je accountadres als reply-to.
 :::
 
 ## Wachtwoord vergeten en herstellen

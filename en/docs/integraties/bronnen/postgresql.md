@@ -51,7 +51,7 @@ The credentials are stored by the backend in the customer's Azure Key Vault as a
 following the convention `adf-{Source name}-connectionstring`; the linked service references it. You
 therefore never enter credentials in pipelines or configuration.
 
-:::info To be confirmed
+:::note A single connection-string secret, self-hosted IR
 PostgreSQL uses the older deploy route with a single combined `…-connectionstring` secret. Previously a
 separate cloud variant (`AzurePostgreSql`) also existed, but that mapping is disabled (commented out) in
 the codebase and is no longer used — all PostgreSQL connections run through the single `PostgreSql`

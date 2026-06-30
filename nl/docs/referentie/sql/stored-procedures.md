@@ -33,7 +33,7 @@ Het schema `LoadManagement` bevat de kern van Yres: de procedures die `STAGE` na
 - `@TableLoadType (NVARCHAR(MAX), default NULL)`: Het laadtype (bijv. `FULL`, `DELTA`).
 
 :::warning Geen aparte end-dating meer
-In oudere documentatie staat dat `spLoadDWH` óók `[LoadManagement].[spUpdateETL_EndDate]` aanroept. Die tweede aanroep is **uitgecommentarieerd** ("Update ETL Enddate not required anymore"). Het end-daten van rijen gebeurt nu binnen `spHIS_InsertAndUpdate` zelf, in het `@LatestRecord`-UPDATE-blok. `spLoadDWH` doet dus niets anders dan doorgeven aan `spHIS_InsertAndUpdate`.
+`spLoadDWH` roept `[LoadManagement].[spUpdateETL_EndDate]` **niet** (meer) aan: die tweede aanroep is **uitgecommentarieerd** ("Update ETL Enddate not required anymore"). Het end-daten van rijen gebeurt nu binnen `spHIS_InsertAndUpdate` zelf, in het `@LatestRecord`-UPDATE-blok. `spLoadDWH` doet dus niets anders dan doorgeven aan `spHIS_InsertAndUpdate`.
 :::
 
 ### `[LoadManagement].[spHIS_InsertAndUpdate]`
@@ -55,7 +55,7 @@ In oudere documentatie staat dat `spLoadDWH` óók `[LoadManagement].[spUpdateET
 | `ADDITIONAL` | Puur toevoegen (append); werkt ook `LatestRecord` bij | bewaard |
 
 :::danger OVERWRITE en RELOAD niet verwisselen
-Alleen **`OVERWRITE` verwijdert historie** (truncate, RowId herstart). **`RELOAD` bewaart historie** (close-then-insert: de oude generatie wordt afgesloten, daarna komen de nieuwe rijen erbij). **`FULL` bewaart óók de volledige SCD2-historie** — alleen `OVERWRITE` truncate't. Oudere documentatie heeft OVERWRITE en RELOAD verwisseld; dat is onjuist.
+Alleen **`OVERWRITE` verwijdert historie** (truncate, RowId herstart). **`RELOAD` bewaart historie** (close-then-insert: de oude generatie wordt afgesloten, daarna komen de nieuwe rijen erbij). **`FULL` bewaart óók de volledige SCD2-historie** — alleen `OVERWRITE` truncate't.
 :::
 
 Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — met literal `OPTIMAL` → `fxGetOptimalPageSize` — en `'retryCount'`, default 3 in de proc). Bij `fxGetSurrogate(@Target)=1` worden surrogate keys in `LoadManagement.SurrogateKeys` ingevoegd. Bij een memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`) draait eerst `spUpdateKeyAndRowHash`. Elke micro-stap schrijft een rij naar `[Monitoring].[LS_Trans]` (bijv. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
@@ -312,10 +312,6 @@ Alle hieronder schrijven naar `Config.ProcessLog`. De "message-klasse" schrijver
 - `@message3 (NVARCHAR(4000), default NULL)`
 - `@message4 (NVARCHAR(4000), default NULL)`
 - `@dbRequest (NVARCHAR(MAX), default NULL)`
-
-:::info Eén `spWriteMessage`, niet twee
-Oudere documentatie bevatte twee tegenstrijdige beschrijvingen van `spWriteMessage` (een 6-param- en een 10-param-versie). De live procedure heeft het **10-parameter-blok** hierboven.
-:::
 
 #### `[Config].[spWriteError]`
 

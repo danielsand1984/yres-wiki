@@ -51,7 +51,7 @@ De inloggegevens worden door de backend opgeslagen in de Azure Key Vault van de 
 volgens de conventie `adf-{Bronnaam}-connectionstring`; de gekoppelde service verwijst daarnaar. Je
 voert dus nooit credentials in pipelines of configuratie in.
 
-:::info Te bevestigen
+:::note Eén connectionstring-secret, self-hosted IR
 PostgreSQL gebruikt de oudere deploy-route met één gecombineerde `…-connectionstring`-secret. Eerder
 bestond ook een aparte cloud-variant (`AzurePostgreSql`), maar die mapping is in de codebase
 uitgeschakeld (uitgecommentarieerd) en wordt niet meer gebruikt — alle PostgreSQL-koppelingen lopen via

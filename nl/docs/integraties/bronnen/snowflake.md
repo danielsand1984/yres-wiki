@@ -41,8 +41,8 @@ Daarnaast deel je de bron de algemene bronvelden mee die voor elke bron gelden: 
 - Een bestaande, actieve **virtual warehouse**.
 - De inloggegevens worden niet in Yres opgeslagen. Yres plaatst ze als secrets in de **Azure Key Vault** van de klant onder de namen `adf-{bronnaam}-database`, `adf-{bronnaam}-warehouse`, `adf-{bronnaam}-accountName`, `adf-{bronnaam}-userName`, `adf-{bronnaam}-password` en `adf-{bronnaam}-role`. De linked service verwijst naar deze secrets.
 
-:::info Te bevestigen
-Voor staging gebruikt de connector intern een blob-storagecontainer uit de dev-omgeving. Dit is interne Yres-infrastructuur en vereist geen extra invoer van de klant; controleer dit detail bij twijfel met je Yres-beheerder.
+:::note Interne staging
+Voor staging gebruikt de connector intern een blob-storagecontainer. Dit is interne Yres-infrastructuur en vereist geen extra invoer van de klant.
 :::
 
 ## Gegevens ophalen

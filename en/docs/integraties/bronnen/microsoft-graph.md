@@ -50,16 +50,6 @@ Vault** and are referenced from the linked service. The secrets are written unde
 `adf-{sourcename}-…` (the source name you choose in the wizard becomes the name of the
 linked service as well as the prefix of the Key Vault secrets).
 
-:::info To be confirmed
-The Graph preset is stored in the backend as source type **`OData`**, while the form supplies
-OAuth fields (`client_id`, `token_url`, `grant_type`, `refresh_token`). The corresponding
-ADF templates are `linkedService/ODataoAuth_HTTP.json` and
-`ODataoAuth_REST.json` (both pointing at `https://graph.microsoft.com/v1.0/`). Exactly which
-deploy path processes the OAuth credentials (the OAuth builder versus the general
-OData builder) is handled in the shielded backend and cannot be fully confirmed from the
-data-plane repos.
-:::
-
 ## Prerequisites
 
 1. **Register an app in Microsoft Entra ID (Azure AD).** Microsoft Entra admin center →

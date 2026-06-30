@@ -39,7 +39,7 @@ credentials expiry date, tags), Yres expects the following for OData:
   1.52 onward, the data linked service is built as `RestService` (before that, as `OData`); in
   addition, a separate metadata linked service `{bronnaam}_HTTP` is created.
 
-:::info To be confirmed
+:::tip OAuth feeds and helper sources
 For an OData feed with OAuth authentication, do not use this source but
 [**OData OAuth**](odata-oauth.md). A few helper sources (CBS, Tweede Kamer, Topdesk, Microsoft Graph,
 Dynamics 365) are also stored as type `OData` under the hood, but have their own input fields;

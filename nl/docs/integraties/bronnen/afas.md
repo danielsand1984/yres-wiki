@@ -47,7 +47,7 @@ Key Vault-secret.
    `<token>…</token>`-blob dat je in het veld **API token** plakt.
 4. Noteer je omgevingsnummer voor de **URL** (`https://<omgevingsnummer>.rest.afas.online/profitrestservices`).
 
-:::info Te bevestigen
+:::note Authorization-header
 De exacte vorm van de Authorization-header (bijvoorbeeld een prefix zoals
 `AfasToken <token>`) en eventuele licentie-/abonnementsvereisten voor de App connector
 worden door AFAS bepaald en niet door Yres. Yres stuurt de waarde die je opgeeft als

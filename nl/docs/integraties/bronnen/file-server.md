@@ -31,8 +31,8 @@ In de wizard **Bron toevoegen** vul je eerst de standaardvelden in (bronnaam, ty
 - **Een Windows-/fileshare-account** met leesrechten op het opgegeven pad, geldig vanaf de machine waarop de IR draait.
 - **Netwerktoegang** vanaf de IR-machine naar de share (firewall/SMB).
 
-:::info Te bevestigen
-De Key Vault-secret voor het wachtwoord volgt de naamgeving `adf-{bronnaam}-connectionstring`. Het feitelijke wegschrijven en benoemen van secrets gebeurt in de (buiten scope vallende) webapp/backend; controleer de exacte secretnaam in de Key Vault van de klant indien nodig.
+:::note Key Vault-secret
+Het wachtwoord wordt als secret **`adf-{bronnaam}-connectionstring`** in de Key Vault van de klant geplaatst (de moderne `FileServerSource`-builder).
 :::
 
 ## Gegevens ophalen

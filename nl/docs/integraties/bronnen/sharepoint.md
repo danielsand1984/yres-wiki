@@ -32,7 +32,7 @@ De `postfix` wordt ook in de relatieve dataset-URL's verwerkt (`sites`/`teams`/`
 **Azure AD / Microsoft Entra service principal (app-only).** Je registreert een app, geeft die
 toegang tot de SharePoint-site en levert client ID, client secret en tenant ID aan.
 
-:::info Te bevestigen
+:::note Authenticatie-implementatie
 De linked service wordt in ADF aangemaakt als `HttpServer` met `authenticationType: Anonymous`
 (template `linkedService/Sharepoint.json`); de daadwerkelijke service-principal-authenticatie wordt
 afgehandeld door de metadata- en data-pipelines op basis van de opgeslagen `clientId`, `clientSecret`

@@ -31,8 +31,8 @@ In the **Add source** wizard you first fill in the standard fields (source name,
 - **A Windows / file-share account** with read permissions on the specified path, valid from the machine where the IR runs.
 - **Network access** from the IR machine to the share (firewall/SMB).
 
-:::info To be confirmed
-The Key Vault secret for the password follows the naming pattern `adf-{sourcename}-connectionstring`. The actual writing and naming of secrets happens in the (out-of-scope) webapp/backend; verify the exact secret name in the customer's Key Vault if needed.
+:::note Key Vault secret
+The password is placed as the secret **`adf-{sourcename}-connectionstring`** in the customer's Key Vault (by the modern `FileServerSource` builder).
 :::
 
 ## Retrieving the details

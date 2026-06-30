@@ -17,12 +17,10 @@ during loads (via the Master pipeline).
 The registered tenant then appears on the **PowerBI Models** page, where you link the
 correct model per Yres environment that is invoked by an action.
 
-:::info To be confirmed
-The **embedded dashboard** in the Yres web app (tab *PowerBI Dashboard*) is separate from
-this source type. That dashboard is configured with the settings `BiDashboardUrl` (the
-embed URL of a Power BI report) and `BiDashboardHeight` (height), not through this source
-connection. These settings are managed by the web app — verify the exact procedure with the
-owner.
+:::note Embedded dashboard ≠ this source type
+The **embedded dashboard** in the Yres web app (admin tab *PowerBI Dashboard*) is separate from this
+source type. That dashboard is configured with the settings `BiDashboardUrl` (the embed URL of a Power BI
+report) and `BiDashboardHeight` (height), not through this source connection.
 :::
 
 ## Expected input
@@ -43,10 +41,9 @@ plus the following Power BI-specific fields:
   service is created; the tenant is accessed directly via the **Power BI API**. A
   self-hosted integration runtime is not needed here.
 
-:::info To be confirmed
-Whether the wizard for the PowerBI source type *shows* an integration-runtime choice (and if
-so, with which default value) depends on the web app and cannot be derived from the source
-code. Functionally the runtime does not apply because no ADF copy takes place.
+:::note No integration-runtime choice
+The PowerBI source form shows **no** integration-runtime choice (only Tenant Id, Client Id and Client
+Secret). Functionally the runtime does not apply either, because no ADF copy takes place.
 :::
 
 ## Requirements

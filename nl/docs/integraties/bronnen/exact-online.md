@@ -38,8 +38,8 @@ Vóór het koppelen registreer je je Exact-app(s):
 2. **Client ID + Client secret** — Exact geeft per app een **Client ID** en **Client secret** (de OAuth-credentials). Deze vul je in het Yres-formulier in.
 3. **Redirect-URL** — vul bij elke Exact-app de **redirect-URL** in precies zoals die in de Yres-webapp wordt getoond. De redirect moet exact overeenkomen, anders mislukt de OAuth-autorisatie.
 
-:::info Te bevestigen
-De exacte redirect-URL wordt door de webapp gegenereerd en in het koppelformulier getoond. Neem de waarde over zoals die in de webapp staat — vul geen vaste URL uit deze documentatie in.
+:::tip Neem de redirect-URL uit de webapp over
+De redirect-URL wordt door de webapp gegenereerd (een `…/exactonline/callback`-adres) en in het koppelformulier getoond. Neem de waarde over zoals die in de webapp staat — vul geen vaste URL uit deze documentatie in.
 :::
 
 ## Gegevens ophalen

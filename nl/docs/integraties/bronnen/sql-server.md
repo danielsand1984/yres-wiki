@@ -26,8 +26,8 @@ Bij het aanmaken van de bron (wizard **Bron toevoegen**) vul je naast de algemen
 - **Integration runtime:** standaard de cloud-runtime **`AutoResolveIntegrationRuntime`** wanneer de server publiek bereikbaar is. Staat de server **on-premises of achter een firewall**, kies dan een **self-hosted integration runtime** (`pwccIntegrationRuntimeLinked`); deze moet eerst gepubliceerd zijn.
 - **Geen secrets in de frontend:** je wachtwoord wordt nooit in de webapp opgeslagen. Yres schrijft de gegevens als één Key Vault-secret weg in de Azure Key Vault van je eigen omgeving, onder de naam **`adf-{bronnaam}-connectionstring`**. De ADF linked service (`type: SqlServer`) verwijst naar die secret.
 
-:::info Te bevestigen
-SQL Server heeft (anders dan bijvoorbeeld MySQL, Oracle en Snowflake) geen aparte moderne deploy-builder. De bron wordt via de oudere `SourceSystemManager`-route gepubliceerd, met één gecombineerde `…-connectionstring`-secret in plaats van losse secrets per veld. De exacte secret-opbouw is niet uit de data-plane-repos te verifiëren.
+:::note Oudere deploy-route met één connectionstring-secret
+SQL Server heeft (anders dan bijvoorbeeld MySQL, Oracle en Snowflake) geen aparte moderne deploy-builder. De bron wordt via de oudere `SourceSystemManager`-route (`AddLinkedService`) gepubliceerd, met één gecombineerde secret **`adf-{bronnaam}-connectionstring`** in de Key Vault in plaats van losse secrets per veld.
 :::
 
 ## Gegevens ophalen

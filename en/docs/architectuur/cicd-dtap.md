@@ -105,7 +105,7 @@ The pipelines themselves are environment-agnostic: connection strings and secret
 
 The factory uses a **system-assigned managed identity** that has `get` permissions on the environment's Key Vault.
 
-:::info To be confirmed
+:::note Resource names
 The Key Vault resources are still named `kv-iris-…` in the code (IRIS branding). The exact Key Vault URLs per customer are set at provisioning time; the values shown here are examples from the repo, not customer truth.
 :::
 

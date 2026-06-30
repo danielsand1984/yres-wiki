@@ -38,11 +38,10 @@ reachable.
   **"Allow Azure services and resources to access this server"** option on the Azure SQL server, so the
   cloud Integration Runtime can reach the database.
 
-:::info To be confirmed
+:::note A single connection-string secret in the Key Vault
 Yres does not store the credentials itself: the connection is placed as a single secret
 **`adf-{sourcename}-connectionstring`** in the customer's Azure Key Vault and read from there by the
-linked service (`type: AzureSqlDatabase`). The exact secret naming and the writing to Key Vault
-happen in the (off-limits) webapp/provisioning layer.
+linked service (`type: AzureSqlDatabase`).
 :::
 
 ## Where to find these

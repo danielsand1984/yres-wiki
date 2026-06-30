@@ -38,7 +38,7 @@ is a publicly reachable SaaS API, so a self-hosted integration runtime is not re
   as the `Authorization` header. The secret follows the naming convention `adf-{sourcename}-...`
   (in the supplied template `adf-MONDAY-ClientSecret`).
 
-:::info To be confirmed
+:::tip Token permissions
 The token inherits the permissions of the user under whom it was created in monday.com. Create
 the token under an account with sufficient read access to the boards you want to expose, and
 take into account any expiry date on the token.

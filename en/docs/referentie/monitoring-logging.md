@@ -25,7 +25,7 @@ The logging is easiest to understand alongside the [data flow](../concepten/gege
 You read it back through the **monitoring views** — chiefly **`vwLoads`** (the per-pipeline load timeline) and **`vwMonitor`** (broader: also materialized views and Power BI refreshes).
 
 :::warning `vwLoadMonitor` does not exist
-Older documentation refers to `[Monitoring].[vwLoadMonitor]`. That view is **not deployed** (it only appears in an obsolete `.sqlproj_backup`). Use **`vwLoads`** (pipeline timeline) or **`vwMonitor`** (broader) instead.
+The view `[Monitoring].[vwLoadMonitor]` is **not deployed** (it only appears in an obsolete `.sqlproj_backup`). Use **`vwLoads`** (pipeline timeline) or **`vwMonitor`** (broader) instead.
 :::
 
 ## The central logger: `spWriteLoadStatus`

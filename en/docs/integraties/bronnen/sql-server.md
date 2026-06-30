@@ -26,8 +26,8 @@ When you create the source (the **Add source** wizard), besides the general fiel
 - **Integration runtime:** by default the cloud runtime **`AutoResolveIntegrationRuntime`** when the server is publicly reachable. If the server is **on-premises or behind a firewall**, choose a **self-hosted integration runtime** (`pwccIntegrationRuntimeLinked`); this must be published first.
 - **No secrets in the frontend:** your password is never stored in the web app. Yres writes the details as a single Key Vault secret to the Azure Key Vault of your own environment, under the name **`adf-{bronnaam}-connectionstring`**. The ADF linked service (`type: SqlServer`) references that secret.
 
-:::info To be confirmed
-Unlike, for example, MySQL, Oracle and Snowflake, SQL Server has no separate modern deploy builder. The source is published through the older `SourceSystemManager` route, with one combined `…-connectionstring` secret instead of separate secrets per field. The exact secret layout cannot be verified from the data-plane repos.
+:::note Older deploy route with a single connection-string secret
+Unlike, for example, MySQL, Oracle and Snowflake, SQL Server has no separate modern deploy builder. The source is published through the older `SourceSystemManager` route (`AddLinkedService`), with one combined secret **`adf-{sourcename}-connectionstring`** in the Key Vault instead of separate secrets per field.
 :::
 
 ## Gathering the details

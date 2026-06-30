@@ -31,8 +31,8 @@ Rollback en reset worden in de webapp aangeboden vanuit het **monitoring-scherm*
 
 Achter de schermen start de webapp daarvoor een **ADF-pipeline** (`Rollback` of `Reset`); je ziet de voortgang terug in de **Job Monitor** rechtsboven, samen met de overige systeemtaken (loads, metadata-refreshes, view-persistence).
 
-:::info Te bevestigen
-De exacte plaatsing van de rollback- en reset-knoppen in het monitoring-scherm en de precieze klikvolgorde behoren tot de webapp (control plane) en zijn niet vanuit de datawarehouse- of ADF-repository te verifiëren. De beschreven *werking* van `spRollback`/`spReset` en de ADF-pipelines `Rollback`/`Reset` is wél geverifieerd tegen de code. Bevestig de schermdetails voordat je hier exacte UI-stappen op baseert.
+:::note
+De beschreven *werking* van `spRollback`/`spReset` en de ADF-pipelines `Rollback`/`Reset` is geverifieerd tegen de code. De knoppen vind je in het **Monitoring**-scherm (zie de schermafbeeldingen in [Load management](../frontend/load-management.md)).
 :::
 
 ## Rollback — terug naar een tijdstip

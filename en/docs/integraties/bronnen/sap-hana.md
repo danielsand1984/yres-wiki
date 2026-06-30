@@ -49,11 +49,11 @@ service URL:
 **Integration runtime:** **`AutoResolveIntegrationRuntime`** (cloud) if the OData service is reachable over
 the internet; a self-hosted integration runtime if the service sits behind a firewall.
 
-:::info To be confirmed
-SAP HANA has **no dedicated wizard form and no dedicated linked-service template** in Yres: the connection
-is set up as a generic database type (ODBC route) or as an OData source (XS OData route). Have the exact
-route and the source type to choose confirmed by your Yres contact before you start, and align the
-port/schema with your SAP/HANA administrator.
+:::note No dedicated source type — generic route
+SAP HANA has **no dedicated wizard form and no dedicated linked-service template** in Yres
+(source picker `SourceField.tsx`): the connection is set up as a generic database type (ODBC route) or as
+an OData source (XS OData route). Which route fits depends on how your HANA environment exposes its data;
+align the route, port and schema with your SAP/HANA administrator.
 :::
 
 :::note How Yres stores credentials

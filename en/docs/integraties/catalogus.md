@@ -127,11 +127,10 @@ webapp; for Datasphere the same SAS input is used.
 | File Server | UNC path; self-hosted IR **required** |
 | Azure Data Lake (Gen2) | SAS token (AzureBlobFS) |
 
-:::info To be confirmed
-**Azure Data Lake** and **SAP Datasphere** do have an ADF template (`AzureBlobFS`), but were not
-found in the code as a separate option in the source wizard. It is therefore unconfirmed whether they
-appear in the webapp as standalone **selectable sources**, or whether they are internal Yres
-infrastructure (staging) and connected via the SAP_BDC form respectively.
+:::note Not a separate wizard choice
+**Azure Data Lake** and **SAP Datasphere** do have an ADF template (`AzureBlobFS`), but are **not a
+separate option** in the source wizard (`SourceField.tsx`). Azure Data Lake is internal Yres
+infrastructure (staging/output); SAP Datasphere is connected via the **SAP_BDC** form.
 :::
 
 ## Custom

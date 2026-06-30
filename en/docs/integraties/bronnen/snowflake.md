@@ -41,8 +41,8 @@ In addition, you provide the source with the general source fields that apply to
 - An existing, active **virtual warehouse**.
 - The credentials are not stored in Yres. Yres places them as secrets in the customer's **Azure Key Vault** under the names `adf-{source name}-database`, `adf-{source name}-warehouse`, `adf-{source name}-accountName`, `adf-{source name}-userName`, `adf-{source name}-password` and `adf-{source name}-role`. The linked service references these secrets.
 
-:::info To be confirmed
-For staging, the connector internally uses a blob storage container from the dev environment. This is internal Yres infrastructure and requires no additional input from the customer; if in doubt, check this detail with your Yres administrator.
+:::note Internal staging
+For staging, the connector internally uses a blob storage container. This is internal Yres infrastructure and requires no additional input from the customer.
 :::
 
 ## Obtaining the details

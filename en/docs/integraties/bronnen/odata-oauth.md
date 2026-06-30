@@ -69,11 +69,11 @@ IR via `connectVia` to both linked services.
 - Consult the provider's API and OAuth documentation for the exact service root, scope names, and token
   endpoint.
 
-:::info To be confirmed
+:::tip Use the preset page for those services
 A number of fixed presets (Microsoft Graph, Dynamics 365, Intune Data Warehouse) use the same
-OData-OAuth mechanism under the hood but are stored as backend type `OData`. Whether those presets
-actually run through the OData-OAuth builder on deployment cannot be confirmed from the data plane. For
-those services, use the relevant preset page instead of this generic OData OAuth source.
+OData-OAuth mechanism under the hood but are stored as backend type `OData` (and deployed through the
+standard OData builder). For those services, use the relevant preset page instead of this generic OData
+OAuth source.
 :::
 
 ## Load types and delta

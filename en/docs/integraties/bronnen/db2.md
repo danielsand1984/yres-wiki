@@ -52,10 +52,10 @@ The labels below are exactly as they appear in the form:
   relevant database, rather than a personal or admin account.
 - A working self-hosted IR — see [Connecting a data source](../../setup/databron-koppelen.md).
 
-:::info To be confirmed
-Db2 has no dedicated backend builder; the source is created through the older
-deploy path (`SourceSystemManager`), which writes a single combined `adf-{bronnaam}-connectionstring` secret.
-The exact composition of the connection string at provisioning time cannot be verified from the code.
+:::note Older deploy route with a single connection-string secret
+Db2 has no dedicated backend builder; the source is created through the older deploy path
+(`SourceSystemManager`/`AddLinkedService`), which writes a single combined secret
+**`adf-{sourcename}-connectionstring`** to the Key Vault.
 :::
 
 ## Gathering the details

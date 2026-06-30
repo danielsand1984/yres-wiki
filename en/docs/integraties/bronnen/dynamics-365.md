@@ -40,10 +40,6 @@ Fixed (hidden) parameters: pagination `paginationType=BodyUrl` with `body_url=@o
 - **Permissions on Dynamics CRM/Dataverse** — Assign the app the required API permissions for Dynamics CRM/Dataverse (e.g. `user_impersonation`) with admin consent.
 - **Company and tenant** — Keep the **tenant ID** and the **company name** (Business Central company) at hand; together they determine the automatically built OData URL.
 
-:::info To be confirmed
-This preset is stored in the webapp as backend type **`OData`**, but the form supplies OAuth fields (`client_id`, `token_url`, `grant_type`, `refresh_token`). The default `ODataSource` builder only handles Anonymous/Basic authentication. Whether this source is actually handled at deployment via `ODataOAuthSource` (or an older code path) **cannot be confirmed** from the data-plane repositories. Verify the deploy routing before you build on this.
-:::
-
 ## Load types & delta
 
 Dynamics 365 is exposed as an OData source. Metadata discovery runs through the standard `GetMetaData` pipeline; after that you set the load type and any delta/key columns per table, just like with other OData sources. The OData feed is paginated automatically via `@odata.nextLink`.

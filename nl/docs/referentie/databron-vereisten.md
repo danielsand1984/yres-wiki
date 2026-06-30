@@ -103,9 +103,9 @@ Het Data Lake (`AzureBlobFS`, SAS-authenticatie) is primair Yres' **eigen** stag
 standaard een door de gebruiker toegevoegde bron. Wanneer het als bron wordt gebruikt, volgt het hetzelfde
 **SAS-patroon** als Azure Blob Storage / SAP_BDC.
 
-:::info Te bevestigen
-Of Azure Data Lake een afzonderlijk te kiezen bron is in de bronpicker, is niet vast te stellen uit de
-code: er is wel een `AzureBlobFS`-template maar geen picker-formulier. Bevestig dit met de producteigenaar.
+:::note Geen selecteerbare bron
+Azure Data Lake is **geen** afzonderlijk te kiezen bron in de bronpicker (`SourceField.tsx`): er is wel
+een `AzureBlobFS`-template maar geen picker-keuze. Het is interne Yres-staging-/uitvoeropslag.
 :::
 
 ### SharePoint
@@ -201,10 +201,9 @@ SAP Datasphere heeft **geen eigen formulier**. De template is een `AzureBlobFS` 
 vorm als SAP_BDC. Datasphere wordt dus geconsumeerd als een **AzureBlobFS/SAS-bron**. Zie
 [SAP Datasphere](../integraties/bronnen/sap-datasphere.md).
 
-:::info Te bevestigen
+:::note
 SAP_BDC ("SAP Business Data Cloud") en SAP Datasphere zijn verwante maar **verschillende** SAP-producten.
-Bevestig met de producteigenaar of Datasphere een eigen picker-entry heeft of via het SAP_BDC-formulier
-loopt.
+Datasphere heeft **geen eigen picker-entry**; je koppelt het via het **SAP_BDC-formulier**.
 :::
 
 ## Business-apps / SaaS

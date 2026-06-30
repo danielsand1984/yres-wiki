@@ -49,7 +49,7 @@ credentials, tags) zijn dit de relevante velden voor Mendix:
   of API-key/Basic-auth, afhankelijk van de app-configuratie) en geef die gebruiker/sleutel door bij het
   toevoegen van de bron.
 
-:::info Te bevestigen
+:::note Koppel via OData of RestService
 Mendix is geen apart bron-type in Yres; de koppeling verloopt via de generieke **OData**- of
 **RestService**-bron. Welke van de twee het handigst is, hangt af van hoe je Mendix-app de data
 publiceert (OData-feed of een eigen REST-API). Voor een Mendix-service met OAuth-authenticatie gebruik

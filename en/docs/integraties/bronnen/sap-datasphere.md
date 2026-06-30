@@ -45,8 +45,8 @@ The connection uses the same SAS-based input as the SAP_BDC form (`getFormAddSap
 
 > Note: the values in the bundled `Datasphere.json` (host, endpoint) are **sample/seed data** for the dev factory, not customer-specific configuration. The *shape* of the linked service is what matters, not the host names.
 
-:::info To be confirmed
-**No dedicated input form or backend builder for Datasphere** was found in the code (there is a `Datasphere.json` template, but no `DatasphereSource.php` and no separate item in `CreateSource.tsx`). It is therefore unconfirmed whether SAP Datasphere appears **as a standalone choice** in the "Add source" wizard in the webapp, or whether you connect it **via the SAP_BDC form** (same SAS input). Have the owner confirm this before documenting the exact selection step.
+:::note No dedicated wizard choice — connect via SAP_BDC
+SAP Datasphere is **not a standalone choice** in the "Add source" wizard: there is no Datasphere item in the source picker (`SourceField.tsx` / `CreateSource.tsx`), and no `DatasphereSource.php` (only a `Datasphere.json` template). You therefore connect Datasphere **via the SAP_BDC form** (same SAS input).
 :::
 
 ## Preparing data in SAP Datasphere

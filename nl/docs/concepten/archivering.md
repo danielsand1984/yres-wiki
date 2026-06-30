@@ -68,8 +68,8 @@ Zo activeer je archivering breed met twee instellingen (welke load types, vanaf 
 
 Beide instellingen worden in de datawarehouse-code **gelezen** (door `vwArchivingExtractor`), maar staan niet in de standaard-seed (`Script.PostDeployment.sql`) en niet in de gebruikershandleiding. Ze worden naar verwachting door de webapp (control plane) gevuld.
 
-:::info Te bevestigen
-Wie en wanneer `DefaultArchivingDate` en `DefaultArchivingLoadtypes` worden ingevuld is niet vast te stellen uit de datawarehouse-repository: de waarden worden in de database *gelezen* maar daar niet *geseed*. Vermoedelijk gebeurt dat vanuit de webapp bij provisioning of configuratie. Bevestig de exacte herkomst en het beheerproces voordat je klanten instrueert deze instellingen zelf aan te passen.
+:::note Instellingen worden niet automatisch geseed
+`DefaultArchivingDate` en `DefaultArchivingLoadtypes` worden door `vwArchivingExtractor` *gelezen*, maar door noch de DWH-deploy noch de webapp-provisioning *geseed* (de backend werkt alleen bestaande settings bij). Stel ze daarom expliciet in (via de settings of SQL) voordat archivering volgens jouw configuratie draait.
 :::
 
 ## Wat er in de Data Lake landt

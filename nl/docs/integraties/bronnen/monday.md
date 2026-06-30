@@ -38,7 +38,7 @@ is een publiek bereikbare SaaS-API, dus een self-hosted integration runtime is n
   `Authorization`-header opgehaald. De secret volgt de naamgeving `adf-{bronnaam}-...` (in de
   meegeleverde template `adf-MONDAY-ClientSecret`).
 
-:::info Te bevestigen
+:::tip Token-rechten
 Het token erft de rechten van de gebruiker waarmee het is aangemaakt in monday.com. Maak het
 token aan onder een account met voldoende leesrechten op de borden die u wilt ontsluiten, en
 houd rekening met een eventuele verloopdatum van het token.

@@ -32,7 +32,7 @@ The `postfix` is also incorporated into the relative dataset URLs (`sites`/`team
 **Azure AD / Microsoft Entra service principal (app-only).** You register an app, grant it
 access to the SharePoint site, and provide the client ID, client secret and tenant ID.
 
-:::info To be confirmed
+:::note Authentication implementation
 The linked service is created in ADF as `HttpServer` with `authenticationType: Anonymous`
 (template `linkedService/Sharepoint.json`); the actual service-principal authentication is
 handled by the metadata and data pipelines based on the stored `clientId`, `clientSecret`

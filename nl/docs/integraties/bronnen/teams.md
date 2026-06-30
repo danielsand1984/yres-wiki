@@ -55,15 +55,6 @@ klant en worden vanuit de linked service gerefereerd. De geheimen worden weggesc
 `adf-{bronnaam}-…` (de bronnaam die je in de wizard kiest, wordt de naam van de linked service én de
 prefix van de Key Vault-geheimen).
 
-:::info Te bevestigen
-De Graph-preset wordt in de backend opgeslagen als brontype **`OData`**, terwijl het formulier
-OAuth-velden (`client_id`, `token_url`, `grant_type`, `refresh_token`) aanlevert. De bijbehorende
-ADF-templates zijn `linkedService/ODataoAuth_HTTP.json` en `ODataoAuth_REST.json` (beide gericht op
-`https://graph.microsoft.com/v1.0/`). Welk deploy-pad de OAuth-credentials precies verwerkt (de
-OAuth-builder versus de algemene OData-builder) wordt afgehandeld in de afgeschermde backend en kan
-vanuit de data-plane-repos niet volledig worden bevestigd.
-:::
-
 ## Vereisten (prerequisites)
 
 1. **Registreer een app in Microsoft Entra ID (Azure AD).** Microsoft Entra-beheercentrum →

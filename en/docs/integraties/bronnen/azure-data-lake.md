@@ -10,8 +10,8 @@ description: Connect Azure Data Lake to Yres — connection requirements.
 
 Azure Data Lake Storage Gen2 is an Azure Storage account with **hierarchical namespace** enabled. Within Yres, the Data Lake mainly serves as **storage for (raw) data**: alongside the database, Yres can optionally also land loaded data as **Parquet** in the Data Lake. In doing so, Yres adds the framework columns `RowHash`, `KeyHash` and `EtlDate`, enabling a medallion architecture (bronze/silver/gold).
 
-:::info To be confirmed
-In the current code, the Data Lake is **not a separate, selectable source** in the "Add source" wizard: there is no input form for Azure Data Lake in `CreateSource.tsx`. What does exist is a fixed linked service (`AzureDataLakeStorage.json`, type `AzureBlobFS`) that Yres uses as its **own staging/output storage** — the destination where Yres optionally writes Parquet. Whether the Data Lake is also intended as a user-selectable *source* (like Azure Blob Storage), or is purely internal Yres infrastructure, is for the owner to confirm. Do not document this as a selectable source until this is clear.
+:::note Not a selectable source — internal staging/storage
+The Data Lake is **not a separate, selectable source** in the "Add source" wizard: there is no Azure Data Lake choice in the source picker (`SourceField.tsx` / `CreateSource.tsx`). What does exist is a fixed linked service (`AzureDataLakeStorage.json`, type `AzureBlobFS`) that Yres uses as its **own staging/output storage** — the destination where Yres optionally writes Parquet.
 :::
 
 ## Expected input

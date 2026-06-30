@@ -127,11 +127,10 @@ webapp; voor Datasphere wordt dezelfde SAS-invoer gebruikt.
 | File Server | UNC-pad; self-hosted IR **verplicht** |
 | Azure Data Lake (Gen2) | SAS-token (AzureBlobFS) |
 
-:::info Te bevestigen
-**Azure Data Lake** en **SAP Datasphere** hebben wel een ADF-template (`AzureBlobFS`), maar zijn in de
-code niet als losse keuze in de bron-wizard teruggevonden. Het is daarom onbevestigd of deze in de
-webapp als zelfstandig **selecteerbare bron** verschijnen, of dat ze interne Yres-infrastructuur
-(staging) zijn respectievelijk via het SAP_BDC-formulier worden gekoppeld.
+:::note Geen losse wizard-keuze
+**Azure Data Lake** en **SAP Datasphere** hebben wel een ADF-template (`AzureBlobFS`), maar zijn **geen
+losse keuze** in de bron-wizard (`SourceField.tsx`). Azure Data Lake is interne Yres-infrastructuur
+(staging/uitvoer); SAP Datasphere koppel je via het **SAP_BDC**-formulier.
 :::
 
 ## Custom

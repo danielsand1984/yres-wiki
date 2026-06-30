@@ -54,7 +54,7 @@ Maak een **SAS-token** aan via het storage-account → **Security + networking**
 
 Azure Blob Storage is een **bestandsbron**: Yres slaat geen metadata-stap (`GetMetaData`) over via een databasedictionary, maar leest de structuur uit de bestanden zelf. Je voegt per bestand (of bestandspatroon) een tabel toe en kiest daarbij het gewenste load-type, net als bij andere bronnen.
 
-:::info Te bevestigen
+:::note Bronaccount ≠ interne opslag
 Yres gebruikt intern een vergelijkbaar `AzureBlobFS`/SAS-patroon voor zijn eigen staging- en Data Lake-opslag. Het blob-storage-account dat je hier koppelt is een **door jou gekozen bronaccount** en staat los van die interne infrastructuur. Controleer bij twijfel of je het juiste account/container opgeeft.
 :::
 

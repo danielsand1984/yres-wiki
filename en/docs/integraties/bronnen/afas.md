@@ -47,7 +47,7 @@ Key Vault secret.
    `<token>…</token>` blob that you paste into the **API token** field.
 4. Note your environment number for the **URL** (`https://<environmentnumber>.rest.afas.online/profitrestservices`).
 
-:::info To be confirmed
+:::note Authorization header
 The exact form of the Authorization header (for example a prefix such as
 `AfasToken <token>`) and any license/subscription requirements for the App connector
 are determined by AFAS, not by Yres. Yres sends the value you provide as the

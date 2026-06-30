@@ -45,8 +45,8 @@ De verbinding gebruikt dezelfde SAS-gebaseerde invoer als het SAP_BDC-formulier 
 
 > Let op: de waarden in de meegeleverde `Datasphere.json` (host, endpoint) zijn **voorbeeld-/seeddata** voor de dev-factory, geen klant-specifieke configuratie. De *vorm* van de linked service is leidend, de hostnamen niet.
 
-:::info Te bevestigen
-In de code is **geen eigen invoerformulier of backend-builder voor Datasphere** teruggevonden (er is wel een `Datasphere.json`-template, maar geen `DatasphereSource.php` en geen eigen item in `CreateSource.tsx`). Het is daarom onbevestigd of SAP Datasphere in de webapp **als zelfstandige keuze** in de "Bron toevoegen"-wizard verschijnt, of dat je hem koppelt **via het SAP_BDC-formulier** (zelfde SAS-invoer). Laat de eigenaar dit bevestigen voordat je de exacte keuze-stap documenteert.
+:::note Geen eigen wizard-keuze — koppel via SAP_BDC
+SAP Datasphere is **geen zelfstandige keuze** in de "Bron toevoegen"-wizard: in de bronpicker (`SourceField.tsx` / `CreateSource.tsx`) staat geen Datasphere-item, en er is geen `DatasphereSource.php` (alleen een `Datasphere.json`-template). Je koppelt Datasphere daarom **via het SAP_BDC-formulier** (zelfde SAS-invoer).
 :::
 
 ## Data klaarzetten in SAP Datasphere

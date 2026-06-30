@@ -39,7 +39,7 @@ vervaldatum credentials, tags) verwacht Yres voor OData:
   1.52 wordt de data-linked-service als `RestService` opgebouwd (daarvoor als `OData`); er wordt
   daarnaast een aparte metadata-linked-service `{bronnaam}_HTTP` aangemaakt.
 
-:::info Te bevestigen
+:::tip OAuth-feeds en helper-bronnen
 Voor een OData-feed met OAuth-authenticatie gebruik je niet deze bron maar
 [**OData OAuth**](odata-oauth.md). Enkele helper-bronnen (CBS, Tweede Kamer, Topdesk, Microsoft Graph,
 Dynamics 365) worden onder water ook als type `OData` opgeslagen, maar hebben hun eigen invulvelden;

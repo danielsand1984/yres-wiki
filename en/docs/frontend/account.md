@@ -33,8 +33,8 @@ Adjust the following fields and click **Update**:
 | **Date format** | How dates are shown in the application; this is also stored in your session. |
 | **Language** | Interface language: `en`, `nl` or `de`. |
 
-:::info To be confirmed
-The **email address** linked to your account is used for password recovery and as the reply-to for feedback. Whether you can change this address yourself from this page (versus through an administrator/invitation) cannot be verified from the data plane — confirm this before publishing.
+:::note Email address is not self-editable
+The **email address** linked to your account is used for password recovery and as the reply-to for feedback. You **cannot** change this address yourself on this page: the settings screen (`UserSettings`) only contains name, timezone, date format and language. An email change goes through an administrator/invitation.
 :::
 
 ### Change password
@@ -69,8 +69,8 @@ Feedback is split into three categories:
 - **Feature request** — request new or improved features.
 - **Feedback** — general feedback on Yres or on processes.
 
-:::info To be confirmed
-The feedback email address **feedback@yres.app** was provided by the owner and does not come from the data-plane code; only the feedback flow (three categories, reply to your account address) is verifiable. Confirm the exact address before publishing.
+:::note Feedback email address
+Feedback from the three in-app categories goes to **feedback@yres.app** (from version 1.56; before that `Feedback@iris-dwh.nl`), with your account address as the reply-to.
 :::
 
 ## Forgot and recover password

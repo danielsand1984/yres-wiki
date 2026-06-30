@@ -103,9 +103,9 @@ The Data Lake (`AzureBlobFS`, SAS authentication) is primarily Yres' **own** sta
 by default a user-added source. When it is used as a source, it follows the same
 **SAS pattern** as Azure Blob Storage / SAP_BDC.
 
-:::info To be confirmed
-Whether Azure Data Lake is a separately selectable source in the source picker cannot be determined from the
-code: there is an `AzureBlobFS` template but no picker form. Confirm this with the product owner.
+:::note Not a selectable source
+Azure Data Lake is **not** a separately selectable source in the source picker (`SourceField.tsx`): there
+is an `AzureBlobFS` template but no picker choice. It is internal Yres staging/output storage.
 :::
 
 ### SharePoint
@@ -201,9 +201,9 @@ SAP Datasphere has **no dedicated form**. The template is an `AzureBlobFS` with 
 shape as SAP_BDC. Datasphere is therefore consumed as an **AzureBlobFS/SAS source**. See
 [SAP Datasphere](../integraties/bronnen/sap-datasphere.md).
 
-:::info To be confirmed
+:::note
 SAP_BDC ("SAP Business Data Cloud") and SAP Datasphere are related but **different** SAP products.
-Confirm with the product owner whether Datasphere has its own picker entry or runs through the SAP_BDC form.
+Datasphere has **no picker entry of its own**; you connect it through the **SAP_BDC form**.
 :::
 
 ## Business apps / SaaS

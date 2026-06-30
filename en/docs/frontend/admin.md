@@ -313,9 +313,8 @@ is noted in parentheses).
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Whether users may directly change / delete / configure / edit logs in the database. |
 | `EnvironmentType` | — | DTAP type of this environment (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::info To be confirmed — two code discrepancies
-Two settings behave differently in the current DWH code than the documentation suggests; verify this
-with a Yres admin before you rely on it:
+:::note Two known code discrepancies
+Two settings behave differently in the current DWH code than their name suggests (verified against the code):
 
 - **`DefaultOdsMemOptimized`** is effectively not read by the fallback function `fxGetOptimized` (both
   branches reference the STAGE setting). The per-table column `odsMemOptimized` does work. Whether this is a bug

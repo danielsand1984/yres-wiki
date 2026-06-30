@@ -49,7 +49,7 @@ date, tags), these are the relevant fields for Mendix:
   API key/Basic auth, depending on the app configuration) and provide that user/key when adding the
   source.
 
-:::info To be confirmed
+:::note Connect via OData or RestService
 Mendix is not a separate source type in Yres; the connection goes through the generic **OData** or
 **RestService** source. Which of the two is most convenient depends on how your Mendix app publishes the
 data (an OData feed or its own REST API). For a Mendix service with OAuth authentication, use the

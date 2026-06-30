@@ -54,7 +54,7 @@ Create a **SAS token** via the storage account → **Security + networking** →
 
 Azure Blob Storage is a **file source**: Yres does not skip a metadata step (`GetMetaData`) via a database dictionary, but reads the structure from the files themselves. You add a table per file (or file pattern) and choose the desired load type, just as with other sources.
 
-:::info To be confirmed
+:::note Source account ≠ internal storage
 Internally, Yres uses a similar `AzureBlobFS`/SAS pattern for its own staging and Data Lake storage. The blob storage account you connect here is a **source account of your choosing** and is separate from that internal infrastructure. When in doubt, verify that you are specifying the correct account/container.
 :::
 

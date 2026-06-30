@@ -40,10 +40,6 @@ Vast ingestelde (verborgen) parameters: paginatie `paginationType=BodyUrl` met `
 - **Rechten op Dynamics CRM/Dataverse** — Wijs de app de benodigde API-permissies toe voor Dynamics CRM/Dataverse (bijv. `user_impersonation`) met admin-consent.
 - **Bedrijf en tenant** — Houd de **tenant ID** en de **bedrijfsnaam** (Business Central company) bij de hand; deze bepalen samen de automatisch opgebouwde OData-URL.
 
-:::info Te bevestigen
-Deze preset wordt in de webapp opgeslagen als backend-type **`OData`**, maar het formulier levert OAuth-velden aan (`client_id`, `token_url`, `grant_type`, `refresh_token`). De standaard `ODataSource`-builder verwerkt alleen Anonymous/Basic-authenticatie. Of deze bron bij deployment daadwerkelijk via `ODataOAuthSource` (of een ouder code-pad) wordt afgehandeld, is **niet te bevestigen** vanuit de data-plane-repositories. Verifieer de deploy-routing voordat je hierop bouwt.
-:::
-
 ## Load-types en delta
 
 Dynamics 365 wordt als OData-bron ontsloten. Metadata-discovery verloopt via de standaard `GetMetaData`-pipeline; daarna stel je per tabel het load-type en de eventuele delta-/sleutelkolommen in zoals bij andere OData-bronnen. De OData-feed wordt automatisch gepagineerd via `@odata.nextLink`.

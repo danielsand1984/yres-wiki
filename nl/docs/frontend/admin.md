@@ -313,9 +313,8 @@ staat tussen haakjes vermeld).
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Of gebruikers direct in de database mogen wijzigen / verwijderen / instellen / logs bewerken. |
 | `EnvironmentType` | — | DTAP-type van deze omgeving (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::info Te bevestigen — twee codeafwijkingen
-Twee instellingen gedragen zich in de huidige DWH-code anders dan de documentatie suggereert; controleer dit
-met een Yres-admin vóór je erop vertrouwt:
+:::note Twee bekende code-afwijkingen
+Twee instellingen gedragen zich in de huidige DWH-code anders dan hun naam suggereert (geverifieerd tegen de code):
 
 - **`DefaultOdsMemOptimized`** wordt door de fallback-functie `fxGetOptimized` effectief niet gelezen (beide
   takken verwijzen naar de STAGE-setting). De per-tabel-kolom `odsMemOptimized` werkt wél. Of dit een bug is

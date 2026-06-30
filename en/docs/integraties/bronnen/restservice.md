@@ -51,7 +51,7 @@ The chosen pagination type also determines which dynamic pipelines Yres generate
 - The correct **credentials** for the chosen authentication type (Basic: username + password; OAuth2 client credentials: token endpoint, client ID, client secret, scope and optionally resource). Yres stores these in the customer's Azure Key Vault under `adf-{bronnaam}-…`; the frontend keeps no secrets itself.
 - Any **extra HTTP headers** that the API requires.
 
-:::info To be confirmed
+:::note No metadata step
 REST sources have **no metadata step**: fetching/refreshing metadata is skipped (`hasMetadata()=false`). You therefore configure the data to retrieve directly based on the OpenAPI specification or the known endpoints, not via a metadata dictionary as with database sources.
 :::
 
