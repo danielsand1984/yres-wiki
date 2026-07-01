@@ -68,11 +68,11 @@ Oracle is de enige database die om een **Service name** vraagt in plaats van een
 Server en Azure SQL slaan intern op als DWH-brontype `MSSQL_ADF`.
 :::
 
-:::warning MySQL: maar één delta-kolom
-MySQL is de **enige SQL-bron die geen twee delta-kolommen ondersteunt**. Voor alle andere SQL-bronnen
-(`MSSQL_ADF`, `DB2`, `Sybase`, `PostgreSQL`, `Salesforce`, `OneStream`) kun je twee delta-kolommen
-instellen; voor MySQL gebruik je **één delta-kolom**. De standaard laadtypes
-(FULL/DELTA/OVERWRITE/RELOAD/IMAGE/ADDITIONAL) werken wel gewoon. Zie [MySQL](../integraties/bronnen/mysql.md).
+:::note Twee delta-kolommen: ondersteunde bronnen
+Twee delta-kolommen (komma-gescheiden, zelfde datatype — de hoogste waarde telt) werken op alle bronnen die
+Yres met SQL bevraagt: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake en
+OneStream**. De engine bouwt een ANSI-`COALESCE`-uitdrukking, dus **MySQL is geen uitzondering meer**. Zie
+[Load types → Meerdere deltakolommen](../concepten/load-types.md#meerdere-deltakolommen) en [MySQL](../integraties/bronnen/mysql.md).
 :::
 
 ### SAP HANA / SAP S/4HANA

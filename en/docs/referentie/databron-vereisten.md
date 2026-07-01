@@ -68,11 +68,11 @@ Oracle is the only database that asks for a **Service name** instead of a databa
 Server and Azure SQL are stored internally as DWH source type `MSSQL_ADF`.
 :::
 
-:::warning MySQL: only one delta column
-MySQL is the **only SQL source that does not support two delta columns**. For all other SQL sources
-(`MSSQL_ADF`, `DB2`, `Sybase`, `PostgreSQL`, `Salesforce`, `OneStream`) you can configure two delta columns;
-for MySQL you use **one delta column**. The standard load types
-(FULL/DELTA/OVERWRITE/RELOAD/IMAGE/ADDITIONAL) do work as normal. See [MySQL](../integraties/bronnen/mysql.md).
+:::note Two delta columns: supported sources
+Two delta columns (comma-separated, same data type — the highest value counts) work on every source Yres
+queries with SQL: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake and
+OneStream**. The engine builds an ANSI `COALESCE` expression, so **MySQL is no longer an exception**. See
+[Load types → Multiple delta columns](../concepten/load-types.md#multiple-delta-columns) and [MySQL](../integraties/bronnen/mysql.md).
 :::
 
 ### SAP HANA / SAP S/4HANA

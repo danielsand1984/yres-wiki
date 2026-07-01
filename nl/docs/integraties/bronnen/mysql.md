@@ -45,8 +45,8 @@ Staat de database achter een firewall of on-premises? Dan is een Integration Run
 
 MySQL ondersteunt de standaard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL).
 
-:::warning Eén deltakolom voor MySQL
-Anders dan de overige SQL-bronnen ondersteunt MySQL **slechts één deltakolom**. Twee deltakolommen — die voor de andere SQL-gebaseerde bronnen wél kunnen worden ingesteld — worden voor MySQL **niet** ondersteund. Gebruik bij een delta-load dus precies één deltakolom.
+:::note Twee deltakolommen ondersteund
+MySQL ondersteunt — net als de andere SQL-/databasebronnen — **twee deltakolommen** (komma-gescheiden, zelfde datatype; de hoogste waarde telt). Zie [Load types → Meerdere deltakolommen](../../concepten/load-types.md#meerdere-deltakolommen).
 :::
 
 > Officiële documentatie: [MySQL Connector/J — Connection URL Syntax](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-jdbc-url-format.html)

@@ -45,8 +45,8 @@ Is the database behind a firewall or on-premises? Then an Integration Runtime is
 
 MySQL supports the standard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL).
 
-:::warning One delta column for MySQL
-Unlike the other SQL sources, MySQL supports **only one delta column**. Two delta columns — which can be configured for the other SQL-based sources — are **not** supported for MySQL. So for a delta load, use exactly one delta column.
+:::note Two delta columns supported
+MySQL supports — like the other SQL/database sources — **two delta columns** (comma-separated, same data type; the highest value counts). See [Load types → Multiple delta columns](../../concepten/load-types.md#multiple-delta-columns).
 :::
 
 > Official documentation: [MySQL Connector/J — Connection URL Syntax](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-jdbc-url-format.html)

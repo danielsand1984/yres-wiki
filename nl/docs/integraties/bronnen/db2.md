@@ -70,8 +70,8 @@ Deze waarden komen van je databasebeheerder (DBA) of uit de bestaande JDBC/ODBC-
 
 ## Load types en delta
 
-Db2 hoort tot de SQL-gebaseerde bronnen en ondersteunt **twee delta-kolommen** (dit in tegenstelling
-tot MySQL, dat slechts één delta-kolom toelaat). De standaard load types (FULL, DELTA, DELTAIMAGE,
+Db2 hoort tot de SQL-gebaseerde bronnen en ondersteunt **twee delta-kolommen** (komma-gescheiden, zelfde
+datatype; de hoogste telt). De standaard load types (FULL, DELTA, DELTAIMAGE,
 IMAGE, OVERWRITE, RELOAD, ADDITIONAL) zijn beschikbaar. Zie [Load types](../../concepten/load-types.md)
 voor de werking per type.
 

@@ -70,8 +70,8 @@ These values come from your database administrator (DBA) or from the existing JD
 
 ## Load types and delta
 
-Db2 belongs to the SQL-based sources and supports **two delta columns** (unlike MySQL, which allows
-only one delta column). The standard load types (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD,
+Db2 belongs to the SQL-based sources and supports **two delta columns** (comma-separated, same data type;
+the highest counts). The standard load types (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD,
 ADDITIONAL) are available. See [Load types](../../concepten/load-types.md) for how each type works.
 
 > Official documentation: [IBM Db2 — URL format for the JDBC driver](https://www.ibm.com/docs/en/db2/12.1.0?topic=cdsudidsdjs-url-format-data-server-driver-jdbc-sqlj-type-4-connectivity)

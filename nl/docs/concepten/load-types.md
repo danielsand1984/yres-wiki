@@ -100,6 +100,46 @@ Gebruik ADDITIONAL voor append-only bronnen zoals logs of events.
 De engine ondersteunt alle zeven types. In de webapp biedt het overschrijven van het load type per run alleen **FULL, IMAGE, OVERWRITE en RELOAD** aan — dat is een UI-beperking, geen beperking van de engine.
 :::
 
+## Meerdere deltakolommen
+
+Voor incrementele loads (`DELTA`, `DELTAIMAGE` en `ADDITIONAL`) volstaat meestal één wijzigingskolom. Soms legt een bron "voor het laatst gewijzigd" echter over **twee** kolommen vast — bijvoorbeeld een `CreatedDate` die alleen bij het invoegen wordt gezet naast een `ModifiedDate` die alleen bij een wijziging wordt gezet, of twee losse audit-timestampkolommen. Met één deltakolom zou je dan de records missen waarvan de verandering alleen in de andere kolom terechtkomt. Daarom kun je in Yres een **tweede** deltakolom opgeven.
+
+Je stelt dit in stap 4 (**Load type**) van de wizard *Add table* in. Naast het veld **Delta column** verschijnt dan **Additional delta column**. Dat tweede veld:
+
+- toont **alleen kolommen met hetzelfde datatype** als de eerste deltakolom (en alleen kolommen die je in de stap *Columns* hebt aangevinkt);
+- is **optioneel** — kies *No addition delta column* om het over te slaan;
+- is **uitgeschakeld** wanneer er geen enkele kolom van hetzelfde datatype beschikbaar is (dan kun je alleen één deltakolom kiezen).
+
+De webapp bewaart beide kolommen samen, **komma-gescheiden met de eerste kolom vooraan**, in `LoadManagement.UsedTables.DeltaColumn` (bijvoorbeeld `ModifiedDate, CreatedDate`).
+
+### Hoe de engine twee kolommen combineert
+
+Bij het bouwen van het bron-filter neemt de engine (`LoadManagement.fxExtractor`) niet één kolom, maar de **hoogste van de twee** — een NULL-veilige "greatest":
+
+```sql
+WHERE
+  CASE WHEN COALESCE(col1, col2) >= COALESCE(col2, col1)
+       THEN COALESCE(col1, col2)
+       ELSE COALESCE(col2, col1)
+  END >= <watermark>
+```
+
+De gevolgen:
+
+- Een rij valt binnen de delta zodra **één van beide** kolommen voorbij het watermark is gekomen. Verandert alleen `CreatedDate` óf alleen `ModifiedDate`, dan wordt de rij toch opgehaald.
+- De vergelijking is **NULL-veilig**: staat één van de twee kolommen op `NULL`, dan telt de andere. Alleen als *beide* `NULL` zijn, valt de rij buiten de delta.
+- Het watermark (`LoadManagement.UsedTables.LatestRecord`) schuift daarna mee met de hoogste waargenomen deltawaarde, net als bij een enkele deltakolom, zodat de volgende run vanaf daar verdergaat.
+
+### Voorwaarden
+
+- **Maximaal twee** deltakolommen.
+- Beide kolommen moeten **hetzelfde datatype** hebben — de webapp toont bij *Additional delta column* alleen kolommen van hetzelfde type als de eerste.
+- Twee deltakolommen werken op alle bronnen die Yres met SQL bevraagt: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake en OneStream**. De engine bouwt een ANSI-`COALESCE`-uitdrukking, dus dit geldt óók voor MySQL. Zie [Databron-vereisten](../referentie/databron-vereisten.md#databases-directe-verbinding).
+
+:::tip Voorbeeld
+Een tabel `Orders` stempelt `CreatedDate` bij het aanmaken en `ModifiedDate` bij elke latere wijziging. Een nieuwe order krijgt wél een `CreatedDate`, maar (nog) geen `ModifiedDate`; een bijgewerkte order krijgt een nieuwe `ModifiedDate`. Met **beide** kolommen als deltakolom vangt de load in één keer zowel nieuwe als gewijzigde orders op — een filter op alleen `ModifiedDate` zou de nog niet gewijzigde nieuwe orders missen.
+:::
+
 ## Hoe Yres wijzigingen detecteert (hashing)
 
 Yres bepaalt "nieuw / gewijzigd / ongewijzigd" niet kolom-voor-kolom, maar met twee SHA2_512-hashes die als **persisted computed columns op de STAGE-tabel** worden berekend:
@@ -132,7 +172,7 @@ In de stap **Load type** kies je een van de zeven types. De velden **Delta colum
 
 - De deltakolom komt uit de in stap 3 geselecteerde kolommen (`Loadmanagement.Dictionary`).
 - Voor brontype `SAP_BDC` wordt de deltakolom vast op `ETL_DATE` gezet.
-- Een **tweede** deltakolom is optioneel en moet hetzelfde datatype hebben als de eerste. Twee deltakolommen worden ondersteund voor SQL-bronnen, **behalve MySQL** (daar is slechts één deltakolom mogelijk).
+- Een **tweede** deltakolom is optioneel en moet hetzelfde datatype hebben als de eerste. Twee deltakolommen worden ondersteund voor alle SQL-/databasebronnen (SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake, OneStream). Zie [Meerdere deltakolommen](#meerdere-deltakolommen) voor hoe de engine ze combineert.
 
 ### Stap 5 — Sleutelkolommen (key columns)
 
@@ -144,7 +184,7 @@ Sleutelkolommen identificeren een rij uniek en bepalen de `KeyHash`. Je hebt dri
 
 ## Gerelateerde instellingen
 
-- **Key columns** — identificeren records uniek; bepalen de `KeyHash`. Voor SQL-bronnen (behalve MySQL) zijn twee deltakolommen mogelijk (komma-gescheiden in `LoadManagement.UsedTables.deltaColumn`, zelfde datatype — de hoogste waarde telt).
+- **Key columns** — identificeren records uniek; bepalen de `KeyHash`. Voor alle SQL-/databasebronnen zijn twee deltakolommen mogelijk (komma-gescheiden in `LoadManagement.UsedTables.deltaColumn`, zelfde datatype — de hoogste waarde telt).
 - **Staging (`DefaultKeepStage`)** — of de STAGE-tabel na verwerking wordt getruncate of bewaard. De engine leest dit per tabel (`keepStage`), niet rechtstreeks uit de globale instelling.
 - **Surrogate keys (`DefaultSurrogate`)** — automatisch gegenereerde sleutels, opgeslagen in `[LoadManagement].[SurrogateKeys]`. Per tabel te schakelen via `fxGetSurrogate(@Target)`.
 - **Pagination (`UsePagination` / `PageSize`)** — grote datasets in pagina's verwerken bij de STAGE→HIS-merge.

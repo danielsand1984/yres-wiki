@@ -100,6 +100,46 @@ Use ADDITIONAL for append-only sources such as logs or events.
 The engine supports all seven types. In the webapp, overriding the load type per run only offers **FULL, IMAGE, OVERWRITE and RELOAD** — that is a UI limitation, not a limitation of the engine.
 :::
 
+## Multiple delta columns
+
+For incremental loads (`DELTA`, `DELTAIMAGE` and `ADDITIONAL`) a single change column is usually enough. Sometimes, though, a source records "last changed" across **two** columns — for example a `CreatedDate` that is only set on insert alongside a `ModifiedDate` that is only set on change, or two separate audit-timestamp columns. With a single delta column you would then miss the records whose change lands only in the other column. That is why Yres lets you specify a **second** delta column.
+
+You set this in step 4 (**Load type**) of the *Add table* wizard. Next to the **Delta column** field, an **Additional delta column** field appears. That second field:
+
+- only lists **columns with the same data type** as the first delta column (and only columns you ticked in the *Columns* step);
+- is **optional** — pick *No addition delta column* to skip it;
+- is **disabled** when no column of the same data type is available (then you can pick only one delta column).
+
+The webapp stores both columns together, **comma-separated with the first column first**, in `LoadManagement.UsedTables.DeltaColumn` (for example `ModifiedDate, CreatedDate`).
+
+### How the engine combines two columns
+
+When building the source filter, the engine (`LoadManagement.fxExtractor`) uses not one column but the **greater of the two** — a NULL-safe "greatest":
+
+```sql
+WHERE
+  CASE WHEN COALESCE(col1, col2) >= COALESCE(col2, col1)
+       THEN COALESCE(col1, col2)
+       ELSE COALESCE(col2, col1)
+  END >= <watermark>
+```
+
+The consequences:
+
+- A row falls within the delta as soon as **either** column has moved past the watermark. If only `CreatedDate` *or* only `ModifiedDate` changes, the row is still picked up.
+- The comparison is **NULL-safe**: if one of the two columns is `NULL`, the other counts. Only when *both* are `NULL` does the row fall outside the delta.
+- The watermark (`LoadManagement.UsedTables.LatestRecord`) then advances with the highest observed delta value, just as with a single delta column, so the next run continues from there.
+
+### Conditions
+
+- **At most two** delta columns.
+- Both columns must have the **same data type** — for *Additional delta column* the webapp only shows columns of the same type as the first.
+- Two delta columns work on every source Yres queries with SQL: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake and OneStream**. The engine builds an ANSI `COALESCE` expression, so this includes MySQL. See [Data source requirements](../referentie/databron-vereisten.md#databases-direct-connection).
+
+:::tip Example
+A table `Orders` stamps `CreatedDate` on creation and `ModifiedDate` on every later change. A new order does get a `CreatedDate` but (not yet) a `ModifiedDate`; an updated order gets a new `ModifiedDate`. With **both** columns as delta column the load picks up new *and* changed orders in one pass — a filter on `ModifiedDate` alone would miss the new, not-yet-changed orders.
+:::
+
 ## How Yres detects changes (hashing)
 
 Yres determines "new / changed / unchanged" not column by column, but with two SHA2_512 hashes computed as **persisted computed columns on the STAGE table**:
@@ -132,7 +172,7 @@ In the **Load type** step you choose one of the seven types. The **Delta column*
 
 - The delta column comes from the columns selected in step 3 (`Loadmanagement.Dictionary`).
 - For source type `SAP_BDC` the delta column is fixed to `ETL_DATE`.
-- A **second** delta column is optional and must have the same data type as the first. Two delta columns are supported for SQL sources, **except MySQL** (there only one delta column is possible).
+- A **second** delta column is optional and must have the same data type as the first. Two delta columns are supported for all SQL/database sources (SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake, OneStream). See [Multiple delta columns](#multiple-delta-columns) for how the engine combines them.
 
 ### Step 5 — Key columns
 
@@ -144,7 +184,7 @@ Key columns uniquely identify a row and determine the `KeyHash`. You have three 
 
 ## Related settings
 
-- **Key columns** — identify records uniquely; determine the `KeyHash`. For SQL sources (except MySQL), two delta columns are possible (comma-separated in `LoadManagement.UsedTables.deltaColumn`, same data type — the highest value counts).
+- **Key columns** — identify records uniquely; determine the `KeyHash`. For all SQL/database sources, two delta columns are possible (comma-separated in `LoadManagement.UsedTables.deltaColumn`, same data type — the highest value counts).
 - **Staging (`DefaultKeepStage`)** — whether the STAGE table is truncated or kept after processing. The engine reads this per table (`keepStage`), not directly from the global setting.
 - **Surrogate keys (`DefaultSurrogate`)** — automatically generated keys, stored in `[LoadManagement].[SurrogateKeys]`. Toggled per table via `fxGetSurrogate(@Target)`.
 - **Pagination (`UsePagination` / `PageSize`)** — process large datasets in pages during the STAGE→HIS merge.
