@@ -42,7 +42,7 @@ The **source systems / environments** split per package (2 / 1 · 5 / 2 · unlim
 Yres does **not actively enforce** feature gating at this time; the allocation above is the intended split and can be enforced via the **license**. Two specifics:
 
 - The **web application firewall** is included in **all** packages.
-- **Site-to-site VPN** is set up **separately** as consultancy (**€150/hour**; the number of hours depends on your requirements) — so it is not package-bound.
+- **Site-to-site VPN** is available at an **additional cost**; the exact price depends on your requirements — so it is not package-bound.
 :::
 
 
@@ -55,7 +55,7 @@ For small teams and starting environments. One environment, a maximum of two sou
 The most chosen package. In addition to a second environment — so you can safely keep developing on `dev` without touching existing dashboards in production — you get access to the **changes system**, **automatic scaling** of databases and the **web application firewall**.
 
 ### Ultimate
-For large, complex environments: an unlimited number of source systems and environments, plus the option of a **site-to-site VPN** for isolated networks.
+For large, complex environments: an unlimited number of source systems and environments, plus the option of a **site-to-site VPN** (at an additional cost) for isolated networks.
 
 ## Frequently asked pricing questions
 

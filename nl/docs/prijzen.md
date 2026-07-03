@@ -42,7 +42,7 @@ De verdeling **bronsystemen / omgevingen** per pakket (2 / 1 · 5 / 2 · onbeper
 Yres dwingt feature-gating op dit moment **niet actief af**; de toewijzing hierboven is de bedoelde indeling en kan via de **licentie** worden afgedwongen. Twee bijzonderheden:
 
 - De **web application firewall** zit in **alle** pakketten.
-- **Site-to-site VPN** richten we **los** in als consultancy (**€150/uur**; het aantal uren hangt af van je wensen) — dus niet pakketgebonden.
+- **Site-to-site VPN** is mogelijk tegen een **meerprijs**; de exacte prijs hangt af van je wensen — dus niet pakketgebonden.
 :::
 
 
@@ -55,7 +55,7 @@ Voor kleine teams en opstartende omgevingen. Eén omgeving, maximaal twee bronsy
 Het meest gekozen pakket. Naast een tweede omgeving — zodat je veilig kunt doorontwikkelen op `dev` zonder bestaande dashboards op productie te raken — krijg je toegang tot het **changes-systeem**, **automatisch schalen** van databases en de **web application firewall**.
 
 ### Ultimate
-Voor grote, complexe omgevingen: onbeperkt aantal bronsystemen en omgevingen, plus de mogelijkheid tot een **site-to-site VPN** voor afgeschermde netwerken.
+Voor grote, complexe omgevingen: onbeperkt aantal bronsystemen en omgevingen, plus de mogelijkheid tot een **site-to-site VPN** (tegen meerprijs) voor afgeschermde netwerken.
 
 ## Veelgestelde prijsvragen
 

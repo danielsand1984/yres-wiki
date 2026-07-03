@@ -97,7 +97,7 @@ Belangrijkste regels in het kort:
 - **VPN-toegang** voor de webapp is op aanvraag mogelijk; de webapp heeft zelf ook een firewall om toegang per locatie te beperken.
 
 :::note VPN & web application firewall
-De **web application firewall** zit in **alle** tiers. **Site-to-site VPN** richten we **los** in als consultancy (**€150/uur**; het aantal uren hangt af van je exacte wensen) — niet versie-gebonden.
+De **web application firewall** zit in **alle** tiers. **Site-to-site VPN** is mogelijk tegen een **meerprijs**; de exacte prijs hangt af van je wensen — niet versie-gebonden.
 :::
 
 ## Schalen

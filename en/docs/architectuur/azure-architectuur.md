@@ -97,7 +97,7 @@ The key rules in brief:
 - **VPN access** for the web app is available on request; the web app itself also has a firewall to restrict access by location.
 
 :::note VPN & web application firewall
-The **web application firewall** is included in **all** tiers. **Site-to-site VPN** is set up **separately** as consultancy (**€150/hour**; the number of hours depends on your exact requirements) — not version-bound.
+The **web application firewall** is included in **all** tiers. **Site-to-site VPN** is available at an **additional cost**; the exact price depends on your requirements — not version-bound.
 :::
 
 ## Scaling

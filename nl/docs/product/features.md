@@ -90,7 +90,7 @@ Azure-resources worden automatisch ingericht, geschaald en onderhouden binnen je
 **Automatisch schalen** bespaart kosten: via de instelling `AutomaticDatabaseScaling` (met `DefaultServiceTier` en `HighServiceTier`) schaalt de database op tijdens zware verwerking en daarna weer terug. Zo betaal je alleen voor extra capaciteit wanneer je die echt nodig hebt.
 
 :::note Feature-toewijzing per tier
-Yres dwingt feature-gating nu **niet actief af**; de tier-indeling is de bedoelde opzet en is via de **licentie** afdwingbaar. De **web application firewall** zit in alle tiers; **site-to-site VPN** richten we los in als consultancy (**€150/uur**, naar wens).
+Yres dwingt feature-gating nu **niet actief af**; de tier-indeling is de bedoelde opzet en is via de **licentie** afdwingbaar. De **web application firewall** zit in alle tiers; **site-to-site VPN** is mogelijk tegen een **meerprijs**, afhankelijk van de exacte wensen.
 :::
 
 ## 7. Houd controle over toegang en gebruik

@@ -90,7 +90,7 @@ Azure resources are automatically provisioned, scaled and maintained within your
 **Automatic scaling** saves costs: via the `AutomaticDatabaseScaling` setting (with `DefaultServiceTier` and `HighServiceTier`), the database scales up during heavy processing and then back down again. That way you only pay for extra capacity when you actually need it.
 
 :::note Feature allocation per tier
-Yres does **not actively enforce** feature gating today; the tier split is the intended setup and is enforceable via the **license**. The **web application firewall** is in all tiers; **site-to-site VPN** is set up separately as consultancy (**€150/hour**, as required).
+Yres does **not actively enforce** feature gating today; the tier split is the intended setup and is enforceable via the **license**. The **web application firewall** is in all tiers; **site-to-site VPN** is available at an **additional cost**, depending on your exact requirements.
 :::
 
 ## 7. Stay in control of access and usage
