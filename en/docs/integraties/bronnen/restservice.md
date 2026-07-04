@@ -45,12 +45,69 @@ The chosen pagination type also determines which dynamic pipelines Yres generate
 
 ## How Yres builds the request URL
 
-The **Base URL** is stored in the customer's Key Vault as `adf-{bronnaam}-http-url`. On every run the pipeline reads this secret and Yres builds the complete request URL itself from the Base URL and the endpoint:
+Yres builds the complete request URL **itself, inside the pipeline** — the connector does no URI resolution of its own. That avoids the well-known pitfalls of relative URLs (where .NET would discard the Base URL's path). You supply two things; Yres combines them on every run.
 
-- **Query parameters in the Base URL are preserved** and merged with the endpoint's and pagination's query parameters. Example: Base URL `https://api.example.com/v1?key=123` + endpoint `/cars?json=full` → `https://api.example.com/v1/cars?key=123&json=full`.
-- An endpoint starting with `/` (or without a separator, such as `cars`) is appended to the Base URL's path as a **path**.
-- An endpoint starting with `?` or `&`, or a bare `name=value`, is added as a **query parameter**.
-- The pagination pipelines (Offset / Paging / OffsetPage) append their page parameters to the same query string.
+### What you enter
+
+| Input | Where | What it is |
+|---|---|---|
+| **Base URL** | Once, on the **source** (step 1 of the wizard) | The root of the API. Stored in the Key Vault as `adf-{bronnaam}-http-url`. May already contain a query string itself (e.g. a fixed `?api-version=2.0`). |
+| **Endpoint** | Per **table** (the *Endpoint* field) | The path and/or query of that specific endpoint. This field decides whether Yres appends a path or a query. |
+
+On every run the pipeline reads the `http-url` secret, splits it on the first `?` into a **base path** and a **base query**, parses your endpoint, and joins everything into one URL.
+
+### The rules
+
+Yres decides purely from how you write the **Endpoint** field:
+
+- **Empty** → only the Base URL is used.
+- Starts with `/`, or a bare name such as `cars` or `cars/active` → appended as a **path** to the base path.
+- Starts with `?` or `&`, or a bare `name=value` (contains `=` and no `/`) → added as a **query**.
+- Contains both a path and a `?` → everything before the `?` is path, everything after is query.
+
+Further details that shape the behaviour:
+
+- **Query parameters from the Base URL are always preserved** and come before the endpoint and pagination query.
+- A **trailing `/`** on the Base URL is removed only when a path is appended; without a path it stays.
+- A `=` **inside a path segment** (e.g. `/path/a=b`) simply stays part of the path — the `=` rule only applies when the endpoint has no `/`.
+- Yres does **not de-duplicate query parameters**: if `key=` appears in both the Base URL and the endpoint, both end up in the URL (`?key=1&key=2`). So set a parameter in one place only.
+
+### Examples
+
+Assuming the **Base URL** is stored as the `http-url` secret:
+
+| Base URL (secret) | Endpoint (per table) | Resulting request URL |
+|---|---|---|
+| `https://api.example.com/v1` | `/customers` | `https://api.example.com/v1/customers` |
+| `https://api.example.com/v1` | `customers` | `https://api.example.com/v1/customers` |
+| `https://api.example.com/v1` | `customers/active` | `https://api.example.com/v1/customers/active` |
+| `https://api.example.com/v1` | `?$top=100` | `https://api.example.com/v1?$top=100` |
+| `https://api.example.com/v1` | `&$top=100` | `https://api.example.com/v1?$top=100` |
+| `https://api.example.com/v1` | `active=true` | `https://api.example.com/v1?active=true` |
+| `https://api.example.com/v1/` | `/cars` | `https://api.example.com/v1/cars` |
+| `https://api.example.com/v1/` | *(empty)* | `https://api.example.com/v1/` |
+| `https://api.example.com/v1` | `/path/a=b` | `https://api.example.com/v1/path/a=b` |
+
+More complex combinations, where the Base URL itself already carries a fixed query:
+
+| Base URL (secret) | Endpoint (per table) | Resulting request URL |
+|---|---|---|
+| `https://api.example.com/v1?api-version=2.0` | `/orders?status=open` | `https://api.example.com/v1/orders?api-version=2.0&status=open` |
+| `https://api.example.com/v1?key=abc` | `cars?type=ev&year=2024` | `https://api.example.com/v1/cars?key=abc&type=ev&year=2024` |
+| `https://api.example.com/v1?key=abc` | *(empty)* | `https://api.example.com/v1?key=abc` |
+| `https://api.example.com/v1?key=abc` | `&$select=id,name` | `https://api.example.com/v1?key=abc&$select=id,name` |
+
+### Pagination
+
+For any pagination type other than *No pagination*, the matching pipeline appends the page parameters to the end of that same query string, once per page. The names come from the **Offset Object** and **Limit Object** fields you fill in on the source; `pageSize` is the load setting. Assuming Base URL `https://api.example.com/v1?key=abc`, endpoint `/orders` and `pageSize = 500`:
+
+| Type | Fields | Page 1 | Page 2 | … |
+|---|---|---|---|---|
+| **Offset** | Offset Object `offset`, Limit Object `limit` | `…/orders?key=abc&offset=0&limit=500` | `…&offset=500&limit=500` | offset increments by `pageSize` |
+| **OffsetPage** | Offset Object `page`, Limit Object `limit` | `…/orders?key=abc&page=0&limit=500` | `…&page=1&limit=500` | page increments by 1, `limit` stays `pageSize` |
+| **Paging** | Offset Object `page` | `…/orders?key=abc&page=1` | `…&page=2` | page increments by 1, no limit |
+
+The loop stops as soon as a page returns no more rows. **BodyUrl** and **RFC5988** use no offset/limit fields: they follow the next-page link from the response body and the `Link` header respectively, starting from the URL built above.
 
 ## Requirements
 

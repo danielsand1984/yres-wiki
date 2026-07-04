@@ -45,12 +45,69 @@ Het gekozen paginatietype bepaalt ook welke dynamische pipelines Yres genereert 
 
 ## Hoe Yres de request-URL opbouwt
 
-De **Base URL** wordt opgeslagen in de Key Vault van de klant als `adf-{bronnaam}-http-url`. Bij elke run leest de pipeline dit secret en bouwt Yres zelf de volledige request-URL op uit de Base URL en het endpoint:
+Yres bouwt de volledige request-URL **zelf op in de pipeline** — de connector doet geen eigen URI-resolutie. Dat voorkomt de bekende valkuilen van relatieve URL's (waarbij .NET het pad van de Base URL zou weggooien). Je levert twee dingen aan; Yres combineert ze bij elke run.
 
-- **Queryparameters in de Base URL blijven behouden** en worden samengevoegd met de queryparameters van het endpoint en de paginatie. Voorbeeld: Base URL `https://api.example.com/v1?key=123` + endpoint `/cars?json=full` → `https://api.example.com/v1/cars?key=123&json=full`.
-- Een endpoint dat met `/` begint (of zonder scheidingsteken, zoals `cars`) wordt als **pad** achter het pad van de Base URL geplakt.
-- Een endpoint dat met `?` of `&` begint, of een kale `naam=waarde`, wordt als **queryparameter** toegevoegd.
-- De paginatiepipelines (Offset / Paging / OffsetPage) voegen hun pagina-parameters toe aan dezelfde querystring.
+### Wat jij invoert
+
+| Invoer | Waar | Wat het is |
+|---|---|---|
+| **Base URL** | Eenmalig bij de **bron** (stap 1 van de wizard) | De root van de API. Opgeslagen in de Key Vault als `adf-{bronnaam}-http-url`. Mag zelf al een querystring bevatten (bv. een vaste `?api-version=2.0`). |
+| **Endpoint** | Per **tabel** (het *Endpoint*-veld) | Het pad en/of de query van dat specifieke endpoint. Dit veld bepaalt of Yres een pad óf een query aanplakt. |
+
+Bij elke run leest de pipeline het `http-url`-secret, splitst het op de eerste `?` in een **basispad** en een **basisquery**, ontleedt jouw endpoint, en voegt alles samen tot één URL.
+
+### De regels
+
+Yres beslist puur op basis van hoe je het **Endpoint**-veld schrijft:
+
+- **Leeg** → alleen de Base URL wordt gebruikt.
+- Begint met `/`, of een kale naam zoals `cars` of `cars/active` → wordt als **pad** achter het basispad geplakt.
+- Begint met `?` of `&`, of een kale `naam=waarde` (bevat `=` en géén `/`) → wordt als **query** toegevoegd.
+- Bevat zowel een pad als een `?` → alles vóór de `?` is pad, alles erna is query.
+
+Verdere details die het gedrag bepalen:
+
+- **Queryparameters uit de Base URL blijven altijd behouden** en komen vóór de endpoint- en paginatie-query te staan.
+- Een **afsluitende `/`** op de Base URL wordt alleen weggehaald wanneer er een pad wordt aangeplakt; zonder pad blijft hij staan.
+- Een `=` **in een pad-segment** (bv. `/path/a=b`) blijft gewoon onderdeel van het pad — de `=`-regel geldt alleen als er géén `/` in het endpoint staat.
+- Yres **ontdubbelt geen queryparameters**: staat `key=` zowel in de Base URL als in het endpoint, dan komen beide in de URL (`?key=1&key=2`). Zet een parameter dus op één plek.
+
+### Voorbeelden
+
+Ervan uitgaande dat de **Base URL** is opgeslagen als het `http-url`-secret:
+
+| Base URL (secret) | Endpoint (per tabel) | Resulterende request-URL |
+|---|---|---|
+| `https://api.example.com/v1` | `/customers` | `https://api.example.com/v1/customers` |
+| `https://api.example.com/v1` | `customers` | `https://api.example.com/v1/customers` |
+| `https://api.example.com/v1` | `customers/active` | `https://api.example.com/v1/customers/active` |
+| `https://api.example.com/v1` | `?$top=100` | `https://api.example.com/v1?$top=100` |
+| `https://api.example.com/v1` | `&$top=100` | `https://api.example.com/v1?$top=100` |
+| `https://api.example.com/v1` | `active=true` | `https://api.example.com/v1?active=true` |
+| `https://api.example.com/v1/` | `/cars` | `https://api.example.com/v1/cars` |
+| `https://api.example.com/v1/` | *(leeg)* | `https://api.example.com/v1/` |
+| `https://api.example.com/v1` | `/path/a=b` | `https://api.example.com/v1/path/a=b` |
+
+Complexere combinaties, waarbij de Base URL zélf al een vaste query heeft:
+
+| Base URL (secret) | Endpoint (per tabel) | Resulterende request-URL |
+|---|---|---|
+| `https://api.example.com/v1?api-version=2.0` | `/orders?status=open` | `https://api.example.com/v1/orders?api-version=2.0&status=open` |
+| `https://api.example.com/v1?key=abc` | `cars?type=ev&year=2024` | `https://api.example.com/v1/cars?key=abc&type=ev&year=2024` |
+| `https://api.example.com/v1?key=abc` | *(leeg)* | `https://api.example.com/v1?key=abc` |
+| `https://api.example.com/v1?key=abc` | `&$select=id,name` | `https://api.example.com/v1?key=abc&$select=id,name` |
+
+### Paginatie
+
+Bij een paginatietype anders dan *No pagination* voegt de bijbehorende pipeline per pagina de pagina-parameters achteraan dezelfde querystring toe. De namen komen uit de velden **Offset Object** en **Limit Object** die je bij de bron invult; `pageSize` is de laadinstelling. Uitgaande van Base URL `https://api.example.com/v1?key=abc`, endpoint `/orders` en `pageSize = 500`:
+
+| Type | Velden | Pagina 1 | Pagina 2 | … |
+|---|---|---|---|---|
+| **Offset** | Offset Object `offset`, Limit Object `limit` | `…/orders?key=abc&offset=0&limit=500` | `…&offset=500&limit=500` | offset telt op met `pageSize` |
+| **OffsetPage** | Offset Object `page`, Limit Object `limit` | `…/orders?key=abc&page=0&limit=500` | `…&page=1&limit=500` | page telt op met 1, `limit` blijft `pageSize` |
+| **Paging** | Offset Object `page` | `…/orders?key=abc&page=1` | `…&page=2` | page telt op met 1, geen limit |
+
+De loop stopt zodra een pagina geen rijen meer teruggeeft. **BodyUrl** en **RFC5988** gebruiken géén offset/limit-velden: die volgen de volgende-pagina-link uit respectievelijk de response-body en de `Link`-header, startend vanaf de hierboven opgebouwde URL.
 
 ## Vereisten
 
