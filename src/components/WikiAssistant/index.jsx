@@ -73,6 +73,7 @@ export default function WikiAssistant() {
   const lastSentRef = useRef(0);
   const scrollRef = useRef(null);
   const askRef = useRef(null);
+  const lastHandoffRef = useRef(0);
 
   // Hydrateer count + gesprek + open-status uit de sessie (na een navigatie/herlaad).
   useEffect(() => {
@@ -177,6 +178,12 @@ export default function WikiAssistant() {
   // Open het paneel, en verstuur de vraag meteen als autoSend gezet is.
   useEffect(() => {
     function onExternalAsk(e) {
+      // Dedupe: negeer een tweede event binnen 1,2s (bv. dubbel-geregistreerde
+      // listener of dubbelklik) zodat één handoff niet twee vragen verstuurt.
+      const now = Date.now();
+      if (now - lastHandoffRef.current < 1200) return;
+      lastHandoffRef.current = now;
+
       const detail = e && e.detail ? e.detail : {};
       const q = typeof detail.question === 'string' ? detail.question.trim() : '';
       setOpen(true);

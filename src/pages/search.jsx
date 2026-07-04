@@ -57,10 +57,18 @@ function SearchInner() {
   const location = useLocation();
 
   const urlQuery = parseQuery(location.search);
-  const [input, setInput] = useState(urlQuery);
+  // Start leeg + query-afhankelijke UI pas ná mount: bij SSR/SSG is er nog geen
+  // `?q=`, dus zonder deze gate zou de eerste client-render afwijken van de
+  // server-HTML (React hydration-mismatch #418/#423).
+  const [mounted, setMounted] = useState(false);
+  const [input, setInput] = useState('');
   const [results, setResults] = useState(null); // null = nog niet gezocht
   const [loading, setLoading] = useState(false);
   const pagesRef = useRef(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Houd het invoerveld in sync met de URL (bv. via de navbar-balk of back/forward).
   useEffect(() => {
@@ -106,7 +114,7 @@ function SearchInner() {
     );
   }
 
-  const hasQuery = urlQuery.trim().length >= 2;
+  const hasQuery = mounted && urlQuery.trim().length >= 2;
   const noResults = hasQuery && !loading && results && results.length === 0;
 
   return (
@@ -128,7 +136,7 @@ function SearchInner() {
         </button>
       </form>
 
-      {!hasQuery && <p className={styles.meta}>{t.emptyPrompt}</p>}
+      {mounted && !hasQuery && <p className={styles.meta}>{t.emptyPrompt}</p>}
 
       {hasQuery && loading && <p className={styles.meta}>{t.counting}</p>}
 
