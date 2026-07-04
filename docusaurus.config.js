@@ -95,6 +95,16 @@ const config = {
             position: 'right',
           },
           {
+            // Naar het Yres Academy cursusplatform (aparte Next.js-app, door nginx
+            // geserveerd op /academy/{taal}). href i.p.v. to → geen baseUrl-prefix;
+            // target _self houdt het in hetzelfde tabblad, net als siteHome.
+            href: isEN ? '/academy/en' : '/academy/nl',
+            label: 'Academy',
+            position: 'right',
+            target: '_self',
+            rel: null,
+          },
+          {
             // Taalwissel: blijft op dezelfde pagina, zelfde tabblad (custom component).
             type: 'custom-langSwitch',
             position: 'right',
