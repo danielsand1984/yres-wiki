@@ -17,10 +17,6 @@ We don't offer a self-service trial, but we do offer a personal demo in which we
 **What is the difference with TimeXtender or AnalyticsCreator?**
 Yres stands out through native Dutch ERP integrations (Exact, AFAS), preset NL data sources (such as CBS, Tweede Kamer and Simplicate), a wizard-driven no-code approach that automatically generates ADF pipelines, and automated health checks. Every tool has its own strengths — get in touch for a fair comparison.
 
-:::note Pricing communication
-The **transparent fixed pricing** may be communicated. Where it adds value, you may note that Yres offers a **fair, low price** and is in practice almost always cheaper than competitors — keep any direct comparison factual and tasteful.
-:::
-
 ## Technical
 
 **How do I design my data pipelines in Yres?**
@@ -56,7 +52,7 @@ No. Yres runs **entirely within your own Azure tenant**; your data never leaves 
 Azure SSO and role-based access control (RBAC), tying into your existing security environment. SSO can be enforced per user.
 
 :::note Security & compliance
-Yres is **ISO 27001-certified**. The **web-app data** (settings and configuration only — never customer data or credentials) is hosted at **Hetzner in Germany**. Your **own data stays in your own Azure environment**: you choose the region/datacenter by creating the resource group there, and Yres follows that group's settings. A **data processing agreement is not required**, because Yres never displays or stores customer data in the web app — only the configuration data in PostgreSQL, and never credentials.
+Yres is **ISO 27001-certified**. The **web-app data** (settings and configuration only — never customer data or credentials) is hosted in **Azure West Europe**. Your **own data stays in your own Azure environment**: you choose the region/datacenter by creating the resource group there, and Yres follows that group's settings. A **data processing agreement is not required**, because Yres never displays or stores customer data in the web app — only the configuration data in PostgreSQL, and never credentials.
 :::
 
 ## Implementation

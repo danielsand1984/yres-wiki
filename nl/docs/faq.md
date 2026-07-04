@@ -17,10 +17,6 @@ We bieden geen zelfbediening-trial, maar wel een persoonlijke demo waarin we jou
 **Wat is het verschil met TimeXtender of AnalyticsCreator?**
 Yres onderscheidt zich door native Nederlandse ERP-koppelingen (Exact, AFAS), preset NL databronnen (zoals CBS, Tweede Kamer en Simplicate), een wizard-gestuurde no-code aanpak die automatisch ADF-pipelines genereert, en geautomatiseerde health checks. Elke tool heeft eigen sterktes — neem contact op voor een eerlijke vergelijking.
 
-:::note Pricing-communicatie
-De **transparante vaste pricing** mag je communiceren. Waar het toegevoegde waarde heeft, mag je vermelden dat Yres een **eerlijke, lage prijs** hanteert en in de praktijk bijna altijd goedkoper is dan concurrenten — houd directe vergelijkingen feitelijk en netjes.
-:::
-
 ## Technisch
 
 **Hoe ontwerp ik mijn data-pipelines in Yres?**
@@ -56,7 +52,7 @@ Nee. Yres draait **volledig binnen jouw eigen Azure tenant**; je data verlaat jo
 Azure SSO en rolgebaseerde rechten (RBAC), aansluitend op je bestaande security-omgeving. SSO kan per gebruiker worden afgedwongen.
 
 :::note Beveiliging & compliance
-Yres is **ISO 27001-gecertificeerd**. De **webapp-data** (alleen instellingen en inrichting — nooit klantdata of credentials) staat bij **Hetzner in Duitsland**. Je **eigen data blijft in je eigen Azure-omgeving**: je kiest zelf de regio/het datacenter door de resource group daar aan te maken, en Yres volgt de instellingen van die group. Een **verwerkersovereenkomst is niet nodig**, omdat Yres nooit klantdata in de webapp toont of opslaat — alleen de configuratiegegevens in PostgreSQL, en nooit credentials.
+Yres is **ISO 27001-gecertificeerd**. De **webapp-data** (alleen instellingen en inrichting — nooit klantdata of credentials) staat in **Azure West Europe**. Je **eigen data blijft in je eigen Azure-omgeving**: je kiest zelf de regio/het datacenter door de resource group daar aan te maken, en Yres volgt de instellingen van die group. Een **verwerkersovereenkomst is niet nodig**, omdat Yres nooit klantdata in de webapp toont of opslaat — alleen de configuratiegegevens in PostgreSQL, en nooit credentials.
 :::
 
 ## Implementatie
