@@ -3,6 +3,7 @@ import {useHistory} from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import {fetchIndex, searchPages, highlightParts} from '@site/src/lib/wikiSearch';
+import {ASSISTANT_ASK_EVENT} from '@site/src/lib/assistantBridge';
 import styles from './styles.module.css';
 
 const STR = {
@@ -84,6 +85,15 @@ export default function SearchBar({mobile}) {
     history.push(`${searchUrl}?q=${encodeURIComponent(query2)}`);
   }
 
+  // Zet de vraag rechtstreeks door naar de AI-assistent (opent + verstuurt),
+  // zonder eerst naar de resultatenpagina te gaan.
+  function askAssistant(query) {
+    const query2 = (query ?? q).trim();
+    if (!query2 || typeof window === 'undefined') return;
+    setOpen(false);
+    window.dispatchEvent(new CustomEvent(ASSISTANT_ASK_EVENT, {detail: {question: query2, autoSend: true}}));
+  }
+
   function onKeyDown(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -149,7 +159,7 @@ export default function SearchBar({mobile}) {
                 type="button"
                 className={styles.askAiInline}
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => goToResults()}
+                onClick={() => askAssistant()}
               >
                 ✨ {t.askAi}
               </button>

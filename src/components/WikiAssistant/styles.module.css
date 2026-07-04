@@ -31,18 +31,55 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
   z-index: 1000;
   overflow: hidden;
+  transition: width 0.18s ease, height 0.18s ease;
+}
+
+/* Vergrote weergave: (bijna) volledig scherm, gecentreerd, meer ruimte voor
+   tabellen en codeblokken in de antwoorden. */
+.panelExpanded {
+  top: 24px;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  width: auto;
+  height: auto;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.panelExpanded .messages { padding: 20px clamp(20px, 6vw, 64px); }
+.panelExpanded .inputRow,
+.panelExpanded .footer { padding-left: clamp(16px, 6vw, 64px); padding-right: clamp(16px, 6vw, 64px); }
+.panelExpanded .userMsg,
+.panelExpanded .botMsg { max-width: 760px; }
+.panelExpanded .md :global(pre) { font-size: 13px; }
+.panelExpanded .md :global(table) { font-size: 13px; }
+
+@media (max-width: 600px) {
+  .panelExpanded { top: 8px; right: 8px; bottom: 8px; left: 8px; }
 }
 
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
   padding: 12px 16px;
   background: #fbaf42;
   color: #1c1c1e;
 }
 .headerTitle { font-weight: 700; }
-.remaining { font-size: 11px; opacity: 0.8; }
+/* Duwt de actieknoppen naar rechts; titel + teller blijven links. */
+.remaining { font-size: 11px; opacity: 0.8; margin-right: auto; }
+.headerBtn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 15px;
+  opacity: 0.85;
+  padding: 0 4px;
+  line-height: 1;
+}
+.headerBtn:hover { opacity: 1; }
 
 .keyForm { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
 .keyLabel { font-size: 13px; font-weight: 600; }

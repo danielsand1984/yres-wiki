@@ -39,6 +39,9 @@ const STR = {
     err: 'Er ging iets mis. Probeer het later opnieuw.',
     remaining: (n) => `${n} vragen over deze sessie`,
     disclaimer: 'Antwoorden zijn AI-gegenereerd op basis van de wiki — controleer bij twijfel de bronpagina.',
+    expand: 'Groter weergeven',
+    shrink: 'Kleiner weergeven',
+    close: 'Sluiten',
   },
   en: {
     open: 'Ask the wiki',
@@ -56,6 +59,9 @@ const STR = {
     err: 'Something went wrong. Try again later.',
     remaining: (n) => `${n} questions left this session`,
     disclaimer: 'Answers are AI-generated from the wiki — verify on the source page when in doubt.',
+    expand: 'Expand',
+    shrink: 'Shrink',
+    close: 'Close',
   },
 };
 
@@ -65,6 +71,7 @@ export default function WikiAssistant() {
   const t = STR[lang];
 
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]); // {role:'user'|'assistant', text}
   const [loading, setLoading] = useState(false);
@@ -210,21 +217,44 @@ export default function WikiAssistant() {
       </button>
 
       {open && (
-        <div className={styles.panel} role="dialog" aria-label={t.title}>
+        <div
+          className={`${styles.panel} ${expanded ? styles.panelExpanded : ''}`}
+          role="dialog"
+          aria-label={t.title}
+        >
           <div className={styles.header}>
             <span className={styles.headerTitle}>✨ {t.title}</span>
             <span className={styles.remaining}>{t.remaining(Math.max(0, MAX_QUESTIONS_PER_SESSION - count))}</span>
             {messages.length > 0 && (
               <button
                 type="button"
+                className={styles.headerBtn}
                 onClick={clearConversation}
                 title={t.newChat}
                 aria-label={t.newChat}
-                style={{background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '15px', opacity: 0.85, padding: '0 4px', lineHeight: 1}}
               >
                 ↻
               </button>
             )}
+            <button
+              type="button"
+              className={styles.headerBtn}
+              onClick={() => setExpanded((e) => !e)}
+              title={expanded ? t.shrink : t.expand}
+              aria-label={expanded ? t.shrink : t.expand}
+              aria-pressed={expanded}
+            >
+              {expanded ? '⤡' : '⤢'}
+            </button>
+            <button
+              type="button"
+              className={styles.headerBtn}
+              onClick={() => setOpen(false)}
+              title={t.close}
+              aria-label={t.close}
+            >
+              ✕
+            </button>
           </div>
 
           <div className={styles.messages} ref={scrollRef}>
