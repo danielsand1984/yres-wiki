@@ -45,9 +45,9 @@ The product is called **Yres**, but in the database many identifiers still read 
 > `spLoadDWH` is the entry point that ADF calls once STAGE has been filled; it is a **pure pass-through** to `spHIS_InsertAndUpdate` (the old `spUpdateETL_EndDate` call is commented out — end-dating now happens inside `spHIS_InsertAndUpdate` itself).
 
 ### Schema `[Config]` — configuration, logging & metadata
-`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `spGenerateDbreader` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
+`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `fxGetDependenciesSQL` · `spGenerateDbreader` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
 
-> The four "message-class" writers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) write to `Config.ProcessLog`. `spGenerateDbreader` (no parameters) rebuilds the database role **`Yres_dbreader`**.
+> The four "message-class" writers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) write to `Config.ProcessLog`. `spGenerateDbreader` (no parameters) rebuilds the database role **`Yres_dbreader`**. Despite the `fx` prefix, `fxGetDependenciesSQL` is a **stored procedure** — the variant that `spFindTablesBehindSQL` calls.
 
 ### Schema `[Change]` — change management
 | Procedure | Purpose |

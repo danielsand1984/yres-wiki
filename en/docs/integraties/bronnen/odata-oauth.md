@@ -70,10 +70,10 @@ IR via `connectVia` to both linked services.
   endpoint.
 
 :::tip Use the preset page for those services
-A number of fixed presets (Microsoft Graph, Dynamics 365, Intune Data Warehouse) use the same
-OData-OAuth mechanism under the hood but are stored as backend type `OData` (and deployed through the
-standard OData builder). For those services, use the relevant preset page instead of this generic OData
-OAuth source.
+A number of fixed presets use the same OData-OAuth mechanism under the hood. Dynamics 365 and
+Intune Data Warehouse are stored as backend type `OData` (and deployed through the standard OData
+builder); Microsoft Graph is stored as `ODataoAuth` since v1.56. For those services, use the relevant
+preset page instead of this generic OData OAuth source.
 :::
 
 ## Load types and delta

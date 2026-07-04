@@ -45,9 +45,9 @@ Het product heet **Yres**, maar in de database staan veel identifiers nog op `IR
 > `spLoadDWH` is het instappunt dat ADF aanroept nadat STAGE gevuld is; het is een **pure pass-through** naar `spHIS_InsertAndUpdate` (de oude `spUpdateETL_EndDate`-aanroep is uitgecommentarieerd — end-dating gebeurt nu binnen `spHIS_InsertAndUpdate` zelf).
 
 ### Schema `[Config]` — configuratie, logging & metadata
-`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `spGenerateDbreader` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
+`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `fxGetDependenciesSQL` · `spGenerateDbreader` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
 
-> De vier "message-class" schrijvers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) schrijven naar `Config.ProcessLog`. `spGenerateDbreader` (geen parameters) bouwt de databaserol **`Yres_dbreader`** opnieuw op.
+> De vier "message-class" schrijvers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) schrijven naar `Config.ProcessLog`. `spGenerateDbreader` (geen parameters) bouwt de databaserol **`Yres_dbreader`** opnieuw op. `fxGetDependenciesSQL` is ondanks het `fx`-voorvoegsel een **stored procedure** — de variant die `spFindTablesBehindSQL` aanroept.
 
 ### Schema `[Change]` — change management
 | Procedure | Doel |

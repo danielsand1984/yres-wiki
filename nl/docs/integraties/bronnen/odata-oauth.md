@@ -70,10 +70,10 @@ bereikbaar is. Yres schrijft de gekozen IR via `connectVia` naar beide linked se
   en het token-endpoint.
 
 :::tip Gebruik de presetpagina voor die diensten
-Een aantal vaste presets (Microsoft Graph, Dynamics 365, Intune Data Warehouse) gebruikt onder water
-hetzelfde OData-OAuth-mechanisme maar wordt als backend-type `OData` opgeslagen (en via de standaard
-OData-bouwer uitgerold). Voor die diensten gebruik je de betreffende presetpagina in plaats van deze
-generieke OData-OAuth-bron.
+Een aantal vaste presets gebruikt onder water hetzelfde OData-OAuth-mechanisme. Dynamics 365 en
+Intune Data Warehouse worden als backend-type `OData` opgeslagen (en via de standaard OData-bouwer
+uitgerold); Microsoft Graph wordt sinds v1.56 als `ODataoAuth` opgeslagen. Voor die diensten gebruik
+je de betreffende presetpagina in plaats van deze generieke OData-OAuth-bron.
 :::
 
 ## Load types en delta

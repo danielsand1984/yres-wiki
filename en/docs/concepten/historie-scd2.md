@@ -96,7 +96,7 @@ Besides the `<table>_RowId` (the surrogate key of each row version), Yres can cr
 
 - the function `[LoadManagement].[fxGetSurrogate](@Target)`, which by default follows the **`DefaultSurrogate`** setting (default `0` = off).
 
-When this is enabled, after the insert the engine adds `(RowId, Keyhash, <key columns as JSON>, @Target)` to `SurrogateKeys` for each new row. The key columns are ordered alphabetically so that the JSON key stays stable. This is useful for star-shaped models in which fact tables reference a fixed integer key.
+When this is enabled, after the insert the engine adds a row `(intKey, Keyhash, <key columns as JSON>, @Target)` to `SurrogateKeys` for each new natural key. The `intKey` is a **running counter per table** (continuing from the highest existing key), so keys keep incrementing collision-free even after e.g. an `OVERWRITE` truncate. The key columns are ordered alphabetically so that the `jsonKey` stays stable; a dot in a column name is replaced by `_` in the JSON name (values are left untouched). This is useful for star-shaped models in which fact tables reference a fixed integer key; the `jsonKey` is also a stable hook for custom extensions.
 
 ## The Object history screen
 

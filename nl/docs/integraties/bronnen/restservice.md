@@ -43,6 +43,15 @@ Het gekozen paginatietype bepaalt ook welke dynamische pipelines Yres genereert 
 
 `AutoResolveIntegrationRuntime` (cloud) is de standaard en de juiste keuze voor een publiek bereikbare REST-API. Kies een **self-hosted integration runtime** alleen wanneer de API on-premises of achter een firewall draait. De backend (`RestServiceSource.php`) schrijft de gekozen IR via `withConnectVia` in de linked service en zet `enableServerCertificateValidation=true`.
 
+## Hoe Yres de request-URL opbouwt
+
+De **Base URL** wordt opgeslagen in de Key Vault van de klant als `adf-{bronnaam}-http-url`. Bij elke run leest de pipeline dit secret en bouwt Yres zelf de volledige request-URL op uit de Base URL en het endpoint:
+
+- **Queryparameters in de Base URL blijven behouden** en worden samengevoegd met de queryparameters van het endpoint en de paginatie. Voorbeeld: Base URL `https://api.example.com/v1?key=123` + endpoint `/cars?json=full` → `https://api.example.com/v1/cars?key=123&json=full`.
+- Een endpoint dat met `/` begint (of zonder scheidingsteken, zoals `cars`) wordt als **pad** achter het pad van de Base URL geplakt.
+- Een endpoint dat met `?` of `&` begint, of een kale `naam=waarde`, wordt als **queryparameter** toegevoegd.
+- De paginatiepipelines (Offset / Paging / OffsetPage) voegen hun pagina-parameters toe aan dezelfde querystring.
+
 ## Vereisten
 
 - **Base URL** van de API (zonder afsluitende `/`).

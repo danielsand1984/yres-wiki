@@ -96,7 +96,7 @@ Naast de `<tabel>_RowId` (de surrogaatsleutel van elke rijversie) kan Yres een *
 
 - de functie `[LoadManagement].[fxGetSurrogate](@Target)`, die standaard de instelling **`DefaultSurrogate`** volgt (standaard `0` = uit).
 
-Staat dit aan, dan voegt de engine na de insert per nieuwe rij `(RowId, Keyhash, <sleutelkolommen als JSON>, @Target)` toe aan `SurrogateKeys`. De sleutelkolommen worden alfabetisch geordend zodat de JSON-sleutel stabiel blijft. Dit is handig voor stervormige modellen waarin feittabellen naar een vaste integersleutel verwijzen.
+Staat dit aan, dan voegt de engine na de insert per nieuwe natural key een rij `(intKey, Keyhash, <sleutelkolommen als JSON>, @Target)` toe aan `SurrogateKeys`. De `intKey` is een **doorlopende teller per tabel** (verder tellend vanaf de hoogste bestaande sleutel), zodat sleutels ook na bijvoorbeeld een `OVERWRITE`-truncate botsingsvrij blijven doorlopen. De sleutelkolommen worden alfabetisch geordend zodat de `jsonKey` stabiel blijft; een punt in een kolomnaam wordt in de JSON-naam vervangen door `_` (de waarden blijven onaangetast). Dit is handig voor stervormige modellen waarin feittabellen naar een vaste integersleutel verwijzen; ook de `jsonKey` is een stabiel aanknopingspunt voor eigen uitbreidingen.
 
 ## Het Object history-scherm
 

@@ -8,7 +8,7 @@ description: Reference for the stored procedures in the IRIS_DWH database, per s
 
 This page describes the stored procedures in the data-plane database **`IRIS_DWH`**. The names are taken verbatim from the live repository; in code, the product is still called **IRIS** in many places. The content was regenerated from the source code (the code takes precedence over older documentation).
 
-The live database contains **108 stored procedures, 56 functions, and 41 views**. Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
+The database contains **102 stored procedures, 56 functions, and 41 views** (counted on the deploy source, July 2026). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
 
 :::note Schema overview
 The procedures are spread across the schemas `LoadManagement` (the load engine), `Config` (settings, logging, DB tuning), `Change` (DTAP change management), `Monitoring` (load-status logging), `Maintenance` (maintenance, health checks), `Expose` (reporting RBAC), and `dbo` (helper procedures).
@@ -148,9 +148,9 @@ Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagi
 
 ### `[LoadManagement].[spRegenerateSurrogateKeys]`
 
-**Purpose:** Regenerates surrogate keys for a source table, typically after source-data changes.
+**Purpose:** Fully rebuilds the surrogate keys of one table, typically after source-data changes. The procedure first validates that the table exists in `UsedTables`, that surrogate keys are enabled for the table (`fxGetSurrogate` = 1) and that key columns are defined; `OverwriteSource`/`OverwriteSchema`/`OverwriteTable` are honoured. The rebuild is atomic: `DELETE` + `INSERT` run in a single transaction, so on failure the existing keys remain in place. `intKey` values are **reassigned** in the process; the `jsonKey` is built with the same alphabetical column order as during loading.
 
-**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@Execute`, `@AppUser`.
+**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@Execute (BIT, default 0 = dry run: only print the script)`, `@AppUser`.
 
 ### `[LoadManagement].[spCheckKeyAndRowHash]`
 
@@ -184,7 +184,7 @@ Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagi
 
 ### `[LoadManagement].[spFindTablesBehindSQL]`
 
-**Purpose:** Determines which tables a SQL query uses (dependency analysis).
+**Purpose:** Determines which tables a SQL query uses (dependency analysis). Uses `[Config].[fxGetDependenciesSQL]` under the hood.
 
 **Parameters:** `@SQL (NVARCHAR(MAX))`.
 
@@ -284,7 +284,13 @@ Call `spSwapDictionary`/`spSwapServices` **without** scope parameters and the wh
 
 ### `[Config].[spGetDependenciesSQL]`
 
-**Purpose:** Analyzes a `SELECT` statement and determines which tables/views/objects it uses.
+**Purpose:** Analyzes a `SELECT` statement and determines which tables/views/objects it uses (temporarily turns it into a view and reads the dependencies via `Metadata.fxGetDependencies`).
+
+**Parameters:** `@SQL (NVARCHAR(MAX))`.
+
+### `[Config].[fxGetDependenciesSQL]`
+
+**Purpose:** Despite the `fx` prefix a **stored procedure** (not a function). Same behaviour as `spGetDependenciesSQL`; this is the variant that `[LoadManagement].[spFindTablesBehindSQL]` calls. Part of the deploy again since July 2026 (the procedure used to be missing from the source, which broke `spFindTablesBehindSQL`).
 
 **Parameters:** `@SQL (NVARCHAR(MAX))`.
 
