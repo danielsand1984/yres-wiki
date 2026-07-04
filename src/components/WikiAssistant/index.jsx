@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import {marked} from 'marked';
 import DOMPurify from 'dompurify';
+import {ASSISTANT_ASK_EVENT} from '@site/src/lib/assistantBridge';
 import styles from './styles.module.css';
 
 // De assistent praat met een CENTRAAL endpoint op de marketingsite
@@ -71,6 +72,7 @@ export default function WikiAssistant() {
   const [count, setCount] = useState(0);
   const lastSentRef = useRef(0);
   const scrollRef = useRef(null);
+  const askRef = useRef(null);
 
   // Hydrateer count + gesprek + open-status uit de sessie (na een navigatie/herlaad).
   useEffect(() => {
@@ -121,8 +123,9 @@ export default function WikiAssistant() {
     }
   }
 
-  async function ask() {
-    const q = input.trim();
+  async function ask(qArg) {
+    // qArg kan een string zijn (externe handoff) of het click-event van de knop.
+    const q = (typeof qArg === 'string' ? qArg : input).trim();
     setError('');
     if (!q) return;
     if (q.length > MAX_INPUT_CHARS) return setError(t.tooLong);
@@ -165,6 +168,29 @@ export default function WikiAssistant() {
       setLoading(false);
     }
   }
+
+  // Houd een ref naar de actuele ask() zodat de globale event-listener (hieronder)
+  // altijd de meest recente closure aanroept, zonder telkens te her-binden.
+  askRef.current = ask;
+
+  // Externe handoff: de zoek-resultatenpagina stuurt een window-event met een vraag.
+  // Open het paneel, en verstuur de vraag meteen als autoSend gezet is.
+  useEffect(() => {
+    function onExternalAsk(e) {
+      const detail = e && e.detail ? e.detail : {};
+      const q = typeof detail.question === 'string' ? detail.question.trim() : '';
+      setOpen(true);
+      if (!q) return;
+      if (detail.autoSend) {
+        // Kort uitstel zodat het paneel eerst opent en de state gehydrateerd is.
+        setTimeout(() => askRef.current && askRef.current(q), 60);
+      } else {
+        setInput(q);
+      }
+    }
+    window.addEventListener(ASSISTANT_ASK_EVENT, onExternalAsk);
+    return () => window.removeEventListener(ASSISTANT_ASK_EVENT, onExternalAsk);
+  }, []);
 
   function renderMd(md) {
     return {__html: DOMPurify.sanitize(marked.parse(md, {breaks: true}))};

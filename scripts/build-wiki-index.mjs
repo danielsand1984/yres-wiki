@@ -33,7 +33,17 @@ function parseFrontmatter(raw) {
 }
 
 function routeFor(relPath, slug) {
-  if (slug === "/") return "";
+  // Honour a custom `slug:` frontmatter — otherwise pages that override their
+  // URL (bv. architectuur/azure-architectuur.md → /referentie/azure-architectuur)
+  // end up indexed at their file path and every link to them 404's.
+  if (slug) {
+    const s = slug.trim();
+    if (s === "/") return "";
+    if (s.startsWith("/")) return s.replace(/^\/+/, "");
+    // Relative slug: resolve against the file's own directory.
+    const dir = dirname(relPath).replace(/\\/g, "/");
+    return (dir === "." ? "" : dir + "/") + s.replace(/\.mdx?$/, "");
+  }
   return relPath.replace(/\\/g, "/").replace(/\.mdx?$/, "");
 }
 
@@ -54,7 +64,10 @@ function plainText(md) {
 const files = await walk(DOCS_DIR);
 const pages = [];
 for (const file of files) {
-  const raw = await readFile(file, "utf8");
+  // Normaliseer CRLF→LF: op Windows-checkouts hebben veel docs CRLF, en de
+  // frontmatter-/kop-regexes hieronder verwachten LF (`---\n`). Zonder dit werd
+  // voor CRLF-bestanden geen frontmatter geparst → verkeerde titel + genegeerde slug.
+  const raw = (await readFile(file, "utf8")).replace(/\r\n/g, "\n");
   const { data, body } = parseFrontmatter(raw);
   const rel = relative(DOCS_DIR, file);
   const route = routeFor(rel, data.slug);

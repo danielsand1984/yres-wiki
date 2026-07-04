@@ -1,0 +1,172 @@
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.heading {
+  font-size: 28px;
+  margin: 0 0 20px;
+}
+
+.searchForm {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.searchInput {
+  flex: 1;
+  height: 46px;
+  padding: 0 16px;
+  font-size: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 10px;
+  background: var(--ifm-background-surface-color, #f6f9f9);
+  color: inherit;
+  outline: none;
+}
+.searchInput:focus {
+  border-color: #fbaf42;
+  box-shadow: 0 0 0 3px rgba(251, 175, 66, 0.25);
+}
+.searchInput::-webkit-search-decoration,
+.searchInput::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+.searchButton {
+  height: 46px;
+  padding: 0 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: #fbaf42;
+  color: #1c1c1e;
+  cursor: pointer;
+}
+.searchButton:hover {
+  filter: brightness(0.97);
+}
+
+.meta {
+  color: var(--ifm-color-emphasis-600, #666);
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.results {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.result {
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+.resultTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ifm-color-primary-dark, #c58116);
+  text-decoration: none;
+}
+.resultTitle:hover {
+  text-decoration: underline;
+}
+.resultSnippet {
+  margin: 4px 0 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-800, #333);
+}
+.resultUrl {
+  font-size: 12px;
+  color: var(--ifm-color-emphasis-500, #8a8a8a);
+}
+.mark {
+  background: rgba(251, 175, 66, 0.4);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.askBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  background: var(--ifm-background-surface-color, #f6f9f9);
+}
+/* Bij 0 resultaten wordt dit het primaire element. */
+.askBoxPrimary {
+  border-color: #fbaf42;
+  background: rgba(251, 175, 66, 0.1);
+  box-shadow: 0 6px 20px rgba(251, 175, 66, 0.18);
+}
+.askText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 220px;
+  flex: 1;
+}
+.askTitle {
+  font-size: 15px;
+}
+.askBody {
+  font-size: 13px;
+  color: var(--ifm-color-emphasis-600, #666);
+}
+.askAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+.askButton {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #fbaf42;
+  color: #1c1c1e;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.askButton:hover {
+  filter: brightness(0.97);
+}
+.askHint {
+  font-size: 11px;
+  color: var(--ifm-color-emphasis-500, #888);
+}
+
+@media (max-width: 560px) {
+  .askAction {
+    align-items: stretch;
+    width: 100%;
+  }
+  .askButton {
+    width: 100%;
+  }
+  .askHint {
+    text-align: center;
+  }
+}
+
+[data-theme='dark'] .searchInput {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+[data-theme='dark'] .result {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme='dark'] .askBox {
+  border-color: rgba(255, 255, 255, 0.14);
+}

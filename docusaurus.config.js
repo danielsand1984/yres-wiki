@@ -90,6 +90,11 @@ const config = {
             className: 'navbar-item--wiki',
           },
           {
+            // Zoekbalk met live dropdown → resultatenpagina (custom component).
+            type: 'custom-searchBar',
+            position: 'right',
+          },
+          {
             // Taalwissel: blijft op dezelfde pagina, zelfde tabblad (custom component).
             type: 'custom-langSwitch',
             position: 'right',
