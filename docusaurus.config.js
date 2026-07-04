@@ -96,9 +96,10 @@ const config = {
           },
           {
             // Naar het Yres Academy cursusplatform (aparte Next.js-app, door nginx
-            // geserveerd op /academy/{taal}). href i.p.v. to → geen baseUrl-prefix;
-            // target _self houdt het in hetzelfde tabblad, net als siteHome.
-            href: isEN ? '/academy/en' : '/academy/nl',
+            // geserveerd op /academy/{taal}). Volledige URL i.p.v. een pad, anders
+            // plakt Docusaurus de wiki-baseUrl (/nl/wiki/) ervoor → 404. target _self
+            // houdt het in hetzelfde tabblad, net als siteHome.
+            href: isEN ? 'https://oogopdata.nl/academy/en' : 'https://oogopdata.nl/academy/nl',
             label: 'Academy',
             position: 'right',
             target: '_self',
