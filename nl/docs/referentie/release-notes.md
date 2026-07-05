@@ -16,19 +16,78 @@ ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — n
 
 ## v1.56 — in test
 
+De grootste release tot nu toe: naast de webapp is ook het complete dataplatform (database + ADF)
+onder handen genomen. Hieronder de hoofdlijnen per thema; de gelinkte wiki-pagina's beschrijven de
+details van elk onderwerp.
+
+### Upgrade & breaking changes
+
+- **Upgraden kan alleen vanaf v1.50.** Oudere omgevingen upgraden eerst naar 1.50.
+- **IRIS → Yres, ook in de database en ADF.** De upgrade hernoemt het maatwerkschema `CustomIris` naar
+  `CustomYres` (eigen objecten verhuizen mee), kolommen `Iris*` naar `Yres*` (zoals `YresLastUpdated`),
+  de databaserol naar `Yres_MANAGED_USERS` en de versiesetting naar `YRES_VERSION`. In ADF heten alle
+  pipelines voortaan `… YRES` in plaats van `… IRIS`, de linked service `IrisDwh` werd `YresDwh` en het
+  data lake gebruikt de container `datalake-yres`. **Eigen rapporten, SQL of scripts die de oude namen
+  gebruiken moeten worden aangepast.**
+- **Surrogate keys worden bij de upgrade opnieuw opgebouwd** volgens een nieuw, botsingsvrij sleutelmodel
+  (`intKey` als doorlopende teller per tabel; `jsonKey` blijft beschikbaar voor eigen uitbreidingen).
+  → [Historie & SCD2](../concepten/historie-scd2.md)
+- **Deployvolgorde:** de database-upgrade hoort altijd vóór de ADF-publish — de nieuwe pipelines
+  gebruiken procedures die oudere databases nog niet hebben.
+
+### Webapp
+
 - **Branding:** IRIS heet voortaan **Yres** in de hele webapp (e-mails, UI, vertalingen); bij de update naar 1.56 worden oude triggers met de legacy-merknaam opgeruimd.
 - **Projects & changes:** herontworpen changes-tabel met environment-entries per change; gerelateerde changes zichtbaar vanuit de object viewer. → [Wijzigingsproces](../concepten/wijzigingsproces.md), [Projecten & changes](../frontend/projecten-changes.md)
 - **Multi-tenancy:** subdomein per organisatie, Azure SSO-redirect naar de juiste organisatie, en het aantal omgevingen gekoppeld aan het abonnement. → [Admin](../frontend/admin.md)
-- **Nieuwe bronnen:** **Oracle** en **MySQL** (zonder connection string, met SSL). → [Oracle](../integraties/bronnen/oracle.md), [MySQL](../integraties/bronnen/mysql.md)
+- **Oracle & MySQL vernieuwd:** de linked services zijn bijgewerkt naar de nieuwste connectorversies — property-gebaseerd in plaats van een connection string, MySQL met SSL. → [Oracle](../integraties/bronnen/oracle.md), [MySQL](../integraties/bronnen/mysql.md)
 - **Bronnen & connectiviteit:** nieuwe REST-service-presets, verfijnde REST-paginering, en **Test connectivity** vanuit de webapp. → [Integraties](../integraties/overzicht.md)
 - **Monitoring & health:** nieuwe health bar met DWH-statistieken; pipeline-runs met filters. → [Monitoring & logging](./monitoring-logging.md)
 - **Data engineering & object viewer:** git-diff en syntax highlighting, uitgebreidere mapping van scripted objects, en wizard-verbeteringen. → [Data engineering](../frontend/data-engineering.md)
 - **Beheer & beveiliging:** admin secrets-view, credential-vervalnotificaties, encryptie van credentials en jobs, Azure Redis-cache, en robuustere Azure DevOps-integratie.
-- **Feedback & vertalingen:** feedbackformulier naar feedback@yres.app; UI-vertalingen live bij te werken.
-- **Data & loading:** de metadata-refresh is nu transactioneel — een mislukte refresh wist je kolommen niet meer. → [Metadata verversen](../frontend/data-sources.md#metadata-verversen-refresh-metadata)
-- **Archivering afgemaakt:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (dubbel gegate, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. → [Archivering](../concepten/archivering.md)
-- **Retentiebeleid voor de logtabellen:** instelbaar per tabel via `Monitoring.RetentionPolicy` (standaard 90–365 dagen); de wekelijkse ADF-pipeline `Maintenance Retention YRES` schoont gebatcht op met vaste integriteitsgaranties (de laatste run per load en lopende loads blijven altijd staan) en een dry-run-modus. Voorheen groeiden de logtabellen onbegrensd. → [Monitoring & logging](./monitoring-logging.md#retentie-van-de-logtabellen)
-- **Sneller plannen en laden:** de planningsquery (`vwExtractor`) leunt niet langer op de zware monitoringview en voert de licentie-omvangcheck één keer per query uit in plaats van per tabel; in de SCD2-merge zijn de resterende ontdubbelingsstappen herschreven (hetzelfde patroon dat eerder ~2,6× sneller bleek). Vooral merkbaar op omgevingen met veel tabellen of veel monitoringhistorie.
+
+### Dataplatform — nieuw
+
+- **Workload-administratie:** workflows plannen hun volledige werklast vooraf in
+  (`LoadManagement.LoadLog`) en werken die per load bij. De monitor toont daardoor ook **geplande en
+  overgeslagen loads**, statussen komen uit de administratie zelf en looptijden kloppen. Een nieuwe
+  `ADFLoadMonitor`-pipeline en een herbouwde garbage collection spiegelen de ADF-runstatussen terug naar
+  de database, zodat een weggevallen run niet blijvend op "RUNNING" staat.
+  → [Monitoring & logging](./monitoring-logging.md)
+- **Retentiebeleid voor de logtabellen:** instelbaar per tabel via `Monitoring.RetentionPolicy`
+  (standaard 90–365 dagen); de wekelijkse ADF-pipeline `Maintenance Retention YRES` schoont gebatcht op
+  met vaste integriteitsgaranties (de laatste run per load en lopende loads blijven altijd staan) en een
+  dry-run-modus; de trigger staat na installatie bewust uit. Voorheen groeiden de logtabellen onbegrensd.
+  → [Retentie van de logtabellen](./monitoring-logging.md#retentie-van-de-logtabellen)
+- **Metadata verversen is atomair:** alle GetMetaData-pipelines stagen de metadata en wisselen die in
+  één transactie in — bij bronnen met meerdere services per onderdeel. Een mislukte of gelijktijdige
+  refresh kan de kolomadministratie niet meer half leeg achterlaten.
+  → [Metadata verversen](../frontend/data-sources.md#metadata-verversen-refresh-metadata), [Stored procedures](./sql/stored-procedures.md)
+- **Delta-loads uitgebreid:** twee deltakolommen werken nu op alle SQL-/databasebronnen én op
+  Salesforce, SAP SAC en AFAS; Exact Online kreeg datumdelta's, het loadtype ADDITIONAL delta-append,
+  AFAS datatype-bewuste filters en **Oracle** volwaardige delta-ondersteuning.
+  → [Load-types](../concepten/load-types.md), [Meerdere deltakolommen](../concepten/load-types.md#meerdere-deltakolommen)
+- **REST-bronnen:** de request-URL wordt voortaan in de pipeline opgebouwd uit de basis-URL in Key Vault
+  plus het endpoint (inclusief querystring-merge). → [REST-service](../integraties/bronnen/restservice.md)
+- **Snowflake:** staging herschreven naar één Parquet-bestand met een instelbare stagingcontainer.
+  → [Snowflake](../integraties/bronnen/snowflake.md)
+- **Health checks:** de checkview is opgesplitst in modulaire groepen en uitgebreid met ~24 nieuwe
+  configuratie-integriteitschecks. → [Admin → Health checks](../frontend/admin.md)
+- **Wijzigingsproces gehard:** veertien fouten in release/import/install opgelost, plus een leesbare
+  release-historie per change (`Change.vwLogs`). → [Wijzigingsproces](../concepten/wijzigingsproces.md)
+- **DB-tier-scaling:** naast de "Default"-tier is nu ook een "High"-tier configureerbaar waarnaar
+  workflows tijdens zware loads kunnen opschalen.
+- **Archivering:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (dubbel gegate, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. Archivering is nog niet in te stellen vanuit de webapp; die ondersteuning volgt binnenkort. → [Archivering](../concepten/archivering.md)
+
+### Dataplatform — stabiliteit & performance
+
+- **Stabiliteitsfixes:** een brede reeks fixes in het laadmechanisme (typemappings, delta-filters,
+  paginering, monitoring-statussen en foutafhandeling) en in de CI/CD-mechanismes (wijzigingsproces,
+  release/import/install en deployment). → [Monitoring & logging](./monitoring-logging.md),
+  [Wijzigingsproces](../concepten/wijzigingsproces.md)
+- **Performance-verbeteringen:** de SCD2-merge is op zijn hotspots herschreven en de workflow-planning
+  schaalt niet meer mee met de monitoringhistorie of het aantal tabellen — vooral merkbaar op grote
+  omgevingen.
 
 ## v1.55 — september 2025
 

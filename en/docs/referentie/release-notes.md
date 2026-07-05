@@ -16,19 +16,78 @@ order as decimal fractions — so **1.9 comes after 1.55, and 1.56 before it** �
 
 ## v1.56 — in testing
 
+The biggest release so far: alongside the web app, the entire data platform (database + ADF) was
+overhauled. Below are the highlights per theme; the linked wiki pages describe the details of each
+topic.
+
+### Upgrade & breaking changes
+
+- **Upgrading is only possible from v1.50.** Older environments upgrade to 1.50 first.
+- **IRIS → Yres, in the database and ADF too.** The upgrade renames the customization schema
+  `CustomIris` to `CustomYres` (your own objects move along), columns `Iris*` to `Yres*` (such as
+  `YresLastUpdated`), the database role to `Yres_MANAGED_USERS` and the version setting to
+  `YRES_VERSION`. In ADF every pipeline is now named `… YRES` instead of `… IRIS`, the linked service
+  `IrisDwh` became `YresDwh` and the data lake uses the container `datalake-yres`. **Your own reports,
+  SQL or scripts that use the old names must be updated.**
+- **Surrogate keys are rebuilt during the upgrade** under a new, collision-free key model (`intKey` as
+  a running counter per table; `jsonKey` remains available for custom extensions).
+  → [History & SCD2](../concepten/historie-scd2.md)
+- **Deploy order:** the database upgrade always precedes the ADF publish — the new pipelines use
+  procedures that older databases don't have yet.
+
+### Web app
+
 - **Branding:** IRIS is now **Yres** across the whole web app (emails, UI, translations); updating to 1.56 cleans up old triggers carrying the legacy brand name.
 - **Projects & changes:** redesigned changes table with environment entries per change; an object's related changes are visible from the object viewer. → [Change process](../concepten/wijzigingsproces.md), [Projects & changes](../frontend/projecten-changes.md)
 - **Multi-tenancy:** subdomain per organization, Azure SSO redirect to the correct organization, and the number of environments tied to the subscription. → [Admin](../frontend/admin.md)
-- **New sources:** **Oracle** and **MySQL** (without a connection string, with SSL). → [Oracle](../integraties/bronnen/oracle.md), [MySQL](../integraties/bronnen/mysql.md)
+- **Oracle & MySQL refreshed:** the linked services were updated to the latest connector versions — property-based instead of a connection string, MySQL with SSL. → [Oracle](../integraties/bronnen/oracle.md), [MySQL](../integraties/bronnen/mysql.md)
 - **Sources & connectivity:** new REST service presets, refined REST pagination, and **Test connectivity** from the web app. → [Integrations](../integraties/overzicht.md)
 - **Monitoring & health:** new health bar with DWH statistics; pipeline runs with filters. → [Monitoring & logging](./monitoring-logging.md)
 - **Data engineering & object viewer:** git diff and syntax highlighting, richer mapping of scripted objects, and wizard improvements. → [Data engineering](../frontend/data-engineering.md)
 - **Management & security:** admin secrets view, credential-expiry notifications, encryption of credentials and jobs, Azure Redis cache, and more robust Azure DevOps integration.
-- **Feedback & translations:** feedback form to feedback@yres.app; UI translations updatable live.
-- **Data & loading:** the metadata refresh is now transactional — a failed refresh no longer wipes your columns. → [Refreshing metadata](../frontend/data-sources.md#refreshing-metadata-refresh-metadata)
-- **Archiving completed:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (double-gated, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. → [Archiving](../concepten/archivering.md)
-- **Retention policy for the log tables:** configurable per table via `Monitoring.RetentionPolicy` (defaults 90–365 days); the weekly ADF pipeline `Maintenance Retention YRES` cleans up in batches with fixed integrity guarantees (the latest run per load and in-flight loads always survive) and a dry-run mode. Previously the log tables grew without bound. → [Monitoring & logging](./monitoring-logging.md#retention-of-the-log-tables)
-- **Faster planning and loading:** the planning query (`vwExtractor`) no longer leans on the heavy monitoring view and performs the licence size check once per query instead of per table; in the SCD2 merge the remaining deduplication steps were rewritten (the same pattern that previously proved ~2.6× faster). Most noticeable on environments with many tables or a lot of monitoring history.
+
+### Data platform — new
+
+- **Workload administration:** workflows now plan their full workload up front
+  (`LoadManagement.LoadLog`) and update it per load. The monitor therefore also shows **planned and
+  skipped loads**, statuses come from the administration itself and runtimes are accurate. A new
+  `ADFLoadMonitor` pipeline and a rebuilt garbage collection mirror the ADF run statuses back into the
+  database, so a run that died no longer stays "RUNNING" forever.
+  → [Monitoring & logging](./monitoring-logging.md)
+- **Retention policy for the log tables:** configurable per table via `Monitoring.RetentionPolicy`
+  (defaults 90–365 days); the weekly ADF pipeline `Maintenance Retention YRES` cleans up in batches with
+  fixed integrity guarantees (the latest run per load and in-flight loads always survive) and a dry-run
+  mode; the trigger deliberately ships disabled. Previously the log tables grew without bound.
+  → [Retention of the log tables](./monitoring-logging.md#retention-of-the-log-tables)
+- **Refreshing metadata is atomic:** all GetMetaData pipelines stage the metadata and swap it in in a
+  single transaction — per part for sources with multiple services. A failed or concurrent refresh can
+  no longer leave the column administration half empty.
+  → [Refreshing metadata](../frontend/data-sources.md#refreshing-metadata-refresh-metadata), [Stored procedures](./sql/stored-procedures.md)
+- **Delta loads extended:** two delta columns now work on all SQL/database sources plus Salesforce,
+  SAP SAC and AFAS; Exact Online gained date deltas, the ADDITIONAL load type delta-append, AFAS
+  datatype-aware filters and **Oracle** full delta support.
+  → [Load types](../concepten/load-types.md), [Multiple delta columns](../concepten/load-types.md#multiple-delta-columns)
+- **REST sources:** the request URL is now built inside the pipeline from the base URL in Key Vault plus
+  the endpoint (including query-string merge). → [REST service](../integraties/bronnen/restservice.md)
+- **Snowflake:** staging rewritten to a single Parquet file with a configurable staging container.
+  → [Snowflake](../integraties/bronnen/snowflake.md)
+- **Health checks:** the check view was split into modular groups and extended with ~24 new
+  configuration-integrity checks. → [Admin → Health checks](../frontend/admin.md)
+- **Change process hardened:** fourteen defects in release/import/install fixed, plus a readable release
+  history per change (`Change.vwLogs`). → [Change process](../concepten/wijzigingsproces.md)
+- **DB tier scaling:** next to the "Default" tier, a "High" tier is now configurable that workflows can
+  scale up to during heavy loads.
+- **Archiving:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (double-gated, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. Archiving cannot be configured from the web app yet; that support is coming soon. → [Archiving](../concepten/archivering.md)
+
+### Data platform — stability & performance
+
+- **Stability fixes:** a broad set of fixes in the load mechanism (type mappings, delta filters,
+  pagination, monitoring statuses and error handling) and in the CI/CD mechanisms (change process,
+  release/import/install and deployment). → [Monitoring & logging](./monitoring-logging.md),
+  [Change process](../concepten/wijzigingsproces.md)
+- **Performance improvements:** the SCD2 merge was rewritten on its hotspots and workflow planning no
+  longer scales with the monitoring history or the number of tables — most noticeable on large
+  environments.
 
 ## v1.55 — September 2025
 
