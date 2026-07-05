@@ -18,7 +18,7 @@ The logging is easiest to understand alongside the [data flow](../concepten/gege
 |---|---|---|---|
 | Pipeline run | `[Monitoring].[spWriteLoadStatus]` | `[Monitoring].[LS_Pipeline]` | 1 row per run (at *Start workflow* / *Start load*) |
 | Micro-step | `[Monitoring].[spWriteLoadStatus]` | `[Monitoring].[LS_Trans]` | 1 row per step (always) |
-| Table load (status) | `[Monitoring].[spWriteLoadStatus]` | `[LoadManagement].[LoadLog]` | durable status per table load (RUNNING/SUCCEEDED/FAILED) |
+| Table load (status) | `[LoadManagement].[spPrepareWorkload]` (PLANNED/SKIPPED) → `[Monitoring].[spWriteLoadStatus]` (RUNNING/SUCCEEDED/FAILED) | `[LoadManagement].[LoadLog]` | durable status per table load |
 | Proc/app log | `[Config].[spWriteMessage]` / `Warning` / `Error` / `Log` | `[Config].[ProcessLog]` | messages and errors per stored procedure |
 | DDL/permission audit | database triggers | `[Config].[EventLog]` | object and permission changes |
 
@@ -26,6 +26,19 @@ You read it back through the **monitoring views** — chiefly **`vwLoads`** (the
 
 :::warning `vwLoadMonitor` does not exist
 The view `[Monitoring].[vwLoadMonitor]` is **not deployed** (it only appears in an obsolete `.sqlproj_backup`). Use **`vwLoads`** (pipeline timeline) or **`vwMonitor`** (broader) instead.
+:::
+
+## Before the start: `PLANNED` and `SKIPPED`
+
+`spWriteLoadStatus` (below) only sets a table load to `RUNNING` once ADF actually picks it up. Before that point, the `LoadLog` row passes through two statuses that are **not** set by `spWriteLoadStatus` but by **`[LoadManagement].[spPrepareWorkload]`** — in the "Get tables" Lookup step of `Dynamic Workflow YRES`, before `vwExtractor`/`fxExtractor` returns the work list (see [data flow, step 3](../concepten/gegevensstroom.md)):
+
+- **`PLANNED`** — there is (not yet) another `PLANNED` or `RUNNING` row for the same `Source`/`SourceSchema`/`SourceTable`. This row is actually picked up: at the end, `spPrepareWorkload` dynamically builds a `SELECT` that only returns `LoadLog` rows with `LoadStatus = 'PLANNED'` for this `WorkFlow` to the `ForEach` loop.
+- **`SKIPPED`** — `spPrepareWorkload` found (via `fxExtractor`, which joins `vwLatestLoad` restricted to `LoadStatus IN ('PLANNED','RUNNING')`) that a not-yet-finished load for that exact table already existed. A `LoadLog` row is still written — for traceability, "this request came in" — but immediately with status `SKIPPED`, and that row does **not** come back in the `ForEach` loop.
+
+This is the non-concurrency lock: without this check, a second trigger (or an overlapping manual run) would queue the same table again while the previous load was still in progress. **`[LoadManagement].[vwLatestLoad]`** explicitly excludes `SKIPPED` rows when determining "the latest load" per table, so a skipped duplicate never hides the real (still running or already finished) load in the monitoring screens or in `vwMonitor`.
+
+:::note `SKIPPED` is not an error
+A `SKIPPED` row does not mean something went wrong — it means the same table was already queued or loading elsewhere when this request came in (for example, two overlapping triggers). The Monitoring page does not treat such a row as a failure.
 :::
 
 ## The central logger: `spWriteLoadStatus`

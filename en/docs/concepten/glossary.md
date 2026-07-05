@@ -97,7 +97,8 @@ The fixed data spine is: source → ADF Copy → `STAGE` → `spLoadDWH` → `sp
 | Term | Meaning |
 |---|---|
 | **`spWriteLoadStatus`** | The central load-status logger (`[Monitoring].[spWriteLoadStatus]`). Writes `LS_Pipeline` (at the start of a workflow/load), always `LS_Trans`, and sets the `LoadLog` status to RUNNING/SUCCEEDED/FAILED. |
-| **`LoadLog`** | `[LoadManagement].[LoadLog]` — one durable row per table load with the status (`LoadStatus`), start/end time, error message and a JSON snapshot of the config. Forms the join backbone of `vwMonitor`. |
+| **`PLANNED` / `SKIPPED`** | The two statuses that **`spPrepareWorkload`** (not `spWriteLoadStatus`) sets in `LoadLog` before the load even starts: `PLANNED` = this table load is actually picked up by the `ForEach` loop; `SKIPPED` = a not-yet-finished (`PLANNED`/`RUNNING`) load for the same table already existed, so this request is logged but not executed. See [Monitoring & logging](../referentie/monitoring-logging.md). |
+| **`LoadLog`** | `[LoadManagement].[LoadLog]` — one durable row per table load with the status (`LoadStatus`: PLANNED → RUNNING → SUCCEEDED/FAILED, or PLANNED → SKIPPED), start/end time, error message and a JSON snapshot of the config. Forms the join backbone of `vwMonitor`. |
 | **`LS_Pipeline` / `LS_Trans`** | `[Monitoring].[LS_Pipeline]` = one row per pipeline/workflow run; `[Monitoring].[LS_Trans]` = one row per step (the fine-grained timeline). |
 | **`vwLoads`** | The canonical per-pipeline load timeline `[Monitoring].[vwLoads]` (start + runtime per step, row counts, status). |
 | **`vwMonitor`** | Broader monitor view `[Monitoring].[vwMonitor]` that also includes materialized views and Power BI refreshes. |

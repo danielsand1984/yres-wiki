@@ -62,9 +62,11 @@ Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagi
 
 ### `[LoadManagement].[spPrepareWorkload]`
 
-**Purpose:** Prepares the workload for a single table by writing a row to `[LoadManagement].[LoadLog]` (the durable status per table load). Called by the master pipeline before `vwExtractor` is read.
+**Purpose:** Prepares the workload by writing a row to `[LoadManagement].[LoadLog]` (the durable status per table load) for every table `fxExtractor` returns. Called by the master pipeline (Lookup "Get tables") before `vwExtractor` is read further.
 
-**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (all `NVARCHAR(1024)`), `@execute (INT, default 1)`.
+**PLANNED/SKIPPED logic:** For each candidate table, the procedure checks — via `fxExtractor`'s join with `vwLatestLoad`, restricted to `LoadStatus IN ('PLANNED','RUNNING')` — whether a not-yet-finished load for that exact `Source`/`SourceSchema`/`SourceTable` already exists. If so: the new row is immediately given `LoadStatus = 'SKIPPED'` (logged, not executed — a non-concurrency guard against overlapping triggers). If not: the row gets `LoadStatus = 'PLANNED'`. Finally, the procedure dynamically builds a `SELECT` over `vwExtractor`'s columns, filtered to `WorkFlow = @Workflow AND LoadStatus = 'PLANNED'` — that is the actual work list which (when `@execute = 1`) is executed and returned to the ADF `ForEach`. See [Monitoring & logging](../monitoring-logging.md) for the full status lifecycle.
+
+**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (all `NVARCHAR(1024)`), `@execute (INT, default 1 — at 0 the built SELECT is only printed, not executed)`.
 
 ### `[LoadManagement].[spPrepareCopy]`
 

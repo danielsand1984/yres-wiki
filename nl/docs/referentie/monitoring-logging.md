@@ -18,7 +18,7 @@ De logging is het beste te begrijpen naast de [gegevensstroom](../concepten/gege
 |---|---|---|---|
 | Pipeline-run | `[Monitoring].[spWriteLoadStatus]` | `[Monitoring].[LS_Pipeline]` | 1 rij per run (bij *Start workflow* / *Start load*) |
 | Micro-stap | `[Monitoring].[spWriteLoadStatus]` | `[Monitoring].[LS_Trans]` | 1 rij per stap (altijd) |
-| Tabel-load (status) | `[Monitoring].[spWriteLoadStatus]` | `[LoadManagement].[LoadLog]` | duurzame status per tabel-load (RUNNING/SUCCEEDED/FAILED) |
+| Tabel-load (status) | `[LoadManagement].[spPrepareWorkload]` (PLANNED/SKIPPED) → `[Monitoring].[spWriteLoadStatus]` (RUNNING/SUCCEEDED/FAILED) | `[LoadManagement].[LoadLog]` | duurzame status per tabel-load |
 | Proc-/app-log | `[Config].[spWriteMessage]` / `Warning` / `Error` / `Log` | `[Config].[ProcessLog]` | berichten en fouten per stored procedure |
 | DDL-/permissie-audit | databasetriggers | `[Config].[EventLog]` | object- en rechtenwijzigingen |
 
@@ -26,6 +26,19 @@ Lezen doe je via de **monitoringviews** — vooral **`vwLoads`** (de per-pipelin
 
 :::warning `vwLoadMonitor` bestaat niet
 De view `[Monitoring].[vwLoadMonitor]` is **niet gedeployd** (hij komt alleen voor in een verouderd `.sqlproj_backup`). Gebruik in plaats daarvan **`vwLoads`** (pipeline-tijdlijn) of **`vwMonitor`** (breder).
+:::
+
+## Vóór de start: `PLANNED` en `SKIPPED`
+
+`spWriteLoadStatus` (hieronder) zet een tabel-load pas op `RUNNING` zodra ADF hem daadwerkelijk oppakt. Vóór dat moment doorloopt de `LoadLog`-rij twee statussen die **niet** door `spWriteLoadStatus` maar door **`[LoadManagement].[spPrepareWorkload]`** worden gezet — in de Lookup-stap "Get tables" van `Dynamic Workflow YRES`, vóórdat `vwExtractor`/`fxExtractor` de werklijst teruggeeft (zie [gegevensstroom, stap 3](../concepten/gegevensstroom.md)):
+
+- **`PLANNED`** — er is (nog) geen andere `PLANNED`- of `RUNNING`-rij voor dezelfde `Source`/`SourceSchema`/`SourceTable`. Deze rij wordt écht meegenomen: `spPrepareWorkload` bouwt aan het eind dynamisch een `SELECT` die alleen `LoadLog`-rijen met `LoadStatus = 'PLANNED'` voor deze `WorkFlow` teruggeeft aan de `ForEach`-lus.
+- **`SKIPPED`** — `spPrepareWorkload` vond (via `fxExtractor`, dat linkt met `vwLatestLoad` beperkt tot `LoadStatus IN ('PLANNED','RUNNING')`) al een niet-afgeronde load voor precies diezelfde tabel. Er wordt toch een `LoadLog`-rij weggeschreven — voor traceerbaarheid, "deze aanvraag is binnengekomen" — maar meteen met status `SKIPPED`, en die rij komt **niet** terug in de `ForEach`-lus.
+
+Dit is de non-concurrency-vergrendeling: zonder deze check zou een tweede trigger (of een overlappende handmatige run) dezelfde tabel nóg een keer inplannen terwijl de vorige load nog bezig is. **`[LoadManagement].[vwLatestLoad]`** sluit `SKIPPED`-rijen expliciet uit bij het bepalen van "de laatste load" per tabel, zodat een overgeslagen duplicaat de echte (nog lopende of al afgeronde) load niet verbergt in de monitoringschermen of in `vwMonitor`.
+
+:::note `SKIPPED` is geen fout
+Een `SKIPPED`-rij betekent niet dat er iets misging — hij betekent dat dezelfde tabel al ergens anders in de wachtrij stond of aan het laden was toen deze aanvraag binnenkwam (bijvoorbeeld twee triggers die elkaar overlappen). De Monitoring-pagina behandelt zo'n rij niet als storing.
 :::
 
 ## De centrale logger: `spWriteLoadStatus`

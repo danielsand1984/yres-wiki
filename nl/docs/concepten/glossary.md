@@ -97,7 +97,8 @@ De vaste dataspine is: bron → ADF Copy → `STAGE` → `spLoadDWH` → `spHIS_
 | Term | Betekenis |
 |---|---|
 | **`spWriteLoadStatus`** | De centrale load-status-logger (`[Monitoring].[spWriteLoadStatus]`). Schrijft `LS_Pipeline` (bij start van workflow/load), altijd `LS_Trans`, en zet `LoadLog`-status op RUNNING/SUCCEEDED/FAILED. |
-| **`LoadLog`** | `[LoadManagement].[LoadLog]` — één duurzame rij per tabel-load met de status (`LoadStatus`), start-/eindtijd, foutmelding en een JSON-snapshot van de config. Vormt de join-ruggengraat van `vwMonitor`. |
+| **`PLANNED` / `SKIPPED`** | De twee statussen die **`spPrepareWorkload`** (niet `spWriteLoadStatus`) al vóór de start in `LoadLog` zet: `PLANNED` = deze tabel-load wordt echt meegenomen in de `ForEach`-lus; `SKIPPED` = er lag al een niet-afgeronde (`PLANNED`/`RUNNING`) load voor dezelfde tabel, dus deze aanvraag wordt gelogd maar niet uitgevoerd. Zie [Monitoring & logging](../referentie/monitoring-logging.md). |
+| **`LoadLog`** | `[LoadManagement].[LoadLog]` — één duurzame rij per tabel-load met de status (`LoadStatus`: PLANNED → RUNNING → SUCCEEDED/FAILED, of PLANNED → SKIPPED), start-/eindtijd, foutmelding en een JSON-snapshot van de config. Vormt de join-ruggengraat van `vwMonitor`. |
 | **`LS_Pipeline` / `LS_Trans`** | `[Monitoring].[LS_Pipeline]` = één rij per pipeline-/workflow-run; `[Monitoring].[LS_Trans]` = één rij per stap (de fijnmazige timeline). |
 | **`vwLoads`** | De canonieke per-pipeline load-timeline `[Monitoring].[vwLoads]` (start + runtime per stap, rijtellingen, status). |
 | **`vwMonitor`** | Bredere monitor-view `[Monitoring].[vwMonitor]` die ook materialized views en Power BI-refreshes meeneemt. |

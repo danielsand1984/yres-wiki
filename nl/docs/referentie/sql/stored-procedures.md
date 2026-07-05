@@ -62,9 +62,11 @@ Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePa
 
 ### `[LoadManagement].[spPrepareWorkload]`
 
-**Doel:** Bereidt de werklast voor één tabel voor door een regel in `[LoadManagement].[LoadLog]` te schrijven (de duurzame status per tabel-load). Door de master-pipeline aangeroepen voordat `vwExtractor` wordt gelezen.
+**Doel:** Bereidt de werklast voor door voor élke tabel die `fxExtractor` teruggeeft een regel in `[LoadManagement].[LoadLog]` te schrijven (de duurzame status per tabel-load). Door de master-pipeline aangeroepen (Lookup "Get tables") vóórdat `vwExtractor` verder wordt gelezen.
 
-**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (alle `NVARCHAR(1024)`), `@execute (INT, default 1)`.
+**PLANNED/SKIPPED-logica:** Per kandidaat-tabel checkt de procedure — via `fxExtractor`'s join met `vwLatestLoad`, beperkt tot `LoadStatus IN ('PLANNED','RUNNING')` — of er al een niet-afgeronde load voor diezelfde `Source`/`SourceSchema`/`SourceTable` bestaat. Zo ja: de nieuwe rij krijgt meteen `LoadStatus = 'SKIPPED'` (gelogd, niet uitgevoerd — bedoeld als non-concurrency-guard tegen overlappende triggers). Zo nee: de rij krijgt `LoadStatus = 'PLANNED'`. Tot slot bouwt de procedure dynamisch een `SELECT` op basis van de kolommen van `vwExtractor`, gefilterd op `WorkFlow = @Workflow AND LoadStatus = 'PLANNED'` — dat is de daadwerkelijke werklijst die (bij `@execute = 1`) wordt uitgevoerd en teruggegeven aan de ADF-`ForEach`. Zie [Monitoring & logging](../monitoring-logging.md) voor de volledige statuslevenscyclus.
+
+**Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (alle `NVARCHAR(1024)`), `@execute (INT, default 1 — op 0 wordt de opgebouwde SELECT alleen ge-print, niet uitgevoerd)`.
 
 ### `[LoadManagement].[spPrepareCopy]`
 
