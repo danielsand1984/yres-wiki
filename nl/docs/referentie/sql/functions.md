@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Volledige referentie van alle 56 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
+description: Volledige referentie van alle 58 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
 ---
 
 > Beheer doe je bij voorkeur via de webapp; deze objecten zijn voor het SQL-endpoint (SSMS / Azure Data Studio).
 
-Deze pagina beschrijft alle **56 functions** in de data-plane database `IRIS_DWH`, gegroepeerd per schema.
+Deze pagina beschrijft alle **58 functions** in de data-plane database `IRIS_DWH`, gegroepeerd per schema.
 Per function vind je de volledig gekwalificeerde naam, de signature (zoals in de `CREATE FUNCTION`-header
 staat) en het doel. De namen en types zijn rechtstreeks overgenomen uit de broncode — code is leidend.
 
@@ -24,6 +24,16 @@ Zie ook: [Stored procedures](stored-procedures.md) en [Logs & views](logs-views.
 
 Het hart van de laadmotor. Deze functions bepalen *wat* er geladen wordt en hoe `STAGE` naar `HIS`
 (SCD2) gemergd wordt.
+
+### `[LoadManagement].[fxArchivingPredicate]` — scalar
+
+**Signature:**
+
+```sql
+(@Target NVARCHAR(512)) RETURNS NVARCHAR(MAX)
+```
+
+**Doel:** bouwt per tabel de **archiveringsconditie** (het WHERE-deel) uit de configuratie op `UsedTables`: `CLOSED` → `isCurrent = 0 AND ETL_EndDate < '<grens>'`, `BUSINESS` → `[<ArchivingColumn>] < '<grens>'`, of de vrije `ArchivingClause` letterlijk. De grensdatum wordt als **vaste literal** gerenderd, zodat de kopieer- en opschoonstap binnen één run dezelfde regel gebruiken. `NULL` = archivering uit of onvolledig geconfigureerd (de health checks signaleren dat). Consumenten: `fxExtractor` (bouwt er het `ArchivingScript` van), `spHIS_InsertAndUpdate` (blokkeert bij `BUSINESS` binnenkomende rijen in de gearchiveerde ruimte) en — via ADF — `spArchivePurge`. Zie [Archivering](../../concepten/archivering.md).
 
 ### `[LoadManagement].[fxExtractor]` — table-valued
 

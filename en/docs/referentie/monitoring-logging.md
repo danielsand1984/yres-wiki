@@ -113,6 +113,20 @@ The four writers (`[Config].[spWriteMessage]`, `spWriteWarning`, `spWriteError`,
 
 Object and permission changes: `EventType, ObjectType, TimeStamp, ServerName, DatabaseName, SchemaName, ObjectName, script, fullCommand XML, ChangedBy, …`. This is the source of `vwAccessManagement`, `vwUserManagement` and `vwObjectAlterations`.
 
+## Retention of the log tables
+
+:::info From v1.56
+The retention policy below is part of **v1.56 (in test)**. Older versions have no cleanup mechanism: the log tables grow without bound there.
+:::
+
+The log tables grow with every run (`LS_Trans` writes ~12 rows per merge page; `LoadLog` one row per table per workflow run). Without cleanup, everything that touches monitoring — the planning view `vwExtractor`, `vwMonitor`, the monitoring screens — gets slower over time. That is why there is a **configurable per-table retention policy**:
+
+- **`[Monitoring].[RetentionPolicy]`** — one row per log table with `RetentionDays` (minimum 7) and an `Active` switch. Defaults are seeded at deploy time (only when the row does not exist yet, so your own changes survive): `LS_Trans` and `ProcessLog` 90 days, `LS_Pipeline` and `AdfLoadMonitor` 180 days, `LoadLog` and `DeletedLoads` 365 days.
+- **`[Maintenance].[spApplyRetentionPolicy]`** — the cleanup procedure. Deletes everything older than the retention period in batches, while guarding monitoring integrity: the **latest run per table load** (which `vwLatestLoad` and `vwExtractor` rely on), all **`PLANNED`/`RUNNING`** loads and the detail rows of those protected runs are ALWAYS preserved, regardless of the configured days. Only tables with an explicit cleanup rule are touched.
+- **ADF pipeline `Maintenance Retention YRES`** — runs the procedure on a schedule via the **`Retention`** trigger (weekly, Sunday 03:00). The trigger ships stopped and must be enabled per environment. The pipeline parameter `DryRun = true` gives a **simulation**: per table, the number of rows that would be deleted, without deleting anything.
+
+Every run logs its summary (per table: deleted rows + note) to `LS_Trans` with `Process = 'Maintenance'`.
+
 ## The monitoring views
 
 | View | Level | Use |

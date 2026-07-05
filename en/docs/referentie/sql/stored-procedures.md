@@ -8,7 +8,7 @@ description: Reference for the stored procedures in the IRIS_DWH database, per s
 
 This page describes the stored procedures in the data-plane database **`IRIS_DWH`**. The names are taken verbatim from the live repository; in code, the product is still called **IRIS** in many places. The content was regenerated from the source code (the code takes precedence over older documentation).
 
-The database contains **102 stored procedures, 56 functions, and 41 views** (counted on the deploy source, July 2026). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
+The database contains **105 stored procedures, 58 functions, and 48 views** (counted on the deploy source, July 2026). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
 
 :::note Schema overview
 The procedures are spread across the schemas `LoadManagement` (the load engine), `Config` (settings, logging, DB tuning), `Change` (DTAP change management), `Monitoring` (load-status logging), `Maintenance` (maintenance, health checks), `Expose` (reporting RBAC), and `dbo` (helper procedures).
@@ -197,13 +197,25 @@ These procedures write the metadata that drives the load engine (in `LoadManagem
 | Procedure | Purpose (short) |
 |---|---|
 | `[LoadManagement].[spMaintainSource]` | Manages data sources in `SourceSystems` (`@action`, `@source`, `@sourceType`, `@AppUser`). |
-| `[LoadManagement].[spMaintainTable]` | Manages tables (`UsedTables`/`UsedColumns`); many extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …). |
+| `[LoadManagement].[spMaintainTable]` | Manages tables (`UsedTables`/`UsedColumns`); many extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …) — since v1.56 also the archiving configuration (`@ArchivingMode`, `@ArchivingColumn`, `@ArchivingRetention(+Unit)`, `@ArchivingClause`), validated against the Dictionary. |
 | `[LoadManagement].[spMaintainFiles]` | Manages file sources for import. |
 | `[LoadManagement].[spMaintainRestService]` | Manages REST service endpoints (`@service`, `@endpoint`, …). |
 | `[LoadManagement].[spMaintainTrigger]` | Manages triggers per source/schema/table (`@action` = `ADD`/`DELETE`; `"all"`/`"ALL"` possible). |
 | `[LoadManagement].[spMaintainPersistView]` | Manages view persistence in `ViewPersistence`. |
 | `[LoadManagement].[spMaintainFilesInDictionary]` | Manages file metadata in `Dictionary`/`UsedColumns`. |
 | `[LoadManagement].[spMaintainRestInDictionary]` | Manages REST metadata in the dictionary. |
+
+### Archiving: verify and purge (v1.56)
+
+See [Archiving](../../concepten/archivering.md) for the full story; these are the two procedures behind it.
+
+#### `[LoadManagement].[spArchivePurge]`
+
+**Purpose:** the verified purge step of archiving. The `Dynamic Archiving Workflow YRES` calls this procedure per table after a successful Copy-to-Parquet, passing exactly the same archiving condition (the `ArchivingScript`) and the number of copied rows. The procedure recounts how many rows match the condition and deletes **only on an exact match** — in batches, and double-gated by the settings `ArchivingPurgeEnabled` and `AllowDeletesFromDB` (switch off = clean copy-only run, not an error). If the counts differ, nothing is deleted and the step fails visibly via `spWriteLoadStatus`.
+
+#### `[LoadManagement].[spArchiveMaintainView]`
+
+**Purpose:** after every successful archive copy, refreshes the per-table union view `[<HIS schema>].[<Target>_IncArchive]` (live table `UNION ALL` archived Parquet via data virtualization / `OPENROWSET`, deduplicated on the `RowID` with precedence for live). Idempotently creates the required credential and external data source (`YresArchiveLake`, from the `ArchiveLakeLocation` setting). This procedure must never block archiving: every error is logged and swallowed (e.g. while the Data Lake permissions for SQL are not yet in place).
 
 ### Metadata staging: stage, swap, and finalize
 
@@ -437,6 +449,12 @@ All bookkeeping writes are wrapped in a `TRY/CATCH` and are best-effort: a faile
 ## Maintenance — maintenance and health checks
 
 This schema contains maintenance routines and the health-check implementation. The health-check results can be queried through the view `[Maintenance].[vwYresChecks]` (the source file is still named `vwIrisChecks.sql`).
+
+### `[Maintenance].[spApplyRetentionPolicy]` (v1.56)
+
+**Purpose:** Applies the [retention policy](../monitoring-logging.md#retention-of-the-log-tables) from `[Monitoring].[RetentionPolicy]` to the log tables: deletes everything older than the retention period in batches, with fixed integrity rules (the latest run per table load, `PLANNED`/`RUNNING` loads and their detail rows always survive; only tables with an explicit cleanup rule are touched). Called on a schedule by the ADF pipeline `Maintenance Retention YRES`.
+
+**Parameters:** `@PipelineID (NVARCHAR(255))`, `@DryRun (BIT, default 0)` — 1 = only count what would be deleted, `@BatchSize (INT, default 100000)`, `@Scope (NVARCHAR(255))` and `@OverrideRetentionDays (INT)` — test/ops scoping (an override without a scope is refused). Returns one summary row per processed table.
 
 ### `[Maintenance].[spImplementSolution]`
 

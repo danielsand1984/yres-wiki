@@ -1,110 +1,125 @@
 ---
 sidebar_position: 4
 title: Archivering
-description: Hoe Yres oudere historie naar Parquet in de Data Lake wegschrijft via vwArchivingExtractor en de Dynamic Archiving Workflow YRES.
+description: Hoe Yres oudere historie geverifieerd naar Parquet in de Data Lake verplaatst — kopiëren, controleren, opschonen — en live + archief als één geheel toont.
 ---
 
 # Archivering
 
-**Archivering** schrijft oudere rijen uit het history-schema (`HIS`/`ODS`) weg naar **Parquet-bestanden in de Azure Data Lake**. Zo houd je de actieve datawarehouse-database kleiner en goedkoper, terwijl de oudere historie bewaard blijft als kolomgeoriënteerde bestanden die je later nog kunt bevragen.
+**Archivering** verplaatst oudere rijen uit het history-schema (`HIS`/`ODS`) naar **Parquet-bestanden in de Azure Data Lake**. Zo blijft de actieve datawarehouse-database klein en goedkoop, terwijl de oudere historie bewaard blijft als kolomgeoriënteerde bestanden — en via een automatisch onderhouden **union-view** gewoon meequeryt met de live tabel.
 
-:::note Wat archivering wél en niet doet
-Archivering **kopieert** rijen die ouder zijn dan een ingestelde grensdatum naar de Data Lake. In de huidige `Dynamic Archiving Workflow YRES` worden die rijen **niet** automatisch uit `HIS`/`ODS` verwijderd — de workflow bevat alleen een Copy-stap naar Parquet, geen delete-stap op het history-schema. Archivering is dus in de eerste plaats een **uitplaats-/back-up-mechanisme** naar de Data Lake, niet een purge.
+Archivering werkt in drie stappen per tabel, binnen één run van de `Dynamic Archiving Workflow YRES`:
+
+1. **Kopiëren** — de rijen die aan de archiveringsregel voldoen gaan als Parquet naar het `archive/`-pad in de Data Lake.
+2. **Verifiëren & opschonen (purge)** — `[LoadManagement].[spArchivePurge]` telt de rijen die *nu* aan de regel voldoen en verwijdert ze **alleen bij een exacte match** met het aantal gekopieerde rijen. Wijkt de telling af (er is tussendoor geladen), dan wordt er **niets** verwijderd en kun je de run veilig opnieuw draaien.
+3. **Union-view verversen** — `[LoadManagement].[spArchiveMaintainView]` genereert per tabel de view `[<HIS-schema>].[<Target>_IncArchive]` die de live tabel en de gearchiveerde Parquet-bestanden als één geheel toont.
+
+:::tip Eerst proefdraaien, dan pas opschonen
+De purge staat standaard **uit** (instelling `ArchivingPurgeEnabled = 0`). In die stand kopieert de workflow alleen naar de Data Lake en wordt er niets verwijderd — ideaal om de configuratie en de Parquet-uitvoer te controleren. Zet daarna `ArchivingPurgeEnabled` op `1` (én `AllowDeletesFromDB` op `1` — een dubbele beveiliging) om echt op te schonen.
+:::
+
+## Twee archiveringsmodi per tabel
+
+Archivering is **opt-in per tabel** en kent twee modi, ingesteld op `LoadManagement.UsedTables` (via `spMaintainTable`):
+
+| Modus | Wat wordt gearchiveerd | Typisch gebruik |
+|---|---|---|
+| **`CLOSED`** | Alleen **afgesloten SCD2-versies**: rijen met `isCurrent = 0` waarvan de `ETL_EndDate` ouder is dan de bewaartermijn. De actuele rij blijft altijd in de database. | Historie-opschoning zonder functioneel effect: de actuele stand blijft compleet. |
+| **`BUSINESS`** | **Echte data** op basis van een **datumkolom in de dataset** (de `ArchivingColumn`), bv. facturen ouder dan 10 jaar — inclusief actuele rijen. | Wettelijke/functionele retentie: "alles ouder dan X jaar mag het datawarehouse uit". |
+
+De configuratiekolommen:
+
+| Kolom (`UsedTables`) | Betekenis |
+|---|---|
+| `ArchivingMode` | `NULL` = uit, `CLOSED` of `BUSINESS`. |
+| `ArchivingColumn` | Alleen bij `BUSINESS`: de datasetkolom met de businessdatum (moet in de Dictionary bestaan). |
+| `ArchivingRetention` + `ArchivingRetentionUnit` | De bewaartermijn: een aantal `YEAR` / `MONTH` / `DAY` (bv. `10` + `YEAR`). |
+| `ArchivingClause` | Geavanceerd: een vrije WHERE-clausule die de modus **overstemt** — voor uitzonderingsgevallen zoals een Unix-timestampkolom. Bij `BUSINESS` mag zo'n clausule alleen datakolommen gebruiken (geen `ETL_*`/`isCurrent`). |
+
+Uit die configuratie bouwt de function **`[LoadManagement].[fxArchivingPredicate]`** één archiveringsconditie, met de grensdatum als **vaste literal** — zodat de kopieer- en opschoonstap binnen één run gegarandeerd exact dezelfde regel gebruiken. Het resultaat verschijnt als **`ArchivingScript`** (`FROM <HIS-schema>.<Target> WHERE <conditie>`) op de contractview `[LoadManagement].[vwExtractor]`; de workflow pakt alleen tabellen waar dit script gevuld is.
+
+:::note Gearchiveerde data komt niet terug (BUSINESS)
+Bij `BUSINESS`-archivering kan een verwijderde rij nog in het bronsysteem bestaan. Daarom **blokkeert de laadmachine** (`spHIS_InsertAndUpdate`) bij deze modus alle binnenkomende rijen die in de "gearchiveerde ruimte" vallen (businessdatum ouder dan de grens): ze bereiken `HIS` nooit meer, ook niet via een FULL- of IMAGE-load. Het aantal geblokkeerde rijen wordt per load gelogd (`Blocked archived-space rows in page` in de monitoring). Tip: zet het `LoadFilter` van zo'n tabel gelijk aan de archiveringsgrens, dan haalt de bron-extractie die oude data ook niet meer op. `CLOSED` heeft deze blokkering niet nodig: de actuele rij blijft immers gewoon in de database staan.
 :::
 
 ## Wanneer draait archivering?
 
-Archivering is een **aparte workflow** (`Dynamic Archiving Workflow YRES`), los van de normale load. Hij draait wanneer je hem expliciet start:
+Archivering is een **aparte workflow** (`Dynamic Archiving Workflow YRES`), los van de normale load. Hij draait wanneer je hem expliciet start — handmatig of via een eigen trigger — met dezelfde scope- en tierparameters als de gewone load:
 
-- via een **trigger** (schema) die op deze pipeline staat, of
-- via een **handmatige run** met parameters (`Source`, `Schema`, `Table`).
+| Parameter | Standaard | Betekenis |
+|---|---|---|
+| `Source` / `Schema` / `Table` | `ALL` | Beperk de run tot één bron, schema of tabel. |
+| `RunningTier` | `Current` | Schaal de database tijdelijk op tijdens de run. |
+| `RevertToTier` | `Previous` | Tier waarnaar na afloop wordt teruggeschaald. |
 
-Het is dus **geen onderdeel van elke load**: een reguliere load (`Dynamic Workflow YRES`) raakt de Data Lake-archieven niet. Archivering is een geplande, terugkerende opschoonactie die je los inricht.
+De `ForEach` over de tabellen draait parallel (`batchCount: 3`); de pipeline zelf heeft `concurrency: 1` — er draait nooit meer dan één archiveer-workflow tegelijk.
 
 ## Hoe het werkt (op hoofdlijnen)
 
 ```
-Trigger / handmatige run  (Source, Schema, Table, RunningTier, RevertToTier)
-  → WLS Start workflow                 → [Monitoring].[spWriteLoadStatus]  (Process = 'Archiving Workflow')
-  → (optioneel) Set DB Tier            → schaal de database tijdelijk op
-  → Get tables (Lookup)                → SELECT … FROM [LoadManagement].[vwExtractor]
-                                          WHERE [ArchivingScript] IS NOT NULL
-  → ForEach "Load data" (parallel, batchCount 3), per tabel:
-        WLS Start DL Archiving load    → spWriteLoadStatus  (Process = 'Archiving')
-        Copy data                      → run [ArchivingScript] (een SELECT uit HIS)
-                                          → Parquet in de Data Lake (AzureDataLakeStorage_MAIN)
-        WLS End DL load                → spWriteLoadStatus
-  → (optioneel) Set DB Tier Back       → schaal de database terug
-  → WLS End Workflow                   → spWriteLoadStatus
+Handmatige run / trigger  (Source, Schema, Table, RunningTier, RevertToTier)
+  → (optioneel) Set DB Tier          → schaal de database tijdelijk op
+  → Get tables (Lookup)              → SELECT … FROM [LoadManagement].[vwExtractor]
+                                        WHERE [ArchivingScript] IS NOT NULL
+  → ForEach per tabel (parallel):
+        Copy data                    → 'SELECT * ' + ArchivingScript
+                                        → Parquet op archive/… (AzureDataLakeStorage_ARCHIVE)
+        Purge archived rows          → [LoadManagement].[spArchivePurge]
+                                        telt opnieuw; verwijdert alleen bij exacte match,
+                                        gefaseerd (batches), dubbel gegate door instellingen
+        Maintain archive view        → [LoadManagement].[spArchiveMaintainView]
+                                        ververst de <Target>_IncArchive-unionview
+  → (optioneel) Set DB Tier Back     → schaal de database terug
 ```
 
-De kern: de **SQL-database bepaalt wat gearchiveerd wordt** (via een view), en ADF voert alleen de Copy-opdracht naar de Data Lake uit. Net als bij een gewone load is ADF een generieke uitvoerder; de logica zit in SQL.
-
-### Het archiveer-script komt uit een view
-
-Welke rijen voor archivering in aanmerking komen, wordt berekend in **`[LoadManagement].[vwArchivingExtractor]`**. Die view bouwt per tabel een **`ArchivingDeltaScript`**: een `SELECT * FROM <HIS-schema>.<Target> WHERE …` met een filter op de grensdatum.
-
-- Voor **DELTA**-tabellen filtert het script op de **deltakolom**: `WHERE [DeltaColumn] < [ArchivingDate]` (met een datatype-afhankelijke cast naar `date`/`datetime`/`datetime2`/etc.).
-- Voor de overige tabellen filtert het op de laaddatum: `WHERE ETL_DATE < [ArchivingDate]`.
-
-Het uiteindelijke script wordt aan ADF aangeboden via de kolom **`[ArchivingScript]`** op de contractview `[LoadManagement].[vwExtractor]`. De archiveer-workflow haalt alleen de tabellen op waarvoor dit script gevuld is (`WHERE [ArchivingScript] IS NOT NULL`); tabellen zonder grensdatum doen niet mee.
-
-## De grensdatum bepalen
-
-Per tabel wordt de grensdatum (`ArchivingDate`) als volgt bepaald (zie `vwArchivingExtractor`):
-
-1. **Per-tabel override** — de kolom `LoadManagement.UsedTables.ArchivingClause`. Staat hier een waarde, dan telt die.
-2. **Standaardinstellingen** — anders geldt: als het load type van de tabel voorkomt in de instelling **`DefaultArchivingLoadtypes`** (een komma-gescheiden lijst), dan wordt de grensdatum **`DefaultArchivingDate`** gebruikt.
-3. **Geen archivering** — voldoet de tabel aan geen van beide, dan blijft `ArchivingDate` leeg en wordt de tabel overgeslagen.
-
-Zo activeer je archivering breed met twee instellingen (welke load types, vanaf welke datum), terwijl je per tabel kunt afwijken via `ArchivingClause`.
-
-### De instellingen
-
-| Instelling | Wat het regelt | Type |
-|---|---|---|
-| **`DefaultArchivingDate`** | De grensdatum: rijen ouder dan deze datum komen in aanmerking voor archivering. | Code-instelling in `[Config].[Settings]` |
-| **`DefaultArchivingLoadtypes`** | Komma-gescheiden lijst van load types waarvoor de standaard-grensdatum geldt. | Code-instelling in `[Config].[Settings]` |
-
-Beide instellingen worden in de datawarehouse-code **gelezen** (door `vwArchivingExtractor`), maar staan niet in de standaard-seed (`Script.PostDeployment.sql`) en niet in de gebruikershandleiding. Ze worden naar verwachting door de webapp (control plane) gevuld.
-
-:::note Instellingen worden niet automatisch geseed
-`DefaultArchivingDate` en `DefaultArchivingLoadtypes` worden door `vwArchivingExtractor` *gelezen*, maar door noch de DWH-deploy noch de webapp-provisioning *geseed* (de backend werkt alleen bestaande settings bij). Stel ze daarom expliciet in (via de settings of SQL) voordat archivering volgens jouw configuratie draait.
-:::
+Net als bij een gewone load is ADF de generieke uitvoerder en zit de logica in SQL: het `ArchivingScript` begint bewust met `FROM`, zodat er zowel een `SELECT *` (kopiëren) als een `DELETE` (opschonen) vóór geplakt kan worden — beide draaien daardoor op **exact dezelfde** rijenselectie.
 
 ## Wat er in de Data Lake landt
 
-De `Copy data`-stap schrijft het resultaat van het `ArchivingScript` weg als **Parquet** naar de dataset `AzureDataLakeStorage_MAIN`, gepartitioneerd op:
+De Copy-stap schrijft het resultaat als **Parquet** naar een eigen archiefpad (dataset `AzureDataLakeStorage_ARCHIVE`), gescheiden van de gewone Data Lake-loads:
 
 ```
-<Source> / <TargetSchema> / <Target> / <jaar> / <maand>
+archive / <Source> / <TargetSchema> / <Target> / <jaar> / <maand> / <Target>-<timestamp>.parquet
 ```
 
-Het jaar en de maand komen uit het moment van de archiveer-run (`utcnow()`). De geëxporteerde rijen behouden de SCD2-framework­kolommen (`KeyHash`, `RowHash`, `ETL_Date`), zodat de Parquet-historie dezelfde structuur heeft als de bron in `HIS`.
+De geëxporteerde rijen behouden alle SCD2-frameworkkolommen (`KeyHash`, `RowHash`, `ETL_Date`, `ETL_EndDate`, `isCurrent` en de `RowID`), zodat het archief dezelfde structuur heeft als de bron in `HIS`.
 
-## Parameters van de workflow
+## Live + archief als één geheel: de `_IncArchive`-views
 
-`Dynamic Archiving Workflow YRES` accepteert dezelfde scope- en tier-parameters als de gewone load:
+Na elke geslaagde kopie ververst `spArchiveMaintainView` per tabel de view **`[<HIS-schema>].[<Target>_IncArchive>`**: een `UNION ALL` van de live tabel en de gearchiveerde Parquet-bestanden, gelezen met **Azure SQL data virtualization** (`OPENROWSET` over een external data source op de Data Lake). Afnemers die ook de gearchiveerde historie nodig hebben, bevragen simpelweg deze view in plaats van de tabel.
 
-| Parameter | Standaard | Betekenis |
+- De view **dedupliceert** op de interne `RowID` met voorrang voor de live rij — een proefrun in copy-only-modus of een herstart kan dezelfde rijen immers twee keer in het archief zetten.
+- De kolomlijst en datatypes worden bij elke archiveringsrun **opnieuw gegenereerd** uit de live tabel, dus kolomwijzigingen volgen vanzelf.
+- View-onderhoud kan archivering **nooit blokkeren**: lukt het niet (bv. rechten nog niet ingericht), dan wordt dat gelogd en gaat de archivering gewoon door. De view verschijnt automatisch bij de eerstvolgende run nadat het probleem is opgelost.
+
+:::caution Rechten voor de union-views
+De views lezen het Data Lake rechtstreeks vanuit SQL. Daarvoor moet eenmalig per omgeving zijn ingericht: een **system-assigned managed identity op de logical SQL-server**, **Storage Blob Data Reader** voor die identity op de Data Lake-container, en de instelling **`ArchiveLakeLocation`** (`adls://<container>@<account>.dfs.core.windows.net`). Zolang dat niet gebeurd is, werkt archiveren zelf gewoon — alleen de views worden overgeslagen (met een melding in de monitoring). Data virtualization is een preview-feature van Azure SQL Database.
+:::
+
+## De instellingen
+
+| Instelling (`[Config].[Settings]`) | Standaard | Wat het regelt |
 |---|---|---|
-| `Source` | `ALL` | Beperk tot één bronsysteem (of `ALL` voor alle, of `AUTO` voor de tabellen die aan déze trigger gekoppeld zijn). |
-| `Schema` | `ALL` | Beperk tot één bronschema. |
-| `Table` | `ALL` | Beperk tot één tabel. |
-| `RunningTier` | `Current` | Schaal de database tijdelijk naar deze tier tijdens de run (`Current` = niet schalen). |
-| `RevertToTier` | `Previous` | Tier waarnaar na afloop wordt teruggeschaald. |
+| **`ArchivingPurgeEnabled`** | `0` (Nee) | Hoofdschakelaar van de opschoonstap. `0` = alleen kopiëren (proefdraaien), `1` = na geverifieerde kopie ook verwijderen uit `HIS`. |
+| **`AllowDeletesFromDB`** | bestaand | Moet óók `1` zijn voordat de purge iets verwijdert (dubbele beveiliging). |
+| **`ArchiveLakeLocation`** | leeg | `adls://…`-locatie van de Data Lake voor de union-views; wordt door provisioning gevuld. Leeg = views worden overgeslagen. |
 
-De `ForEach` over de tabellen draait parallel met `batchCount: 3`; de pipeline zelf heeft `concurrency: 1` (er draait nooit meer dan één archiveer-workflow tegelijk).
+De **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, groep 7) bewaken de configuratie: `BUSINESS` zonder datumkolom, een `ArchivingColumn` die niet in de Dictionary bestaat, een ontbrekende bewaartermijn, een clausule op `ETL_`-kolommen en een purge die aanstaat terwijl `AllowDeletesFromDB` uit staat, worden allemaal gesignaleerd.
+
+:::note Vervallen: settings-gestuurde standaard-archivering
+Oudere versies bevatten een tweede, nooit afgemaakt ontwerp (`vwArchivingExtractor` met de instellingen `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) dat automatisch alle DELTA-tabellen zou archiveren. Dat is in v1.56 **verwijderd**: archivering is bewust een expliciete keuze per tabel. De deploy ruimt de oude view en instellingen zelf op.
+:::
 
 ## Monitoring
 
-Elke stap logt via **`[Monitoring].[spWriteLoadStatus]`**, net als een gewone load — maar met `Process = 'Archiving Workflow'` (op workflow-niveau) en `Process = 'Archiving'` (per tabel). Je vindt de runs dus terug in de monitoring-views (`vwLoads`, `vwMonitor`) en op het monitoring-scherm in de webapp. Mislukt een tabel, dan schrijft de workflow `Status = FAILED` weg met de foutcontext.
+Archiveringsruns verschijnen in de gewone monitoringschermen: de stappen per tabel loggen als `Process = 'load'` (zichtbaar in `vwLoads`/`vwMonitor`, met de HIS-tabel als target) en de workflowstappen als `Process = 'Workflow'` (zichtbaar in `vwWorkflow`). Daarnaast schrijven de archiveringsprocedures **detailstappen** met `Process = 'Archiving'`: de verificatietellingen (gekopieerd vs. nu aanwezig), het aantal verwijderde rijen, overgeslagen purges (schakelaar uit) en het view-onderhoud. Mislukt de verificatie, dan faalt de run zichtbaar met de reden in de log — en is opnieuw draaien altijd veilig, want er is dan niets verwijderd.
 
 ## Verschil met de load types
 
-Archivering staat **los van** de [load types](./load-types.md). Een load type bepaalt wat er bij het laden met de history-tabel gebeurt; archivering bepaalt wat er met *oude* rijen uit die history-tabel gebeurt (wegschrijven naar de Data Lake). Let in het bijzonder op:
+Archivering staat **los van** de [load types](./load-types.md). Een load type bepaalt wat er bij het *laden* met de history-tabel gebeurt; archivering bepaalt wat er met *oude* rijen gebeurt. Let in het bijzonder op:
 
-- **OVERWRITE** wist de history bij élke load (truncate, geen historie) — daar valt dus weinig te archiveren.
-- **FULL**, **DELTA**, **IMAGE**, **RELOAD** en de andere types bouwen wél SCD2-historie op; juist die tabellen profiteren van archivering om de database klein te houden.
+- **OVERWRITE** wist de history bij elke load — daar valt weinig te archiveren.
+- **FULL**, **DELTA**, **IMAGE**, **RELOAD** en de andere types bouwen wél SCD2-historie op; juist die tabellen profiteren van `CLOSED`-archivering.
+- Tabellen uit **bestandsbronnen** doen (nog) niet mee met archivering.
 
-Zie ook [Load types](./load-types.md), de [begrippenlijst](./glossary.md) en [Views & pipelines](../setup/views-pipelines.md).
+Zie ook [Load types](./load-types.md), [Historie & SCD2](./historie-scd2.md), de [begrippenlijst](./glossary.md) en [Views & pipelines](../setup/views-pipelines.md).

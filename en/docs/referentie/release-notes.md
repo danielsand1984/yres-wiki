@@ -26,6 +26,9 @@ order as decimal fractions — so **1.9 comes after 1.55, and 1.56 before it** �
 - **Management & security:** admin secrets view, credential-expiry notifications, encryption of credentials and jobs, Azure Redis cache, and more robust Azure DevOps integration.
 - **Feedback & translations:** feedback form to feedback@yres.app; UI translations updatable live.
 - **Data & loading:** the metadata refresh is now transactional — a failed refresh no longer wipes your columns. → [Refreshing metadata](../frontend/data-sources.md#refreshing-metadata-refresh-metadata)
+- **Archiving completed:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (double-gated, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. → [Archiving](../concepten/archivering.md)
+- **Retention policy for the log tables:** configurable per table via `Monitoring.RetentionPolicy` (defaults 90–365 days); the weekly ADF pipeline `Maintenance Retention YRES` cleans up in batches with fixed integrity guarantees (the latest run per load and in-flight loads always survive) and a dry-run mode. Previously the log tables grew without bound. → [Monitoring & logging](./monitoring-logging.md#retention-of-the-log-tables)
+- **Faster planning and loading:** the planning query (`vwExtractor`) no longer leans on the heavy monitoring view and performs the licence size check once per query instead of per table; in the SCD2 merge the remaining deduplication steps were rewritten (the same pattern that previously proved ~2.6× faster). Most noticeable on environments with many tables or a lot of monitoring history.
 
 ## v1.55 — September 2025
 

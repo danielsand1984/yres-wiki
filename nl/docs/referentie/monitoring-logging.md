@@ -113,6 +113,20 @@ De vier schrijvers (`[Config].[spWriteMessage]`, `spWriteWarning`, `spWriteError
 
 Object- en rechtenwijzigingen: `EventType, ObjectType, TimeStamp, ServerName, DatabaseName, SchemaName, ObjectName, script, fullCommand XML, ChangedBy, …`. Dit is de bron van `vwAccessManagement`, `vwUserManagement` en `vwObjectAlterations`.
 
+## Retentie van de logtabellen
+
+:::info Vanaf v1.56
+Het retentiebeleid hieronder is onderdeel van **v1.56 (in test)**. Oudere versies hebben geen opschoonmechanisme: de logtabellen groeien daar onbegrensd.
+:::
+
+De logtabellen groeien met elke run (`LS_Trans` schrijft ~12 regels per merge-pagina; `LoadLog` één rij per tabel per workflow-run). Zonder opschoning wordt alles wat monitoring aanraakt — de planningsview `vwExtractor`, `vwMonitor`, de monitorschermen — sluipend trager. Daarom is er een **instelbaar retentiebeleid per tabel**:
+
+- **`[Monitoring].[RetentionPolicy]`** — één rij per logtabel met `RetentionDays` (minimaal 7) en een `Active`-schakelaar. Standaardwaarden worden bij de deploy geseed (alleen als de rij nog niet bestaat, dus eigen aanpassingen blijven staan): `LS_Trans` en `ProcessLog` 90 dagen, `LS_Pipeline` en `AdfLoadMonitor` 180 dagen, `LoadLog` en `DeletedLoads` 365 dagen.
+- **`[Maintenance].[spApplyRetentionPolicy]`** — de opschoonprocedure. Verwijdert in batches alles ouder dan de bewaartermijn, maar bewaakt de integriteit van de monitoring: de **laatste run per tabel-load** (waar `vwLatestLoad` en `vwExtractor` op leunen), alle **`PLANNED`/`RUNNING`-loads** en de detailregels van die beschermde runs blijven áltijd staan, ongeacht de ingestelde dagen. Alleen tabellen waarvoor een expliciete opschoonregel bestaat worden geraakt.
+- **ADF-pipeline `Maintenance Retention YRES`** — draait de procedure gepland via de trigger **`Retention`** (wekelijks, zondag 03:00). De trigger wordt uitgeleverd in gestopte staat en moet per omgeving worden aangezet. De pipeline-parameter `DryRun = true` geeft een **simulatie**: per tabel het aantal rijen dat verwijderd zóu worden, zonder iets te verwijderen.
+
+Elke run logt zijn samenvatting (per tabel: verwijderde rijen + toelichting) in `LS_Trans` met `Process = 'Maintenance'`.
+
 ## De monitoringviews
 
 | View | Niveau | Gebruik |

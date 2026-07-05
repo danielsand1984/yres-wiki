@@ -11,14 +11,14 @@ Every Yres database (`IRIS_DWH`) can be managed through a **SQL endpoint** (SSMS
 :::tip This page is the catalog
 Below are the **names per schema** with a short description. The full **purpose, inputs and outputs per object** are on the detail pages:
 
-- [Stored procedures](./sql/stored-procedures.md) — all 102 procedures
-- [Functions](./sql/functions.md) — all 56 functions
-- [Logs & views](./sql/logs-views.md) — log tables + all 41 views with output columns
+- [Stored procedures](./sql/stored-procedures.md) — all 105 procedures
+- [Functions](./sql/functions.md) — all 58 functions
+- [Logs & views](./sql/logs-views.md) — log tables + all 48 views with output columns
 :::
 
 ## Overview: schemas and counts
 
-`IRIS_DWH` contains **102 stored procedures, 56 functions and 41 views**, spread across these schemas:
+`IRIS_DWH` contains **105 stored procedures, 58 functions and 48 views**, spread across these schemas:
 
 | Schema | Role |
 |---|---|
@@ -114,7 +114,7 @@ The product is called **Yres**, but in the database many identifiers still read 
 > **`vwLoads`** = the per-pipeline load timeline; **`vwMonitor`** = broader (incl. materialized views and Power BI refreshes). The three `vw*Management`/`vwObjectAlterations` views come from `Config.EventLog`.
 
 ### `[LoadManagement]`
-`vwExtractor` · `vwArchivingExtractor` · `vwDictionary` · `vwInitialDictionary` · `vwLatestLoad` · `vwUsedTables` · `vwUsedColumns` · `vwUsedODSTablesAndColumns` · `vwUnusedTables` · `vwViewPersistence` · `vwViewsAndColumns`
+`vwExtractor` · `vwDictionary` · `vwInitialDictionary` · `vwLatestLoad` · `vwUsedTables` · `vwUsedColumns` · `vwUsedODSTablesAndColumns` · `vwUnusedTables` · `vwViewPersistence` · `vwViewsAndColumns` · generated `<Target>_IncArchive` archive views
 
 > `vwExtractor` is the contract ADF reads to determine what needs to be loaded: `SELECT * FROM [LoadManagement].[fxExtractor](NULL, NULL)`.
 

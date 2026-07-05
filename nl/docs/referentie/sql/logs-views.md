@@ -96,6 +96,16 @@ Gebruik die spelling verbatim.
 Een `INSTEAD OF DELETE, UPDATE`-trigger blokkeert het manipuleren van deze tabel tenzij de setting
 `Config.fxGetSetting('AllowSettingsUpdates')` dit toestaat.
 
+### `[Monitoring].[RetentionPolicy]` (v1.56)
+
+De retentieconfiguratie van de logtabellen: één rij per logtabel met de bewaartermijn in dagen.
+Wordt gelezen door `[Maintenance].[spApplyRetentionPolicy]` (zie
+[Monitoring & logging → Retentie](../monitoring-logging.md#retentie-van-de-logtabellen)). Standaardwaarden
+worden bij de deploy insert-if-missing geseed, dus eigen aanpassingen blijven staan.
+
+**Kolommen:** `RowId IDENTITY`, `SchemaName`, `TableName` (uniek paar), `RetentionDays` (CHECK ≥ 7),
+`Active BIT`, `Description`, `YresLastUpdated`, `YresLastUpdatedBy`.
+
 ### `[Config].[EventLog]`
 
 De DDL- en rechten-audit. Bron voor de drie `vw*Management`-/`vwObjectAlterations`-views.
@@ -240,11 +250,19 @@ stage → live; bij 0 gestagede rijen blijft de live-metadata staan. Het mechani
 procedures (`spSwapDictionary`, `spClearDictionaryStage`, `spFinalizeDictionary` en hun `Services`-varianten)
 staan beschreven bij [Stored procedures → Metadata-staging](stored-procedures.md#metadata-staging-stage-swap-en-finalize).
 
-### `[LoadManagement].[vwArchivingExtractor]`
+### `[<HIS-schema>].[<Target>_IncArchive]` — gegenereerde archiefviews (v1.56)
 
-Genereert SQL-scripts voor het archiveren van data op basis van load type en delta-kolommen. Drijft de
-`Dynamic Archiving Workflow YRES`-pipeline. Output omvat alle kolommen van de archiverings-function plus
-`ArchivingDeltaScript`.
+Per gearchiveerde tabel onderhoudt `spArchiveMaintainView` een union-view die de **live tabel én de
+gearchiveerde Parquet-bestanden** in de Data Lake als één geheel toont (`UNION ALL` via data
+virtualization/`OPENROWSET`, gededupliceerd op de `RowID` met voorrang voor de live rij). De kolomlijst
+wordt bij elke archiveringsrun opnieuw uit de live tabel gegenereerd. Zie
+[Archivering](../../concepten/archivering.md).
+
+:::note Vervallen: `vwArchivingExtractor`
+De oude view `[LoadManagement].[vwArchivingExtractor]` (settings-gestuurde standaard-archivering) is in
+v1.56 verwijderd; het `ArchivingScript` op `vwExtractor` — nu gevoed door `fxArchivingPredicate` — is het
+enige archiveringscontract.
+:::
 
 ### Overige LoadManagement-views
 

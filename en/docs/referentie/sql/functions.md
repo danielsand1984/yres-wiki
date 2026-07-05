@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Complete reference of all 56 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
+description: Complete reference of all 58 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
 ---
 
 > Management is best done through the webapp; these objects are for the SQL endpoint (SSMS / Azure Data Studio).
 
-This page describes all **56 functions** in the data-plane database `IRIS_DWH`, grouped by schema.
+This page describes all **58 functions** in the data-plane database `IRIS_DWH`, grouped by schema.
 For each function you'll find the fully qualified name, the signature (as it appears in the `CREATE FUNCTION`
 header) and its purpose. The names and types are taken directly from the source code — the code is authoritative.
 
@@ -24,6 +24,16 @@ See also: [Stored procedures](stored-procedures.md) and [Logs & views](logs-view
 
 The heart of the load engine. These functions determine *what* gets loaded and how `STAGE` is merged into
 `HIS` (SCD2).
+
+### `[LoadManagement].[fxArchivingPredicate]` — scalar
+
+**Signature:**
+
+```sql
+(@Target NVARCHAR(512)) RETURNS NVARCHAR(MAX)
+```
+
+**Purpose:** builds the per-table **archiving condition** (the WHERE part) from the configuration on `UsedTables`: `CLOSED` → `isCurrent = 0 AND ETL_EndDate < '<cutoff>'`, `BUSINESS` → `[<ArchivingColumn>] < '<cutoff>'`, or the free-form `ArchivingClause` verbatim. The cutoff date is rendered as a **fixed literal**, so the copy and purge steps within one run use the same rule. `NULL` = archiving off or incompletely configured (the health checks flag that). Consumers: `fxExtractor` (builds the `ArchivingScript` from it), `spHIS_InsertAndUpdate` (blocks incoming rows in the archived space for `BUSINESS`) and — via ADF — `spArchivePurge`. See [Archiving](../../concepten/archivering.md).
 
 ### `[LoadManagement].[fxExtractor]` — table-valued
 

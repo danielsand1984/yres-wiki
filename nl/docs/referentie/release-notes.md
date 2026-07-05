@@ -26,6 +26,9 @@ ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — n
 - **Beheer & beveiliging:** admin secrets-view, credential-vervalnotificaties, encryptie van credentials en jobs, Azure Redis-cache, en robuustere Azure DevOps-integratie.
 - **Feedback & vertalingen:** feedbackformulier naar feedback@yres.app; UI-vertalingen live bij te werken.
 - **Data & loading:** de metadata-refresh is nu transactioneel — een mislukte refresh wist je kolommen niet meer. → [Metadata verversen](../frontend/data-sources.md#metadata-verversen-refresh-metadata)
+- **Archivering afgemaakt:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (dubbel gegate, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. → [Archivering](../concepten/archivering.md)
+- **Retentiebeleid voor de logtabellen:** instelbaar per tabel via `Monitoring.RetentionPolicy` (standaard 90–365 dagen); de wekelijkse ADF-pipeline `Maintenance Retention YRES` schoont gebatcht op met vaste integriteitsgaranties (de laatste run per load en lopende loads blijven altijd staan) en een dry-run-modus. Voorheen groeiden de logtabellen onbegrensd. → [Monitoring & logging](./monitoring-logging.md#retentie-van-de-logtabellen)
+- **Sneller plannen en laden:** de planningsquery (`vwExtractor`) leunt niet langer op de zware monitoringview en voert de licentie-omvangcheck één keer per query uit in plaats van per tabel; in de SCD2-merge zijn de resterende ontdubbelingsstappen herschreven (hetzelfde patroon dat eerder ~2,6× sneller bleek). Vooral merkbaar op omgevingen met veel tabellen of veel monitoringhistorie.
 
 ## v1.55 — september 2025
 

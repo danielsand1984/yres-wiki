@@ -86,7 +86,7 @@ The only place where Yres actually *moves* data is the ADF `Copy` activity (sour
 |---|---|
 | **`Dynamic Workflow YRES`** | Default: discovers via `vwExtractor` which tables to load and loads them in a `ForEach` loop. |
 | **`Direct Workflow YRES`** | Loads one specific target, without the discovery loop. |
-| **`Dynamic Archiving Workflow YRES`** | Archiving/retention, driven by `vwArchivingExtractor`. |
+| **`Dynamic Archiving Workflow YRES`** | [Archiving](./archivering.md): copies old history to Parquet with verification and then purges, driven by the `ArchivingScript` on `vwExtractor`. |
 
 :::note Code quirk
 In `Orchestration - Switch 1` the `Oracle` case points to the pipeline `Dynamic Pipeline YRES - MySql` — so Oracle is handled through the MySql ingestion pipeline.

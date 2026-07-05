@@ -96,6 +96,16 @@ Use that spelling verbatim.
 An `INSTEAD OF DELETE, UPDATE` trigger blocks any manipulation of this table unless the setting
 `Config.fxGetSetting('AllowSettingsUpdates')` allows it.
 
+### `[Monitoring].[RetentionPolicy]` (v1.56)
+
+The retention configuration of the log tables: one row per log table with the retention period in days.
+Read by `[Maintenance].[spApplyRetentionPolicy]` (see
+[Monitoring & logging → Retention](../monitoring-logging.md#retention-of-the-log-tables)). Defaults are
+seeded insert-if-missing at deploy time, so your own changes survive.
+
+**Columns:** `RowId IDENTITY`, `SchemaName`, `TableName` (unique pair), `RetentionDays` (CHECK ≥ 7),
+`Active BIT`, `Description`, `YresLastUpdated`, `YresLastUpdatedBy`.
+
 ### `[Config].[EventLog]`
 
 The DDL and permission audit. The source for the three `vw*Management`/`vwObjectAlterations` views.
@@ -240,11 +250,19 @@ stage → live; with 0 staged rows the live metadata is left in place. The mecha
 procedures (`spSwapDictionary`, `spClearDictionaryStage`, `spFinalizeDictionary` and their `Services`
 variants) are described under [Stored procedures → Metadata staging](stored-procedures.md#metadata-staging-stage-swap-and-finalize).
 
-### `[LoadManagement].[vwArchivingExtractor]`
+### `[<HIS schema>].[<Target>_IncArchive]` — generated archive views (v1.56)
 
-Generates SQL scripts for archiving data based on load type and delta columns. Drives the
-`Dynamic Archiving Workflow YRES` pipeline. The output includes all columns of the archiving function plus
-`ArchivingDeltaScript`.
+For every archived table, `spArchiveMaintainView` maintains a union view that presents the **live table
+and the archived Parquet files** in the Data Lake as one whole (`UNION ALL` via data
+virtualization/`OPENROWSET`, deduplicated on the `RowID` with precedence for the live row). The column
+list is regenerated from the live table on every archiving run. See
+[Archiving](../../concepten/archivering.md).
+
+:::note Retired: `vwArchivingExtractor`
+The old view `[LoadManagement].[vwArchivingExtractor]` (settings-driven default archiving) was removed in
+v1.56; the `ArchivingScript` on `vwExtractor` — now fed by `fxArchivingPredicate` — is the only archiving
+contract.
+:::
 
 ### Other LoadManagement views
 
