@@ -144,5 +144,5 @@ De monitoringviews lezen uit deze ruwe logtabellen:
 | `[Config].[EventLog]` | DDL-/permissie-audit (bron van de access-/user-/object-views). |
 
 :::warning Verouderde view-namen
-`[Monitoring].[vwLoadMonitor]` **bestaat niet** als gedeployde view (komt alleen voor in een verouderd `.sqlproj_backup`). Gebruik in plaats daarvan **`vwLoads`** (pipeline-tijdlijn) of **`vwMonitor`** (breder). Verwijs nieuwe documentatie en queries naar deze twee.
+`[Monitoring].[vwLoadMonitor]` **bestaat niet** als gedeployde view. Gebruik in plaats daarvan **`vwLoads`** (pipeline-tijdlijn) of **`vwMonitor`** (breder). Verwijs nieuwe documentatie en queries naar deze twee.
 :::

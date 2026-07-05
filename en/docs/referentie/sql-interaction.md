@@ -144,5 +144,5 @@ The monitoring views read from these raw log tables:
 | `[Config].[EventLog]` | DDL/permission audit (source of the access/user/object views). |
 
 :::warning Outdated view names
-`[Monitoring].[vwLoadMonitor]` **does not exist** as a deployed view (it only appears in an outdated `.sqlproj_backup`). Use **`vwLoads`** (pipeline timeline) or **`vwMonitor`** (broader) instead. Point new documentation and queries at these two.
+`[Monitoring].[vwLoadMonitor]` **does not exist** as a deployed view. Use **`vwLoads`** (pipeline timeline) or **`vwMonitor`** (broader) instead. Point new documentation and queries at these two.
 :::

@@ -25,7 +25,7 @@ De logging is het beste te begrijpen naast de [gegevensstroom](../concepten/gege
 Lezen doe je via de **monitoringviews** — vooral **`vwLoads`** (de per-pipeline laadtijdlijn) en **`vwMonitor`** (breder: ook gematerialiseerde views en Power BI-refreshes).
 
 :::warning `vwLoadMonitor` bestaat niet
-De view `[Monitoring].[vwLoadMonitor]` is **niet gedeployd** (hij komt alleen voor in een verouderd `.sqlproj_backup`). Gebruik in plaats daarvan **`vwLoads`** (pipeline-tijdlijn) of **`vwMonitor`** (breder).
+Er bestaat geen view `[Monitoring].[vwLoadMonitor]`. Gebruik in plaats daarvan **`vwLoads`** (pipeline-tijdlijn) of **`vwMonitor`** (breder).
 :::
 
 ## Vóór de start: `PLANNED` en `SKIPPED`

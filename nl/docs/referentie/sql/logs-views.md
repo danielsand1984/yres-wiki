@@ -43,8 +43,7 @@ Bovenop deze tabellen liggen views die er bruikbare inzichten van maken:
 - **Procedure-logs:** `[Config].[vwUserlog]`, `[Config].[vwUserLogJSON]`
 
 :::caution `vwLoadMonitor` bestaat niet
-De naam `[Monitoring].[vwLoadMonitor]` komt **niet** voor als gedeployede view; hij staat alleen nog in een
-verouderd projectbestand (`IRIS_DWH.sqlproj_backup`). Gebruik in plaats daarvan **`vwLoads`** (per-pipeline
+De naam `[Monitoring].[vwLoadMonitor]` komt **niet** voor als gedeployde view. Gebruik in plaats daarvan **`vwLoads`** (per-pipeline
 timeline) of **`vwMonitor`** (breder: inclusief gematerialiseerde views en Power BI-refreshes).
 :::
 
