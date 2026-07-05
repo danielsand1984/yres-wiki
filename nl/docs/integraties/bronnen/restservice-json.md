@@ -119,9 +119,12 @@ de API zonder dat je iets hoeft aan te passen.
 
 ### Grenzen
 
-- Per opgehaald **JSON-document** worden maximaal **10.000 records** uit de collection verwerkt. Levert
-  een endpoint in één respons meer op, gebruik dan een **paginatievorm** (zie
-  [REST API › Paginatie](restservice.md#paginatie)); elke pagina wordt dan apart ontleed.
+- Per opgehaald **JSON-document** kijkt Yres naar de **eerste 10.000 records** van de collection om de
+  kolommen en datatypes te bepalen; **alle records worden daarna geladen**. Een veld dat pas ná die
+  eerste 10.000 records voor het eerst voorkomt, krijgt in die run géén kolom — die waarden gaan voor
+  dat document verloren. Levert een endpoint per respons veel records op, gebruik dan een
+  **paginatievorm** (zie [REST API › Paginatie](restservice.md#paginatie)); elke pagina wordt dan apart
+  en volledig ontleed.
 - Waarden worden bij het inlezen tot **4000 tekens** meegenomen voor de typebepaling.
 
 ## Sturen op het resultaat

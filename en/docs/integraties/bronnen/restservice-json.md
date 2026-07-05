@@ -119,9 +119,12 @@ having to change anything.
 
 ### Limits
 
-- Per fetched **JSON document**, at most **10,000 records** from the collection are processed. If an
-  endpoint returns more in a single response, use a **pagination type** (see
-  [REST API › Pagination](restservice.md#pagination)); each page is then parsed separately.
+- Per fetched **JSON document**, Yres inspects the **first 10,000 records** of the collection to
+  determine the columns and data types; **all records are then loaded**. A field that first appears
+  after those initial 10,000 records does not get a column in that run — those values are lost for
+  that document. If an endpoint returns many records per response, use a **pagination type** (see
+  [REST API › Pagination](restservice.md#pagination)); each page is then parsed separately and in
+  full.
 - Values are read up to **4,000 characters** for type inference.
 
 ## Steering the result
