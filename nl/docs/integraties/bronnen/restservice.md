@@ -109,6 +109,14 @@ Bij een paginatietype anders dan *No pagination* voegt de bijbehorende pipeline 
 
 De loop stopt zodra een pagina geen rijen meer teruggeeft. **BodyUrl** en **RFC5988** gebruiken géén offset/limit-velden: die volgen de volgende-pagina-link uit respectievelijk de response-body en de `Link`-header, startend vanaf de hierboven opgebouwde URL.
 
+## Van JSON-respons naar tabel
+
+Yres laat ADF de JSON **niet** kolom-voor-kolom mappen: het haalt de hele respons als tekst op en
+ontleedt die **server-side in SQL Server**. Zo maakt en verruimt Yres de tabel automatisch op basis van
+de velden in de respons, zonder dat je een veldmapping opgeeft. De enige knop die je meestal nodig hebt
+is de **collection** (het pad naar de records-array, standaard `AUTO`). Hoe dit precies werkt — geneste
+objecten, arrays, datatypes en uitgewerkte voorbeelden — staat op **[JSON naar tabellen](restservice-json.md)**.
+
 ## Vereisten
 
 - **Base URL** van de API (zonder afsluitende `/`).
@@ -135,4 +143,4 @@ Raadpleeg voor al deze waarden de officiële documentatie van de API waarmee je 
 
 ---
 
-**Zie ook:** [Integratiecatalogus](../catalogus.md) · [Alle databron-vereisten](../../referentie/databron-vereisten.md) · [Integraties — overzicht](../overzicht.md)
+**Zie ook:** [JSON naar tabellen](restservice-json.md) · [Integratiecatalogus](../catalogus.md) · [Alle databron-vereisten](../../referentie/databron-vereisten.md) · [Integraties — overzicht](../overzicht.md)

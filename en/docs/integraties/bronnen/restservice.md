@@ -109,6 +109,14 @@ For any pagination type other than *No pagination*, the matching pipeline append
 
 The loop stops as soon as a page returns no more rows. **BodyUrl** and **RFC5988** use no offset/limit fields: they follow the next-page link from the response body and the `Link` header respectively, starting from the URL built above.
 
+## From JSON response to table
+
+Yres does **not** let ADF map the JSON column by column: it fetches the whole response as text and
+parses it **server-side in SQL Server**. This way Yres creates and widens the table automatically based
+on the fields in the response, without you supplying a field mapping. The only knob you usually need is
+the **collection** (the path to the records array, defaulting to `AUTO`). How this works exactly —
+nested objects, arrays, data types and worked examples — is on **[JSON to tables](restservice-json.md)**.
+
 ## Requirements
 
 - **Base URL** of the API (without a trailing `/`).
@@ -135,4 +143,4 @@ For all of these values, consult the official documentation of the API you are c
 
 ---
 
-**See also:** [Integration catalog](../catalogus.md) · [All data source requirements](../../referentie/databron-vereisten.md) · [Integrations — overview](../overzicht.md)
+**See also:** [JSON to tables](restservice-json.md) · [Integration catalog](../catalogus.md) · [All data source requirements](../../referentie/databron-vereisten.md) · [Integrations — overview](../overzicht.md)
