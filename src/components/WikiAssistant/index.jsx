@@ -30,6 +30,10 @@ const STR = {
     ask: 'Vraag…',
     send: 'Vraag stellen',
     thinking: 'Aan het zoeken in de wiki…',
+    thinkingDeep: 'Diepzoeken: de hele wiki wordt doorgelezen…',
+    deepLabel: 'Diepzoeken',
+    deepHint: 'Leest de hele wiki i.p.v. de meest relevante pagina’s. Trager, maar vindt meer.',
+    deepOn: 'Diepzoeken staat aan voor je volgende vraag.',
     limitReached: `Je hebt het maximum van ${MAX_QUESTIONS_PER_SESSION} vragen voor deze sessie bereikt. Begin een nieuw gesprek om opnieuw te beginnen.`,
     newChat: 'Nieuw gesprek',
     cooldown: 'Even wachten tussen vragen…',
@@ -50,6 +54,10 @@ const STR = {
     ask: 'Ask…',
     send: 'Ask',
     thinking: 'Searching the wiki…',
+    thinkingDeep: 'Deep search: reading the entire wiki…',
+    deepLabel: 'Deep search',
+    deepHint: 'Reads the entire wiki instead of the most relevant pages. Slower, but finds more.',
+    deepOn: 'Deep search is on for your next question.',
     limitReached: `You reached the limit of ${MAX_QUESTIONS_PER_SESSION} questions for this session. Start a new chat to begin again.`,
     newChat: 'New chat',
     cooldown: 'Please wait between questions…',
@@ -77,6 +85,10 @@ export default function WikiAssistant() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [count, setCount] = useState(0);
+  // Diepzoeken (hele wiki als context) is bewust NIET zichtbaar bij de eerste
+  // vraag: de meeste vragen worden prima beantwoord via de gewone zoekmanier,
+  // en die is sneller en goedkoper. Pas als het gesprek loopt verschijnt de knop.
+  const [deep, setDeep] = useState(false);
   const lastSentRef = useRef(0);
   const scrollRef = useRef(null);
   const askRef = useRef(null);
@@ -117,6 +129,7 @@ export default function WikiAssistant() {
     setMessages([]);
     setError('');
     setCount(0);
+    setDeep(false);
     try {
       sessionStorage.removeItem(MSGS_STORAGE);
       sessionStorage.removeItem(COUNT_STORAGE);
@@ -141,23 +154,27 @@ export default function WikiAssistant() {
     if (Date.now() - lastSentRef.current < COOLDOWN_MS) return setError(t.cooldown);
     lastSentRef.current = Date.now();
 
+    // Diepzoeken alleen als het gesprek al loopt (de knop bestaat dan pas).
+    const useDeep = deep && messages.length > 0;
+
     const history = messages.slice(-HISTORY_MESSAGES).map((m) => ({role: m.role, content: m.text}));
     setMessages((m) => [...m, {role: 'user', text: q}]);
     setInput('');
-    setLoading(true);
+    setLoading(useDeep ? 'deep' : true);
 
     try {
       const res = await fetch(endpoint(), {
         method: 'POST',
         headers: {'content-type': 'application/json'},
-        body: JSON.stringify({question: q, lang, history}),
+        body: JSON.stringify({question: q, lang, history, deep: useDeep}),
       });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok || data.error) {
         setLoading(false);
         setMessages((m) => m.slice(0, -1));
-        if (res.status === 429 || data.code === 'RATE_LIMITED') setError(t.rate);
+        if (data.code === 'DEEP_RATE_LIMITED') setError(data.message || t.rate);
+        else if (res.status === 429 || data.code === 'RATE_LIMITED') setError(t.rate);
         else if (res.status === 503 || data.code === 'NO_API_KEY') setError(t.unavailable);
         else setError(data.message || t.err);
         return;
@@ -268,8 +285,28 @@ export default function WikiAssistant() {
                 )}
               </div>
             ))}
-            {loading && <div className={styles.botMsg}><em>{t.thinking}</em></div>}
+            {loading && (
+              <div className={styles.botMsg}>
+                <em>{loading === 'deep' ? t.thinkingDeep : t.thinking}</em>
+              </div>
+            )}
           </div>
+
+          {/* Pas zichtbaar zodra het gesprek loopt — houdt de eerste vraag simpel. */}
+          {messages.length > 0 && (
+            <div className={styles.deepRow}>
+              <label className={styles.deepToggle}>
+                <input
+                  type="checkbox"
+                  checked={deep}
+                  disabled={loading || count >= MAX_QUESTIONS_PER_SESSION}
+                  onChange={(e) => setDeep(e.target.checked)}
+                />
+                <span>🔎 {t.deepLabel}</span>
+              </label>
+              <span className={styles.deepHint}>{deep ? t.deepOn : t.deepHint}</span>
+            </div>
+          )}
 
           {error && <div className={styles.error}>{error}</div>}
 
