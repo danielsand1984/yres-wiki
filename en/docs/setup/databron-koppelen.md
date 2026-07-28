@@ -104,7 +104,7 @@ Step by step:
 3. **Columns** — tick columns, set the **RowHash** participation per column (v1.54+) and optionally override the **TargetType**.
 4. **Load type & delta columns** — see [configure a load](#4-configure-a-load).
 5. **Key column** — see [configure a load](#4-configure-a-load).
-6. **Options** — extra options depending on the service tier and source type (for example memory-optimized tables, package size, delta overlap). If there are none, you can skip the step.
+6. **Options** — extra options depending on the service tier and source type (for example memory-optimized tables, package size, [delta overlap](../concepten/load-types.md#the-delta-window-for-file-sources) and, for file sources, the compression of the source file). If there are none, you can skip the step.
 7. **Overwrite** — optionally override the physical STAGE/HIS target names. A live preview shows the result, for example `[STAGE].[SOURCE_SCHEMA_TABLE]` and `[ODS].[…]`.
 
 #### The wizard in pictures

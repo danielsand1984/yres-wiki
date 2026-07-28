@@ -53,7 +53,7 @@ Schedule a pipeline with a recurrence pattern (an ADF schedule trigger). For eac
 *The Triggers screen: pick a pipeline, review the existing triggers, and schedule a new one with **Create**.*
 
 (1) **Pipeline list** on the left — select the pipeline whose triggers you manage.
-(2) **Triggers table** with columns `Name`, `status`, `frequency`, `on`, `time`, `timezone`.
+(2) **Triggers table** with columns `Name`, `status`, `frequency`, `on`, `time`, `timezone`. The `on` and `time` columns show **all** selected days and times respectively, comma-separated.
 (3) **Start ▶ / Stop ■** — turn a trigger on or off.
 (4) **Delete** — remove a trigger.
 (5) **Create** — opens the scheduling wizard.
@@ -63,9 +63,32 @@ Schedule a pipeline with a recurrence pattern (an ADF schedule trigger). For eac
 
 1. Select a pipeline on the left.
 2. Click **Create**.
-3. Enter **Name**, **Every / interval** and **Frequency** (`Minute(s)`, `Hour(s)`, `Day(s)`, `Week(s)`, `Month(s)`). For **Week(s)** you choose a **Day of the week**, for **Month(s)** a **Day of the month** (1–31), and for Day/Week/Month a **Time**.
+3. Enter **Name**, **Every / interval** and **Frequency** (`Minute(s)`, `Hour(s)`, `Day(s)`, `Week(s)`, `Month(s)`) and pick the moments the pipeline should run — see [Multiple days and times in one trigger](#multiple-days-and-times-in-one-trigger) below.
 4. If the pipeline has parameters, enter Source/Schema/Table in the second step.
 5. Click **Submit**.
+
+### Multiple days and times in one trigger {#multiple-days-and-times-in-one-trigger}
+
+From **v1.56** you pick **several values at once** per field, as clickable tiles. A single trigger can
+therefore run "every Monday and Saturday at 01:00, 05:00 and 09:00"; previously every day/time pair was
+a separate trigger.
+
+| Field | Choice | Shown for |
+|---|---|---|
+| **Hours** | 0–23, several at once | Day(s), Week(s), Month(s) |
+| **Minutes** | 0–59, several at once | Day(s), Week(s), Month(s) |
+| **Days of the week** | Monday through Sunday, several at once | Week(s) |
+| **Days of the month** | 1 through 31 plus **Last day**, several at once | Month(s) |
+| **Monthly occurrences** | rows of *first/second/third/fourth/fifth/last* × weekday — for example "last Friday of the month" | Month(s) |
+
+:::caution Hours × minutes is a cross product
+The selected hours and minutes are **combined**, not paired. Hours `11, 19` with minutes `00, 30`
+produces four moments: 11:00, 11:30, 19:00 and 19:30 — on every selected day. The form shows a summary
+at the bottom listing every actual run moment and their count, so you can check this before saving.
+:::
+
+For the **Minute(s)** and **Hour(s)** frequencies you pick no times: those triggers run purely on the
+interval, counted from the start time.
 
 :::info Timezone
 The interface shows the hint *"Timezone UTC(+1) will be used"*, but the trigger actually uses the **timezone of the logged-in user** (from your user settings), not a fixed UTC+1.

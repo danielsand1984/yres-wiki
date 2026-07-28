@@ -34,6 +34,15 @@ details van elk onderwerp.
   → [Historie & SCD2](../concepten/historie-scd2.md)
 - **Deployvolgorde:** de database-upgrade hoort altijd vóór de ADF-publish — de nieuwe pipelines
   gebruiken procedures die oudere databases nog niet hebben.
+- **De Data Lake bevat voortaan mutaties in plaats van momentopnames.** Wie data uit de lake leest,
+  moet mee: de bestanden staan op een nieuw pad, bevatten alleen de gewijzigde rijen van die run en
+  dragen een `I`/`U`/`D`-markering. Bestaande bestanden blijven staan, maar er komt niets meer bij op
+  het oude pad. → [Lake feed](../concepten/lake-feed.md)
+- **SharePoint-bronnen hebben nieuwe rechten nodig.** Microsoft heeft de app-only-flow via Azure ACS
+  uitgezet, waardoor SharePoint-loads faalden. Yres gebruikt nu Microsoft Graph; geef de geregistreerde
+  app daarom **application permissions** op Microsoft Graph (minimaal `Sites.Read.All`) met admin
+  consent. De oude machtiging via `appinv.aspx` volstaat niet meer.
+  → [SharePoint](../integraties/bronnen/sharepoint.md)
 
 ### Webapp
 
@@ -44,10 +53,25 @@ details van elk onderwerp.
 - **Bronnen & connectiviteit:** nieuwe REST-service-presets, verfijnde REST-paginering, en **Test connectivity** vanuit de webapp. → [Integraties](../integraties/overzicht.md)
 - **Monitoring & health:** nieuwe health bar met DWH-statistieken; pipeline-runs met filters. → [Monitoring & logging](./monitoring-logging.md)
 - **Data engineering & object viewer:** git-diff en syntax highlighting, uitgebreidere mapping van scripted objects, en wizard-verbeteringen. → [Data engineering](../frontend/data-engineering.md)
+- **Triggers met meerdere dagen én tijdstippen:** één trigger kan nu bijvoorbeeld elke maandag én zaterdag om 01:00, 05:00 en 09:00 draaien. Uren, minuten, weekdagen en maanddagen kies je als meervoudige selectie, aangevuld met terugkerende voorkomens als "laatste vrijdag van de maand"; een samenvatting toont vooraf alle uitvoermomenten. Voorheen was elk dag/tijd-paar een aparte trigger. → [Triggers](../frontend/load-management.md#meerdere-dagen-en-tijdstippen-in-één-trigger)
+- **Archiveringspipeline uit de doos:** bij het bijwerken van een omgeving naar 1.56 wordt de `Dynamic Archiving Workflow YRES` automatisch aangemaakt, inclusief de bijbehorende archiefopslag. Je kunt hem daarna gewoon vanuit **Run pipelines** starten en met een trigger inplannen. Elke pipeline met Source/Schema/Table-parameters krijgt bovendien die drie als kolommen én filters in de runhistorie — dus ook de archiveringsworkflow. → [Load management](../frontend/load-management.md)
 - **Beheer & beveiliging:** admin secrets-view, credential-vervalnotificaties, encryptie van credentials en jobs, Azure Redis-cache, en robuustere Azure DevOps-integratie.
+- **Opgeloste fouten:** het handmatig starten van een pipeline en het aanmaken van een trigger gebruikten soms een verouderde merknaam, waardoor de actie op een niet-bestaande pipelinenaam stukliep; het rechtermuisknop-menu in **Changes** en **Used tables** opende op de verkeerde plek zodra de pagina gescrold was; en het bijwerken van een grote organisatie kon voortijdig afbreken en daardoor dubbel draaien.
 
 ### Dataplatform — nieuw
 
+- **Lake feed: de Data Lake als change feed.** De Data-Lake-uitvoer is herbouwd. In plaats van elke run
+  de volledige stagingtabel te dumpen, schrijft Yres nu per run één Parquet-bestand met **alleen de
+  mutaties**, elk gemarkeerd als insert, update of delete — inclusief expliciete tombstones voor
+  verwijderde rijen, die voorheen onzichtbaar waren. Daarmee is uit de lake zowel de actuele stand als de
+  volledige historie af te leiden, en is de feed direct bruikbaar als invoer voor een Delta-tabel. Runs
+  zonder wijzigingen schrijven niets, een herstart overschrijft zijn eigen bestand, en de lake-stap loopt
+  parallel aan het laden van het datawarehouse. Aanzetten doe je per tabel met `DataPlatform = DL`.
+  → [Lake feed](../concepten/lake-feed.md)
+- **De testsuite wordt meegeleverd.** De regressietestsuite die elk databaseobject doorlicht, zit nu in
+  de DACPAC en komt dus met elke versie mee. Na een deploy of bij twijfel draai je hem zelf met
+  `EXEC Test.spRunAll` — hij is veilig op productie, ruimt bewijsbaar op en draait nooit uit zichzelf.
+  → [Testsuite](./testsuite.md)
 - **Workload-administratie:** workflows plannen hun volledige werklast vooraf in
   (`LoadManagement.LoadLog`) en werken die per load bij. De monitor toont daardoor ook **geplande en
   overgeslagen loads**, statussen komen uit de administratie zelf en looptijden kloppen. Een nieuwe
@@ -77,7 +101,7 @@ details van elk onderwerp.
   release-historie per change (`Change.vwLogs`). → [Wijzigingsproces](../concepten/wijzigingsproces.md)
 - **DB-tier-scaling:** naast de "Default"-tier is nu ook een "High"-tier configureerbaar waarnaar
   workflows tijdens zware loads kunnen opschalen.
-- **Archivering:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (dubbel gegate, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. Archivering is nog niet in te stellen vanuit de webapp; die ondersteuning volgt binnenkort. → [Archivering](../concepten/archivering.md)
+- **Archivering:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (dubbel gegate, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. De archiveringsworkflow wordt bij de update automatisch aangemaakt en is vanuit de webapp te starten en in te plannen; welke tabellen archiveren stel je in deze versie nog in de database in, niet in de webapp. → [Archivering](../concepten/archivering.md)
 
 ### Dataplatform — stabiliteit & performance
 
@@ -87,7 +111,34 @@ details van elk onderwerp.
   [Wijzigingsproces](../concepten/wijzigingsproces.md)
 - **Performance-verbeteringen:** de SCD2-merge is op zijn hotspots herschreven en de workflow-planning
   schaalt niet meer mee met de monitoringhistorie of het aantal tabellen — vooral merkbaar op grote
-  omgevingen.
+  omgevingen. Daarnaast blokkeren de **logstappen het echte werk niet meer**: ze draaien voortaan naast
+  de laadactiviteiten in plaats van ervoor, wat per tabel wachttijd scheelt. Er verdwijnt geen logregel;
+  wel kunnen regels binnen dezelfde load in een iets andere volgorde in de monitoring verschijnen.
+- **SharePoint werkt weer:** de bestandsophaal is overgezet op Microsoft Graph nu Microsoft de oude
+  app-only-authenticatie heeft uitgezet. Yres zoekt het bestand nu via site → documentbibliotheek →
+  bestand en haalt het op via een tijdelijke kopie in de Blob Storage van de omgeving. Let op de
+  gewijzigde rechten en de betekenis van de bestandslocatie.
+  → [SharePoint](../integraties/bronnen/sharepoint.md)
+- **Bestandsbronnen — deltavenster gecorrigeerd:** meervoudsvormen als `DAYS` en `HOURS` werden niet
+  herkend en vielen stil terug op seconden, en `YEAR` rekende met 365 uur in plaats van 365 dagen.
+  Beide zijn opgelost; een tabel met zo'n instelling pakt na de update een breder en correct venster op.
+  → [Deltavenster bij bestandsbronnen](../concepten/load-types.md#deltavenster-bij-bestandsbronnen)
+- **Datatype-mappings opgeschoond:** een brede correctieronde op de standaard type-mapping. Kolommen die
+  als `rowversion` in het datawarehouse belandden (SQL Server, DB2, MySQL, OneStream) worden nu correct
+  als binaire waarde of datum aangemaakt, mappings naar typen die SQL Server niet kent (`blob`, `bool`,
+  `byte`) zijn vervangen, Salesforce-adreskolommen worden niet meer op één teken afgekapt, Snowflake
+  `VARIANT` mag weer lange waarden bevatten, en dubbele mappingregels — die willekeurig gedrag gaven —
+  zijn verwijderd. Ontbrekende regels worden bij de deploy hersteld.
+- **Automatisch remodelleren robuuster:** een bronwijziging die meerdere tabellen tegelijk raakte, liep
+  na de eerste tabel vast, en een `rowversion`-kolom kon helemaal niet geremodelleerd worden. Beide
+  zijn opgelost. → [Wijzigingsproces](../concepten/wijzigingsproces.md)
+- **DB2-metadata:** het ophalen van de kolomstructuur van een DB2-bron leverde een onvolledige
+  administratie op, waardoor tabel- en kolomlijsten in de webapp leeg of incompleet bleven. Opgelost.
+- **Minder valse meldingen in de health checks:** de check op verweesde metadata markeerde de hele nog
+  niet gebruikte broncatalogus als dode metadata. Hij slaat nu alleen nog aan op metadata van bronnen
+  die niet meer bestaan of inactief zijn. → [Admin → Health checks](../frontend/admin.md)
+- **Bestandsbronnen — compressie:** de compressievorm van een bronbestand blijft nu behouden wanneer de
+  tabelconfiguratie wordt bijgewerkt; voorheen ging die instelling bij elke wijziging verloren.
 
 ## v1.55 — september 2025
 

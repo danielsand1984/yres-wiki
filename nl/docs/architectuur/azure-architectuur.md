@@ -17,7 +17,7 @@ Yres draait **volledig in jouw eigen Azure-tenant**. Per organisatie × omgeving
 |---|---|---|---|
 | **Azure Data Factory (ADF)** | Orkestratie & Copy | Yres genereert linked services en pipelines, triggert runs, monitort ze en beheert Integration Runtimes | Pay-per-activity + IR-kosten |
 | **Azure Blob Storage** | Raw data landing | Staging van bestanden voor import | Hot/Cool tier |
-| **Azure Data Lake (Gen2)** | Onbewerkte data (data science) | Slaat data ruw op als Parquet; Yres voegt **RowHash, KeyHash, EtlDate** toe | Storage |
+| **Azure Data Lake (Gen2)** | Onbewerkte data (data science) | Slaat de mutaties per run op als Parquet change feed; Yres voegt **KeyHash, RowHash, YresAction, YresDateStart** toe | Storage |
 | **Azure SQL Database (`IRIS_DWH`)** | Curated opslag, load-engine & queries | Yres-Copy landt in `STAGE`; stored procedures bouwen de historie in `HIS`/`ODS` en exposeren via `Exposed` | DTU-/vCore-based |
 | **Azure Key Vault** | Credentials | ADF leest secrets om bronnen te verbinden; de webapp schrijft ze ernaartoe | Pay-per-operation |
 
@@ -26,7 +26,7 @@ Data uit een bron kan in de **database**, de **Data Lake**, of **beide** worden 
 :::note Twee soorten "historie" — niet verwarren
 Yres legt op twee plekken historie vast, en die werken anders:
 
-- **In de Data Lake** schrijft Yres elke extract weg als Parquet met de framework-kolommen **`RowHash`**, **`KeyHash`** en **`EtlDate`**. Dit is de ruwe, onbewerkte landing — de basis voor een medallion-achtige opslag voor data science.
+- **In de Data Lake** schrijft Yres per laadrun de **mutaties** weg als Parquet, met de framework-kolommen **`KeyHash`**, **`RowHash`**, **`YresAction`** (`I`/`U`/`D`) en **`YresDateStart`**. Dit is een append-only [change feed](../concepten/lake-feed.md) — de basis voor een medallion-achtige opslag voor data science. Historie leid je hier af door de bestanden op te tellen, niet door één bestand te lezen.
 - **In de database (`HIS`/`ODS`)** bouwt de load-engine een echte **SCD2-historie** op via de stored procedure `[LoadManagement].[spHIS_InsertAndUpdate]`: per record een open/gesloten versie met `ETL_Date`, `ETL_EndDate`, `IsCurrent` en `Delta`. De `KeyHash`/`RowHash` zijn hier persisted computed columns op `STAGE` die de wijzigingsdetectie aansturen.
 
 De hashing in de Data Lake is dus **niet** hetzelfde als de SCD2-versionering in de database. De [load-types](../concepten/load-types.md) en het [Historie & SCD2-model](../concepten/historie-scd2.md) bepalen welke historie in de database ontstaat.

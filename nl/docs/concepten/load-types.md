@@ -140,6 +140,42 @@ De gevolgen:
 Een tabel `Orders` stempelt `CreatedDate` bij het aanmaken en `ModifiedDate` bij elke latere wijziging. Een nieuwe order krijgt wél een `CreatedDate`, maar (nog) geen `ModifiedDate`; een bijgewerkte order krijgt een nieuwe `ModifiedDate`. Met **beide** kolommen als deltakolom vangt de load in één keer zowel nieuwe als gewijzigde orders op — een filter op alleen `ModifiedDate` zou de nog niet gewijzigde nieuwe orders missen.
 :::
 
+## Deltavenster bij bestandsbronnen
+
+Bij **bestandsbronnen** (Azure Blob Storage, File Server) is er geen wijzigingskolom in de data. Yres
+kijkt daar naar de **wijzigingsdatum van het bestand** en haalt alleen bestanden op die binnen een
+terugkijkvenster vallen. Dat venster stel je per tabel in met twee velden in de stap *Options* van de
+wizard:
+
+- **Delta overlap** — een getal.
+- **Delta overlap unit** — de eenheid daarbij.
+
+Samen betekenen ze "kijk zoveel terug vanaf nu". Met `7` + `DAY` pakt de load elk bestand op dat in de
+afgelopen zeven dagen gewijzigd is. Toegestane eenheden:
+
+| Eenheid | Ook toegestaan | Lengte |
+|---|---|---|
+| `SECOND` | `SECONDS` | 1 seconde |
+| `MINUTE` | `MINUTES` | 60 seconden |
+| `HOUR` | `HOURS` | 1 uur |
+| `DAY` | `DAYS` | 24 uur |
+| `WEEK` | `WEEKS` | 7 dagen |
+| `MONTH` | `MONTHS` | 30 dagen (vast) |
+| `YEAR` | `YEARS` | 365 dagen |
+
+Hoofdletters maken niet uit: `DAY`, `Day` en `day` werken alle drie.
+
+:::caution Een onbekende eenheid valt terug op seconden
+Vul je iets in dat niet in de tabel staat (bijvoorbeeld `QUARTER` of een typefout), dan rekent de load
+met **seconden** — zonder foutmelding. Een venster dat "7 kwartalen" had moeten zijn, wordt dan 7
+seconden en de load pakt vrijwel niets op. Laat je de velden leeg of zet je de overlap op `0`, dan geldt
+juist het omgekeerde: er wordt geen venster toegepast en álle bestanden komen in aanmerking.
+:::
+
+Tot v1.55 werden de **meervoudsvormen niet herkend** (`DAYS` viel stil terug op seconden) en rekende
+`YEAR` met 365 *uur* in plaats van 365 dagen. Beide zijn in v1.56 gecorrigeerd; omgevingen die zo'n
+configuratie hadden, pakken na de update een breder — en nu correct — venster op.
+
 ## Hoe Yres wijzigingen detecteert (hashing)
 
 Yres bepaalt "nieuw / gewijzigd / ongewijzigd" niet kolom-voor-kolom, maar met twee SHA2_512-hashes die als **persisted computed columns op de STAGE-tabel** worden berekend:

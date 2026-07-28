@@ -58,7 +58,8 @@ The load engine, SCD2 history and the seven load types are covered in detail in
 | **HIS** | History layer with the full SCD2 history (schema name via setting `SchemaHIS`). The HIS schema name is **not** hard-coded; in verifiable environments `SchemaHIS` resolves to `ODS`. |
 | **ODS** | Operational Data Store. Also the default value of `SchemaHIS` — in practice the HIS layer lands in the `ODS` schema. |
 | **Expose** | The reporting/expose layer (`Exposed`, `Expose`, user schemas). Contains the reporting-oriented views/tables plus RBAC, built by `spMaterializeViews`. |
-| **Data Lake** | Optional Parquet landing in Azure Data Lake Gen2. ADF copies `STAGE` to Parquet (with `RowHash`/`KeyHash`/`EtlDate`), partitioned on Source/Schema/Target/Year/Month. |
+| **Data Lake** | Optional Parquet landing in Azure Data Lake Gen2. Yres writes a [change feed](./lake-feed.md) per run holding only the mutations (`YresAction` = `I`/`U`/`D`, plus `KeyHash`/`RowHash`/`YresDateStart`), partitioned on Source/Schema/Target/Year/Month. |
+| **Lake feed** | The append-only mutation stream in the Data Lake: one Parquet file per load run holding that run's inserts, updates and deletes. See [Lake feed](./lake-feed.md). |
 
 :::note STAGE → HIS → Expose
 The fixed data spine is: source → ADF Copy → `STAGE` → `spLoadDWH` → `spHIS_InsertAndUpdate` →

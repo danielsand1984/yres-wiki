@@ -11,14 +11,14 @@ Elke Yres-database (`IRIS_DWH`) is te beheren via een **SQL-endpoint** (SSMS, Az
 :::tip Deze pagina is de catalogus
 Hieronder staan de **namen per schema** met een korte omschrijving. De volledige **purpose, inputs en outputs per object** staan op de detailpagina's:
 
-- [Stored procedures](./sql/stored-procedures.md) — alle 105 procedures
+- [Stored procedures](./sql/stored-procedures.md) — alle 108 procedures
 - [Functions](./sql/functions.md) — alle 58 functions
 - [Logs & views](./sql/logs-views.md) — logtabellen + alle 48 views met output-kolommen
 :::
 
 ## Overzicht: schema's en aantallen
 
-`IRIS_DWH` bevat **105 stored procedures, 58 functions en 48 views**, verdeeld over deze schema's:
+`IRIS_DWH` bevat **108 stored procedures, 58 functions en 48 views**, verdeeld over deze schema's:
 
 | Schema | Rol |
 |---|---|
@@ -30,6 +30,8 @@ Hieronder staan de **namen per schema** met een korte omschrijving. De volledige
 | `[Expose]` | Reporting/RBAC: rollen, gebruikers en exposed objecten beheren. |
 | `[Metadata]` | Lineage en afhankelijkheden tussen objecten. |
 | `[oData]` | OData-helpers voor het exposeren van data. |
+| `[LAKE]` | Slanke administratie per tabel voor de [lake feed](../concepten/lake-feed.md) — alleen hashes en datums, geen businessdata. De tabellen worden door de laadmotor zelf aangemaakt. |
+| `[Test]` | De meegeleverde [regressietestsuite](./testsuite.md): framework, per-object-tests en runhistorie. |
 | `[dbo]` | Algemene utilities en onderhoudsroutines. |
 | `Security` | `CREATE SCHEMA`-bestanden die de runtimeschema's en rollen aanmaken (geen procs/functions). |
 

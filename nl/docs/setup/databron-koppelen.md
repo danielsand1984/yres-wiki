@@ -104,7 +104,7 @@ Stap voor stap:
 3. **Columns** — vink kolommen aan, stel per kolom de **RowHash**-deelname in (v1.54+) en overschrijf eventueel het **TargetType**.
 4. **Load type & deltakolommen** — zie [een load configureren](#4-een-load-configureren).
 5. **Key column** — zie [een load configureren](#4-een-load-configureren).
-6. **Options** — extra opties afhankelijk van service-tier en brontype (bijvoorbeeld geheugen-geoptimaliseerde tabellen, package size, delta-overlap). Zijn er geen, dan kun je de stap overslaan.
+6. **Options** — extra opties afhankelijk van service-tier en brontype (bijvoorbeeld geheugen-geoptimaliseerde tabellen, package size, [delta-overlap](../concepten/load-types.md#deltavenster-bij-bestandsbronnen) en, bij bestandsbronnen, de compressie van het bronbestand). Zijn er geen, dan kun je de stap overslaan.
 7. **Overwrite** — optioneel de fysieke STAGE/HIS-doelnamen overschrijven. Een live preview toont het resultaat, bijvoorbeeld `[STAGE].[BRON_SCHEMA_TABEL]` en `[ODS].[…]`.
 
 #### De wizard in beeld

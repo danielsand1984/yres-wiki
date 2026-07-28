@@ -39,9 +39,11 @@ De gezaghebbende orchestrator is de pipeline **`Dynamic Workflow YRES`** (op oud
         ├─ Orchestration - Hub  →  Orchestration - Switch 1 (switch op Source)
         │        └→ Dynamic Pipeline YRES - <Source>
         │              bron → Copy → STAGE.<Target>     (ADF verplaatst alleen bytes)
+        ├─ Prepare lake load    →  [LoadManagement].[spLoadLake]        (optioneel: DataPlatform bevat DL)
         ├─ Load DWH             →  [LoadManagement].[spLoadDWH]
         │        └→ [LoadManagement].[spHIS_InsertAndUpdate]   (STAGE → HIS, SCD2-merge)
-        ├─ Load DL (optioneel)  →  Copy STAGE → Parquet in de Data Lake
+        ├─ Write lake feed      →  [LoadManagement].[spGetLakeFeed] → Copy → Parquet change feed
+        │                          (parallel aan Load DWH; alleen als er mutaties zijn)
         ├─ STAGE truncaten      →  [LoadManagement].[spSTAGE_TruncateTable] (overgeslagen bij keepStage=1)
         └─ WLS End load         →  [Monitoring].[spWriteLoadStatus]         (status per stap)
    5. Materialize Views         →  [LoadManagement].[spMaterializeViews]
@@ -57,7 +59,7 @@ De gezaghebbende orchestrator is de pipeline **`Dynamic Workflow YRES`** (op oud
 4. **Per tabel laden (ForEach).** De `ForEach`-activiteit "Load data" draait **parallel** (`batchCount` 5). Per tabel gebeurt het volgende:
    - **Bron → STAGE.** `Orchestration - Hub` → `Orchestration - Switch 1` schakelt op de waarde van `Source` en start de juiste bronpipeline `Dynamic Pipeline YRES - <Source>`. Die voert één `Copy`-activiteit uit die de brondata **letterlijk kopieert** naar `STAGE.<Target>`, met een `ETL_Date`-kolom erbij. *ADF verplaatst hier alleen bytes.*
    - **STAGE → HIS.** `Load DWH` roept **`[LoadManagement].[spLoadDWH]`** aan, een dunne pass-through naar **`[LoadManagement].[spHIS_InsertAndUpdate]`**. Deze procedure doet de echte, set-based **SCD2-merge** van `STAGE` naar de history-laag (zie [SCD2 & hashing](#scd2-de-historie-laag) hieronder).
-   - **Optioneel naar de Data Lake.** `Load DL` kopieert `STAGE` als **Parquet** naar Azure Data Lake Gen2 (alleen als het doel ook een Data-Lake-platform heeft).
+   - **Optioneel naar de Data Lake.** Staat de tabel ook op het Data-Lake-platform (`DataPlatform` bevat `DL`), dan bepaalt `Prepare lake load` vooraf welke rijen er in deze run muteren en schrijft `Write lake feed` die mutaties als **Parquet change feed** weg — parallel aan `Load DWH`, en alleen als er daadwerkelijk iets gewijzigd is. Zie [Lake feed](./lake-feed.md).
    - **STAGE opruimen.** **`[LoadManagement].[spSTAGE_TruncateTable]`** leegt de stagingtabel — **tenzij** `keepStage=1` voor die tabel staat, dan blijft STAGE bewaard.
    - **Status loggen.** `WLS End load` schrijft via `spWriteLoadStatus` de status (`RUNNING` / `SUCCEEDED` / `FAILED`) en de rij-aantallen per stap weg.
 5. **Views materialiseren.** Na alle tabellen draait **`[LoadManagement].[spMaterializeViews]`** om persisted/reporting-views bij te werken.
@@ -65,7 +67,7 @@ De gezaghebbende orchestrator is de pipeline **`Dynamic Workflow YRES`** (op oud
 7. **Afsluiten.** `WLS End Workflow` sluit de run af, reconcilieert eventuele achtergebleven statussen en schrijft de eindstatus weg.
 
 :::info ADF verplaatst bytes, SQL doet de load
-De enige plek waar Yres data daadwerkelijk *verplaatst* is de ADF `Copy`-activiteit (bron → `STAGE`, en optioneel `STAGE` → Parquet). Alle **logica** — wat nieuw is, wat gewijzigd is, wat afgesloten moet worden, hoe historie wordt opgebouwd — zit in de SQL-procedure `spHIS_InsertAndUpdate`. Dat is de strakke scheiding tussen orkestratie en logica.
+De enige plek waar Yres data daadwerkelijk *verplaatst* is de ADF `Copy`-activiteit (bron → `STAGE`, en optioneel de mutaties → Parquet). Alle **logica** — wat nieuw is, wat gewijzigd is, wat afgesloten moet worden, hoe historie wordt opgebouwd — zit in de SQL-procedure `spHIS_InsertAndUpdate`. Dat is de strakke scheiding tussen orkestratie en logica.
 :::
 
 ## SCD2: de historie-laag

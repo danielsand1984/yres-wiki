@@ -8,7 +8,7 @@ description: Referentie van de stored procedures in de IRIS_DWH-database, per sc
 
 Deze pagina beschrijft de stored procedures in de data-plane database **`IRIS_DWH`**. De namen zijn letterlijk uit de live repository overgenomen; in code heet het product nog op veel plaatsen **IRIS**. De inhoud is geregenereerd uit de broncode (de code is leidend boven oudere documentatie).
 
-De database telt **105 stored procedures, 58 functions en 48 views** (geteld op de deploy-bron, juli 2026). Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
+De database telt **108 stored procedures, 58 functions en 48 views** (geteld op de deploy-bron, juli 2026). Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
 
 :::note Schema-overzicht
 De procedures zijn verdeeld over de schema's `LoadManagement` (de laadmachine), `Config` (instellingen, logging, DB-tuning), `Change` (DTAP-wijzigingsbeheer), `Monitoring` (laadstatus-logging), `Maintenance` (onderhoud, health checks), `Expose` (rapportage-RBAC) en `dbo` (hulpprocedures).
@@ -40,7 +40,7 @@ Het schema `LoadManagement` bevat de kern van Yres: de procedures die `STAGE` na
 
 **Doel:** De SCD2-merge-engine — het hart van de laadlogica. Voor één doel resolveert de procedure bron/schema/tabel uit `UsedTables` (met fallback naar `CustomYres.Extractor`), leest `vwDictionary` voor de lees-/schrijf-/verwijderkolommen, berekent de KeyHash/RowHash-kolommen en **bouwt een grote dynamische SQL-string** die — afhankelijk van het laadtype — nieuwe rijen invoegt, gewijzigde/verdwenen rijen afsluit (`isCurrent=0`, `ETL_EndDate`), dedupliceert en in pagina's door `STAGE` heen werkt. Bij `@Execute=1` voert hij die SQL uit (omhuld door `Config.fxAddTryCatch`); anders print hij de SQL via `dbo.spLongPrint`.
 
-**Parameters:** identiek aan `spLoadDWH` (`@Target`, `@Pipeline_ID`, `@Execute`, `@DeltaColumn` (default lege string), `@TableLoadType`).
+**Parameters:** die van `spLoadDWH` (`@Target`, `@Pipeline_ID`, `@Execute`, `@DeltaColumn` (default lege string), `@TableLoadType`), plus `@LakeMode (BIT, default 0)`. Met `@LakeMode = 1` richt dezelfde merge zich op de slanke administratietabel van de [lake feed](../../concepten/lake-feed.md) in plaats van op het HIS-schema: er worden geen surrogate keys gegenereerd en alleen de deltakolommen worden meegenomen. Deze stand wordt uitsluitend door `spLoadLake` gezet.
 
 **Laadtypes (zoals afgeleid uit de code, leidend):** de procedure vertakt expliciet op zes waarden van `@TableLoadType` — **`DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL`** — plus `FULL` als impliciet standaardpad (het niet-speciale pad).
 
@@ -59,6 +59,24 @@ Alleen **`OVERWRITE` verwijdert historie** (truncate, RowId herstart). **`RELOAD
 :::
 
 Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — met literal `OPTIMAL` → `fxGetOptimalPageSize` — en `'retryCount'`, default 3 in de proc). Bij `fxGetSurrogate(@Target)=1` worden surrogate keys in `LoadManagement.SurrogateKeys` ingevoegd. Bij een memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`) draait eerst `spUpdateKeyAndRowHash`. Elke micro-stap schrijft een rij naar `[Monitoring].[LS_Trans]` (bijv. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
+
+### `[LoadManagement].[spLoadLake]`
+
+**Doel:** Het lake-tegenhanger van `spLoadDWH`, aangeroepen door de ADF-stap **Prepare lake load** vlak vóór `Load DWH` (alleen als `DataPlatform` de waarde `DL` bevat). De procedure maakt zo nodig de slanke administratietabel voor het doel aan, zet een startmarkering in `[Monitoring].[LS_Trans]` (het ankerpunt waaraan de mutaties van déze run herkend worden) en delegeert daarna naar `spHIS_InsertAndUpdate` met `@LakeMode = 1`. Bij loadtype `ADDITIONAL` slaat hij de merge volledig over. Zie [Lake feed](../../concepten/lake-feed.md).
+
+**Parameters:** `@Target`, `@Pipeline_ID`, `@TableLoadType` (leeg = uit `UsedTables`), `@DeltaColumn`, `@Execute` (default `1`).
+
+### `[LoadManagement].[spGetLakeFeed]`
+
+**Doel:** Levert de ADF-stap **Write lake feed** één rij met `FeedQuery` (de query die precies de mutaties van deze run selecteert) en `MutationCount`. Bij `MutationCount = 0` slaat ADF de kopieerstap over, zodat er geen leeg bestand in de Data Lake ontstaat. De query markeert elke rij als `I`, `U` of `D`; verwijderde sleutels komen als tombstone terug met lege businesskolommen.
+
+**Parameters:** `@Target`, `@Pipeline_ID` (lokaliseert de startmarkering), `@TableLoadType`.
+
+### `[LoadManagement].[spResetLakeIndex]`
+
+**Doel:** Wist de slanke lake-administratie voor één tabel of — zonder argument — voor alle lake-tabellen. De eerstvolgende load verstuurt daarna de volledige actuele dataset opnieuw als `I`-rijen. Bedoeld voor herstel en backfill; de al geschreven Parquet-bestanden blijven ongemoeid.
+
+**Parameters:** `@Target` (leeg = alle lake-tabellen).
 
 ### `[LoadManagement].[spPrepareWorkload]`
 

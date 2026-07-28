@@ -57,7 +57,7 @@ The same common thread runs underneath every load. At a high level:
 3. **Get tables** reads `vwExtractor` (the underlying logic lives in the function `[LoadManagement].[fxExtractor]`) and determines which tables are loaded.
 4. Per table (in parallel) ADF copies the source via **Copy** into **`STAGE.<Target>`**.
 5. **Load DWH** calls `[LoadManagement].[spLoadDWH]`, which forwards to `[LoadManagement].[spHIS_InsertAndUpdate]` — the SCD2 merge from `STAGE` into **`HIS`** (by default the `ODS` schema).
-6. Optionally, **Load DL** lands a copy as **Parquet** in the Data Lake.
+6. Optionally, **this run's mutations** land as a **Parquet change feed** in the Data Lake.
 7. `STAGE` is cleaned up (unless `keepStage=1`) and the status is closed out via `spWriteLoadStatus`.
 
 The three layers the data flows through:
@@ -72,10 +72,10 @@ The three layers the data flows through:
 
 ## Data Lake (medallion / Parquet)
 
-Alongside the Azure SQL warehouse, Yres can **optionally** also write each load as **Parquet** to Azure Data Lake Gen2, partitioned by source/schema/table/year/month. This is a separate, parallel landing for analytics and data lake scenarios (medallion approach).
+Alongside the Azure SQL warehouse, Yres can **optionally** also write each load to Azure Data Lake Gen2, as an **append-only change feed**: one Parquet file per run holding only the mutated rows, each marked as an insert, update or delete, partitioned by source/schema/table/year/month. This is a separate, parallel landing for analytics and lakehouse scenarios (medallion approach). → [Lake feed](../concepten/lake-feed.md)
 
 :::note Two separate tracks
-The Data Lake copy is **independent of** the SCD2 history engine. The SCD2 history is built in Azure SQL (`STAGE` → `HIS`) by `spHIS_InsertAndUpdate`; the Parquet landing is a separate ADF Copy from `STAGE` to the Data Lake. Don't confuse the two: the warehouse is the source of truth for history, the Data Lake is an optional extra landing.
+The lake output is **independent of** the SCD2 history engine in the database. The warehouse is the source of truth for history; the feed is append-only data derived from it. Yres keeps slim bookkeeping per lake table for that (the `LAKE` schema), holding only hashes and dates — no business data.
 :::
 
 ## Pipelines

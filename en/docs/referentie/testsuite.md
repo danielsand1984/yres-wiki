@@ -1,14 +1,16 @@
 ---
 sidebar_position: 6
 title: Test suite (DWH)
-description: The bundled regression test suite for the Yres database — when to run it, how to start it with run-all-tests.ps1 or Test.spRunAll, how to read the results, and why it is safe on production.
+description: The bundled regression test suite for the Yres database — part of the DACPAC since v1.56; when to run it, how to start it with Test.spRunAll, how to read the results, and why it is safe on production.
 ---
 
 # Test suite (DWH)
 
-The Yres data-plane database (`IRIS_DWH`) ships with a **regression test suite** that exercises the complete SQL framework: every in-scope object (stored procedures, functions, views and triggers) has exactly one test. The suite lives in the DWH repository under **`DWH/tests/`** and is **not part of the DACPAC** — it is never deployed automatically. You install and run it deliberately, and you can remove it just as deliberately.
+The Yres data-plane database (`IRIS_DWH`) ships with a **regression test suite** that exercises the complete SQL framework: every in-scope object (stored procedures, functions, views and triggers) has exactly one test.
 
-This page describes how to **use** the suite. Its internal design (fixtures, test tiers, assert framework) is documented inside the repository itself (`DWH/tests/README.md`).
+From **v1.56** the suite belongs to the database itself: it sits in the DACPAC as the **`[Test]`** schema and is therefore **installed with every Yres version**. There is nothing to install — any environment on the current version already holds every `Test.*` object. Nothing runs **automatically** either: the suite only acts when you call one of its procedures yourself.
+
+This page describes how to **use** the suite.
 
 ## What you use it for
 
@@ -35,34 +37,29 @@ Where `AllowSettingsUpdates = 0`, the audit logs (`Config.EventLog`, `Config.Pro
 
 ## Running it
 
-### Via the bundled runner (recommended)
-
-```powershell
-cd DWH/tests
-.\run-all-tests.ps1 -CredentialsFile 'C:\path\to\environment-creds.txt' -FailIfBusy
-```
-
-The runner installs (or refreshes) the framework and then runs all tests. Useful options:
-
-| Option | Meaning |
-|---|---|
-| `-CredentialsFile` | Text file holding the server/database/user/password of the target environment. |
-| `-FailIfBusy` | **Recommended on production:** aborts when loads are running (started in the last 4 hours). Without this switch the busy check is advisory only (a SKIP row in the result). |
-| `-Suite framework` / `-Suite loadengine` | Run only the per-object suite or only the load-engine suite (default: both). |
-| `-Schema <name>` | Run only the tests of one schema (e.g. `LoadManagement`). |
-| `-Round '<label>'` | Your own label for the run (e.g. a ticket number), retrievable in the history. |
-
-The account used needs read/write access on the framework schemas plus DDL rights on `STAGE`, the HIS schema and `Test`.
-
-### Via SQL
-
-Once the framework is installed, you can run straight from SSMS or Azure Data Studio:
+You run the suite from SSMS, Azure Data Studio or any other SQL client:
 
 ```sql
 DECLARE @id int;
-EXEC Test.spRunAll   @Round = 'ticket-123', @RunId = @id OUTPUT;  -- everything: preflight → tests → cleanup + residue check
-EXEC Test.spRunSuite @Schema = 'LoadManagement', @Round = 'ticket-123';  -- one schema
+EXEC Test.spRunAll @Round = 'ticket-123', @FailIfBusy = 1, @RunId = @id OUTPUT;
 ```
+
+`spRunAll` walks the whole cycle: preflight → tests → cleanup + residue check. Its parameters:
+
+| Parameter | Meaning |
+|---|---|
+| `@Round` | Your own label for the run (for example a ticket number), retrievable in the history. Leave it empty and the run gets an automatic timestamped label. |
+| `@Schema` | Run only the tests of one schema (for example `LoadManagement`). Empty = all schemas. |
+| `@FailIfBusy` | **Recommended on production:** `1` aborts when loads are running. At `0` (the default) the busy check is advisory only — a SKIP row in the result. |
+| `@RunId` | OUTPUT: the run number by which you retrieve the result later. |
+
+For a single schema there is a shorter wrapper:
+
+```sql
+EXEC Test.spRunSuite @Schema = 'LoadManagement', @Round = 'ticket-123';
+```
+
+The account used needs read/write access on the framework schemas plus DDL rights on `STAGE`, the HIS schema and `Test`.
 
 In addition there is a self-contained **load-engine suite** (`Test.spRunLoadEngineTests`) that walks all load types (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL) against a synthetic source and verifies the [SCD2 outcome](../concepten/historie-scd2.md):
 
@@ -81,8 +78,15 @@ EXEC Test.spRunLoadEngineTests @Round = 'ticket-123';
 | `Test.RunResult` | One row per assertion: PASS/FAIL/SKIP with expected vs. actual value. |
 | `Test.vwRunSummary` | One row per run with totals and final status. |
 | `Test.vwCoverageSummary` | Tested vs. in-scope objects per schema — the target is **100%** everywhere. |
+| `Test.CoverageExclusion` | What is deliberately out of coverage scope, with the reason. |
 
 - **SKIP rows always carry a reason** — for example a licence gate, a deliberately non-executed unsafe action, or the busy advisory. A SKIP is documented behaviour, not a missed test.
+
+Coverage is measured over **Yres-owned** objects. Out of scope are therefore the bundled third-party
+diagnostic packages (the `Maintenance` schema with the sp\_Blitz family, `sp_WhoIsActive` and
+AdaptiveIndexDefrag) and everything generated per customer (the `Exposed` schema and your own
+`Custom…` schemas). Those exclusions are listed with their reason in `Test.CoverageExclusion` and are
+re-applied on every deploy.
 
 :::tip Check the licence first
 The tests around `fxExtractor`/`vwExtractor` skip themselves (SKIP) when the licence filters the test fixture out of the extraction overview. If you see unexpectedly many SKIPs in `LoadManagement`, check the licence first.
@@ -90,4 +94,10 @@ The tests around `fxExtractor`/`vwExtractor` skip themselves (SKIP) when the lic
 
 ## Removing it
 
-The test results and the framework live in their own `Test` schema, which deliberately persists after a run so the history stays queryable. If you want to leave an environment without any trace, first run `EXEC Test.spCleanupAll;` (if a run was interrupted) and then drop all objects in the `Test` schema followed by the schema itself. The DWH repository ships a ready-made script for this in the runbook accompanying the suite.
+The test results and the framework live in their own `Test` schema, which deliberately persists after a run so the history stays queryable. If a run was interrupted, `EXEC Test.spCleanupAll;` sweeps the leftover fixtures.
+
+:::note The `Test` schema belongs to the database
+Because the suite has been part of the DACPAC since v1.56, the `Test` schema simply returns with the
+next version update if you drop it by hand. It costs virtually nothing as long as you start no runs:
+without a run, `Test.RunLog` and `Test.RunResult` stay empty.
+:::

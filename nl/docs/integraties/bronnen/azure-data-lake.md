@@ -8,7 +8,7 @@ description: Azure Data Lake koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Azure · Bestand
 
-Azure Data Lake Storage Gen2 is een Azure Storage-account met **hiërarchische naamruimte (hierarchical namespace)** ingeschakeld. Binnen Yres speelt de Data Lake vooral een rol als **opslag voor (onbewerkte) data**: naast de database kan Yres geladen data optioneel ook als **Parquet** in de Data Lake landen. Yres voegt daarbij de framework-kolommen `RowHash`, `KeyHash` en `EtlDate` toe, zodat een medallion-architectuur (bronze/silver/gold) mogelijk is.
+Azure Data Lake Storage Gen2 is een Azure Storage-account met **hiërarchische naamruimte (hierarchical namespace)** ingeschakeld. Binnen Yres speelt de Data Lake vooral een rol als **opslag voor (onbewerkte) data**: naast de database kan Yres geladen data optioneel ook als **Parquet** in de Data Lake landen — sinds v1.56 als append-only [change feed](../../concepten/lake-feed.md), met per run alleen de gemuteerde rijen en de framework-kolommen `KeyHash`, `RowHash`, `YresAction` en `YresDateStart`. Daarmee is een medallion-architectuur (bronze/silver/gold) mogelijk, inclusief het incrementeel bijwerken van Delta-tabellen.
 
 :::note Koppelen via Azure Blob Storage
 Er is geen aparte **Azure Data Lake**-keuze in de "Bron toevoegen"-wizard (bronpicker `SourceField.tsx`). Wil je **data uit een Data Lake (Gen2) ophalen**, voeg die dan toe als **[Azure Blob Storage](azure-blob-storage.md)**-bron (zelfde `AzureBlobFS`/SAS-vorm). Daarnaast gebruikt Yres intern een vaste Data Lake-linked service (`AzureDataLakeStorage.json`) als **eigen staging-/uitvoeropslag** — de bestemming waar Yres optioneel Parquet wegschrijft.

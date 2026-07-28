@@ -1,14 +1,16 @@
 ---
 sidebar_position: 6
 title: Testsuite (DWH)
-description: De meegeleverde regressietestsuite voor de Yres-database — wanneer je hem draait, hoe je hem start met run-all-tests.ps1 of Test.spRunAll, hoe je de resultaten leest en waarom hij veilig is op productie.
+description: De meegeleverde regressietestsuite voor de Yres-database — sinds v1.56 onderdeel van de DACPAC; wanneer je hem draait, hoe je hem start met Test.spRunAll, hoe je de resultaten leest en waarom hij veilig is op productie.
 ---
 
 # Testsuite (DWH)
 
-De Yres data-plane database (`IRIS_DWH`) wordt geleverd met een **regressietestsuite** die het complete SQL-framework doorlicht: elk in-scope object (stored procedures, functions, views en triggers) heeft precies één test. De suite staat in de DWH-repository onder **`DWH/tests/`** en is **geen onderdeel van de DACPAC** — hij wordt dus nooit automatisch mee-gedeployed. Je installeert en draait hem bewust, en je kunt hem net zo bewust weer verwijderen.
+De Yres data-plane database (`IRIS_DWH`) wordt geleverd met een **regressietestsuite** die het complete SQL-framework doorlicht: elk in-scope object (stored procedures, functions, views en triggers) heeft precies één test.
 
-Deze pagina beschrijft het **gebruik** van de suite. De interne opzet (fixtures, testtiers, assert-framework) staat gedocumenteerd in de repository zelf (`DWH/tests/README.md`).
+Vanaf **v1.56** hoort de suite bij de database zelf: hij zit in de DACPAC als het schema **`[Test]`** en wordt dus **met elke Yres-versie meegeïnstalleerd**. Er valt niets te installeren — elke omgeving op de actuele versie heeft alle `Test.*`-objecten al staan. Er draait ook **niets automatisch**: de suite komt alleen in actie als je er zelf een procedure voor aanroept.
+
+Deze pagina beschrijft het **gebruik** van de suite.
 
 ## Waarvoor gebruik je hem
 
@@ -35,34 +37,29 @@ Waar `AllowSettingsUpdates = 0` staat, zijn de auditlogs (`Config.EventLog`, `Co
 
 ## Draaien
 
-### Via de meegeleverde runner (aanbevolen)
-
-```powershell
-cd DWH/tests
-.\run-all-tests.ps1 -CredentialsFile 'C:\pad\naar\omgeving-creds.txt' -FailIfBusy
-```
-
-De runner installeert (of ververst) het framework en draait daarna alle tests. Nuttige opties:
-
-| Optie | Betekenis |
-|---|---|
-| `-CredentialsFile` | Tekstbestand met server/database/gebruiker/wachtwoord van de doelomgeving. |
-| `-FailIfBusy` | **Aanbevolen op productie:** breekt af als er lopende loads zijn (gestart in de laatste 4 uur). Zonder deze switch is de bezet-controle alleen een advies (SKIP-regel in het resultaat). |
-| `-Suite framework` / `-Suite loadengine` | Draai alleen de per-object-suite of alleen de load-engine-suite (standaard: beide). |
-| `-Schema <naam>` | Draai alleen de tests van één schema (bijv. `LoadManagement`). |
-| `-Round '<label>'` | Eigen label voor de run (bijv. een ticketnummer), terug te vinden in de historie. |
-
-Het gebruikte account heeft lees-/schrijfrechten op de frameworkschema's nodig plus DDL-rechten op `STAGE`, het HIS-schema en `Test`.
-
-### Via SQL
-
-Als het framework al geïnstalleerd is, kun je rechtstreeks vanuit SSMS of Azure Data Studio draaien:
+Je draait de suite vanuit SSMS, Azure Data Studio of elke andere SQL-client:
 
 ```sql
 DECLARE @id int;
-EXEC Test.spRunAll   @Round = 'ticket-123', @RunId = @id OUTPUT;  -- alles: preflight → tests → cleanup + residucontrole
-EXEC Test.spRunSuite @Schema = 'LoadManagement', @Round = 'ticket-123';  -- één schema
+EXEC Test.spRunAll @Round = 'ticket-123', @FailIfBusy = 1, @RunId = @id OUTPUT;
 ```
+
+`spRunAll` doorloopt de hele cyclus: preflight → tests → cleanup + residucontrole. De parameters:
+
+| Parameter | Betekenis |
+|---|---|
+| `@Round` | Eigen label voor de run (bijvoorbeeld een ticketnummer), terug te vinden in de historie. Laat je hem leeg, dan krijgt de run automatisch een label met het tijdstip. |
+| `@Schema` | Draai alleen de tests van één schema (bijvoorbeeld `LoadManagement`). Leeg = alle schema's. |
+| `@FailIfBusy` | **Aanbevolen op productie:** `1` breekt af als er lopende loads zijn. Bij `0` (standaard) is de bezet-controle alleen een advies — een SKIP-regel in het resultaat. |
+| `@RunId` | OUTPUT: het runnummer waarmee je het resultaat later terugvindt. |
+
+Voor één schema is er de kortere wrapper:
+
+```sql
+EXEC Test.spRunSuite @Schema = 'LoadManagement', @Round = 'ticket-123';
+```
+
+Het gebruikte account heeft lees-/schrijfrechten op de frameworkschema's nodig plus DDL-rechten op `STAGE`, het HIS-schema en `Test`.
 
 Daarnaast is er een zelfstandige **load-engine-suite** (`Test.spRunLoadEngineTests`) die alle laadtypen (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL) tegen een synthetische bron doorloopt en het [SCD2-resultaat](../concepten/historie-scd2.md) controleert:
 
@@ -81,8 +78,15 @@ EXEC Test.spRunLoadEngineTests @Round = 'ticket-123';
 | `Test.RunResult` | Eén rij per assertion: PASS/FAIL/SKIP met verwachte vs. werkelijke waarde. |
 | `Test.vwRunSummary` | Eén rij per run met totalen en eindstatus. |
 | `Test.vwCoverageSummary` | Geteste vs. in-scope objecten per schema — het doel is overal **100%**. |
+| `Test.CoverageExclusion` | Wat bewust buiten de dekkingsmeting valt, met de reden erbij. |
 
 - **SKIP-regels dragen altijd een reden** — bijvoorbeeld een licentiegate, een bewust niet-uitgevoerde onveilige actie, of het bezet-advies. Een SKIP is dus gedocumenteerd gedrag, geen gemiste test.
+
+De dekkingsmeting gaat over **Yres-eigen** objecten. Buiten scope vallen daarom de meegeleverde
+diagnostiekpakketten van derden (het `Maintenance`-schema met de sp\_Blitz-familie, `sp_WhoIsActive` en
+AdaptiveIndexDefrag) en alles wat per klant gegenereerd wordt (het `Exposed`-schema en je eigen
+`Custom…`-schema's). Die uitzonderingen staan met reden in `Test.CoverageExclusion` en worden bij elke
+deploy opnieuw gezet.
 
 :::tip Licentie eerst controleren
 De tests rond `fxExtractor`/`vwExtractor` slaan zichzelf over (SKIP) als de licentie de testfixture uit het extractieoverzicht filtert. Zie je onverwacht veel SKIP's in `LoadManagement`, controleer dan eerst de licentie.
@@ -90,4 +94,10 @@ De tests rond `fxExtractor`/`vwExtractor` slaan zichzelf over (SKIP) als de lice
 
 ## Verwijderen
 
-De testresultaten en het framework leven in een eigen `Test`-schema, dat na een run bewust blijft staan zodat de historie bevraagbaar is. Wil je een omgeving zonder enig spoor achterlaten, draai dan eerst `EXEC Test.spCleanupAll;` (als een run onderbroken werd) en verwijder daarna alle objecten in het `Test`-schema gevolgd door het schema zelf. De DWH-repository bevat hiervoor een kant-en-klaar script in de runbook bij de suite.
+De testresultaten en het framework leven in een eigen `Test`-schema, dat na een run bewust blijft staan zodat de historie bevraagbaar is. Werd een run onderbroken, dan ruimt `EXEC Test.spCleanupAll;` de achtergebleven fixtures op.
+
+:::note Het `Test`-schema hoort bij de database
+Omdat de suite sinds v1.56 in de DACPAC zit, komt het `Test`-schema bij de eerstvolgende versie-update
+gewoon terug als je het handmatig verwijdert. Het schema kost vrijwel niets zolang je geen runs start:
+zonder run staan `Test.RunLog` en `Test.RunResult` leeg.
+:::

@@ -26,7 +26,7 @@ Start handmatig een pipeline: een tabel laden, metadata ophalen, een view materi
 
 (1) **Pipeline-lijst** links — selecteer de pipeline die je wilt draaien of inspecteren.
 (2) **Datumfilter** (`runEnd`) — beperk de getoonde runs tot een periode.
-(3) **Statusfilter** (No filter / Succeeded / InProgress / Failed / Cancelled). Voor de **Dynamic Workflow YRES**-pipeline verschijnen er drie extra cascaderende filters: **Source → Schema → Table**.
+(3) **Statusfilter** (No filter / Succeeded / InProgress / Failed / Cancelled). Heeft de geselecteerde pipeline de parameters Source, Schema én Table — zoals **Dynamic Workflow YRES** en **Dynamic Archiving Workflow YRES** — dan verschijnen er drie extra cascaderende filters: **Source → Schema → Table**, en toont de runs-tabel die drie ook als kolommen.
 (4) **Runs-tabel** met per run de status, `runStart`, `runEnd` en de berekende `runtime` (`Xh Ym Zs`).
 (5) **Acties per run** — link naar de ADF-monitoring, **fout bekijken** (rood `i`-icoon bij een foutmelding) en **pipeline stoppen** (bij InProgress/Queuing/Queued).
 (6) **Start pipeline** — heeft de pipeline parameters, dan leest de knop **Set parameters to start** en opent een formulier waar je Source/Schema/Table en eventueel de service tier invult.
@@ -53,7 +53,7 @@ Plan een pipeline met een herhaalpatroon (een ADF schedule-trigger). Per geselec
 *Het Triggers-scherm: kies een pipeline, bekijk de bestaande triggers en plan een nieuwe met **Create**.*
 
 (1) **Pipeline-lijst** links — selecteer de pipeline waarvoor je triggers beheert.
-(2) **Triggers-tabel** met kolommen `Name`, `status`, `frequency`, `on`, `time`, `timezone`.
+(2) **Triggers-tabel** met kolommen `Name`, `status`, `frequency`, `on`, `time`, `timezone`. De kolommen `on` en `time` tonen **alle** geselecteerde dagen respectievelijk tijdstippen, komma-gescheiden.
 (3) **Start ▶ / Stop ■** — schakel een trigger aan of uit.
 (4) **Verwijderen** — wis een trigger.
 (5) **Create** — opent de plan-wizard.
@@ -63,9 +63,33 @@ Plan een pipeline met een herhaalpatroon (een ADF schedule-trigger). Per geselec
 
 1. Selecteer links een pipeline.
 2. Klik **Create**.
-3. Vul **Name**, **Every / interval** en **Frequency** in (`Minute(s)`, `Hour(s)`, `Day(s)`, `Week(s)`, `Month(s)`). Bij **Week(s)** kies je een **Day of the week**, bij **Month(s)** een **Day of the month** (1–31), en bij Day/Week/Month een **Time**.
+3. Vul **Name**, **Every / interval** en **Frequency** in (`Minute(s)`, `Hour(s)`, `Day(s)`, `Week(s)`, `Month(s)`) en kies de momenten waarop de pipeline moet draaien — zie [Meerdere dagen en tijdstippen in één trigger](#meerdere-dagen-en-tijdstippen-in-één-trigger) hieronder.
 4. Heeft de pipeline parameters, vul dan in de tweede stap Source/Schema/Table in.
 5. Klik **Submit**.
+
+### Meerdere dagen en tijdstippen in één trigger {#meerdere-dagen-en-tijdstippen-in-één-trigger}
+
+Vanaf **v1.56** kies je per veld **meerdere waarden tegelijk**, als aanklikbare blokjes. Eén trigger kan
+daardoor bijvoorbeeld "elke maandag én zaterdag om 01:00, 05:00 en 09:00" draaien; voorheen was elk
+dag/tijd-paar een aparte trigger.
+
+| Veld | Keuze | Zichtbaar bij |
+|---|---|---|
+| **Hours** | 0–23, meerdere tegelijk | Day(s), Week(s), Month(s) |
+| **Minutes** | 0–59, meerdere tegelijk | Day(s), Week(s), Month(s) |
+| **Days of the week** | maandag t/m zondag, meerdere tegelijk | Week(s) |
+| **Days of the month** | 1 t/m 31 plus **Last day**, meerdere tegelijk | Month(s) |
+| **Monthly occurrences** | rijen als *eerste/tweede/derde/vierde/vijfde/laatste* × weekdag — bijvoorbeeld "laatste vrijdag van de maand" | Month(s) |
+
+:::caution Uren × minuten is een kruisproduct
+De geselecteerde uren en minuten worden **gecombineerd**, niet gepaard. Uren `11, 19` met minuten
+`00, 30` levert vier momenten op: 11:00, 11:30, 19:00 en 19:30 — en dat op elke geselecteerde dag. Het
+formulier toont onderaan een samenvatting met alle daadwerkelijke uitvoermomenten en hun aantal, zodat
+je dit vóór het opslaan kunt controleren.
+:::
+
+Bij de frequenties **Minute(s)** en **Hour(s)** kies je geen tijdstippen: die triggers draaien puur op
+het interval, gerekend vanaf de starttijd.
 
 :::info Tijdzone
 De interface toont de hint *"Timezone UTC(+1) will be used"*, maar de trigger gebruikt in werkelijkheid de **tijdzone van de ingelogde gebruiker** (uit je gebruikersinstellingen), niet een vaste UTC+1.

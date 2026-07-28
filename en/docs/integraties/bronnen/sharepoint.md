@@ -29,8 +29,35 @@ The `postfix` is also incorporated into the relative dataset URLs (`sites`/`team
 
 ### Authentication
 
-**Azure AD / Microsoft Entra service principal (app-only).** You register an app, grant it
-access to the SharePoint site, and provide the client ID, client secret and tenant ID.
+**Microsoft Entra service principal (app-only), through Microsoft Graph.** You register an app, grant it
+read access to SharePoint, and provide the client ID, client secret and tenant ID.
+
+:::note Through Microsoft Graph since v1.56
+Yres used to fetch SharePoint files through the **Azure ACS** token endpoint
+(`accounts.accesscontrol.windows.net`) and the SharePoint REST API. Microsoft has retired that app-only
+flow, which made SharePoint loads fail. From v1.56 Yres obtains its token at `login.microsoftonline.com`
+and reaches files through **Microsoft Graph** (site → document library → file). The fields you enter and
+the Key Vault secrets are unchanged; what does change are the **permissions the app needs** — see
+[Prerequisites](#prerequisites).
+:::
+
+### How Yres locates a file
+
+Yres derives the path to a file from your configuration in three steps:
+
+1. **The site** — the site name (`stageCategory`) is combined with your tenant name into the Graph site.
+2. **The document library** — the **first path segment** of the file location is taken as the name of the
+   document library (drive) within that site.
+3. **The file** — the rest of the file location plus the file name is the path *inside* that library.
+
+:::caution The file location must start with the library
+Because the first segment identifies the document library, the file location has to contain one — for
+example `Shared Documents/Finance/`. If it holds only a folder name without a library, Yres finds no
+matching library and the step fails.
+:::
+
+The file is then loaded in two steps: first as a binary copy into the environment's Blob Storage, then
+read from there into `STAGE`. The intermediate copy is cleaned up automatically afterwards.
 
 :::note Authentication implementation
 The linked service is created in ADF as `HttpServer` with `authenticationType: Anonymous`
@@ -72,10 +99,15 @@ prefix of the Key Vault secrets.)
    **New client secret**. Copy the **Value** right away; this value is only shown once.
 3. **Store the App ID + secret in Azure Key Vault** (in the environment's resource group) — this
    happens automatically via the wizard.
-4. **Grant the app access to the site.** The classic route is
-   `https://<tenant>.sharepoint.com/sites/<site>/_layouts/15/appinv.aspx`: enter the App ID → **Lookup**
-   → assign a permission XML with **FullControl** on the site collection
-   (`http://sharepoint/content/sitecollection/web`).
+4. **Grant the app read access through Microsoft Graph.** App → **API permissions** → **Add a permission**
+   → **Microsoft Graph** → **Application permissions** → at least **`Sites.Read.All`**. Then click
+   **Grant admin consent**; without that approval the app stays unauthorized.
+
+   :::warning The old appinv.aspx route no longer works
+   Up to v1.55 you granted the app rights through `https://<tenant>.sharepoint.com/sites/<site>/_layouts/15/appinv.aspx`
+   with a permission XML (SharePoint app-only through Azure ACS). Microsoft has switched that flow off.
+   Existing connections authorized only that way need Graph permissions as described above.
+   :::
 
 > Official documentation: [Register an app in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app)
 

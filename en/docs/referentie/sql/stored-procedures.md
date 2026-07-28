@@ -8,7 +8,7 @@ description: Reference for the stored procedures in the IRIS_DWH database, per s
 
 This page describes the stored procedures in the data-plane database **`IRIS_DWH`**. The names are taken verbatim from the live repository; in code, the product is still called **IRIS** in many places. The content was regenerated from the source code (the code takes precedence over older documentation).
 
-The database contains **105 stored procedures, 58 functions, and 48 views** (counted on the deploy source, July 2026). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
+The database contains **108 stored procedures, 58 functions, and 48 views** (counted on the deploy source, July 2026). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
 
 :::note Schema overview
 The procedures are spread across the schemas `LoadManagement` (the load engine), `Config` (settings, logging, DB tuning), `Change` (DTAP change management), `Monitoring` (load-status logging), `Maintenance` (maintenance, health checks), `Expose` (reporting RBAC), and `dbo` (helper procedures).
@@ -40,7 +40,7 @@ The `LoadManagement` schema contains the core of Yres: the procedures that merge
 
 **Purpose:** The SCD2 merge engine — the heart of the load logic. For a single target, the procedure resolves source/schema/table from `UsedTables` (with a fallback to `CustomYres.Extractor`), reads `vwDictionary` for the read/write/delete columns, computes the KeyHash/RowHash columns, and **builds a large dynamic SQL string** that — depending on the load type — inserts new rows, closes off changed/disappeared rows (`isCurrent=0`, `ETL_EndDate`), deduplicates, and works through `STAGE` in pages. With `@Execute=1` it executes that SQL (wrapped by `Config.fxAddTryCatch`); otherwise it prints the SQL via `dbo.spLongPrint`.
 
-**Parameters:** identical to `spLoadDWH` (`@Target`, `@Pipeline_ID`, `@Execute`, `@DeltaColumn` (default empty string), `@TableLoadType`).
+**Parameters:** those of `spLoadDWH` (`@Target`, `@Pipeline_ID`, `@Execute`, `@DeltaColumn` (default empty string), `@TableLoadType`), plus `@LakeMode (BIT, default 0)`. With `@LakeMode = 1` the same merge targets the slim bookkeeping table of the [lake feed](../../concepten/lake-feed.md) instead of the HIS schema: no surrogate keys are generated and only the delta columns are carried. This mode is set exclusively by `spLoadLake`.
 
 **Load types (as derived from the code, which is authoritative):** the procedure branches explicitly on six values of `@TableLoadType` — **`DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL`** — plus `FULL` as the implicit default path (the non-special path).
 
@@ -59,6 +59,24 @@ Only **`OVERWRITE` deletes history** (truncate, RowId restarts). **`RELOAD` keep
 :::
 
 Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — with the literal `OPTIMAL` → `fxGetOptimalPageSize` — and `'retryCount'`, default 3 in the proc). When `fxGetSurrogate(@Target)=1`, surrogate keys are inserted into `LoadManagement.SurrogateKeys`. With a memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`), `spUpdateKeyAndRowHash` runs first. Every micro-step writes a row to `[Monitoring].[LS_Trans]` (e.g. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
+
+### `[LoadManagement].[spLoadLake]`
+
+**Purpose:** The lake counterpart of `spLoadDWH`, called by the ADF step **Prepare lake load** just before `Load DWH` (only when `DataPlatform` contains `DL`). The procedure creates the slim bookkeeping table for the target if needed, stamps a start marker into `[Monitoring].[LS_Trans]` (the anchor by which *this* run's mutations are recognised) and then delegates to `spHIS_InsertAndUpdate` with `@LakeMode = 1`. For load type `ADDITIONAL` it skips the merge entirely. See [Lake feed](../../concepten/lake-feed.md).
+
+**Parameters:** `@Target`, `@Pipeline_ID`, `@TableLoadType` (empty = from `UsedTables`), `@DeltaColumn`, `@Execute` (default `1`).
+
+### `[LoadManagement].[spGetLakeFeed]`
+
+**Purpose:** Hands the ADF step **Write lake feed** a single row holding `FeedQuery` (the query selecting exactly this run's mutations) and `MutationCount`. At `MutationCount = 0` ADF skips the copy step, so no empty file appears in the Data Lake. The query marks every row as `I`, `U` or `D`; deleted keys come back as a tombstone with empty business columns.
+
+**Parameters:** `@Target`, `@Pipeline_ID` (locates the start marker), `@TableLoadType`.
+
+### `[LoadManagement].[spResetLakeIndex]`
+
+**Purpose:** Wipes the slim lake bookkeeping for one table or — without an argument — for all lake tables. The next load then resends the complete current dataset as `I` rows. Intended for recovery and backfill; the Parquet files already written are left alone.
+
+**Parameters:** `@Target` (empty = all lake tables).
 
 ### `[LoadManagement].[spPrepareWorkload]`
 

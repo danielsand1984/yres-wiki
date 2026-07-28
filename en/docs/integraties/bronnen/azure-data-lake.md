@@ -8,7 +8,7 @@ description: Connect Azure Data Lake to Yres — connection requirements.
 
 **Category:** Azure · File
 
-Azure Data Lake Storage Gen2 is an Azure Storage account with **hierarchical namespace** enabled. Within Yres, the Data Lake mainly serves as **storage for (raw) data**: alongside the database, Yres can optionally also land loaded data as **Parquet** in the Data Lake. In doing so, Yres adds the framework columns `RowHash`, `KeyHash` and `EtlDate`, enabling a medallion architecture (bronze/silver/gold).
+Azure Data Lake Storage Gen2 is an Azure Storage account with **hierarchical namespace** enabled. Within Yres, the Data Lake mainly serves as **storage for (raw) data**: alongside the database, Yres can optionally also land loaded data as **Parquet** in the Data Lake — since v1.56 as an append-only [change feed](../../concepten/lake-feed.md), holding only the mutated rows per run plus the framework columns `KeyHash`, `RowHash`, `YresAction` and `YresDateStart`. That enables a medallion architecture (bronze/silver/gold), including incremental updates of Delta tables.
 
 :::note Connect via Azure Blob Storage
 There is no separate **Azure Data Lake** choice in the "Add source" wizard (source picker `SourceField.tsx`). To **ingest data from a Data Lake (Gen2)**, add it as an **[Azure Blob Storage](azure-blob-storage.md)** source (same `AzureBlobFS`/SAS form). In addition, Yres uses a fixed Data Lake linked service (`AzureDataLakeStorage.json`) internally as its **own staging/output storage** — the destination where Yres optionally writes Parquet.

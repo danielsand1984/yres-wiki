@@ -11,14 +11,14 @@ Every Yres database (`IRIS_DWH`) can be managed through a **SQL endpoint** (SSMS
 :::tip This page is the catalog
 Below are the **names per schema** with a short description. The full **purpose, inputs and outputs per object** are on the detail pages:
 
-- [Stored procedures](./sql/stored-procedures.md) — all 105 procedures
+- [Stored procedures](./sql/stored-procedures.md) — all 108 procedures
 - [Functions](./sql/functions.md) — all 58 functions
 - [Logs & views](./sql/logs-views.md) — log tables + all 48 views with output columns
 :::
 
 ## Overview: schemas and counts
 
-`IRIS_DWH` contains **105 stored procedures, 58 functions and 48 views**, spread across these schemas:
+`IRIS_DWH` contains **108 stored procedures, 58 functions and 48 views**, spread across these schemas:
 
 | Schema | Role |
 |---|---|
@@ -30,6 +30,8 @@ Below are the **names per schema** with a short description. The full **purpose,
 | `[Expose]` | Reporting/RBAC: managing roles, users and exposed objects. |
 | `[Metadata]` | Lineage and dependencies between objects. |
 | `[oData]` | OData helpers for exposing data. |
+| `[LAKE]` | Slim per-table bookkeeping for the [lake feed](../concepten/lake-feed.md) — hashes and dates only, no business data. The tables are created by the load engine itself. |
+| `[Test]` | The bundled [regression test suite](./testsuite.md): framework, per-object tests and run history. |
 | `[dbo]` | General utilities and maintenance routines. |
 | `Security` | `CREATE SCHEMA` files that create the runtime schemas and roles (no procs/functions). |
 

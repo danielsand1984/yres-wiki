@@ -34,6 +34,15 @@ topic.
   → [History & SCD2](../concepten/historie-scd2.md)
 - **Deploy order:** the database upgrade always precedes the ADF publish — the new pipelines use
   procedures that older databases don't have yet.
+- **The Data Lake now holds mutations instead of snapshots.** Anyone reading data from the lake has to
+  follow: the files sit on a new path, contain only that run's changed rows, and carry an `I`/`U`/`D`
+  marker. Existing files stay put, but nothing is added to the old path any more.
+  → [Lake feed](../concepten/lake-feed.md)
+- **SharePoint sources need new permissions.** Microsoft has switched off the app-only flow through
+  Azure ACS, which made SharePoint loads fail. Yres now uses Microsoft Graph, so grant the registered
+  app **application permissions** on Microsoft Graph (at least `Sites.Read.All`) with admin consent.
+  The old authorization through `appinv.aspx` no longer suffices.
+  → [SharePoint](../integraties/bronnen/sharepoint.md)
 
 ### Web app
 
@@ -44,10 +53,25 @@ topic.
 - **Sources & connectivity:** new REST service presets, refined REST pagination, and **Test connectivity** from the web app. → [Integrations](../integraties/overzicht.md)
 - **Monitoring & health:** new health bar with DWH statistics; pipeline runs with filters. → [Monitoring & logging](./monitoring-logging.md)
 - **Data engineering & object viewer:** git diff and syntax highlighting, richer mapping of scripted objects, and wizard improvements. → [Data engineering](../frontend/data-engineering.md)
+- **Triggers with multiple days and times:** a single trigger can now run, say, every Monday and Saturday at 01:00, 05:00 and 09:00. Hours, minutes, weekdays and days of the month are multi-select, complemented by recurring occurrences such as "last Friday of the month"; a summary shows every run moment before you save. Previously each day/time pair was a separate trigger. → [Triggers](../frontend/load-management.md#multiple-days-and-times-in-one-trigger)
+- **Archiving pipeline out of the box:** updating an environment to 1.56 creates the `Dynamic Archiving Workflow YRES` automatically, together with its archive storage. You can then start it straight from **Run pipelines** and schedule it with a trigger. Any pipeline carrying Source/Schema/Table parameters also gains those three as columns and filters in the run history — the archiving workflow included. → [Load management](../frontend/load-management.md)
 - **Management & security:** admin secrets view, credential-expiry notifications, encryption of credentials and jobs, Azure Redis cache, and more robust Azure DevOps integration.
+- **Fixed defects:** starting a pipeline by hand and creating a trigger sometimes used a stale brand name, so the action failed on a pipeline name that does not exist; the right-click menu in **Changes** and **Used tables** opened in the wrong place once the page was scrolled; and updating a large organization could abort early and therefore run twice.
 
 ### Data platform — new
 
+- **Lake feed: the Data Lake as a change feed.** The Data Lake output has been rebuilt. Instead of
+  dumping the entire staging table every run, Yres now writes one Parquet file per run holding **only
+  the mutations**, each marked as an insert, update or delete — including explicit tombstones for
+  deleted rows, which used to be invisible. That makes both the current state and the full history
+  derivable from the lake, and the feed directly usable as input for a Delta table. Runs without changes
+  write nothing, a restart overwrites its own file, and the lake step runs in parallel with loading the
+  data warehouse. You switch it on per table with `DataPlatform = DL`.
+  → [Lake feed](../concepten/lake-feed.md)
+- **The test suite ships with the product.** The regression suite that exercises every database object
+  now sits in the DACPAC and therefore arrives with every version. After a deploy, or whenever in doubt,
+  you run it yourself with `EXEC Test.spRunAll` — it is safe on production, proves its own cleanup, and
+  never runs by itself. → [Test suite](./testsuite.md)
 - **Workload administration:** workflows now plan their full workload up front
   (`LoadManagement.LoadLog`) and update it per load. The monitor therefore also shows **planned and
   skipped loads**, statuses come from the administration itself and runtimes are accurate. A new
@@ -77,7 +101,7 @@ topic.
   history per change (`Change.vwLogs`). → [Change process](../concepten/wijzigingsproces.md)
 - **DB tier scaling:** next to the "Default" tier, a "High" tier is now configurable that workflows can
   scale up to during heavy loads.
-- **Archiving:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (double-gated, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. Archiving cannot be configured from the web app yet; that support is coming soon. → [Archiving](../concepten/archivering.md)
+- **Archiving:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (double-gated, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. The archiving workflow is created automatically during the update and can be started and scheduled from the web app; which tables archive is still configured in the database in this version, not in the web app. → [Archiving](../concepten/archivering.md)
 
 ### Data platform — stability & performance
 
@@ -87,7 +111,34 @@ topic.
   [Change process](../concepten/wijzigingsproces.md)
 - **Performance improvements:** the SCD2 merge was rewritten on its hotspots and workflow planning no
   longer scales with the monitoring history or the number of tables — most noticeable on large
-  environments.
+  environments. On top of that, **log steps no longer gate the real work**: they now run alongside the
+  load activities rather than ahead of them, saving queue time per table. No log row disappears; rows
+  within the same load may however show up in a slightly different order in the monitoring.
+- **SharePoint works again:** file retrieval has been moved to Microsoft Graph now that Microsoft has
+  switched off the old app-only authentication. Yres locates the file through site → document library →
+  file and fetches it via a temporary copy in the environment's Blob Storage. Mind the changed
+  permissions and the meaning of the file location.
+  → [SharePoint](../integraties/bronnen/sharepoint.md)
+- **File sources — delta window corrected:** plural forms such as `DAYS` and `HOURS` were not recognised
+  and silently fell back to seconds, and `YEAR` counted 365 hours instead of 365 days. Both are fixed; a
+  table carrying such a setting picks up a wider and correct window after the update.
+  → [The delta window for file sources](../concepten/load-types.md#the-delta-window-for-file-sources)
+- **Data type mappings cleaned up:** a broad correction sweep over the default type mapping. Columns that
+  landed in the data warehouse as `rowversion` (SQL Server, DB2, MySQL, OneStream) are now created
+  correctly as a binary value or a date, mappings to types SQL Server does not know (`blob`, `bool`,
+  `byte`) have been replaced, Salesforce address columns are no longer truncated to a single character,
+  Snowflake `VARIANT` may hold long values again, and duplicate mapping rows — which produced arbitrary
+  behaviour — have been removed. Missing rows are restored during the deploy.
+- **Automatic remodelling made robust:** a source change affecting several tables at once stalled after
+  the first table, and a `rowversion` column could not be remodelled at all. Both are fixed.
+  → [Change process](../concepten/wijzigingsproces.md)
+- **DB2 metadata:** fetching the column structure of a DB2 source produced an incomplete administration,
+  leaving table and column lists in the web app empty or partial. Fixed.
+- **Fewer false alarms in the health checks:** the orphaned-metadata check flagged the entire unused
+  source catalogue as dead metadata. It now only fires for metadata of sources that no longer exist or
+  are inactive. → [Admin → Health checks](../frontend/admin.md)
+- **File sources — compression:** the compression format of a source file is now preserved when the
+  table configuration is updated; previously that setting was lost on every change.
 
 ## v1.55 — September 2025
 

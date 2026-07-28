@@ -58,7 +58,8 @@ De load engine, SCD2-historie en de zeven load types worden uitgebreid behandeld
 | **HIS** | History-laag met de volledige SCD2-historie (schemanaam via setting `SchemaHIS`). De HIS-schemanaam staat **niet** hard gecodeerd; op verifieerbare omgevingen resolvet `SchemaHIS` naar `ODS`. |
 | **ODS** | Operational Data Store. Tevens de standaardwaarde van `SchemaHIS` — de HIS-laag landt in de praktijk in het `ODS`-schema. |
 | **Expose** | De reporting-/exposelaag (`Exposed`, `Expose`, gebruikersschema's). Bevat de rapportagegerichte views/tabellen plus RBAC, opgebouwd door `spMaterializeViews`. |
-| **Data Lake** | Optionele Parquet-landing in Azure Data Lake Gen2. ADF kopieert `STAGE` naar Parquet (met `RowHash`/`KeyHash`/`EtlDate`), gepartitioneerd op Source/Schema/Target/Year/Month. |
+| **Data Lake** | Optionele Parquet-landing in Azure Data Lake Gen2. Yres schrijft per run een [change feed](./lake-feed.md) met alleen de mutaties (`YresAction` = `I`/`U`/`D`, plus `KeyHash`/`RowHash`/`YresDateStart`), gepartitioneerd op Source/Schema/Target/Year/Month. |
+| **Lake feed** | De append-only mutatiestroom in de Data Lake: per laadrun één Parquet-bestand met de inserts, updates en deletes van die run. Zie [Lake feed](./lake-feed.md). |
 
 :::note STAGE → HIS → Expose
 De vaste dataspine is: bron → ADF Copy → `STAGE` → `spLoadDWH` → `spHIS_InsertAndUpdate` →

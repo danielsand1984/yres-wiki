@@ -140,6 +140,41 @@ The consequences:
 A table `Orders` stamps `CreatedDate` on creation and `ModifiedDate` on every later change. A new order does get a `CreatedDate` but (not yet) a `ModifiedDate`; an updated order gets a new `ModifiedDate`. With **both** columns as delta column the load picks up new *and* changed orders in one pass — a filter on `ModifiedDate` alone would miss the new, not-yet-changed orders.
 :::
 
+## The delta window for file sources
+
+For **file sources** (Azure Blob Storage, File Server) there is no change column inside the data. There,
+Yres looks at the **file's modification date** and only picks up files that fall within a look-back
+window. You set that window per table with two fields in the wizard's *Options* step:
+
+- **Delta overlap** — a number.
+- **Delta overlap unit** — the unit that goes with it.
+
+Together they mean "look back this far from now". With `7` + `DAY` the load picks up every file modified
+in the past seven days. Permitted units:
+
+| Unit | Also accepted | Length |
+|---|---|---|
+| `SECOND` | `SECONDS` | 1 second |
+| `MINUTE` | `MINUTES` | 60 seconds |
+| `HOUR` | `HOURS` | 1 hour |
+| `DAY` | `DAYS` | 24 hours |
+| `WEEK` | `WEEKS` | 7 days |
+| `MONTH` | `MONTHS` | 30 days (fixed) |
+| `YEAR` | `YEARS` | 365 days |
+
+Capitalisation does not matter: `DAY`, `Day` and `day` all work.
+
+:::caution An unknown unit falls back to seconds
+Enter something outside the table (`QUARTER`, say, or a typo) and the load counts in **seconds** — with
+no error. A window meant to be "7 quarters" then becomes 7 seconds and the load picks up next to nothing.
+Leave the fields empty or set the overlap to `0` and the opposite applies: no window is enforced and
+every file qualifies.
+:::
+
+Up to v1.55 the **plural forms were not recognised** (`DAYS` silently fell back to seconds) and `YEAR`
+counted 365 *hours* instead of 365 days. Both are corrected in v1.56; environments carrying such a
+configuration will pick up a wider — and now correct — window after the update.
+
 ## How Yres detects changes (hashing)
 
 Yres determines "new / changed / unchanged" not column by column, but with two SHA2_512 hashes computed as **persisted computed columns on the STAGE table**:

@@ -57,7 +57,7 @@ Onder elke load loopt dezelfde rode draad. Op hoofdlijnen:
 3. **Get tables** leest `vwExtractor` (achterliggende logica zit in de functie `[LoadManagement].[fxExtractor]`) en bepaalt welke tabellen geladen worden.
 4. Per tabel (parallel) kopieert ADF de bron via **Copy** naar **`STAGE.<Target>`**.
 5. **Load DWH** roept `[LoadManagement].[spLoadDWH]` aan, die doorschakelt naar `[LoadManagement].[spHIS_InsertAndUpdate]` — de SCD2-merge van `STAGE` naar **`HIS`** (standaard het schema `ODS`).
-6. Optioneel landt **Load DL** een kopie als **Parquet** in de Data Lake.
+6. Optioneel landen de **mutaties van deze run** als **Parquet change feed** in de Data Lake.
 7. `STAGE` wordt opgeschoond (tenzij `keepStage=1`) en de status wordt afgesloten via `spWriteLoadStatus`.
 
 De drie lagen waar data doorheen stroomt:
@@ -72,10 +72,10 @@ De drie lagen waar data doorheen stroomt:
 
 ## Data Lake (medallion / Parquet)
 
-Naast het Azure SQL-warehouse kan Yres elke load **optioneel** ook als **Parquet** wegschrijven naar Azure Data Lake Gen2, gepartitioneerd op bron/schema/tabel/jaar/maand. Dit is een aparte, parallelle landing voor analytics- en data-lake-scenario's (medallion-aanpak).
+Naast het Azure SQL-warehouse kan Yres elke load **optioneel** ook naar Azure Data Lake Gen2 wegschrijven, als **append-only change feed**: per run één Parquet-bestand met alleen de gemuteerde rijen, elk gemarkeerd als insert, update of delete, gepartitioneerd op bron/schema/tabel/jaar/maand. Dit is een aparte, parallelle landing voor analytics- en lakehouse-scenario's (medallion-aanpak). → [Lake feed](../concepten/lake-feed.md)
 
 :::note Twee aparte sporen
-De Data Lake-kopie staat **los van** de SCD2-historie-engine. De SCD2-historie wordt opgebouwd in Azure SQL (`STAGE` → `HIS`) door `spHIS_InsertAndUpdate`; de Parquet-landing is een separate ADF Copy van `STAGE` naar de Data Lake. Verwar de twee niet: het warehouse is de bron van waarheid voor historie, de Data Lake is een optionele extra landing.
+De lake-uitvoer staat **los van** de SCD2-historie-engine in de database. Het warehouse is de bron van waarheid voor historie; de feed is daarvan afgeleide, append-only data. Yres houdt daarvoor per lake-tabel een slanke administratie bij (schema `LAKE`) die alleen hashes en datums bevat — geen businessdata.
 :::
 
 ## Pipelines
