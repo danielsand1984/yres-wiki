@@ -31,6 +31,7 @@ const STR = {
     send: 'Vraag stellen',
     thinking: 'Aan het zoeken in de wiki…',
     thinkingDeep: 'Diepzoeken: de hele wiki wordt doorgelezen…',
+    thinkingHard: 'Aan het nadenken…',
     deepLabel: 'Diepzoeken',
     deepHint: 'Leest de hele wiki i.p.v. de meest relevante pagina’s. Trager, maar vindt meer.',
     deepOn: 'Diepzoeken staat aan voor je volgende vraag.',
@@ -55,6 +56,7 @@ const STR = {
     send: 'Ask',
     thinking: 'Searching the wiki…',
     thinkingDeep: 'Deep search: reading the entire wiki…',
+    thinkingHard: 'Thinking…',
     deepLabel: 'Deep search',
     deepHint: 'Reads the entire wiki instead of the most relevant pages. Slower, but finds more.',
     deepOn: 'Deep search is on for your next question.',
@@ -162,15 +164,21 @@ export default function WikiAssistant() {
     setInput('');
     setLoading(useDeep ? 'deep' : true);
 
+    // Buiten de try, zodat de catch weet of er al een (half) antwoordbericht staat.
+    let opened = false;
+
     try {
       const res = await fetch(endpoint(), {
         method: 'POST',
         headers: {'content-type': 'application/json'},
         body: JSON.stringify({question: q, lang, history, deep: useDeep}),
       });
-      const data = await res.json().catch(() => ({}));
 
-      if (!res.ok || data.error) {
+      // Fouten vóór het antwoord (rate limit, geen key) komen als gewone JSON;
+      // het antwoord zelf streamt als NDJSON — één JSON-object per regel.
+      const streaming = (res.headers.get('content-type') || '').includes('ndjson');
+      if (!res.ok || !streaming) {
+        const data = await res.json().catch(() => ({}));
         setLoading(false);
         setMessages((m) => m.slice(0, -1));
         if (data.code === 'DEEP_RATE_LIMITED') setError(data.message || t.rate);
@@ -180,14 +188,75 @@ export default function WikiAssistant() {
         return;
       }
 
-      setMessages((m) => [...m, {role: 'assistant', text: data.answer || '…'}]);
+      // Placeholder-bericht dat we tijdens het streamen blijven bijwerken.
+      let streamed = '';
+      let failed = null;
+      const openMessage = () => {
+        if (opened) return;
+        opened = true;
+        setLoading(false);
+        setMessages((m) => [...m, {role: 'assistant', text: ''}]);
+      };
+      const updateLast = (text) =>
+        setMessages((m) => [...m.slice(0, -1), {role: 'assistant', text}]);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      for (;;) {
+        const {value, done} = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, {stream: true});
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // laatste stuk kan een halve regel zijn
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          let evt;
+          try {
+            evt = JSON.parse(line);
+          } catch {
+            continue;
+          }
+          if (evt.type === 'status' && evt.value === 'thinking') {
+            setLoading('thinking');
+          } else if (evt.type === 'delta') {
+            openMessage();
+            streamed += evt.text;
+            updateLast(streamed);
+          } else if (evt.type === 'done') {
+            // Vervang de gestreamde tekst door de gecontroleerde versie
+            // (dode wiki-links zijn dan omgeleid).
+            openMessage();
+            updateLast(evt.answer);
+          } else if (evt.type === 'error') {
+            failed = evt;
+          }
+        }
+      }
+
+      if (failed) {
+        setLoading(false);
+        // Placeholder + de vraag terugdraaien, net als bij een gewone fout.
+        setMessages((m) => m.slice(0, opened ? -2 : -1));
+        setError(failed.message || t.err);
+        return;
+      }
+      if (!opened) {
+        setLoading(false);
+        setMessages((m) => m.slice(0, -1));
+        setError(t.err);
+        return;
+      }
+
       const next = count + 1;
       setCount(next);
       try {
         sessionStorage.setItem(COUNT_STORAGE, String(next));
       } catch {}
     } catch (e) {
-      setMessages((m) => m.slice(0, -1));
+      // Breekt de verbinding halverwege, dan staat er al een half antwoord:
+      // dat moet mee terug, samen met de vraag.
+      setMessages((m) => m.slice(0, opened ? -2 : -1));
       setError(t.err);
     } finally {
       setLoading(false);
@@ -287,7 +356,13 @@ export default function WikiAssistant() {
             ))}
             {loading && (
               <div className={styles.botMsg}>
-                <em>{loading === 'deep' ? t.thinkingDeep : t.thinking}</em>
+                <em>
+                  {loading === 'thinking'
+                    ? t.thinkingHard
+                    : loading === 'deep'
+                      ? t.thinkingDeep
+                      : t.thinking}
+                </em>
               </div>
             )}
           </div>
