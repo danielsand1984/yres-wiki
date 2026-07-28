@@ -313,15 +313,15 @@ is noted in parentheses).
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Whether users may directly change / delete / configure / edit logs in the database. |
 | `EnvironmentType` | — | DTAP type of this environment (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::note Two known code discrepancies
-Two settings behave differently in the current DWH code than their name suggests (verified against the code):
+:::note Two resolved code discrepancies
+Two settings behaved differently than their name suggests in older Yres versions; both are fixed in the
+current DWH code:
 
-- **`DefaultOdsMemOptimized`** is effectively not read by the fallback function `fxGetOptimized` (both
-  branches reference the STAGE setting). The per-table column `odsMemOptimized` does work. Whether this is a bug
-  or intentionally disabled cannot be derived from the repository.
-- The setting is seeded as **`AllowUpdatesInIrisSchemas`** (with "Iris"), while the health check expects the name
-  **`AllowUpdatesInYresSchemas`** (with "Yres"). As long as the names are not aligned, the
-  health check can mark this setting both as *missing* (9.03) and *unknown* (9.04).
+- **`DefaultOdsMemOptimized`** was not read by the fallback function `fxGetOptimized` (both branches
+  referenced the STAGE setting). The HIS side now does fall back to this setting.
+- **`AllowUpdatesInIrisSchemas`** (with "Iris") is seeded, while the health check roster expected the name
+  `AllowUpdatesInYresSchemas` (with "Yres") — see
+  [Troubleshooting](../troubleshooting.md#common-settings-checks-90x). The roster now uses the seeded name.
 :::
 
 ### Health Checks

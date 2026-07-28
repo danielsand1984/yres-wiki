@@ -313,15 +313,16 @@ staat tussen haakjes vermeld).
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Of gebruikers direct in de database mogen wijzigen / verwijderen / instellen / logs bewerken. |
 | `EnvironmentType` | — | DTAP-type van deze omgeving (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::note Twee bekende code-afwijkingen
-Twee instellingen gedragen zich in de huidige DWH-code anders dan hun naam suggereert (geverifieerd tegen de code):
+:::note Twee opgeloste code-afwijkingen
+Twee instellingen gedroegen zich in oudere Yres-versies anders dan hun naam suggereert; beide zijn in de
+huidige DWH-code hersteld:
 
-- **`DefaultOdsMemOptimized`** wordt door de fallback-functie `fxGetOptimized` effectief niet gelezen (beide
-  takken verwijzen naar de STAGE-setting). De per-tabel-kolom `odsMemOptimized` werkt wél. Of dit een bug is
-  of bewust uitgeschakeld, is niet uit de repository af te leiden.
-- De setting wordt geseed als **`AllowUpdatesInIrisSchemas`** (met "Iris"), terwijl de health-check de naam
-  **`AllowUpdatesInYresSchemas`** (met "Yres") verwacht. Zolang de namen niet gelijk getrokken zijn, kan de
-  health-check deze setting zowel als *ontbrekend* (9.03) als *onbekend* (9.04) markeren.
+- **`DefaultOdsMemOptimized`** werd door de fallback-functie `fxGetOptimized` niet gelezen (beide takken
+  verwezen naar de STAGE-setting). De HIS-kant valt nu wél terug op deze setting.
+- **`AllowUpdatesInIrisSchemas`** (met "Iris") wordt geseed, terwijl de health-check-roster de naam
+  `AllowUpdatesInYresSchemas` (met "Yres") verwachtte — zie
+  [Troubleshooting](../troubleshooting.md#veelvoorkomende-settings-checks-90x). De roster gebruikt nu de
+  geseede naam.
 :::
 
 ### Health Checks

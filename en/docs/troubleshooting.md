@@ -157,14 +157,15 @@ fix script.
 |---|---|---|
 | **9.01** | Setting not active | an expected setting is set to `active = 0` |
 | **9.02** | Value falls outside `Options` | `EnvironmentType = '1'` (not a valid DTAP code) |
-| **9.03** | Expected setting is **missing** | `AllowUpdatesInYresSchemas` not present |
-| **9.04** | **Unknown** setting present | `AllowUpdatesInIrisSchemas` (the seeded name) |
+| **9.03** | Expected setting is **missing** | a setting from the roster, for example `DefaultSurrogate`, is not in `[Config].[Settings]` |
+| **9.04** | **Unknown** setting present | a manually added or outdated setting that is no longer in the roster |
 
-:::warning Known double flag around `AllowUpdatesInYresSchemas`
-The setting is seeded as **`AllowUpdatesInIrisSchemas`** (with "Iris"), while `vwYresChecks` expects the name
-**`AllowUpdatesInYresSchemas`** (with "Yres"). As a result, the health check may mark this setting both as
-*missing* (9.03) and as *unknown* (9.04), unless the webapp renames it after deployment. This is expected
-behavior given this name difference — not actual data corruption.
+:::note Older versions: double flag around `AllowUpdatesInIrisSchemas`
+This setting is seeded as **`AllowUpdatesInIrisSchemas`** (with "Iris"), while the `vwYresChecks` roster in
+older Yres versions expected the name **`AllowUpdatesInYresSchemas`** (with "Yres"). As a result it was
+flagged both as *missing* (9.03) and as *unknown* (9.04). The roster has since been aligned with the seeded
+name. If you still see the double flag, the database runs an older DWH version and it will disappear with
+the next deployment — it never indicated data corruption.
 :::
 
 :::warning

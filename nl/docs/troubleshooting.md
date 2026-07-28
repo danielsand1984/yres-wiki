@@ -158,14 +158,15 @@ fix-script.
 |---|---|---|
 | **9.01** | Setting niet actief | een verwachte setting staat op `active = 0` |
 | **9.02** | Waarde valt buiten `Options` | `EnvironmentType = '1'` (geen geldige DTAP-code) |
-| **9.03** | Verwachte setting **ontbreekt** | `AllowUpdatesInYresSchemas` niet aanwezig |
-| **9.04** | **Onbekende** setting aanwezig | `AllowUpdatesInIrisSchemas` (de geseede naam) |
+| **9.03** | Verwachte setting **ontbreekt** | een setting uit de roster, bijvoorbeeld `DefaultSurrogate`, staat niet in `[Config].[Settings]` |
+| **9.04** | **Onbekende** setting aanwezig | een handmatig toegevoegde of verouderde setting die niet (meer) in de roster staat |
 
-:::warning Bekende dubbelmelding rond `AllowUpdatesInYresSchemas`
-De setting wordt geseed als **`AllowUpdatesInIrisSchemas`** (met "Iris"), terwijl `vwYresChecks` de naam
-**`AllowUpdatesInYresSchemas`** (met "Yres") verwacht. Daardoor kan de health-check deze setting zowel als
-*ontbrekend* (9.03) als *onbekend* (9.04) markeren, tenzij de webapp de naam na deployment omzet. Dit is
-verwacht gedrag bij dit naamsverschil — geen daadwerkelijke datacorruptie.
+:::note Oudere versies: dubbelmelding rond `AllowUpdatesInIrisSchemas`
+Deze setting wordt geseed als **`AllowUpdatesInIrisSchemas`** (met "Iris"), terwijl de roster van
+`vwYresChecks` in oudere Yres-versies de naam **`AllowUpdatesInYresSchemas`** (met "Yres") verwachtte.
+Daardoor werd hij tegelijk als *ontbrekend* (9.03) én *onbekend* (9.04) gemeld. De roster is inmiddels
+gelijkgetrokken met de geseede naam. Zie je de dubbelmelding nog, dan draait de database op een oudere
+DWH-versie en verdwijnt hij bij de volgende deployment — het was nooit een teken van datacorruptie.
 :::
 
 :::warning
