@@ -105,9 +105,10 @@ details van elk onderwerp.
   doelschema aan, dan hernoemt Yres voortaan de fysieke tabellen: STAGE, HIS en — bij
   `DataPlatform = DL` — de lake-boekhoudtabel verhuizen mee, net als de surrogate keys van die tabel.
   Voorheen bleef de database op de oude naam staan terwijl de configuratie de nieuwe toonde. De
-  hernoeming gebeurt bij de eerstvolgende *Update tables from dictionary* (de stap die ook in elke load
-  meedraait) en is atomair: mislukt hij, dan staat alles nog op de oude naam. Wijst de nieuwe naam al
-  naar een bestaand object, dan weigert Yres en logt dat.
+  hernoeming gebeurt bij de eerstvolgende *Update tables from dictionary* en is atomair: mislukt hij,
+  dan staat alles nog op de oude naam. Wijst de nieuwe naam al naar een bestaand object, dan weigert
+  Yres en logt dat. Bij bestands-, REST-, SharePoint-, Microsoft 365- en TrustIT-bronnen draait die
+  stap automatisch mee in elke load; bij de overige bronnen alleen als je hem zelf start.
   → [Doelnamen wijzigen](../setup/databron-koppelen.md#doelnamen-wijzigen-na-aanmaken)
 - **Health checks:** de checkview is opgesplitst in modulaire groepen en uitgebreid met ~24 nieuwe
   configuratie-integriteitschecks. → [Admin → Health checks](../frontend/admin.md)

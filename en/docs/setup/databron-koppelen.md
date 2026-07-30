@@ -134,8 +134,10 @@ You can still adjust the *Overwrite* fields later. From **v1.56** Yres then rena
 tables as well; before that nothing changed in the database and the configuration silently drifted
 away from the real table names.
 
-What happens on the next **Update tables from dictionary** — the action you can start yourself, and
-which also runs inside every load:
+The rename happens on the next **Update tables from dictionary**. For file, REST, SharePoint,
+Microsoft 365 and TrustIT sources that step sits inside the load pipeline itself, so it happens on
+the next load; for all other sources (databases, Salesforce, AFAS, OData, Snowflake…) only when you
+start the action yourself. What happens then:
 
 - the **STAGE** and **HIS** tables are renamed and, if you changed the target schema, moved;
 - with `DataPlatform = DL`, the matching lake bookkeeping table moves along;

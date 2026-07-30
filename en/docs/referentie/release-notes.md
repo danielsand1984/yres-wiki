@@ -105,9 +105,10 @@ topic.
   registered table and Yres renames the physical tables: STAGE, HIS and — with `DataPlatform = DL` —
   the lake bookkeeping table move along, as do that table's surrogate keys. Previously the database
   kept the old name while the configuration showed the new one. The rename happens on the next
-  *Update tables from dictionary* (the step that also runs inside every load) and is atomic: if it
-  fails, everything is still on the old name. If the new name already points at an existing object,
-  Yres refuses and logs it.
+  *Update tables from dictionary* and is atomic: if it fails, everything is still on the old name. If
+  the new name already points at an existing object, Yres refuses and logs it. For file, REST,
+  SharePoint, Microsoft 365 and TrustIT sources that step runs inside every load; for all other
+  sources only when you start it yourself.
   → [Changing target names](../setup/databron-koppelen.md#changing-target-names-after-creation)
 - **Health checks:** the check view was split into modular groups and extended with ~24 new
   configuration-integrity checks. → [Admin → Health checks](../frontend/admin.md)

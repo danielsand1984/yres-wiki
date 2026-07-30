@@ -134,8 +134,10 @@ Je kunt de *Overwrite*-velden ook later nog aanpassen. Vanaf **v1.56** hernoemt 
 fysieke tabellen; daarvóór veranderde er niets in de database en liep de configuratie stil uit de
 pas met de werkelijke tabelnamen.
 
-Wat er gebeurt bij de eerstvolgende **Update tables from dictionary** — de actie die je zelf kunt
-starten en die ook in elke load meedraait:
+De hernoeming gebeurt bij de eerstvolgende **Update tables from dictionary**. Bij bestands-, REST-,
+SharePoint-, Microsoft 365- en TrustIT-bronnen zit die stap in de laadpipeline zelf, dus daar gebeurt
+het bij de volgende load; bij de overige bronnen (databases, Salesforce, AFAS, OData, Snowflake…)
+alleen wanneer je de actie zelf start. Wat er dan gebeurt:
 
 - de **STAGE**- en **HIS**-tabel worden hernoemd en, als je het doelschema wijzigde, verplaatst;
 - bij `DataPlatform = DL` verhuist de bijbehorende lake-boekhoudtabel mee;
