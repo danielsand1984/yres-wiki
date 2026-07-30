@@ -128,6 +128,37 @@ Stap voor stap:
 Het toevoegen van een tabel registreert hem in `LoadManagement`, boekt een wijziging onder de gekozen Change en maakt de fysieke **STAGE**- en **HIS**-tabellen aan. **Er wordt nog geen data geladen** — dat doe je daarna via een [load](../frontend/load-management.md) of een trigger.
 :::
 
+#### Doelnamen wijzigen na aanmaken
+
+Je kunt de *Overwrite*-velden ook later nog aanpassen. Vanaf **v1.56** hernoemt Yres dan ook de
+fysieke tabellen; daarvóór veranderde er niets in de database en liep de configuratie stil uit de
+pas met de werkelijke tabelnamen.
+
+Wat er gebeurt bij de eerstvolgende **Update tables from dictionary** — de actie die je zelf kunt
+starten en die ook in elke load meedraait:
+
+- de **STAGE**- en **HIS**-tabel worden hernoemd en, als je het doelschema wijzigde, verplaatst;
+- bij `DataPlatform = DL` verhuist de bijbehorende lake-boekhoudtabel mee;
+- de **surrogate keys** van de tabel verhuizen mee, zodat bestaande sleutelwaarden blijven gelden.
+
+Alles gebeurt in één transactie: mislukt een stap, dan staat de tabel nog volledig op zijn oude
+naam. Bestaat er al een object met de nieuwe naam, dan weigert Yres de hernoeming en logt dat —
+kies dan een andere naam.
+
+:::caution Wat niet meeverhuist
+- **De loadhistorie** blijft aan de oude tabelnaam hangen. In de monitoring zie je de historie
+  daardoor splitsen op het moment van hernoemen; dat is bewust, want die loads schreven echt naar de
+  oude tabel.
+- **Al geschreven Data-Lake- en archiefbestanden** staan onder het oude pad en worden niet verplaatst.
+  De `_IncArchive`-view wordt onder de nieuwe naam opnieuw aangemaakt; de oude view blijft achter en
+  kun je laten opruimen.
+- **Index- en sleutelnamen** houden de oorspronkelijke tabelnaam in hun naam. Ze horen bij de tabel en
+  werken gewoon door — alleen hun naam verwijst nog naar de oude situatie.
+
+Wil je dit vermijden, kies de doelnamen dan bij het aanmaken goed. Een hernoeming is een
+beheerhandeling, geen dagelijkse actie.
+:::
+
 ## 4. Een load configureren
 
 Tijdens de stappen *Load type*, *Key column* en *Options* van de wizard leg je vast hoe de tabel geladen wordt.

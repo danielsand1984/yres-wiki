@@ -38,6 +38,12 @@ topic.
   follow: the files sit on a new path, contain only that run's changed rows, and carry an `I`/`U`/`D`
   marker. Existing files stay put, but nothing is added to the old path any more.
   → [Lake feed](../concepten/lake-feed.md)
+- **Target names you changed earlier are applied after all.** Until now, changing a target name or
+  target schema (the *Overwrite* fields) did nothing to the database: the table kept its original
+  name. From 1.56 Yres does rename the physical tables — including for changes you made in the past
+  that never took effect. So before upgrading, review the tables you renamed and put a name back if
+  you want to keep the old one.
+  → [Changing target names](../setup/databron-koppelen.md#changing-target-names-after-creation)
 - **SharePoint sources need new permissions.** Microsoft has switched off the app-only flow through
   Azure ACS, which made SharePoint loads fail. Yres now uses Microsoft Graph, so grant the registered
   app **application permissions** on Microsoft Graph (at least `Sites.Read.All`) with admin consent.
@@ -95,6 +101,14 @@ topic.
   the endpoint (including query-string merge). → [REST service](../integraties/bronnen/restservice.md)
 - **Snowflake:** staging rewritten to a single Parquet file with a configurable staging container.
   → [Snowflake](../integraties/bronnen/snowflake.md)
+- **Changing target names now actually works.** Change the target name or target schema of a
+  registered table and Yres renames the physical tables: STAGE, HIS and — with `DataPlatform = DL` —
+  the lake bookkeeping table move along, as do that table's surrogate keys. Previously the database
+  kept the old name while the configuration showed the new one. The rename happens on the next
+  *Update tables from dictionary* (the step that also runs inside every load) and is atomic: if it
+  fails, everything is still on the old name. If the new name already points at an existing object,
+  Yres refuses and logs it.
+  → [Changing target names](../setup/databron-koppelen.md#changing-target-names-after-creation)
 - **Health checks:** the check view was split into modular groups and extended with ~24 new
   configuration-integrity checks. → [Admin → Health checks](../frontend/admin.md)
 - **Change process hardened:** fourteen defects in release/import/install fixed, plus a readable release

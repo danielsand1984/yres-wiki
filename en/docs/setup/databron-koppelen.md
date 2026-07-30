@@ -128,6 +128,36 @@ Step by step:
 Adding a table registers it in `LoadManagement`, books a change under the chosen Change and creates the physical **STAGE** and **HIS** tables. **No data is loaded yet** — you do that afterwards via a [load](../frontend/load-management.md) or a trigger.
 :::
 
+#### Changing target names after creation
+
+You can still adjust the *Overwrite* fields later. From **v1.56** Yres then renames the physical
+tables as well; before that nothing changed in the database and the configuration silently drifted
+away from the real table names.
+
+What happens on the next **Update tables from dictionary** — the action you can start yourself, and
+which also runs inside every load:
+
+- the **STAGE** and **HIS** tables are renamed and, if you changed the target schema, moved;
+- with `DataPlatform = DL`, the matching lake bookkeeping table moves along;
+- the table's **surrogate keys** move along, so existing key values keep their meaning.
+
+It all happens in one transaction: if a step fails, the table is still entirely on its old name. If
+an object with the new name already exists, Yres refuses the rename and logs it — pick another name.
+
+:::caution What does not move along
+- **Load history** stays attached to the old table name. In monitoring you will therefore see the
+  history split at the moment of the rename; that is deliberate, because those loads really did write
+  to the old table.
+- **Data Lake and archive files already written** sit under the old path and are not moved. The
+  `_IncArchive` view is recreated under the new name; the old view is left behind and can be cleaned
+  up.
+- **Index and key names** keep the original table name inside their own name. They belong to the
+  table and keep working — only their name still refers to the old situation.
+
+To avoid all this, choose the target names carefully when you create the table. Renaming is an
+administrative operation, not a daily action.
+:::
+
 ## 4. Configure a load
 
 During the *Load type*, *Key column* and *Options* steps of the wizard you record how the table is loaded.

@@ -38,6 +38,12 @@ details van elk onderwerp.
   moet mee: de bestanden staan op een nieuw pad, bevatten alleen de gewijzigde rijen van die run en
   dragen een `I`/`U`/`D`-markering. Bestaande bestanden blijven staan, maar er komt niets meer bij op
   het oude pad. → [Lake feed](../concepten/lake-feed.md)
+- **Eerder gewijzigde doelnamen worden alsnog doorgevoerd.** Tot nu toe veranderde het aanpassen van
+  een doelnaam of doelschema (de *Overwrite*-velden) niets aan de database: de tabel bleef onder zijn
+  oorspronkelijke naam staan. Vanaf 1.56 hernoemt Yres de fysieke tabellen wél — ook voor wijzigingen
+  die je in het verleden maakte en die nooit effect hadden. Loop daarom vóór de upgrade je gewijzigde
+  tabellen na en zet een naam terug als je de oude wilt houden.
+  → [Doelnamen wijzigen](../setup/databron-koppelen.md#doelnamen-wijzigen-na-aanmaken)
 - **SharePoint-bronnen hebben nieuwe rechten nodig.** Microsoft heeft de app-only-flow via Azure ACS
   uitgezet, waardoor SharePoint-loads faalden. Yres gebruikt nu Microsoft Graph; geef de geregistreerde
   app daarom **application permissions** op Microsoft Graph (minimaal `Sites.Read.All`) met admin
@@ -95,6 +101,14 @@ details van elk onderwerp.
   plus het endpoint (inclusief querystring-merge). → [REST-service](../integraties/bronnen/restservice.md)
 - **Snowflake:** staging herschreven naar één Parquet-bestand met een instelbare stagingcontainer.
   → [Snowflake](../integraties/bronnen/snowflake.md)
+- **Doelnamen wijzigen werkt nu echt.** Pas je bij een geregistreerde tabel de doelnaam of het
+  doelschema aan, dan hernoemt Yres voortaan de fysieke tabellen: STAGE, HIS en — bij
+  `DataPlatform = DL` — de lake-boekhoudtabel verhuizen mee, net als de surrogate keys van die tabel.
+  Voorheen bleef de database op de oude naam staan terwijl de configuratie de nieuwe toonde. De
+  hernoeming gebeurt bij de eerstvolgende *Update tables from dictionary* (de stap die ook in elke load
+  meedraait) en is atomair: mislukt hij, dan staat alles nog op de oude naam. Wijst de nieuwe naam al
+  naar een bestaand object, dan weigert Yres en logt dat.
+  → [Doelnamen wijzigen](../setup/databron-koppelen.md#doelnamen-wijzigen-na-aanmaken)
 - **Health checks:** de checkview is opgesplitst in modulaire groepen en uitgebreid met ~24 nieuwe
   configuratie-integriteitschecks. → [Admin → Health checks](../frontend/admin.md)
 - **Wijzigingsproces gehard:** veertien fouten in release/import/install opgelost, plus een leesbare
