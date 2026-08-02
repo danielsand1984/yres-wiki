@@ -6,7 +6,7 @@ description: The bundled regression test suite for the Yres database — part of
 
 # Test suite (DWH)
 
-The Yres data-plane database (`IRIS_DWH`) ships with a **regression test suite** that exercises the complete SQL framework: every in-scope object (stored procedures, functions, views and triggers) has exactly one test.
+The Yres data-plane database (`IRIS_DWH`) ships with a **regression test suite** that exercises the complete SQL framework: every in-scope object (stored procedures, functions, views and triggers) has exactly one test procedure. Since v1.56 that single procedure exercises multiple scenarios: per object type it walks a fixed matrix — alongside the happy path also empty input, `NULL`, edge cases, invalid input, missing dependencies and multiple rows at once. In total that amounts to roughly **1665 checks across 194 objects**.
 
 From **v1.56** the suite belongs to the database itself: it sits in the DACPAC as the **`[Test]`** schema and is therefore **installed with every Yres version**. There is nothing to install — any environment on the current version already holds every `Test.*` object. Nothing runs **automatically** either: the suite only acts when you call one of its procedures yourself.
 
@@ -90,6 +90,52 @@ re-applied on every deploy.
 
 :::tip Check the licence first
 The tests around `fxExtractor`/`vwExtractor` skip themselves (SKIP) when the licence filters the test fixture out of the extraction overview. If you see unexpectedly many SKIPs in `LoadManagement`, check the licence first.
+:::
+
+## When has the suite passed?
+
+The criterion is **not** "everything green" but **"no unexplained failure"**.
+
+Every failed check (`Outcome = 'FAIL'`) that describes a known, registered defect carries a reference
+to it in its description (`Label`, recognisable by `KNOWN BUG:`). That row turns green by itself once
+the defect is fixed — until then it is part of the expected outcome. A failure **without** such a
+reference is the signal that matters: that is a regression.
+
+This query shows you exactly that: the unexplained failures of the latest run.
+
+```sql
+SELECT ObjSchema, ObjName, Label, Got, Expected
+FROM Test.RunResult
+WHERE RunId = (SELECT MAX(RunId) FROM Test.RunLog)
+  AND Outcome = 'FAIL'
+  AND (Label IS NULL OR Label NOT LIKE '%KNOWN BUG%');
+```
+
+If this returns a row, that is an issue that needs attention. An empty result set means the suite has
+passed, even if there are (expected) FAIL rows among the individual results.
+
+### Skipped checks carry a structured reason
+
+Besides the free-text reason in `SkipReason`, `Test.RunResult` has a `SkipCategory` column that
+sorts every SKIP into one of five fixed categories:
+
+| Category | Meaning |
+|---|---|
+| `NOT_APPLICABLE` | Does not exist on any environment — for example a check on a column that can never be empty by definition. |
+| `ENVIRONMENT` | Depends on this particular environment and runs automatically elsewhere — for example a check that requires a case-sensitive collation. |
+| `WOULD_MUTATE` | Would change the running environment (service tier, security roles, clearing every staging table) and is therefore never executed automatically. |
+| `SUITE_CONSTRAINT` | Blocked by a rule of the test suite itself, not by the environment. |
+| `KNOWN_BUG` | A side effect of a known, registered defect. |
+
+`Test.vwRunSummary` totals the SKIPs per category for you, so you can see at a glance *why* a run
+executed fewer checks than are in scope — without reading every `SkipReason` individually.
+
+:::warning A percentage is not a meaningful number
+Never compare a "percentage complete" between environments: which checks get skipped differs per
+environment (licence, service tier, configured gates), so the percentage differs per installation and
+is therefore not comparable. The number that does carry meaning is **the number of checks executed
+compared to the previous run** on the same environment. If that drops without explanation, a check has
+dropped out — and that is exactly what you want to be able to see.
 :::
 
 ## Removing it

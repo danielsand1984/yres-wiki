@@ -49,6 +49,19 @@ topic.
   app **application permissions** on Microsoft Graph (at least `Sites.Read.All`) with admin consent.
   The old authorization through `appinv.aspx` no longer suffices.
   → [SharePoint](../integraties/bronnen/sharepoint.md)
+- **Deactivating a column or table now actually has an effect.** Until now, switching a column or
+  table off changed nothing about what got loaded — the configuration showed "inactive" but the load
+  engine kept including it. From 1.56 a deactivated column or table drops out of the loads. Before
+  upgrading, review what you have marked inactive, because it will now genuinely be skipped.
+  → [Actions per source](../frontend/data-sources.md#actions-per-source-depending-on-source-type)
+- **Deleting a column now makes it physically disappear.** Remove a column from the dictionary (deleting
+  the row, not just deactivating it) and Yres now also drops it from the physical HIS table —
+  **including the historical values it held**. Until now nothing happened and the column simply stayed.
+  This is irreversible. Deactivating does **not** do this — only deleting does.
+- **Duplicate dictionary rows are cleaned up during the upgrade.** The tables behind the column
+  administration had no uniqueness guarantee, so a duplicate row could double the load process. The
+  upgrade removes existing duplicates (the most recently updated row survives) and then enforces a
+  uniqueness rule.
 
 ### Web app
 
@@ -74,10 +87,23 @@ topic.
   write nothing, a restart overwrites its own file, and the lake step runs in parallel with loading the
   data warehouse. You switch it on per table with `DataPlatform = DL`.
   → [Lake feed](../concepten/lake-feed.md)
-- **The test suite ships with the product.** The regression suite that exercises every database object
-  now sits in the DACPAC and therefore arrives with every version. After a deploy, or whenever in doubt,
-  you run it yourself with `EXEC Test.spRunAll` — it is safe on production, proves its own cleanup, and
-  never runs by itself. → [Test suite](./testsuite.md)
+- **The test suite ships with the product.** The regression suite that exercises every database
+  object — now **1665 checks across 194 objects** — sits in the DACPAC and therefore arrives with
+  every version. After a deploy, or whenever in doubt, you run it yourself with `EXEC Test.spRunAll`
+  — it is safe on production, proves its own cleanup, and never runs by itself.
+  → [Test suite](./testsuite.md)
+- **Nearly 1700 behavioural checks, around 95 defects found and fixed.** The test suite was expanded
+  from object coverage to **behavioural coverage**: alongside the happy path, every object type is
+  now also tested against empty input, `NULL`, edge cases, missing dependencies and multiple rows at
+  once. The suite grew from roughly 600 to the 1665 checks above, spread across 194 objects. That
+  turned up around 95 findings — all of them fixed. The large majority were **silent** defects: cases
+  where nothing crashed, but the system quietly did the wrong thing. Examples: a daylight-saving-time
+  conversion bug that could make a delta load skip or double-load rows during the transition hour
+  (twice a year); the promotion mechanism that, when moving a table type to a following environment,
+  installed a slightly different definition than the one that was packaged (column widths and default
+  values were lost); partial edits in the web app that could clear other fields; processing jobs that
+  silently stopped on one unprocessable item and skipped the rest; and the audit trail of database
+  changes that could stay switched off after a failed cleanup. → [Test suite](./testsuite.md)
 - **Workload administration:** workflows now plan their full workload up front
   (`LoadManagement.LoadLog`) and update it per load. The monitor therefore also shows **planned and
   skipped loads**, statuses come from the administration itself and runtimes are accurate. A new

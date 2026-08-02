@@ -6,7 +6,7 @@ description: De meegeleverde regressietestsuite voor de Yres-database — sinds 
 
 # Testsuite (DWH)
 
-De Yres data-plane database (`IRIS_DWH`) wordt geleverd met een **regressietestsuite** die het complete SQL-framework doorlicht: elk in-scope object (stored procedures, functions, views en triggers) heeft precies één test.
+De Yres data-plane database (`IRIS_DWH`) wordt geleverd met een **regressietestsuite** die het complete SQL-framework doorlicht: elk in-scope object (stored procedures, functions, views en triggers) heeft precies één testprocedure. Die ene procedure toetst sinds v1.56 wél meerdere scenario's: per objecttype doorloopt hij een vaste matrix — naast het happy path ook lege invoer, `NULL`, grensgevallen, ongeldige invoer, ontbrekende afhankelijkheden en meerdere rijen tegelijk. In totaal gaat het om circa **1665 controles over 194 objecten**.
 
 Vanaf **v1.56** hoort de suite bij de database zelf: hij zit in de DACPAC als het schema **`[Test]`** en wordt dus **met elke Yres-versie meegeïnstalleerd**. Er valt niets te installeren — elke omgeving op de actuele versie heeft alle `Test.*`-objecten al staan. Er draait ook **niets automatisch**: de suite komt alleen in actie als je er zelf een procedure voor aanroept.
 
@@ -90,6 +90,52 @@ deploy opnieuw gezet.
 
 :::tip Licentie eerst controleren
 De tests rond `fxExtractor`/`vwExtractor` slaan zichzelf over (SKIP) als de licentie de testfixture uit het extractieoverzicht filtert. Zie je onverwacht veel SKIP's in `LoadManagement`, controleer dan eerst de licentie.
+:::
+
+## Wanneer is de suite geslaagd?
+
+Het criterium is **niet** "alles groen" maar **"geen onverklaarde mislukking"**.
+
+Elke mislukte controle (`Outcome = 'FAIL'`) die een bekende, geregistreerde fout beschrijft, draagt
+een verwijzing daarnaar in haar omschrijving (`Label`, herkenbaar aan `KNOWN BUG:`). Zo'n regel wordt
+vanzelf groen zodra die fout is verholpen — tot die tijd hoort hij bij de verwachte uitkomst. Een
+mislukking **zónder** zo'n verwijzing is het signaal waar het om gaat: dat is een regressie.
+
+Met deze query zie je precies dat: de onverklaarde mislukkingen van de laatste run.
+
+```sql
+SELECT ObjSchema, ObjName, Label, Got, Expected
+FROM Test.RunResult
+WHERE RunId = (SELECT MAX(RunId) FROM Test.RunLog)
+  AND Outcome = 'FAIL'
+  AND (Label IS NULL OR Label NOT LIKE '%KNOWN BUG%');
+```
+
+Komt hier een rij uit, dan is dat een probleem dat om actie vraagt. Een lege resultaatset betekent
+dat de suite geslaagd is, ook als er (verwachte) FAIL-regels tussen de losse resultaten staan.
+
+### Overgeslagen controles dragen een gestructureerde reden
+
+Naast de vrije-tekstreden in `SkipReason` heeft `Test.RunResult` een kolom `SkipCategory` die elke
+SKIP in één van vijf vaste categorieën indeelt:
+
+| Categorie | Betekenis |
+|---|---|
+| `NOT_APPLICABLE` | Bestaat op geen enkele omgeving — bijvoorbeeld een controle op een kolom die per definitie nooit leeg kan zijn. |
+| `ENVIRONMENT` | Hangt af van déze omgeving en draait vanzelf elders — bijvoorbeeld een controle die een hoofdlettergevoelige sortering vereist. |
+| `WOULD_MUTATE` | Zou de draaiende omgeving wijzigen (servicetier, beveiligingsrollen, alle stagingtabellen legen) en wordt daarom nooit automatisch uitgevoerd. |
+| `SUITE_CONSTRAINT` | Geblokkeerd door een regel van de testsuite zelf, niet door de omgeving. |
+| `KNOWN_BUG` | Nevensymptoom van een bekende, geregistreerde fout. |
+
+`Test.vwRunSummary` telt de SKIP's per categorie voor je op, zodat je in één oogopslag ziet *waarom*
+een run minder controles heeft uitgevoerd dan er in scope zijn — zonder elke `SkipReason` los te lezen.
+
+:::warning Een percentage is geen zinnig getal
+Vergelijk nooit een "percentage voltooid" tussen omgevingen: welke controles worden overgeslagen
+verschilt per omgeving (licentie, service-tier, ingestelde gates), dus het percentage is per
+installatie anders en dus onvergelijkbaar. Het getal dat wél betekenis heeft, is **het aantal
+uitgevoerde controles ten opzichte van de vorige run** op dezelfde omgeving. Daalt dat zonder
+verklaring, dan is er een controle weggevallen — en dát is precies wat je wilt kunnen zien.
 :::
 
 ## Verwijderen
