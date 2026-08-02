@@ -49,19 +49,18 @@ topic.
   app **application permissions** on Microsoft Graph (at least `Sites.Read.All`) with admin consent.
   The old authorization through `appinv.aspx` no longer suffices.
   → [SharePoint](../integraties/bronnen/sharepoint.md)
-- **Deactivating a column or table now actually has an effect.** Until now, switching a column or
-  table off changed nothing about what got loaded — the configuration showed "inactive" but the load
-  engine kept including it. From 1.56 a deactivated column or table drops out of the loads. Before
-  upgrading, review what you have marked inactive, because it will now genuinely be skipped.
+- **The active setting of a column or table now carries through to the loads.** Set a column or
+  table to inactive and, from 1.56 on, it is genuinely skipped when loading. Check what is currently
+  set to inactive in your environment before upgrading, so that your selection matches what you want
+  loaded.
   → [Actions per source](../frontend/data-sources.md#actions-per-source-depending-on-source-type)
-- **Deleting a column now makes it physically disappear.** Remove a column from the dictionary (deleting
-  the row, not just deactivating it) and Yres now also drops it from the physical HIS table —
-  **including the historical values it held**. Until now nothing happened and the column simply stayed.
-  This is irreversible. Deactivating does **not** do this — only deleting does.
-- **Duplicate dictionary rows are cleaned up during the upgrade.** The tables behind the column
-  administration had no uniqueness guarantee, so a duplicate row could double the load process. The
-  upgrade removes existing duplicates (the most recently updated row survives) and then enforces a
-  uniqueness rule.
+- **Deleting a column now also removes it physically.** Take a column out of the dictionary — remove
+  the row, not just set it to inactive — and Yres now also drops it from the HIS table, **including
+  the historical values it holds**. Previously the column stayed in the database. This action cannot
+  be undone; to keep the history, set the column to **inactive** instead of deleting it.
+- **Uniqueness on the column administration.** During the upgrade, the tables behind the dictionary
+  get a uniqueness rule on their logical key, so the same column can only appear once. If duplicate
+  rows exist in your environment, the upgrade removes them and keeps the most recently updated one.
 
 ### Web app
 
@@ -92,18 +91,22 @@ topic.
   every version. After a deploy, or whenever in doubt, you run it yourself with `EXEC Test.spRunAll`
   — it is safe on production, proves its own cleanup, and never runs by itself.
   → [Test suite](./testsuite.md)
-- **Nearly 1700 behavioural checks, around 95 defects found and fixed.** The test suite was expanded
-  from object coverage to **behavioural coverage**: alongside the happy path, every object type is
-  now also tested against empty input, `NULL`, edge cases, missing dependencies and multiple rows at
-  once. The suite grew from roughly 600 to the 1665 checks above, spread across 194 objects. That
-  turned up around 95 findings — all of them fixed. The large majority were **silent** defects: cases
-  where nothing crashed, but the system quietly did the wrong thing. Examples: a daylight-saving-time
-  conversion bug that could make a delta load skip or double-load rows during the transition hour
-  (twice a year); the promotion mechanism that, when moving a table type to a following environment,
-  installed a slightly different definition than the one that was packaged (column widths and default
-  values were lost); partial edits in the web app that could clear other fields; processing jobs that
-  silently stopped on one unprocessable item and skipped the rest; and the audit trail of database
-  changes that could stay switched off after a failed cleanup. → [Test suite](./testsuite.md)
+- **Nearly 1700 behavioural checks on the data platform.** The bundled test suite was expanded from
+  object coverage to **behavioural coverage**: alongside the happy path, every object type is now
+  also tested against empty input, `NULL`, edge cases, missing dependencies and multiple rows at
+  once. The suite grew from roughly 600 to the 1665 checks above, spread across 194 objects, and now
+  ships with every release. What surfaced along the way is included in this version; the edge cases
+  that are more robust as a result:
+
+  - **Delta loads around the daylight-saving changeover** handle both transition nights correctly.
+  - **The promotion mechanism** carries the full definition of a table type through to the next
+    environment, including column widths and default values.
+  - **Partial edits** in the web app leave the fields you did not touch untouched.
+  - **One unprocessable item** no longer stops the rest of a job; it continues and the problem case
+    is logged.
+  - **The audit trail of database changes** stays active even after an interrupted cleanup.
+
+  → [Test suite](./testsuite.md)
 - **Workload administration:** workflows now plan their full workload up front
   (`LoadManagement.LoadLog`) and update it per load. The monitor therefore also shows **planned and
   skipped loads**, statuses come from the administration itself and runtimes are accurate. A new

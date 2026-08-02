@@ -49,19 +49,20 @@ details van elk onderwerp.
   app daarom **application permissions** op Microsoft Graph (minimaal `Sites.Read.All`) met admin
   consent. De oude machtiging via `appinv.aspx` volstaat niet meer.
   → [SharePoint](../integraties/bronnen/sharepoint.md)
-- **Een kolom of tabel deactiveren heeft nu écht effect.** Tot nu toe veranderde het uitzetten van
-  een kolom of tabel niets aan wat er geladen werd — de configuratie toonde "inactief" maar de
-  laadmotor bleef hem meenemen. Vanaf 1.56 verdwijnt een gedeactiveerde kolom of tabel uit de loads.
-  Loop daarom vóór de upgrade na wat er bij jou op inactief staat, want dat wordt nu daadwerkelijk
-  overgeslagen. → [Acties per bron](../frontend/data-sources.md#acties-per-bron-afhankelijk-van-brontype)
-- **Een kolom verwijderen laat hem nu fysiek verdwijnen.** Haal je een kolom uit de dictionary (de
-  rij weghalen, niet alleen deactiveren), dan verwijdert Yres hem voortaan ook uit de fysieke
-  HIS-tabel — **inclusief de historische waarden die erin staan**. Tot nu toe gebeurde er niets en
-  bleef de kolom gewoon staan. Dit is onomkeerbaar. Deactiveren doet dit **niet**, alleen verwijderen.
-- **Dubbele dictionary-rijen worden bij de upgrade opgeruimd.** De tabellen achter de
-  kolomadministratie hadden geen uniciteitsgarantie, waardoor een dubbele rij het laadproces kon
-  verdubbelen. De upgrade verwijdert bestaande duplicaten (de meest recent bijgewerkte rij blijft
-  staan) en legt daarna een uniciteitsregel op.
+- **De actief-instelling van een kolom of tabel werkt nu door in de loads.** Zet je een kolom of
+  tabel op inactief, dan wordt die vanaf 1.56 ook daadwerkelijk overgeslagen bij het laden.
+  Controleer daarom vóór de upgrade wat er bij jou op inactief staat, zodat je selectie klopt met wat
+  je geladen wilt hebben.
+  → [Acties per bron](../frontend/data-sources.md#acties-per-bron-afhankelijk-van-brontype)
+- **Een kolom verwijderen ruimt hem nu ook fysiek op.** Haal je een kolom uit de dictionary — de rij
+  weghalen, niet alleen op inactief zetten — dan verwijdert Yres hem voortaan ook uit de HIS-tabel,
+  **inclusief de historische waarden die erin staan**. Voorheen bleef de kolom in de database staan.
+  Deze actie is niet terug te draaien; wil je de historie bewaren, zet de kolom dan op **inactief** in
+  plaats van hem te verwijderen.
+- **Uniciteit op de kolomadministratie.** De tabellen achter de dictionary krijgen bij de upgrade een
+  uniciteitsregel op hun logische sleutel, zodat dezelfde kolom er maar één keer in kan staan. Komen
+  er in jouw omgeving dubbele rijen voor, dan ruimt de upgrade die op en houdt de meest recent
+  bijgewerkte aan.
 
 ### Webapp
 
@@ -91,19 +92,22 @@ details van elk onderwerp.
   inmiddels **1665 controles over 194 objecten** — zit in de DACPAC en komt dus met elke versie mee.
   Na een deploy of bij twijfel draai je hem zelf met `EXEC Test.spRunAll` — hij is veilig op
   productie, ruimt bewijsbaar op en draait nooit uit zichzelf. → [Testsuite](./testsuite.md)
-- **Bijna 1700 gedragscontroles, zo'n 95 gevonden en gerepareerde fouten.** De testsuite is
-  uitgebreid van objectdekking naar **gedragsdekking**: naast het happy path toetst elk objecttype nu
-  ook lege invoer, `NULL`, grensgevallen, ontbrekende afhankelijkheden en meerdere rijen tegelijk. De
-  suite groeide van circa 600 naar de 1665 controles hierboven, verdeeld over 194 objecten. Dat
-  leverde ongeveer 95 bevindingen op — allemaal gerepareerd. Het overgrote deel was een **stille**
-  fout: niets crashte, maar het systeem deed geruisloos het verkeerde. Voorbeelden: een fout in de
-  zomertijdomzetting waardoor een deltalading in het overgangsuur rijen kon overslaan of dubbel laden
-  (twee nachten per jaar); het promotiemechanisme dat bij het overzetten van een tabeltype naar een
-  volgende omgeving een net iets andere definitie installeerde dan er was ingepakt (kolombreedtes en
-  standaardwaarden gingen verloren); gedeeltelijke wijzigingen in de webapp die andere velden konden
-  leegmaken; verwerkingen die bij één onverwerkbaar item stilletjes stopten en de rest oversloegen; en
-  het auditspoor van databasewijzigingen dat na een mislukte opruimactie uit kon blijven staan. →
-  [Testsuite](./testsuite.md)
+- **Bijna 1700 gedragscontroles op het dataplatform.** De meegeleverde testsuite is uitgebreid van
+  objectdekking naar **gedragsdekking**: naast het happy path toetst elk objecttype nu ook lege
+  invoer, `NULL`, grensgevallen, ontbrekende afhankelijkheden en meerdere rijen tegelijk. De suite
+  groeide van circa 600 naar de 1665 controles hierboven, verdeeld over 194 objecten, en draait
+  voortaan mee met elke release. Wat daarbij naar boven kwam is meegenomen in deze versie; de
+  randgevallen die daardoor steviger zijn geworden:
+
+  - **Delta-loads rond de zomertijdovergang** verwerken de twee overgangsnachten nu correct.
+  - **Het promotiemechanisme** neemt bij een tabeltype de volledige definitie mee naar de volgende
+    omgeving, inclusief kolombreedtes en standaardwaarden.
+  - **Gedeeltelijke wijzigingen** in de webapp laten de velden die je niet aanraakt ongemoeid.
+  - **Een onverwerkbaar item** stopt de rest van een verwerking niet meer; die loopt door en het
+    probleemgeval wordt gelogd.
+  - **Het auditspoor van databasewijzigingen** blijft ook na een onderbroken opruimactie actief.
+
+  → [Testsuite](./testsuite.md)
 - **Workload-administratie:** workflows plannen hun volledige werklast vooraf in
   (`LoadManagement.LoadLog`) en werken die per load bij. De monitor toont daardoor ook **geplande en
   overgeslagen loads**, statussen komen uit de administratie zelf en looptijden kloppen. Een nieuwe
