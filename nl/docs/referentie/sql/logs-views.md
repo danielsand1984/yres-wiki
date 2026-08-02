@@ -42,7 +42,7 @@ Bovenop deze tabellen liggen views die er bruikbare inzichten van maken:
 - **Gebruikers- en toegangsbeheer:** `[Monitoring].[vwAccessManagement]`, `[Monitoring].[vwUserManagement]`, `[Monitoring].[vwObjectAlterations]`
 - **Procedure-logs:** `[Config].[vwUserlog]`, `[Config].[vwUserLogJSON]`
 
-:::caution `vwLoadMonitor` bestaat niet
+:::note `vwLoadMonitor` bestaat niet
 De naam `[Monitoring].[vwLoadMonitor]` komt **niet** voor als gedeployde view. Gebruik in plaats daarvan **`vwLoads`** (per-pipeline
 timeline) of **`vwMonitor`** (breder: inclusief gematerialiseerde views en Power BI-refreshes).
 :::

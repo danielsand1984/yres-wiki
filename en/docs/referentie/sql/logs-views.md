@@ -42,7 +42,7 @@ On top of these tables sit views that turn them into actionable insight:
 - **User and access management:** `[Monitoring].[vwAccessManagement]`, `[Monitoring].[vwUserManagement]`, `[Monitoring].[vwObjectAlterations]`
 - **Procedure logs:** `[Config].[vwUserlog]`, `[Config].[vwUserLogJSON]`
 
-:::caution `vwLoadMonitor` does not exist
+:::note `vwLoadMonitor` does not exist
 The name `[Monitoring].[vwLoadMonitor]` does **not** appear as a deployed view. Use **`vwLoads`** instead (per-pipeline
 timeline) or **`vwMonitor`** (broader: including materialized views and Power BI refreshes).
 :::

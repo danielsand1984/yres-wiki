@@ -6,9 +6,9 @@ description: Veelvoorkomende fouten bij installatie, bronkoppeling en laden — 
 
 # Troubleshooting
 
-Deze pagina verzamelt de fouten die je in de praktijk het vaakst tegenkomt bij het installeren van Yres,
-het koppelen van bronnen en het laden van data. Per probleem staan de **herkenning** (de melding of het
-symptoom), de **oorzaak** en de **oplossing**. Voor structurele DWH-controles gebruik je het
+Deze pagina brengt je snel van probleem naar oplossing bij het installeren van Yres, het koppelen van
+bronnen en het laden van data. Per situatie staan de **herkenning** (de melding of het symptoom), de
+**oorzaak** en de **oplossing**. Voor structurele DWH-controles gebruik je het
 [Health checks-scherm](#health-checks); voor het lezen van laadfouten de
 [Monitoring & logging-pagina](./referentie/monitoring-logging.md).
 

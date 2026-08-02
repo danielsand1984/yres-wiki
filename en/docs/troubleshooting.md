@@ -6,8 +6,8 @@ description: Common errors during installation, source connection and loading â€
 
 # Troubleshooting
 
-This page collects the errors you most often run into in practice when installing Yres,
-connecting sources and loading data. For each problem you'll find the **recognition** (the message or
+This page takes you from problem to solution quickly when installing Yres, connecting sources
+and loading data. For each situation you'll find the **recognition** (the message or
 symptom), the **cause** and the **solution**. For structural DWH checks, use the
 [Health checks screen](#health-checks); for reading load errors, see the
 [Monitoring & logging page](./referentie/monitoring-logging.md).

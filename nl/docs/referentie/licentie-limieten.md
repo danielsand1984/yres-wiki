@@ -115,7 +115,7 @@ Config.fxCheckSystem(@value)
 - Als alles in orde is, geeft `fxCheckLicense` **niet** "OK" terug maar **dezelfde hash** als `fxCheckSystem` (een waarde die bovendien elke minuut verandert).
 - Een aanroeper concludeert "licentie in orde" **alleen** wanneer `fxCheckSystem(@value) = fxCheckLicense(@feature, …, @value)`.
 
-Daardoor kan een klant `fxCheckLicense` niet vervangen door een eigen versie die simpelweg altijd "true" teruggeeft: zonder de juiste, per-minuut-roterende hash matcht het resultaat nooit. Omdat de hash op de grens van een minuut kan verspringen, controleren aanroepers tegen de hash van **deze** én de **vorige** minuut.
+Daardoor kan een klant `fxCheckLicense` niet vervangen door een eigen versie die altijd "true" teruggeeft: zonder de juiste, per-minuut-roterende hash matcht het resultaat nooit. Omdat de hash op de grens van een minuut kan verspringen, controleren aanroepers tegen de hash van **deze** én de **vorige** minuut.
 
 :::note Extra slot op de functie
 Een database-trigger (`dtrEventLog`) houdt wijzigingen aan het object `fxCheckLicense` in de gaten. Pogingen om de licentiecontrole te herschrijven worden dus ook nog vastgelegd in de audit-log.
@@ -135,7 +135,7 @@ De licentiecontrole zit ingebouwd op de plekken waar je iets toevoegt of laadt:
 
 Twee gevolgen die goed zijn om te kennen:
 
-- **Over de limiet → geen extractie.** `fxExtractor` is de view (`vwExtractor`) die ADF leest om te weten wát het moet laden. Tabellen of databases die de `DBSIZE_HIS`/`MAXSIZE_HIS`-grens overschrijden, worden door deze gate **uit het resultaat gefilterd** en dus simpelweg niet meer geladen. Bestaande data blijft staan, maar groeit niet verder.
+- **Over de limiet → geen extractie.** `fxExtractor` is de view (`vwExtractor`) die ADF leest om te weten wát het moet laden. Tabellen of databases die de `DBSIZE_HIS`/`MAXSIZE_HIS`-grens overschrijden, worden door deze gate **uit het resultaat gefilterd** en dus niet meer geladen. Bestaande data blijft staan, maar groeit niet verder.
 - **Toevoegen wordt geweigerd.** Bij een `RESTRICTIVE`-licentie geeft `spMaintainSource`/`spMaintainTable` een foutmelding zodra je de bron- of tabellimiet bereikt, en wordt de bron of tabel niet aangemaakt.
 
 ## De licentie controleren

@@ -111,7 +111,7 @@ With **master pipelines** you tie existing Yres building blocks together into a 
 5. Click **Save** to store the draft.
 6. Click **Publish** to generate the flow as an ADF pipeline. The published pipeline appears in the Data Factory (folder `MasterPipelines`) and in **Run pipelines** after a few minutes.
 
-:::caution Not a free-form ADF designer
+:::note Not a free-form ADF designer
 A master pipeline lets you tie **existing Yres building blocks** (loads, waits, tier switches, view materialization, Power BI refresh) together with success/failure/completion logic. You don't draw individual copy activities or data transformations: you configure nodes and their connections, and Yres **generates** the underlying ADF pipeline from them. The full list of node types and their points of attention is in [Load Management → Master pipelines](../frontend/load-management.md#master-pipelines).
 :::
 

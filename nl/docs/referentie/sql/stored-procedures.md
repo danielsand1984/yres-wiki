@@ -32,7 +32,7 @@ Het schema `LoadManagement` bevat de kern van Yres: de procedures die `STAGE` na
 - `@DeltaColumn (NVARCHAR(MAX), default '')`: De kolom voor delta-detectie (lege string als default, niet NULL).
 - `@TableLoadType (NVARCHAR(MAX), default NULL)`: Het laadtype (bijv. `FULL`, `DELTA`).
 
-:::warning Geen aparte end-dating meer
+:::note Geen aparte end-dating meer
 `spLoadDWH` roept `[LoadManagement].[spUpdateETL_EndDate]` **niet** (meer) aan: die tweede aanroep is **uitgecommentarieerd** ("Update ETL Enddate not required anymore"). Het end-daten van rijen gebeurt nu binnen `spHIS_InsertAndUpdate` zelf, in het `@LatestRecord`-UPDATE-blok. `spLoadDWH` doet dus niets anders dan doorgeven aan `spHIS_InsertAndUpdate`.
 :::
 

@@ -115,7 +115,7 @@ Config.fxCheckSystem(@value)
 - When everything is in order, `fxCheckLicense` does **not** return "OK" but **the same hash** as `fxCheckSystem` (a value that also changes every minute).
 - A caller concludes "license OK" **only** when `fxCheckSystem(@value) = fxCheckLicense(@feature, …, @value)`.
 
-This means a customer cannot replace `fxCheckLicense` with their own version that simply always returns "true": without the correct, per-minute-rotating hash the result never matches. Because the hash can flip on a minute boundary, callers check against the hash of **this** minute and the **previous** minute.
+This means a customer cannot replace `fxCheckLicense` with their own version that always returns "true": without the correct, per-minute-rotating hash the result never matches. Because the hash can flip on a minute boundary, callers check against the hash of **this** minute and the **previous** minute.
 
 :::note Extra lock on the function
 A database trigger (`dtrEventLog`) watches changes to the `fxCheckLicense` object. Attempts to rewrite the license check are therefore also recorded in the audit log.
@@ -135,7 +135,7 @@ The license check is built into the places where you add or load something:
 
 Two consequences worth knowing:
 
-- **Over the limit → no extraction.** `fxExtractor` is the view (`vwExtractor`) that ADF reads to know **what** it should load. Tables or databases that exceed the `DBSIZE_HIS`/`MAXSIZE_HIS` boundary are **filtered out of the result** by this gate and therefore simply no longer loaded. Existing data stays in place but grows no further.
+- **Over the limit → no extraction.** `fxExtractor` is the view (`vwExtractor`) that ADF reads to know **what** it should load. Tables or databases that exceed the `DBSIZE_HIS`/`MAXSIZE_HIS` boundary are **filtered out of the result** by this gate and therefore no longer loaded. Existing data stays in place but grows no further.
 - **Adding is refused.** With a `RESTRICTIVE` license, `spMaintainSource`/`spMaintainTable` returns an error as soon as you reach the source or table limit, and the source or table is not created.
 
 ## Checking the license

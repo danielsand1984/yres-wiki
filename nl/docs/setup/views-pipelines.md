@@ -111,7 +111,7 @@ Met **master pipelines** knoop je bestaande Yres-bouwstenen aan elkaar tot één
 5. Klik **Save** om het concept te bewaren.
 6. Klik **Publish** om de flow als ADF-pipeline te genereren. De gepubliceerde pipeline verschijnt na enkele minuten in de Data Factory (map `MasterPipelines`) en in **Run pipelines**.
 
-:::caution Geen vrije ADF-designer
+:::note Geen vrije ADF-designer
 Een master pipeline laat je **bestaande Yres-bouwstenen** (loads, wachten, tier-wissels, view-materialisatie, Power BI-refresh) aan elkaar knopen met succes-/faal-/voltooid-logica. Je tekent géén losse copy-activiteiten of datatransformaties: je configureert nodes en hun verbindingen, en Yres **genereert** daaruit de onderliggende ADF-pipeline. De volledige lijst node-types en hun aandachtspunten staat in [Load Management → Master pipelines](../frontend/load-management.md#master-pipelines).
 :::
 

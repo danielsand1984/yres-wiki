@@ -32,7 +32,7 @@ The `LoadManagement` schema contains the core of Yres: the procedures that merge
 - `@DeltaColumn (NVARCHAR(MAX), default '')`: The column used for delta detection (empty string as default, not NULL).
 - `@TableLoadType (NVARCHAR(MAX), default NULL)`: The load type (e.g. `FULL`, `DELTA`).
 
-:::warning No separate end-dating anymore
+:::note No separate end-dating anymore
 `spLoadDWH` does **not** call `[LoadManagement].[spUpdateETL_EndDate]` (anymore): that second call is **commented out** ("Update ETL Enddate not required anymore"). End-dating of rows now happens inside `spHIS_InsertAndUpdate` itself, in the `@LatestRecord` UPDATE block. So `spLoadDWH` does nothing other than pass through to `spHIS_InsertAndUpdate`.
 :::
 

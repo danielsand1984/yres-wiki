@@ -145,6 +145,6 @@ The monitoring views read from these raw log tables:
 | `[Config].[ProcessLog]` | App/proc log (messages and errors). |
 | `[Config].[EventLog]` | DDL/permission audit (source of the access/user/object views). |
 
-:::warning Outdated view names
+:::note Outdated view names
 `[Monitoring].[vwLoadMonitor]` **does not exist** as a deployed view. Use **`vwLoads`** (pipeline timeline) or **`vwMonitor`** (broader) instead. Point new documentation and queries at these two.
 :::
