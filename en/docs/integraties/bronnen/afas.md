@@ -58,8 +58,8 @@ header; check the current AFAS documentation for the precise header formatting.
 
 AFAS tables are loaded via GetConnectors. The usual load types
 (FULL, DELTA, IMAGE, OVERWRITE, RELOAD, ADDITIONAL, DELTAIMAGE) apply;
-delta loading requires a suitable delta column in the relevant GetConnector. The
-two-delta-column limitation applies only to MySQL, not to AFAS.
+delta loading requires a suitable delta column in the relevant GetConnector. AFAS supports
+two delta columns, just like the SQL sources.
 
 Official documentation: [AFAS Profit — GetConnector / App connector](https://docs.afas.help/profit/en/get-connector).
 

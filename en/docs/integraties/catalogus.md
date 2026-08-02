@@ -49,7 +49,7 @@ stored in the Key Vault. On-premises databases require a self-hosted Integration
 |---|---|
 | Microsoft SQL | |
 | Azure SQL Database | Cloud — AutoResolve IR is sufficient |
-| MySQL | No support for two delta columns (see source page) |
+| MySQL | |
 | PostgreSQL | |
 | DB2 | |
 | Oracle | Requires *service name* instead of database name |

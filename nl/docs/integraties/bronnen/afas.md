@@ -58,8 +58,8 @@ header mee; controleer de actuele AFAS-documentatie voor de precieze headeropmaa
 
 AFAS-tabellen worden geladen via GetConnectors. De gebruikelijke load types
 (FULL, DELTA, IMAGE, OVERWRITE, RELOAD, ADDITIONAL, DELTAIMAGE) zijn van toepassing;
-delta laden vereist een geschikte deltakolom in de betreffende GetConnector. De
-beperking op twee deltakolommen geldt alleen voor MySQL, niet voor AFAS.
+delta laden vereist een geschikte deltakolom in de betreffende GetConnector. AFAS ondersteunt
+net als de SQL-bronnen twee deltakolommen.
 
 Officiële documentatie: [AFAS Profit — GetConnector / App connector](https://docs.afas.help/profit/en/get-connector).
 

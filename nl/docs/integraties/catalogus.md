@@ -49,7 +49,7 @@ opgeslagen in de Key Vault. On-premises databases vereisen een self-hosted Integ
 |---|---|
 | Microsoft SQL | |
 | Azure SQL Database | Cloud — AutoResolve-IR volstaat |
-| MySQL | Geen ondersteuning voor twee delta-kolommen (zie bronpagina) |
+| MySQL | |
 | PostgreSQL | |
 | DB2 | |
 | Oracle | Vereist *service name* i.p.v. databasenaam |
