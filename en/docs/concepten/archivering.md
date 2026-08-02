@@ -107,7 +107,7 @@ The views read the Data Lake directly from SQL. This requires a one-time per-env
 The **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, group 7) guard the configuration: `BUSINESS` without a date column, an `ArchivingColumn` missing from the Dictionary, a missing retention period, a clause on `ETL_` columns, and a purge that is enabled while `AllowDeletesFromDB` is off are all flagged.
 
 :::note Retired: settings-driven default archiving
-Older versions contained a second, never-finished design (`vwArchivingExtractor` with the settings `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) that would archive all DELTA tables automatically. That was **removed** in v1.56: archiving is deliberately an explicit per-table choice. The deploy cleans up the old view and settings itself.
+Older versions contained an alternative design (`vwArchivingExtractor` with the settings `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) that would archive all DELTA tables automatically. Since v1.56, archiving is deliberately an explicit per-table choice; the deploy cleans up the old view and settings itself.
 :::
 
 ## Monitoring

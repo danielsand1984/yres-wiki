@@ -93,7 +93,7 @@ A metadata refresh **must** have run before you can add tables. Also refresh the
 :::
 
 :::note A failed refresh won't wipe your columns
-Since the June 2026 hardening, a refresh first lands in a **staging table** and is only **atomically** swapped into the live dictionary after a successful, non-empty run. If a refresh fails or stops halfway, your existing columns simply stay in place. For sources that load per part (such as ExactOnline, AFAS and SAC), each successful part is updated immediately, even if another part fails. Technical detail: [Stored procedures → Metadata staging](../referentie/sql/stored-procedures.md#metadata-staging-stage-swap-and-finalize).
+A refresh first lands in a **staging table** and is only **atomically** swapped into the live dictionary after a successful, non-empty run. If a refresh fails or stops halfway, your existing columns simply stay in place. For sources that load per part (such as ExactOnline, AFAS and SAC), each successful part is updated immediately, even if another part fails. Technical detail: [Stored procedures → Metadata staging](../referentie/sql/stored-procedures.md#metadata-staging-stage-swap-and-finalize).
 :::
 
 **Exception — file and REST sources skip this.** For file sources (e.g. Azure Blob) and REST API services there is no dictionary; you manage the tables/files directly (for Azure Blob you even upload files directly).

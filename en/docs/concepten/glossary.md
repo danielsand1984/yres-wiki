@@ -104,7 +104,7 @@ The fixed data spine is: source → ADF Copy → `STAGE` → `spLoadDWH` → `sp
 | **`vwLoads`** | The canonical per-pipeline load timeline `[Monitoring].[vwLoads]` (start + runtime per step, row counts, status). |
 | **`vwMonitor`** | Broader monitor view `[Monitoring].[vwMonitor]` that also includes materialized views and Power BI refreshes. |
 
-:::warning No `vwLoadMonitor`
+:::note No `vwLoadMonitor`
 The view `vwLoadMonitor` does **not** exist in the live database. Use `vwLoads` (pipeline timeline)
 or `vwMonitor` (broader). See the [SQL reference](../referentie/sql-interaction.md).
 :::

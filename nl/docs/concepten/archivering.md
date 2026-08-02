@@ -107,7 +107,7 @@ De views lezen het Data Lake rechtstreeks vanuit SQL. Daarvoor moet eenmalig per
 De **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, groep 7) bewaken de configuratie: `BUSINESS` zonder datumkolom, een `ArchivingColumn` die niet in de Dictionary bestaat, een ontbrekende bewaartermijn, een clausule op `ETL_`-kolommen en een purge die aanstaat terwijl `AllowDeletesFromDB` uit staat, worden allemaal gesignaleerd.
 
 :::note Vervallen: settings-gestuurde standaard-archivering
-Oudere versies bevatten een tweede, nooit afgemaakt ontwerp (`vwArchivingExtractor` met de instellingen `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) dat automatisch alle DELTA-tabellen zou archiveren. Dat is in v1.56 **verwijderd**: archivering is bewust een expliciete keuze per tabel. De deploy ruimt de oude view en instellingen zelf op.
+Oudere versies bevatten een alternatieve opzet (`vwArchivingExtractor` met de instellingen `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) die automatisch alle DELTA-tabellen zou archiveren. Sinds v1.56 is archivering bewust een expliciete keuze per tabel; de deploy ruimt de oude view en instellingen zelf op.
 :::
 
 ## Monitoring

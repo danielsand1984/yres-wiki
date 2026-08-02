@@ -313,16 +313,14 @@ staat tussen haakjes vermeld).
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Of gebruikers direct in de database mogen wijzigen / verwijderen / instellen / logs bewerken. |
 | `EnvironmentType` | — | DTAP-type van deze omgeving (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::note Twee opgeloste code-afwijkingen
-Twee instellingen gedroegen zich in oudere Yres-versies anders dan hun naam suggereert; beide zijn in de
-huidige DWH-code hersteld:
+:::note Naamgeving van deze twee instellingen
+Bij deze twee instellingen is het handig de naamgeving te kennen:
 
-- **`DefaultOdsMemOptimized`** werd door de fallback-functie `fxGetOptimized` niet gelezen (beide takken
-  verwezen naar de STAGE-setting). De HIS-kant valt nu wél terug op deze setting.
-- **`AllowUpdatesInIrisSchemas`** (met "Iris") wordt geseed, terwijl de health-check-roster de naam
-  `AllowUpdatesInYresSchemas` (met "Yres") verwachtte — zie
-  [Troubleshooting](../troubleshooting.md#veelvoorkomende-settings-checks-90x). De roster gebruikt nu de
-  geseede naam.
+- **`DefaultOdsMemOptimized`** — de fallback-functie `fxGetOptimized` gebruikt deze setting ook voor de
+  HIS-kant.
+- **`AllowUpdatesInIrisSchemas`** (met "Iris") is de geseede naam; de health-check-roster gebruikt deze
+  naam. Zie [Troubleshooting](../troubleshooting.md#veelvoorkomende-settings-checks-90x) bij
+  settings-gerelateerde checks.
 :::
 
 ### Health Checks

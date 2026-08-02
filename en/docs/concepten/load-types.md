@@ -34,7 +34,7 @@ In the table below:
 | **ADDITIONAL** | Pure append — no key match, no deduplication; duplicates are allowed. | **Yes** (append only) | Stay current | **yes** |
 
 :::warning OVERWRITE vs. RELOAD — don't mix them up
-This is the most common mistake. **OVERWRITE = no history** (the HIS table is emptied and the surrogate key `RowId` restarts). **RELOAD = preserve history** (the old generation of rows is closed out, not deleted). Earlier documentation had these two exactly reversed; this page follows the actual engine code and the regression tests in `DWH/tests/spRunLoadEngineTests.sql`.
+This is the most common mistake. **OVERWRITE = no history** (the HIS table is emptied and the surrogate key `RowId` restarts). **RELOAD = preserve history** (the old generation of rows is closed out, not deleted). This page follows the actual engine code and the regression tests in `DWH/tests/spRunLoadEngineTests.sql`.
 :::
 
 ## What each type does exactly
@@ -171,9 +171,8 @@ Leave the fields empty or set the overlap to `0` and the opposite applies: no wi
 every file qualifies.
 :::
 
-Up to v1.55 the **plural forms were not recognised** (`DAYS` silently fell back to seconds) and `YEAR`
-counted 365 *hours* instead of 365 days. Both are corrected in v1.56; environments carrying such a
-configuration will pick up a wider — and now correct — window after the update.
+Since v1.56, **plural forms** such as `DAYS` are recognised and `YEAR` counts 365 days. Environments
+with a configuration from before v1.55 will pick up a wider window after the update.
 
 ## How Yres detects changes (hashing)
 

@@ -104,7 +104,7 @@ De vaste dataspine is: bron → ADF Copy → `STAGE` → `spLoadDWH` → `spHIS_
 | **`vwLoads`** | De canonieke per-pipeline load-timeline `[Monitoring].[vwLoads]` (start + runtime per stap, rijtellingen, status). |
 | **`vwMonitor`** | Bredere monitor-view `[Monitoring].[vwMonitor]` die ook materialized views en Power BI-refreshes meeneemt. |
 
-:::warning Geen `vwLoadMonitor`
+:::note Geen `vwLoadMonitor`
 De view `vwLoadMonitor` bestaat **niet** in de live database. Gebruik `vwLoads` (pipeline-timeline)
 of `vwMonitor` (breder). Zie de [SQL-referentie](../referentie/sql-interaction.md).
 :::

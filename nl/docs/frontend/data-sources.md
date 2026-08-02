@@ -93,7 +93,7 @@ Een metadata-refresh **moet** gedraaid zijn voordat je tabellen kunt toevoegen. 
 :::
 
 :::note Een mislukte refresh wist je kolommen niet
-Sinds de hardening van juni 2026 landt een refresh eerst in een **stagingtabel** en wordt die pas na een geslaagde, niet-lege run **atomisch** naar de live dictionary omgewisseld. Mislukt of stopt een refresh halverwege, dan blijven je bestaande kolommen gewoon staan. Bij bronnen die per onderdeel laden (zoals ExactOnline, AFAS en SAC) wordt elk geslaagd onderdeel meteen bijgewerkt, ook als een ander onderdeel faalt. Technische details: [Stored procedures → Metadata-staging](../referentie/sql/stored-procedures.md#metadata-staging-stage-swap-en-finalize).
+Een refresh landt eerst in een **stagingtabel** en wordt pas na een geslaagde, niet-lege run **atomisch** naar de live dictionary omgewisseld. Mislukt of stopt een refresh halverwege, dan blijven je bestaande kolommen gewoon staan. Bij bronnen die per onderdeel laden (zoals ExactOnline, AFAS en SAC) wordt elk geslaagd onderdeel meteen bijgewerkt, ook als een ander onderdeel faalt. Technische details: [Stored procedures → Metadata-staging](../referentie/sql/stored-procedures.md#metadata-staging-stage-swap-en-finalize).
 :::
 
 **Uitzondering — file- en REST-bronnen slaan dit over.** Voor file-sources (bv. Azure Blob) en REST API-services bestaat er geen dictionary; je beheert de tabellen/bestanden direct (voor Azure Blob upload je bestanden zelfs rechtstreeks).

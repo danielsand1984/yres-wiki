@@ -34,7 +34,7 @@ In de tabel hieronder:
 | **ADDITIONAL** | Pure append — geen sleutelmatch, geen ontdubbeling; duplicaten zijn toegestaan. | **Ja** (alleen toevoegen) | Blijven actueel | **ja** |
 
 :::warning OVERWRITE vs. RELOAD — niet verwisselen
-Dit is de meest gemaakte fout. **OVERWRITE = geen historie** (de HIS-tabel wordt leeggegooid en de surrogaatsleutel `RowId` begint opnieuw). **RELOAD = historie behouden** (de oude generatie rijen wordt afgesloten, niet verwijderd). Eerdere documentatie had deze twee precies omgedraaid; deze pagina volgt de werkelijke engine-code en de regressietests in `DWH/tests/spRunLoadEngineTests.sql`.
+Dit is de meest gemaakte fout. **OVERWRITE = geen historie** (de HIS-tabel wordt leeggegooid en de surrogaatsleutel `RowId` begint opnieuw). **RELOAD = historie behouden** (de oude generatie rijen wordt afgesloten, niet verwijderd). Deze pagina volgt de werkelijke engine-code en de regressietests in `DWH/tests/spRunLoadEngineTests.sql`.
 :::
 
 ## Wat elk type precies doet
@@ -172,9 +172,8 @@ seconden en de load pakt vrijwel niets op. Laat je de velden leeg of zet je de o
 juist het omgekeerde: er wordt geen venster toegepast en álle bestanden komen in aanmerking.
 :::
 
-Tot v1.55 werden de **meervoudsvormen niet herkend** (`DAYS` viel stil terug op seconden) en rekende
-`YEAR` met 365 *uur* in plaats van 365 dagen. Beide zijn in v1.56 gecorrigeerd; omgevingen die zo'n
-configuratie hadden, pakken na de update een breder — en nu correct — venster op.
+Sinds v1.56 worden **meervoudsvormen** zoals `DAYS` herkend en rekent `YEAR` met 365 dagen. Omgevingen
+met een configuratie van vóór v1.55 pakken na de update een breder venster op.
 
 ## Hoe Yres wijzigingen detecteert (hashing)
 
