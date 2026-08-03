@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Volledige referentie van alle 58 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
+description: Volledige referentie van alle 59 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
 ---
 
 > Beheer doe je bij voorkeur via de webapp; deze objecten zijn voor het SQL-endpoint (SSMS / Azure Data Studio).
 
-Deze pagina beschrijft alle **58 functions** in de data-plane database `IRIS_DWH`, gegroepeerd per schema.
+Deze pagina beschrijft alle **59 functions** in de data-plane database `IRIS_DWH`, gegroepeerd per schema.
 Per function vind je de volledig gekwalificeerde naam, de signature (zoals in de `CREATE FUNCTION`-header
 staat) en het doel. De namen en types zijn rechtstreeks overgenomen uit de broncode — code is leidend.
 
@@ -144,6 +144,16 @@ roept de function aan met `'Real'`.
 
 **Doel:** bepaalt of een tabel row- of column-store gebruikt, op basis van `LoadManagement.UsedTables` of
 `Config.Settings`. Dezelfde `'Intended'`/`'Real'`-logica als `fxGetOptimized`.
+
+### `[LoadManagement].[fxGetTablockHint]`
+
+**Signature:** `(@SchemaTableName NVARCHAR(MAX)) RETURNS NVARCHAR(20)`
+
+**Doel:** geeft het hint-fragment `' WITH (TABLOCK)'` terug wanneer de opgegeven fysieke tabel (bijv.
+`[ODS].[Bron_Schema_Tabel]`) een clustered-columnstore-index heeft, anders een lege string.
+`spHIS_InsertAndUpdate` plakt het resultaat achter de tabelnaam in de gegenereerde `HIS`-inserts, zodat
+columnstore-tabellen via het bulk-load-pad laden; rowstore-tabellen blijven zonder hint. Kijkt naar de
+wérkelijke opslag (`sys.indexes`), niet naar de geconfigureerde `storeType`.
 
 ### `[LoadManagement].[fxGetSurrogate]`
 

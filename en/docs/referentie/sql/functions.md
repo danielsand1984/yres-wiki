@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Complete reference of all 58 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
+description: Complete reference of all 59 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
 ---
 
 > Management is best done through the webapp; these objects are for the SQL endpoint (SSMS / Azure Data Studio).
 
-This page describes all **58 functions** in the data-plane database `IRIS_DWH`, grouped by schema.
+This page describes all **59 functions** in the data-plane database `IRIS_DWH`, grouped by schema.
 For each function you'll find the fully qualified name, the signature (as it appears in the `CREATE FUNCTION`
 header) and its purpose. The names and types are taken directly from the source code — the code is authoritative.
 
@@ -144,6 +144,16 @@ calls the function with `'Real'`.
 
 **Purpose:** determines whether a table uses row- or column-store, based on `LoadManagement.UsedTables` or
 `Config.Settings`. The same `'Intended'`/`'Real'` logic as `fxGetOptimized`.
+
+### `[LoadManagement].[fxGetTablockHint]`
+
+**Signature:** `(@SchemaTableName NVARCHAR(MAX)) RETURNS NVARCHAR(20)`
+
+**Purpose:** returns the hint fragment `' WITH (TABLOCK)'` when the given physical table (e.g.
+`[ODS].[Source_Schema_Table]`) has a clustered columnstore index, otherwise an empty string.
+`spHIS_InsertAndUpdate` appends the result to the table name in the generated `HIS` inserts, so
+columnstore tables load through the bulk-load path; rowstore tables stay hint-free. Inspects the
+ACTUAL storage (`sys.indexes`), not the configured `storeType`.
 
 ### `[LoadManagement].[fxGetSurrogate]`
 

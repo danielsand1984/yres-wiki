@@ -158,6 +158,10 @@ topic.
   environments. On top of that, **log steps no longer gate the real work**: they now run alongside the
   load activities rather than ahead of them, saving queue time per table. No log row disappears; rows
   within the same load may however show up in a slightly different order in the monitoring.
+- **Columnstore tables load through the bulk-load path:** for target tables created as columnstore,
+  the merge now writes its `HIS` inserts with a single table lock (`TABLOCK`) instead of row and page
+  locks — noticeably less lock overhead on large loads. Rowstore tables are unchanged, and since loads
+  already run one at a time per table this does not introduce any extra blocking.
 - **SharePoint works again:** file retrieval has been moved to Microsoft Graph now that Microsoft has
   switched off the old app-only authentication. Yres locates the file through site → document library →
   file and fetches it via a temporary copy in the environment's Blob Storage. Mind the changed

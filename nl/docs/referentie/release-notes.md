@@ -159,6 +159,10 @@ details van elk onderwerp.
   omgevingen. Daarnaast blokkeren de **logstappen het echte werk niet meer**: ze draaien voortaan naast
   de laadactiviteiten in plaats van ervoor, wat per tabel wachttijd scheelt. Er verdwijnt geen logregel;
   wel kunnen regels binnen dezelfde load in een iets andere volgorde in de monitoring verschijnen.
+- **Columnstore-tabellen laden via het bulk-load-pad:** bij doeltabellen die als columnstore zijn
+  aangemaakt schrijft de merge zijn `HIS`-inserts nu met één tabellock (`TABLOCK`) in plaats van
+  rij- en pagina-locks — merkbaar minder lock-overhead op grote loads. Rowstore-tabellen veranderen
+  niet, en omdat loads per tabel al na elkaar draaien blokkeert dit niets extra.
 - **SharePoint werkt weer:** de bestandsophaal is overgezet op Microsoft Graph nu Microsoft de oude
   app-only-authenticatie heeft uitgezet. Yres zoekt het bestand nu via site → documentbibliotheek →
   bestand en haalt het op via een tijdelijke kopie in de Blob Storage van de omgeving. Let op de
