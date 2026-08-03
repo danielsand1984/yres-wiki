@@ -159,6 +159,13 @@ details van elk onderwerp.
   omgevingen. Daarnaast blokkeren de **logstappen het echte werk niet meer**: ze draaien voortaan naast
   de laadactiviteiten in plaats van ervoor, wat per tabel wachttijd scheelt. Er verdwijnt geen logregel;
   wel kunnen regels binnen dezelfde load in een iets andere volgorde in de monitoring verschijnen.
+- **Deltawatermerk beschermd bij gefaalde loads:** faalde een deel van een DELTA-load, dan kon het
+  watermerk (`UsedTables.LatestRecord`) toch doorschuiven, waardoor de niet-geladen rijen bij volgende
+  delta-runs stilzwijgend buiten beeld bleven; herstel vergde een eenmalige FULL load. Het watermerk
+  schuift nu alleen door wanneer de load volledig is gelukt — na een gefaalde load blijft het staan
+  (zichtbaar in de monitoring als *Delta watermark not advanced*) en pakt de eerstvolgende geslaagde
+  run het verschil automatisch opnieuw op.
+  → [Laadtypes](../concepten/load-types.md#delta--alleen-wijzigingen-met-watermark)
 - **Columnstore-tabellen laden via het bulk-load-pad:** bij doeltabellen die als columnstore zijn
   aangemaakt schrijft de merge zijn `HIS`-inserts nu met één tabellock (`TABLOCK`) in plaats van
   rij- en pagina-locks — merkbaar minder lock-overhead op grote loads. Rowstore-tabellen veranderen

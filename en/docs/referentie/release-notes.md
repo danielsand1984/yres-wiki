@@ -158,6 +158,12 @@ topic.
   environments. On top of that, **log steps no longer gate the real work**: they now run alongside the
   load activities rather than ahead of them, saving queue time per table. No log row disappears; rows
   within the same load may however show up in a slightly different order in the monitoring.
+- **Delta watermark protected on failed loads:** if part of a DELTA load failed, the watermark
+  (`UsedTables.LatestRecord`) could still advance, silently leaving the unloaded rows out of scope for
+  subsequent delta runs; recovery required a one-off FULL load. The watermark now only advances when
+  the load succeeded in full — after a failed load it stays put (visible in monitoring as *Delta
+  watermark not advanced*) and the next successful run automatically picks up the difference again.
+  → [Load types](../concepten/load-types.md#delta--changes-only-with-watermark)
 - **Columnstore tables load through the bulk-load path:** for target tables created as columnstore,
   the merge now writes its `HIS` inserts with a single table lock (`TABLOCK`) instead of row and page
   locks — noticeably less lock overhead on large loads. Rowstore tables are unchanged, and since loads

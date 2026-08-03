@@ -54,6 +54,8 @@ Use FULL for tables that you always supply in full but where vanished rows shoul
 
 DELTA works like FULL, but you supply only the changed records (based on a change column, the `DeltaColumn`). Before the merge runs, the engine deduplicates the batch on `MAX(deltaColumn)` per key (the most recent in-batch version wins). Afterwards the **watermark** advances: `LoadManagement.UsedTables.LatestRecord` is set to `MAX(DeltaColumn)`, so the next run continues from there. Missing keys stay current.
 
+The watermark only advances when the load completed **in full**. If (part of) the load fails, `LatestRecord` stays put — visible in monitoring as *"Delta watermark not advanced"* — and the next successful run automatically picks up the difference again. No manual recovery is needed after a failed delta load.
+
 Use DELTA for large tables with a reliable, increasing change column.
 
 ### DELTAIMAGE — DELTA that catches deletions within the window

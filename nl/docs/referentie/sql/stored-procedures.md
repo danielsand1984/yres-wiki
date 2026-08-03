@@ -58,6 +58,10 @@ Het schema `LoadManagement` bevat de kern van Yres: de procedures die `STAGE` na
 Alleen **`OVERWRITE` verwijdert historie** (truncate, RowId herstart). **`RELOAD` bewaart historie** (close-then-insert: de oude generatie wordt afgesloten, daarna komen de nieuwe rijen erbij). **`FULL` bewaart óók de volledige SCD2-historie** — alleen `OVERWRITE` truncate't.
 :::
 
+:::note Watermerk alleen na volledige merge
+De `LatestRecord`-update (DELTA/DELTAIMAGE/ADDITIONAL) draait alleen wanneer de merge **volledig** is afgerond. Faalt een pagina definitief, dan blijft het watermerk staan en schrijft de procedure de monitoringregel `Delta watermark not advanced` naar `LS_Trans`; de eerstvolgende geslaagde run haalt het verschil opnieuw op en schuift het watermerk alsnog door.
+:::
+
 Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — met literal `OPTIMAL` → `fxGetOptimalPageSize` — en `'retryCount'`, default 3 in de proc). Bij `fxGetSurrogate(@Target)=1` worden surrogate keys in `LoadManagement.SurrogateKeys` ingevoegd. Bij een memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`) draait eerst `spUpdateKeyAndRowHash`. Elke micro-stap schrijft een rij naar `[Monitoring].[LS_Trans]` (bijv. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
 
 ### `[LoadManagement].[spLoadLake]`

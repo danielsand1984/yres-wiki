@@ -58,6 +58,10 @@ The `LoadManagement` schema contains the core of Yres: the procedures that merge
 Only **`OVERWRITE` deletes history** (truncate, RowId restarts). **`RELOAD` keeps history** (close-then-insert: the old generation is closed off, then the new rows are added). **`FULL` also keeps the full SCD2 history** — only `OVERWRITE` truncates.
 :::
 
+:::note Watermark only after a complete merge
+The `LatestRecord` update (DELTA/DELTAIMAGE/ADDITIONAL) only runs when the merge completed **in full**. If a page fails permanently, the watermark stays put and the procedure writes the monitoring line `Delta watermark not advanced` to `LS_Trans`; the next successful run picks up the difference again and advances the watermark then.
+:::
+
 Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagination')`, `'PageSize'` — with the literal `OPTIMAL` → `fxGetOptimalPageSize` — and `'retryCount'`, default 3 in the proc). When `fxGetSurrogate(@Target)=1`, surrogate keys are inserted into `LoadManagement.SurrogateKeys`. With a memory-optimized STAGE (`fxGetOptimized('STAGE',…,'Real')='1'`), `spUpdateKeyAndRowHash` runs first. Every micro-step writes a row to `[Monitoring].[LS_Trans]` (e.g. `New rows`, `Delta rows`, `Closed rows`, `Inserted into Target`).
 
 ### `[LoadManagement].[spLoadLake]`

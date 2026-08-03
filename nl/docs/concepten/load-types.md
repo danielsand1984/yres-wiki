@@ -54,6 +54,8 @@ Gebruik FULL voor tabellen die je telkens volledig aanlevert maar waar verdwenen
 
 DELTA werkt als FULL, maar je levert alleen de gewijzigde records aan (op basis van een wijzigingskolom, de `DeltaColumn`). Voordat de merge draait, ontdubbelt de engine de batch op `MAX(deltaColumn)` per sleutel (de meest recente in-batch-versie wint). Na afloop verschuift het **watermark**: `LoadManagement.UsedTables.LatestRecord` wordt op `MAX(DeltaColumn)` gezet, zodat de volgende run vanaf daar verdergaat. Missende sleutels blijven actueel.
 
+Het watermark verschuift alleen wanneer de load **volledig** is afgerond. Faalt (een deel van) de load, dan blijft `LatestRecord` staan — zichtbaar in de monitoring als *"Delta watermark not advanced"* — en haalt de eerstvolgende geslaagde run het verschil automatisch opnieuw op. Na een gefaalde delta-load hoef je dus niets te herstellen.
+
 Gebruik DELTA voor grote tabellen met een betrouwbare, oplopende wijzigingskolom.
 
 ### DELTAIMAGE — DELTA die verwijderingen binnen het venster opvangt
