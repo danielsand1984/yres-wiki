@@ -67,6 +67,31 @@ Daarnaast is er een zelfstandige **load-engine-suite** (`Test.spRunLoadEngineTes
 EXEC Test.spRunLoadEngineTests @Round = 'ticket-123';
 ```
 
+### Eén volledige run tegelijk — je uitslag is altijd van jouw eigen run
+
+De suite zorgt er zelf voor dat er maximaal één volledige run (`Test.spRunAll`, `Test.spRunSuite` of
+`Test.spRunLoadEngineTests`) tegelijk actief is. Dat is geen beperking maar een garantie: alle
+testfixtures leven in één gedeelde `ZZTEST`-naamruimte, dus zonder die bescherming zou een tweede,
+gelijktijdig gestarte run de fixtures van de eerste kunnen opruimen terwijl die ze nog gebruikt — met een
+**foute uitslag** als gevolg, niet met een foutmelding. Juist die stille faalmodus is wat de vergrendeling
+voorkomt: elke uitslag die je terugkrijgt komt gegarandeerd van een eigen, ongestoorde run.
+
+Start je een run terwijl er al één loopt (bijvoorbeeld twee collega's die kort na elkaar op de
+testsuite-knop in de webapp klikken), dan hoor je dat direct — er wordt niet gewacht en niet stilzwijgend
+overschreven:
+
+```
+Msg 50110, ...
+Test.spRunAll: another full test run is already in progress -- concurrent runs share one ZZTEST fixture
+namespace and would corrupt each other's results. Held by RunId 1160 [ALL/ticket-123], started
+2026-08-03T17:40:37 by gebruiker@host. Wait for it to finish (or check Test.RunLog), then retry.
+```
+
+Waar dat te achterhalen is, noemt de melding meteen wélke run de vergrendeling vasthoudt (`RunId`,
+suite/label, starttijd, gebruiker) — zo zie je in `Test.RunLog` in één oogopslag wanneer je opnieuw kunt
+starten, zonder te hoeven gissen. Een losse testprocedure (`tst_*`) handmatig draaien tijdens ontwikkeling
+wordt hierdoor nooit geblokkeerd: alleen een *volledige* run wacht op deze vergrendeling.
+
 ## Resultaten lezen
 
 - **Console/directe output:** per assertion een regel (PASS/FAIL/SKIP met verwachte en werkelijke waarde), een samenvatting per object, de dekkingssamenvatting en een afsluitende `ALL PASSED`- of `FAILURES`-banner.

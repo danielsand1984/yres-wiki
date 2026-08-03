@@ -67,6 +67,31 @@ In addition there is a self-contained **load-engine suite** (`Test.spRunLoadEngi
 EXEC Test.spRunLoadEngineTests @Round = 'ticket-123';
 ```
 
+### Only one full run at a time — your result is always your own
+
+The suite guarantees that at most one full run (`Test.spRunAll`, `Test.spRunSuite` or
+`Test.spRunLoadEngineTests`) is active at a time. That is not a limitation but a guarantee: every test
+fixture lives in one shared `ZZTEST` namespace, so without that protection a second, concurrently started
+run could sweep away the first run's fixtures while it is still using them — producing a **wrong result**,
+not an error. Preventing exactly that silent failure mode is the point: whatever result you get back is
+guaranteed to come from your own, undisturbed run.
+
+If you start a run while one is already active (for example two colleagues clicking the test-suite button
+in the webapp moments apart), you hear about it immediately — there is no waiting and no silent
+overwriting:
+
+```
+Msg 50110, ...
+Test.spRunAll: another full test run is already in progress -- concurrent runs share one ZZTEST fixture
+namespace and would corrupt each other's results. Held by RunId 1160 [ALL/ticket-123], started
+2026-08-03T17:40:37 by user@host. Wait for it to finish (or check Test.RunLog), then retry.
+```
+
+Where it can be determined, the message names exactly which run holds the lock (`RunId`, suite/label,
+start time, user) — so you can see in `Test.RunLog` at a glance when you can start again, without having
+to guess. Running a single test procedure (`tst_*`) by hand during development is never blocked by this:
+only a *full* run waits on this lock.
+
 ## Reading the results
 
 - **Console/direct output:** one line per assertion (PASS/FAIL/SKIP with expected and actual value), a per-object summary, the coverage summary and a closing `ALL PASSED` or `FAILURES` banner.
