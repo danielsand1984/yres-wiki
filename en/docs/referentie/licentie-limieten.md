@@ -112,13 +112,13 @@ Config.fxCheckSystem(@value)
 
 `fxCheckSystem` returns a `SHA2_512` hash over **server name + database name + `@value`**. This is the counterpart that makes the enforcement **tamper-resistant**:
 
-- When everything is in order, `fxCheckLicense` does **not** return "OK" but **the same hash** as `fxCheckSystem` (a value that also changes every minute).
-- A caller concludes "license OK" **only** when `fxCheckSystem(@value) = fxCheckLicense(@feature, …, @value)`.
+- When everything is in order, `fxCheckLicense` does **not** return "OK" but **the same hash** as `fxCheckSystem`.
+- A caller concludes "license OK" **only** when `fxCheckSystem(@value) = fxCheckLicense(@feature, …, @value)` — with the same caller-chosen salt `@value` on both sides (in practice a `NEWID()` per call, or a fixed value such as `'check'` in the health checks).
 
-This means a customer cannot replace `fxCheckLicense` with their own version that always returns "true": without the correct, per-minute-rotating hash the result never matches. Because the hash can flip on a minute boundary, callers check against the hash of **this** minute and the **previous** minute.
+This means a customer cannot replace `fxCheckLicense` with their own version that always returns "true": only a genuine, passing license check reproduces the server-, database- and salt-dependent hash. The hash is **static** (deterministic for the same server, database and salt); it does not rotate over time — the variation comes from the salt the caller chooses.
 
 :::note Extra lock on the function
-A database trigger (`dtrEventLog`) watches changes to the `fxCheckLicense` object. Attempts to rewrite the license check are therefore also recorded in the audit log.
+The database trigger `dtrEventLog` **blocks** any `ALTER`/`DROP` of `fxCheckLicense`: the attempt is aborted with an error (`RAISERROR`) and rolled back (`ROLLBACK`), unless it comes from the internal Yres account (the `IrisUser` setting). Because the transaction is rolled back, such a blocked attempt is **not** recorded in the audit log.
 :::
 
 ## Where the limits are enforced

@@ -28,7 +28,7 @@ You connect Exact Online through your own, pre-registered Exact app. In the form
 
 **Credentials per environment:** for Exact Online the credentials are **always different per environment** (Yres forces "credentials identical for all environments" to **No**). You therefore register a **separate Exact app for both dev and prod** and go through the OAuth login separately for each environment.
 
-**Secrets:** the web app stores no secrets in the frontend. The client secret and the retrieved tokens go to the customer's **Azure Key Vault** (`adf-{sourcename}-…`); the linked service references them. The tokens are injected into the REST call at runtime — the committed linked services (`ExactOnline.json` / `ExactOnline_HTTP.json`, type `RestService`/`HttpServer`) are themselves set to `Anonymous`.
+**Secrets:** the web app stores no secrets in the frontend. The **Client ID and Client secret** go to the customer's **Azure Key Vault** (`adf-{sourcename}-…`); the **access and refresh tokens** are kept in the **`Config.Tokens`** table in the customer's DWH database, where Yres maintains and refreshes them. The tokens are injected into the REST call at runtime — the committed linked services (`ExactOnline.json` / `ExactOnline_HTTP.json`, type `RestService`/`HttpServer`) are themselves set to `Anonymous`.
 
 ## Preparation
 

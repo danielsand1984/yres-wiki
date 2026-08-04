@@ -48,7 +48,7 @@ De cijfers (1)–(6) in deze schermafbeelding:
 
 1. **Logo + organisatietitel** — klik op het logo om terug te keren naar het Dashboard (`/`).
 2. **Omgevingsschakelaar** — toont de organisatienaam, een `·`-scheidingsteken en de actieve omgeving (bv. *Acme B.V. · Productie*). Wordt alleen getoond bij **meer dan één omgeving**.
-3. **Help "?"** — opent de wiki op `wiki.yres-dwh.app`.
+3. **Help "?"** — opent de wiki op `https://oogopdata.nl/nl/wiki` (bij een Engelse taalinstelling `https://oogopdata.nl/en/wiki`).
 4. **Icoonbalk (secties)** — Home, Admin, Projects, Data sources, Load management, Data engineering. De zichtbaarheid hangt af van je rechten en van de DWH-versie; **Projects** is verborgen bij een organisatie met één omgeving.
 5. **Sub-link-zijbalk** — de contextuele links bij de gekozen sectie (voor Home: *Dashboard* en *Power BI dashboard*). De zijbalk is in breedte versleepbaar.
 6. **Acties rechtsboven** — vernieuwen, monitored jobs, notificaties en het gebruikersmenu.

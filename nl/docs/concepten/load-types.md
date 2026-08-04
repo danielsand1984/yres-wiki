@@ -30,7 +30,7 @@ In de tabel hieronder:
 | **DELTAIMAGE** | DELTA **plus** missende sleutels afsluiten *binnen het deltavenster* (`>=` watermark). | **Ja** | Afgesloten als ze binnen het venster vallen | **ja** |
 | **IMAGE** | Volledige momentopname: upsert **plus** **alle** missende sleutels afsluiten (soft-delete). | **Ja** | **Allemaal afgesloten** | nee |
 | **OVERWRITE** | **HIS wordt getruncate** en alle STAGE-rijen opnieuw ingevoegd. | **Nee — historie weg** (truncate, RowId begint opnieuw) | Weg | nee |
-| **RELOAD** | **Alle huidige rijen afsluiten** (historie blijft bewaard) en daarna alle STAGE-rijen invoegen. | **Ja** (oude generatie afgesloten) | Afgesloten | nee |
+| **RELOAD** | **Alle huidige rijen afsluiten** (historie blijft bewaard; het afsluiten stempelt óók al gesloten rijen opnieuw af — zie hieronder) en daarna alle STAGE-rijen invoegen. | **Ja** (oude generatie afgesloten) | Afgesloten | nee |
 | **ADDITIONAL** | Pure append — geen sleutelmatch, geen ontdubbeling; duplicaten zijn toegestaan. | **Ja** (alleen toevoegen) | Blijven actueel | **ja** |
 
 :::warning OVERWRITE vs. RELOAD — niet verwisselen
@@ -78,7 +78,7 @@ Gebruik OVERWRITE alleen voor tabellen waar je écht geen historie hoeft te bewa
 
 ### RELOAD — vervangen mét historie
 
-RELOAD **sluit eerst alle huidige rijen af** (`IsCurrent = 0`, `ETL_EndDate` gezet) en voegt daarna de volledige STAGE-set als nieuwe generatie in. De oude generatie blijft als historie staan. Het verschil met OVERWRITE: RELOAD gooit niets weg.
+RELOAD **sluit eerst alle huidige rijen af** (`IsCurrent = 0`, `ETL_EndDate` gezet) en voegt daarna de volledige STAGE-set als nieuwe generatie in. De oude generatie blijft als historie staan. Het verschil met OVERWRITE: RELOAD gooit niets weg. Nuance: het afsluiten gebeurt met een `UPDATE` zonder `WHERE` — óók rijen die al afgesloten waren krijgen daarbij een nieuwe `ETL_EndDate`, waarmee het oorspronkelijke sluitmoment wordt overschreven. Er verdwijnen geen rijen, maar wie historie reconstrueert op `ETL_EndDate` moet hier rekening mee houden.
 
 Gebruik RELOAD als je de volledige set opnieuw wilt laden maar de vorige stand als historie wilt bewaren.
 

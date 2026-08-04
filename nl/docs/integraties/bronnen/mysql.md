@@ -43,7 +43,7 @@ Staat de database achter een firewall of on-premises? Dan is een Integration Run
 
 ## Load types en delta
 
-MySQL ondersteunt de standaard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL).
+MySQL ondersteunt de standaard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL, DELTAIMAGE).
 
 :::note Twee deltakolommen ondersteund
 MySQL ondersteunt — net als de andere SQL-/databasebronnen — **twee deltakolommen** (komma-gescheiden, zelfde datatype; de hoogste waarde telt). Zie [Load types → Meerdere deltakolommen](../../concepten/load-types.md#meerdere-deltakolommen).

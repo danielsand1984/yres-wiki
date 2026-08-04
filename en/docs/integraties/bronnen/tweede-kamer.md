@@ -30,11 +30,11 @@ There are **no** source-specific connection fields: the feed URL, the authentica
 
 ### Authentication
 
-**Anonymous.** The Tweede Kamer data is **open data**: no credentials, API keys or tokens are needed. As a result, no Key Vault secrets are created for the connection itself.
+**Anonymous.** The Tweede Kamer data is **open data**: no credentials, API keys or tokens are needed. As a result, no **credential** secrets are created; the backend does write the fixed feed URL as the secret `adf-{sourcename}-http-url` to the Key Vault — the linked service references it.
 
 ### Prerequisites
 
-None. Because there are no credentials and the source runs via the cloud integration runtime, you don't need to register anything in Azure beforehand (no app registration, no client secret, no SAS token, no Key Vault secrets).
+None. Because there are no credentials and the source runs via the cloud integration runtime, you don't need to register anything in Azure beforehand (no app registration, no client secret, no SAS token). The only Key Vault secret — the feed URL (`adf-{sourcename}-http-url`) — is created by Yres itself.
 
 ## Retrieving data
 

@@ -23,19 +23,19 @@ De licentie zelf is gebonden aan een **eenmalig te gebruiken uitnodigingslink** 
 |---|---|---|---|
 | **Prijs** | €350/mnd | €674/mnd | €997/mnd |
 | **Voor** | Kleine teams & opstartende omgevingen | De meeste data teams | Grote, complexe omgevingen |
-| **Omgevingen** | 1 | 2 | Onbeperkt |
+| **Omgevingen** | 1 | 2 | 6 |
 | **Bronsystemen** | Max. 2 | Max. 5 | Alle ondersteunde bronnen |
 | **Tabellen** | Onbeperkt | Onbeperkt | Onbeperkt |
 | **Hosting** | Eigen Azure tenant | Eigen Azure tenant | Eigen Azure tenant |
 | **Changes-systeem** | — | ✅ | ✅ |
 | **Automatisch schalen databases** | — | ✅ | ✅ |
-| **Web application firewall** | — | ✅ | ✅ |
+| **Web application firewall** | ✅ | ✅ | ✅ |
 | **Lokale netwerken (via IR)** | ✅ | ✅ | ✅ |
 | **Site-to-site VPN** | — | — | ✅ |
 
 ⭐ Advanced = **meest gekozen**.
 
-De verdeling **bronsystemen / omgevingen** per pakket (2 / 1 · 5 / 2 · onbeperkt / onbeperkt) ligt vast in de licentie. Tabellen zijn niet gelimiteerd: dat zijn configuratierijen, geen gelicentieerde objecten.
+De verdeling **bronsystemen / omgevingen** per pakket (2 / 1 · 5 / 2 · onbeperkt / 6) ligt vast in de licentie. Tabellen zijn in alle pakketten onbeperkt; technisch kent de licentie wel een `TABLES`-limietsleutel en groottegrenzen per database en tabel (`DBSIZE_HIS`/`MAXSIZE_HIS`) — zie [Licentie & limieten](./referentie/licentie-limieten.md) voor alle sleutels.
 
 
 :::note Feature-toewijzing per pakket
@@ -52,10 +52,10 @@ Yres dwingt feature-gating op dit moment **niet actief af**; de toewijzing hierb
 Voor kleine teams en opstartende omgevingen. Eén omgeving, maximaal twee bronsystemen, en een onbeperkt aantal tabellen. Lokale netwerken zijn bereikbaar via een self-hosted integration runtime.
 
 ### Advanced ⭐
-Het meest gekozen pakket. Naast een tweede omgeving — zodat je veilig kunt doorontwikkelen op `dev` zonder bestaande dashboards op productie te raken — krijg je toegang tot het **changes-systeem**, **automatisch schalen** van databases en de **web application firewall**.
+Het meest gekozen pakket. Naast een tweede omgeving — zodat je veilig kunt doorontwikkelen op `dev` zonder bestaande dashboards op productie te raken — krijg je toegang tot het **changes-systeem** en **automatisch schalen** van databases. De **web application firewall** zit in alle pakketten.
 
 ### Ultimate
-Voor grote, complexe omgevingen: onbeperkt aantal bronsystemen en omgevingen, plus de mogelijkheid tot een **site-to-site VPN** (tegen meerprijs) voor afgeschermde netwerken.
+Voor grote, complexe omgevingen: alle ondersteunde bronsystemen, maximaal **zes omgevingen**, plus de mogelijkheid tot een **site-to-site VPN** (tegen meerprijs) voor afgeschermde netwerken.
 
 ## Veelgestelde prijsvragen
 

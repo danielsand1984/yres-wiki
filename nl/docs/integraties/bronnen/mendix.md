@@ -26,7 +26,7 @@ credentials, tags) zijn dit de relevante velden voor Mendix:
 | **Authentication type** | Doorgaans **`Basic`** (een Mendix-gebruikersrol met gebruikersnaam + wachtwoord). Stel de gepubliceerde service in Mendix zo in dat zij authenticatie vereist. Bij een publieke service kies je `Anonymous`. |
 | **Username** + **Password** | Alleen bij Basic: de gebruiker (Mendix-rol) en het wachtwoord waarmee de OData-service mag worden benaderd. |
 | **HTTP headers** (optioneel) | Eén of meer header/waarde-paren, bijvoorbeeld een API-key-header als je Mendix-app dat verwacht (keuzelijst: `Authorization`, `APIKey`, `X-API-KEY`). |
-| **Pagination type** / **Body url** | Bij OData vast op **`BodyUrl`** met body-pad `$['@odata.nextLink']` (paginering via de OData-`nextLink`). |
+| **Pagination type** / **Body url** | Bij OData staat alleen het paginatietype vast op **`BodyUrl`**; het body-pad is **bewerkbaar**, met `$['@odata.nextLink']` als default (paginering via de OData-`nextLink`). |
 
 - **Authenticatie:** Basic (gebruikersnaam + wachtwoord van een Mendix-gebruikersrol) of Anonymous voor
   een publieke service. Extra headers (bijv. een API-key) worden als authenticatie-headers meegestuurd.

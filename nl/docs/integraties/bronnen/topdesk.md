@@ -16,8 +16,8 @@ In het toevoegformulier voor een Topdesk-bron vul je de volgende velden in:
 
 | Veld (label) | Invoer |
 |---|---|
-| **URL** | Alleen-lezen. Wordt automatisch opgebouwd uit **Domain**: `https://<domain>.topdesk.net/services/reporting/v2/odata`. |
-| **Domain** | Je Topdesk-subdomein, bijvoorbeeld `mijnorganisatie` voor `mijnorganisatie.topdesk.net`. Alleen letters, cijfers, punten en koppeltekens zijn toegestaan. |
+| **URL** | Alleen-lezen. Wordt automatisch opgebouwd uit **Domain**: `https://<domein>/services/reporting/v2/odata`. |
+| **Domain** | Het **volledige** Topdesk-domein, bijvoorbeeld `mijnorganisatie.topdesk.net`. Let op: het formulier plakt `.topdesk.net` er **niet** automatisch achter — vul je alleen `mijnorganisatie` in, dan is de opgebouwde URL onjuist. Alleen letters, cijfers, punten en koppeltekens zijn toegestaan. |
 | **Username** | De loginnaam van het Topdesk-(API-)operatoraccount. |
 | **Password** | Het **applicatiewachtwoord** van dat operatoraccount (zie prerequisites). |
 
@@ -36,7 +36,7 @@ De velden **authenticatietype** (`Basic`), **paginatietype** (`BodyUrl`) en de p
 
 Yres haalt data op via de OData-reporting-endpoint van jouw Topdesk-omgeving:
 
-- **Endpoint:** `https://<domain>.topdesk.net/services/reporting/v2/odata`. Yres bouwt deze URL zelf op uit het ingevulde **Domain**; je hoeft de URL niet handmatig samen te stellen.
+- **Endpoint:** `https://<domein>/services/reporting/v2/odata`, waarbij `<domein>` het volledige domein is dat je bij **Domain** invulde (bijvoorbeeld `mijnorganisatie.topdesk.net`). Yres plakt alleen het `https://`-voorvoegsel en het `/services/reporting/v2/odata`-pad eraan vast — **niet** het `.topdesk.net`-achtervoegsel.
 - **Paginatie:** grote resultaatsets worden automatisch doorlopen via de OData-`@odata.nextLink` (pagination type `BodyUrl`).
 
 Zie de officiële documentatie: [Generating an application password](https://docs.topdesk.com/en/generating-an-application-password.html) en [Authorizing access to TOPdesk API](https://docs.topdesk.com/VA2023R2/en/authorizing-access-to-topdesk-api.html).

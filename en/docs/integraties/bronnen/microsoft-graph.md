@@ -43,12 +43,15 @@ By default the cloud runtime **`AutoResolveIntegrationRuntime`** — Microsoft G
 reachable over HTTPS, so this is usually the right choice. A **self-hosted integration
 runtime** is only needed if you have to route the traffic through a shielded or on-prem network.
 
-### Secrets in Key Vault
+### Where the details end up
 
-The frontend does not store any secrets. The values you enter go to the customer's **Azure Key
-Vault** and are referenced from the linked service. The secrets are written under the group
+The frontend does not store any secrets. The **http URL, client ID, client secret and grant
+type** go as secrets to the customer's **Azure Key Vault**, under the group
 `adf-{sourcename}-…` (the source name you choose in the wizard becomes the name of the
-linked service as well as the prefix of the Key Vault secrets).
+linked service as well as the prefix of the Key Vault secrets). The **refresh token, scope
+and token URL** are kept in the **`Config.Tokens`** table in the customer's DWH database,
+where the token flow uses them. The linked services themselves are set to `Anonymous` and
+reference only the http-url secret.
 
 ## Prerequisites
 

@@ -33,7 +33,7 @@ Elk ingelogd scherm deelt dezelfde "schil": een vaste **bovenbalk**, een **icoon
 
 1. **Logo + organisatietitel** — toont de organisatienaam; klikken brengt je naar Home (`/`).
 2. **Omgevingswisselaar** — alleen zichtbaar bij **meer dan één omgeving**; wisselt tussen Development / Test / Production. De wisselaar is uitgeschakeld op niet-omgevingsgebonden routes en springt dan terug naar `dev`.
-3. **Help "?"** — opent de Yres-wiki op `wiki.yres-dwh.app`.
+3. **Help "?"** — opent de Yres-wiki op `oogopdata.nl/nl/wiki` (of `oogopdata.nl/en/wiki`, afhankelijk van de taal).
 4. **Icoonkolom** — de hoofdsecties: Home, Admin, Projects, Data sources, Load management, Data engineering. Permissie- en versie-gated; **Projects is verborgen bij een single-environment-organisatie**.
 5. **Sub-link-zijbalk** — de schermen binnen de gekozen sectie (resizable, sleep aan de rechterrand).
 6. **Acties rechts** — Refresh, monitored jobs, notificaties en het gebruikersmenu.
@@ -94,8 +94,8 @@ Deze hele sectie is **verborgen bij een single-environment-organisatie**. Projec
 | Projects | `/projects` | `Name` · `Description` · `DueDate` · `Creator` · status-tekst |
 | Changes | `/changes` | filters (Project · "Only show open projects" · Where environment · Has status) · changes-tabel (`Name` · `Description` · `DueDate` · `ReleasedDate` · `Status overview` · `NextStep` · `Dependencies` · `Actions`) · "Create change" · **acties via het ☰-menu per change**: Update/Delete, per-omgeving-submenu (dev ▸ release change; doelomgeving ▸ Reimport/Reinstall change), View dependencies (graaf) en Logs |
 
-:::note Release & Install gebeuren op de Changes-zelf
-Er zijn geen aparte "Release change"- of "Install change"-schermen meer. Release, Import en Install zijn **acties op de geselecteerde change** binnen het **Changes**-scherm (`/changes`), contextueel op de status: een open change toont **Release** (`[Change].[spRelease]`), een vrijgegeven change toont **Import** (`[Change].[spImport]`, alleen DWH) en **Install** (`[Change].[spInstall]` + de `publish-datafactory`-pipeline, DWH + ADF). Scripted/eigen objecten beheer je via **Database objects** in **Data engineering** (`/dataengineering/objecthistory`), waar je een object aan een change toevoegt.
+:::note Release & Install: eigen schermen én in-grid-acties
+Naast de acties in het changes-grid bestaan er **aparte schermen** **Release change** (`/changes/release`) en **Install change** (`/changes/install`), bereikbaar via de zijbalk-links van de sectie. Daarnaast zijn Release, Import en Install ook **acties op de geselecteerde change** binnen het **Changes**-scherm (`/changes`), contextueel op de status: een open change toont **Release** (`[Change].[spRelease]`), een vrijgegeven change toont **Import** (`[Change].[spImport]`, alleen DWH) en **Install** (`[Change].[spInstall]` + de `publish-datafactory`-pipeline, DWH + ADF). Scripted/eigen objecten beheer je via **Database objects** in **Data engineering** (`/dataengineering/objecthistory`), waar je een object aan een change toevoegt.
 :::
 
 ## Admin (organisatie)

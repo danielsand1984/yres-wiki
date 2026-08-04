@@ -112,13 +112,13 @@ Config.fxCheckSystem(@value)
 
 `fxCheckSystem` geeft een `SHA2_512`-hash terug over **servernaam + databasenaam + `@value`**. Dit is de tegenhanger waarmee de afdwinging **manipulatiebestendig** is gemaakt:
 
-- Als alles in orde is, geeft `fxCheckLicense` **niet** "OK" terug maar **dezelfde hash** als `fxCheckSystem` (een waarde die bovendien elke minuut verandert).
-- Een aanroeper concludeert "licentie in orde" **alleen** wanneer `fxCheckSystem(@value) = fxCheckLicense(@feature, …, @value)`.
+- Als alles in orde is, geeft `fxCheckLicense` **niet** "OK" terug maar **dezelfde hash** als `fxCheckSystem`.
+- Een aanroeper concludeert "licentie in orde" **alleen** wanneer `fxCheckSystem(@value) = fxCheckLicense(@feature, …, @value)` — met aan beide kanten dezelfde, door de aanroeper gekozen salt `@value` (in de praktijk een `NEWID()` per aanroep, of een vaste waarde zoals `'check'` in de health checks).
 
-Daardoor kan een klant `fxCheckLicense` niet vervangen door een eigen versie die altijd "true" teruggeeft: zonder de juiste, per-minuut-roterende hash matcht het resultaat nooit. Omdat de hash op de grens van een minuut kan verspringen, controleren aanroepers tegen de hash van **deze** én de **vorige** minuut.
+Daardoor kan een klant `fxCheckLicense` niet vervangen door een eigen versie die altijd "true" teruggeeft: alleen een echte, slagende licentiecontrole reproduceert de server-, database- en salt-afhankelijke hash. De hash is **statisch** (deterministisch voor dezelfde server, database en salt); hij roteert niet in de tijd — de variatie komt uit de salt die de aanroeper kiest.
 
 :::note Extra slot op de functie
-Een database-trigger (`dtrEventLog`) houdt wijzigingen aan het object `fxCheckLicense` in de gaten. Pogingen om de licentiecontrole te herschrijven worden dus ook nog vastgelegd in de audit-log.
+De database-trigger `dtrEventLog` **blokkeert** elke `ALTER`/`DROP` van `fxCheckLicense`: de poging wordt afgebroken met een foutmelding (`RAISERROR`) en teruggerold (`ROLLBACK`), tenzij hij van het interne Yres-account (de `IrisUser`-instelling) komt. Omdat de transactie wordt teruggerold, wordt zo'n geblokkeerde poging **niet** in de audit-log vastgelegd.
 :::
 
 ## Waar de limieten worden afgedwongen

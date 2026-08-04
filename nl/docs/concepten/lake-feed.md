@@ -35,8 +35,8 @@ onzichtbaar: de rij verdween gewoon uit de volgende dump.
 | Historie | alleen de laatst gedumpte stand | volledig af te leiden uit alle bestanden |
 | Groei | schaalt met herlaadvolume | schaalt met mutatievolume |
 | Pad | `<Bron>/<Schema>/<jaar>/<maand>` | `lake/<Bron>/<Schema>/<Tabel>/Year=…/Month=…` |
-| Bestandsnaam | `<Tabel>-<tijdstip>` (zonder extensie) | `<Tabel>-<PipelineRunId>.parquet` |
-| Herstart van een run | leverde een extra bestand op | overschrijft het eigen bestand |
+| Bestandsnaam | `<Tabel>-<tijdstip>` (zonder extensie) | `<Tabel>-g<Generatie>-<PipelineRunId>.parquet` |
+| Herstart van een run | leverde een extra bestand op | overschrijft het eigen bestand (binnen dezelfde generatie) |
 
 :::caution Wat dit betekent voor bestaande afnemers
 De feed schrijft naar een **nieuw pad**. De bestanden die eerder onder `<Bron>/<Schema>/<jaar>/<maand>`
@@ -50,13 +50,15 @@ hieronder.
 
 ```
 datalake-yres
-└── lake/<Bron>/<Schema>/<Tabel>/Year=<jjjj>/Month=<mm>/<Tabel>-<PipelineRunId>.parquet
+└── lake/<Bron>/<Schema>/<Tabel>/Year=<jjjj>/Month=<mm>/<Tabel>-g<Generatie>-<PipelineRunId>.parquet
 ```
 
 - **Eén bestand per laadrun per tabel.** Runs zonder mutaties schrijven niets.
 - **`Year=` / `Month=`** zijn hive-style partitiemappen, zodat elke query-engine op periode kan snoeien.
-- De bestandsnaam draagt het **ADF pipeline run-id**: draai je dezelfde run opnieuw, dan overschrijft hij
-  zijn eigen bestand. Dubbele rijen door een herstart zijn dus uitgesloten.
+- De bestandsnaam draagt het **generatienummer** (`g<Generatie>`, bijgehouden in
+  `LoadManagement.LakeFeedGeneration`) en het **ADF pipeline run-id**: draai je dezelfde run opnieuw
+  binnen dezelfde generatie, dan overschrijft hij zijn eigen bestand. Dubbele rijen door een herstart
+  zijn dus uitgesloten.
 
 Naast de gewone databkolommen en `ETL_Date` draagt elke rij vier framework-kolommen:
 
@@ -114,12 +116,15 @@ Bron ──Copy──► STAGE.<Tabel>
                    │      └→ mutatiequery + aantal mutaties
                    │
                    └─ Write lake feed    →  Copy → Parquet in de Data Lake  (alleen als er mutaties zijn)
+                          └→ Maintain lake view  →  [LoadManagement].[spMaintainLakeExternal] (Scope=VIEW)
 ```
 
 Het is dus **dezelfde, bewezen SCD2-merge** die de historie in de database opbouwt, hier toegepast op een
 administratietabel zonder inhoud. Wat de merge als nieuw of gewijzigd markeert, is precies wat de feed
 verstuurt; wat hij afsluit zonder tegenhanger in de staging, wordt een `D`-rij. Levert een run nul
-mutaties op, dan slaat ADF de kopieerstap over en ontstaat er geen leeg bestand.
+mutaties op, dan slaat ADF de kopieerstap over en ontstaat er geen leeg bestand. Na een geslaagde kopie
+werkt de stap **Maintain lake view** (`spMaintainLakeExternal` met scope `VIEW`) de external view over de
+feed-bestanden bij.
 
 De stap **Write lake feed** loopt **parallel aan Load DWH**, niet erna: de lake-uitvoer vertraagt het
 laden van het datawarehouse dus niet.

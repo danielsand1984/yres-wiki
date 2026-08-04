@@ -55,8 +55,8 @@ staat en **rangschikt kandidaten op de naam van het omhulsel**. Veelvoorkomende 
 in deze volgorde:
 
 > `result` → `results` → `data` → `value` → `values` → `records` → `entries` → `rows` → `list` →
-> `elements` → `objects` → `nodes` → `children` → `resources` → `entities` → `events` → `logs` /
-> `messages` → `entity` → `documents`
+> `elements` → `objects` → `nodes` → `children` → `resources` → `objectlist` → `entities` → `events` →
+> `logs` / `messages` → `entity` → `documents`
 
 Staan er meerdere kandidaten, dan wint de bekendste naam; bij gelijke stand het ondiepste pad. Is de
 **root zelf een array** (`[ { … }, { … } ]`), dan wordt de collection `$`.

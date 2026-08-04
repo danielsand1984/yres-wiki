@@ -26,7 +26,7 @@ date, tags), these are the relevant fields for Mendix:
 | **Authentication type** | Usually **`Basic`** (a Mendix user role with username + password). Configure the published service in Mendix so that it requires authentication. For a public service, choose `Anonymous`. |
 | **Username** + **Password** | Only for Basic: the user (Mendix role) and password used to access the OData service. |
 | **HTTP headers** (optional) | One or more header/value pairs, for example an API-key header if your Mendix app expects one (dropdown: `Authorization`, `APIKey`, `X-API-KEY`). |
-| **Pagination type** / **Body url** | For OData, fixed to **`BodyUrl`** with body path `$['@odata.nextLink']` (pagination via the OData `nextLink`). |
+| **Pagination type** / **Body url** | For OData, only the pagination type is fixed to **`BodyUrl`**; the body path is **editable**, with `$['@odata.nextLink']` as the default (pagination via the OData `nextLink`). |
 
 - **Authentication:** Basic (username + password of a Mendix user role) or Anonymous for a public
   service. Extra headers (e.g. an API key) are sent along as authentication headers.

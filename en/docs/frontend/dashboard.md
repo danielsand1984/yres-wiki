@@ -48,7 +48,7 @@ The numbers (1)–(6) in this screenshot:
 
 1. **Logo + organization title** — click the logo to return to the Dashboard (`/`).
 2. **Environment switcher** — shows the organization name, a `·` separator and the active environment (e.g. *Acme B.V. · Production*). Only shown when there is **more than one environment**.
-3. **Help "?"** — opens the wiki at `wiki.yres-dwh.app`.
+3. **Help "?"** — opens the wiki at `https://oogopdata.nl/en/wiki` (or `https://oogopdata.nl/nl/wiki` when your language is set to Dutch).
 4. **Icon rail (sections)** — Home, Admin, Projects, Data sources, Load management, Data engineering. Visibility depends on your permissions and on the DWH version; **Projects** is hidden for an organization with a single environment.
 5. **Sub-link sidebar** — the contextual links for the selected section (for Home: *Dashboard* and *Power BI dashboard*). The sidebar can be resized by dragging.
 6. **Actions in the top right** — refresh, monitored jobs, notifications and the user menu.

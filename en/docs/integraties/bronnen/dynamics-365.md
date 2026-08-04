@@ -8,7 +8,16 @@ description: Connect Dynamics 365 to Yres — connection requirements.
 
 **Category:** Direct connection
 
-Microsoft Dynamics 365 (Business Central / Dataverse) is connected as an OData source with OAuth2 authentication (Azure AD / Microsoft Entra ID). You select this source via the **Dynamics 365** preset in the *Add source* wizard; the connection address and the token address are mostly built automatically from your tenant and company, so you mainly need to fill in the OAuth details of an app registration.
+Microsoft Dynamics 365 (Business Central / Dataverse) is connected as an **OData source**. You select this source via the **Dynamics 365** preset in the *Add source* wizard; the connection address and the token address are mostly built automatically from your tenant and company.
+
+:::caution OAuth2 support in development
+The OAuth2 flow is currently **not yet executed**. The source is stored as a bare
+**OData** type: at deploy time Yres only writes the http URL (and any basic
+credentials) to Key Vault, and the OData pipelines perform no token flow. The wizard
+form already shows OAuth fields (tenant, client ID/secret, scope, grant type), but
+the deploy does not process them yet. Full OAuth2 support for Dynamics 365 is
+**in development**.
+:::
 
 ## Expected input
 
@@ -27,11 +36,11 @@ Besides the shared wizard fields (**source name**, **integration runtime**, **cr
 
 Fixed (hidden) parameters: pagination `paginationType=BodyUrl` with `body_url=@odata.nextLink` (Yres automatically follows the `@odata.nextLink` pagination of the OData feed).
 
-**Authentication method:** OAuth2 via an Azure AD / Microsoft Entra ID service principal — client credentials or authorization code (with refresh token).
+**Authentication method:** the form asks for OAuth2 details of an Azure AD / Microsoft Entra ID service principal (client credentials or authorization code with refresh token), but the connection currently runs as a **bare OData connection without a token flow** — see the caution above.
 
 **Integration runtime:** by default the cloud runtime **`AutoResolveIntegrationRuntime`**. A self-hosted IR is not needed, because the OData endpoints are publicly reachable over the internet.
 
-**Where secrets are stored:** Yres never stores passwords or secrets itself. The values you enter are placed as secrets in the **Azure Key Vault** of your own environment, following the pattern `adf-{sourcename}-{suffix}`; the linked service in Azure Data Factory references those secrets.
+**Where secrets are stored:** Yres never stores passwords or secrets itself. With the current OData deploy, only the **http URL** (and any basic credentials) is placed as a secret in the **Azure Key Vault** of your own environment, following the pattern `adf-{sourcename}-{suffix}`; the linked service in Azure Data Factory references those secrets. The OAuth fields from the form are not yet written to Key Vault.
 
 ## Preparation
 

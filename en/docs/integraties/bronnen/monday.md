@@ -8,8 +8,9 @@ description: Connecting Monday to Yres — connection requirements.
 
 **Category:** Direct integration · REST
 
-monday.com is a work and project management platform. Yres connects to it through the
-monday.com REST API (API v2) and retrieves the data using a personal API token.
+monday.com is a work and project management platform. Yres queries monday.com through the
+**GraphQL API** (endpoint `https://api.monday.com/v2`) and retrieves the data using a
+personal API token; the ADF linked-service type is technically `RestService`.
 
 ## Expected input
 

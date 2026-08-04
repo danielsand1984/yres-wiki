@@ -26,7 +26,7 @@ Start handmatig een pipeline: een tabel laden, metadata ophalen, een view materi
 
 (1) **Pipeline-lijst** links — selecteer de pipeline die je wilt draaien of inspecteren.
 (2) **Datumfilter** (`runEnd`) — beperk de getoonde runs tot een periode.
-(3) **Statusfilter** (No filter / Succeeded / InProgress / Failed / Cancelled). Heeft de geselecteerde pipeline de parameters Source, Schema én Table — zoals **Dynamic Workflow YRES** en **Dynamic Archiving Workflow YRES** — dan verschijnen er drie extra cascaderende filters: **Source → Schema → Table**, en toont de runs-tabel die drie ook als kolommen.
+(3) **Statusfilter** (No filter / Succeeded / InProgress / Failed / Cancelled). Alleen bij een pipeline met de exacte naam **Dynamic Workflow IRIS** of **Dynamic Workflow YRES** (een hardgecodeerde naamcheck, niet op parameters) verschijnen er drie extra cascaderende filters: **Source → Schema → Table**, en toont de runs-tabel die drie ook als kolommen. **Dynamic Archiving Workflow YRES** krijgt deze filters níét, ook al heeft hij dezelfde parameters.
 (4) **Runs-tabel** met per run de status, `runStart`, `runEnd` en de berekende `runtime` (`Xh Ym Zs`).
 (5) **Acties per run** — link naar de ADF-monitoring, **fout bekijken** (rood `i`-icoon bij een foutmelding) en **pipeline stoppen** (bij InProgress/Queuing/Queued).
 (6) **Start pipeline** — heeft de pipeline parameters, dan leest de knop **Set parameters to start** en opent een formulier waar je Source/Schema/Table en eventueel de service tier invult.
@@ -69,9 +69,13 @@ Plan een pipeline met een herhaalpatroon (een ADF schedule-trigger). Per geselec
 
 ### Meerdere dagen en tijdstippen in één trigger {#meerdere-dagen-en-tijdstippen-in-één-trigger}
 
-Vanaf **v1.56** kies je per veld **meerdere waarden tegelijk**, als aanklikbare blokjes. Eén trigger kan
-daardoor bijvoorbeeld "elke maandag én zaterdag om 01:00, 05:00 en 09:00" draaien; voorheen was elk
-dag/tijd-paar een aparte trigger.
+:::note Eerstvolgende webapp-release
+Deze multi-select-functionaliteit zit in de **eerstvolgende webapp-release**. In oudere versies kies je
+per trigger één dag en één tijdstip; elk dag/tijd-paar is daar een aparte trigger.
+:::
+
+Je kiest per veld **meerdere waarden tegelijk**, als aanklikbare blokjes. Eén trigger kan daardoor
+bijvoorbeeld "elke maandag én zaterdag om 01:00, 05:00 en 09:00" draaien.
 
 | Veld | Keuze | Zichtbaar bij |
 |---|---|---|

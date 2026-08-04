@@ -15,7 +15,7 @@ Archiving works in three steps per table, within a single run of the `Dynamic Ar
 3. **Refresh the union view** — `[LoadManagement].[spArchiveMaintainView]` generates the per-table view `[<HIS schema>].[<Target>_IncArchive]` that presents the live table and the archived Parquet files as one whole.
 
 :::tip Trial-run first, purge later
-The purge is **off** by default (setting `ArchivingPurgeEnabled = 0`). In that mode the workflow only copies to the Data Lake and deletes nothing — ideal for validating the configuration and the Parquet output. Then set `ArchivingPurgeEnabled` to `1` (plus `AllowDeletesFromDB` to `1` — a double safeguard) to actually clean up.
+The purge is **off** by default (setting `ArchivingPurgeEnabled = 0`). In that mode the workflow only copies to the Data Lake and deletes nothing — ideal for validating the configuration and the Parquet output. Then set `ArchivingPurgeEnabled` to `1` to actually clean up — this is the only switch gating the purge. (`AllowDeletesFromDB` deliberately plays no role here: that setting governs dropping objects, not deleting data.)
 :::
 
 ## Two archiving modes per table
@@ -66,7 +66,7 @@ Manual run / trigger  (Source, Schema, Table, RunningTier, RevertToTier)
                                         → Parquet on archive/… (AzureDataLakeStorage_ARCHIVE)
         Purge archived rows          → [LoadManagement].[spArchivePurge]
                                         recounts; deletes only on an exact match,
-                                        batched, double-gated by settings
+                                        batched, gated by ArchivingPurgeEnabled
         Maintain archive view        → [LoadManagement].[spArchiveMaintainView]
                                         refreshes the <Target>_IncArchive union view
   → (optional) Set DB Tier Back      → scale the database back
@@ -100,11 +100,10 @@ The views read the Data Lake directly from SQL. This requires a one-time per-env
 
 | Setting (`[Config].[Settings]`) | Default | What it controls |
 |---|---|---|
-| **`ArchivingPurgeEnabled`** | `0` (No) | Master switch of the purge step. `0` = copy only (trial mode), `1` = also delete from `HIS` after a verified copy. |
-| **`AllowDeletesFromDB`** | existing | Must also be `1` before the purge deletes anything (double safeguard). |
+| **`ArchivingPurgeEnabled`** | `0` (No) | Master switch — and the only gate — of the purge step. `0` = copy only (trial mode), `1` = also delete from `HIS` after a verified copy. The existing setting `AllowDeletesFromDB` deliberately plays no role in the purge: it governs dropping objects, not deleting data. |
 | **`ArchiveLakeLocation`** | empty | `adls://…` location of the Data Lake for the union views; filled by provisioning. Empty = views are skipped. |
 
-The **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, group 7) guard the configuration: `BUSINESS` without a date column, an `ArchivingColumn` missing from the Dictionary, a missing retention period, a clause on `ETL_` columns, and a purge that is enabled while `AllowDeletesFromDB` is off are all flagged.
+The **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, group 7) guard the configuration: `BUSINESS` without a date column, an `ArchivingColumn` missing from the Dictionary, a missing retention period, a clause on `ETL_` columns, and a purge that is enabled while `ArchiveLakeLocation` is empty (check 7.14 — the archive is then unreadable from SQL) are all flagged.
 
 :::note Retired: settings-driven default archiving
 Older versions contained an alternative design (`vwArchivingExtractor` with the settings `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) that would archive all DELTA tables automatically. Since v1.56, archiving is deliberately an explicit per-table choice; the deploy cleans up the old view and settings itself.

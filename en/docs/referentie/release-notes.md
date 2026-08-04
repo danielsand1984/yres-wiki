@@ -87,14 +87,14 @@ topic.
   data warehouse. You switch it on per table with `DataPlatform = DL`.
   → [Lake feed](../concepten/lake-feed.md)
 - **The test suite ships with the product.** The regression suite that exercises every database
-  object — now **1665 checks across 194 objects** — sits in the DACPAC and therefore arrives with
+  object — now **±1655 checks across 195 objects** (and growing per release) — sits in the DACPAC and therefore arrives with
   every version. After a deploy, or whenever in doubt, you run it yourself with `EXEC Test.spRunAll`
   — it is safe on production, proves its own cleanup, and never runs by itself.
   → [Test suite](./testsuite.md)
 - **Nearly 1700 behavioural checks on the data platform.** The bundled test suite was expanded from
   object coverage to **behavioural coverage**: alongside the happy path, every object type is now
   also tested against empty input, `NULL`, edge cases, missing dependencies and multiple rows at
-  once. The suite grew from roughly 600 to the 1665 checks above, spread across 194 objects, and now
+  once. The suite grew from roughly 600 to the ±1655 checks above, spread across 195 objects, and now
   ships with every release. What surfaced along the way is included in this version; the edge cases
   that are more robust as a result:
 
@@ -145,7 +145,7 @@ topic.
   history per change (`Change.vwLogs`). → [Change process](../concepten/wijzigingsproces.md)
 - **DB tier scaling:** next to the "Default" tier, a "High" tier is now configurable that workflows can
   scale up to during heavy loads.
-- **Archiving:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (double-gated, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. The archiving workflow is created automatically during the update and can be started and scheduled from the web app; which tables archive is still configured in the database in this version, not in the web app. → [Archiving](../concepten/archivering.md)
+- **Archiving:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (gated by the `ArchivingPurgeEnabled` setting, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. The archiving workflow is created automatically during the update and can be started and scheduled from the web app; which tables archive is still configured in the database in this version, not in the web app. → [Archiving](../concepten/archivering.md)
 
 ### Data platform — stability & performance
 

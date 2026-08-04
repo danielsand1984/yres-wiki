@@ -33,7 +33,7 @@ Every logged-in screen shares the same "shell": a fixed **top bar**, an **icon c
 
 1. **Logo + organization title** — shows the organization name; clicking it takes you to Home (`/`).
 2. **Environment switcher** — only visible with **more than one environment**; switches between Development / Test / Production. The switcher is disabled on non-environment-bound routes and then snaps back to `dev`.
-3. **Help "?"** — opens the Yres wiki at `wiki.yres-dwh.app`.
+3. **Help "?"** — opens the Yres wiki at `oogopdata.nl/en/wiki` (or `oogopdata.nl/nl/wiki`, depending on the language).
 4. **Icon column** — the main sections: Home, Admin, Projects, Data sources, Load management, Data engineering. Permission- and version-gated; **Projects is hidden for a single-environment organization**.
 5. **Sub-link sidebar** — the screens within the selected section (resizable, drag the right edge).
 6. **Actions on the right** — Refresh, monitored jobs, notifications and the user menu.
@@ -94,8 +94,8 @@ This entire section is **hidden for a single-environment organization**. Project
 | Projects | `/projects` | `Name` · `Description` · `DueDate` · `Creator` · status text |
 | Changes | `/changes` | filters (Project · "Only show open projects" · Where environment · Has status) · changes table (`Name` · `Description` · `DueDate` · `ReleasedDate` · `Status overview` · `NextStep` · `Dependencies` · `Actions`) · "Create change" · **actions via the per-change ☰ menu**: Update/Delete, per-environment submenu (dev ▸ release change; target env ▸ Reimport/Reinstall change), View dependencies (graph) and Logs |
 
-:::note Release & Install happen on the Changes screen
-There are no separate "Release change" or "Install change" screens anymore. Release, Import and Install are **actions on the selected change** within the **Changes** screen (`/changes`), contextual to its status: an open change shows **Release** (`[Change].[spRelease]`), a released change shows **Import** (`[Change].[spImport]`, DWH only) and **Install** (`[Change].[spInstall]` + the `publish-datafactory` pipeline, DWH + ADF). You manage scripted/custom objects via **Database objects** in **Data engineering** (`/dataengineering/objecthistory`), where you add an object to a change.
+:::note Release & Install: dedicated screens plus in-grid actions
+Besides the actions in the changes grid, there are **dedicated screens** **Release change** (`/changes/release`) and **Install change** (`/changes/install`), reachable via the section's sidebar links. In addition, Release, Import and Install are also **actions on the selected change** within the **Changes** screen (`/changes`), contextual to its status: an open change shows **Release** (`[Change].[spRelease]`), a released change shows **Import** (`[Change].[spImport]`, DWH only) and **Install** (`[Change].[spInstall]` + the `publish-datafactory` pipeline, DWH + ADF). You manage scripted/custom objects via **Database objects** in **Data engineering** (`/dataengineering/objecthistory`), where you add an object to a change.
 :::
 
 ## Admin (organization)

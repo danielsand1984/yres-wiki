@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Volledige referentie van alle 59 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
+description: Volledige referentie van alle 66 scalar- en table-valued functions in de IRIS_DWH-database, gegroepeerd per schema.
 ---
 
 > Beheer doe je bij voorkeur via de webapp; deze objecten zijn voor het SQL-endpoint (SSMS / Azure Data Studio).
 
-Deze pagina beschrijft alle **59 functions** in de data-plane database `IRIS_DWH`, gegroepeerd per schema.
+Deze pagina beschrijft alle **66 functions** in de data-plane database `IRIS_DWH` (stand augustus 2026 — het aantal groeit per release), gegroepeerd per schema.
 Per function vind je de volledig gekwalificeerde naam, de signature (zoals in de `CREATE FUNCTION`-header
 staat) en het doel. De namen en types zijn rechtstreeks overgenomen uit de broncode — code is leidend.
 
@@ -212,6 +212,18 @@ Wordt gebruikt door de monitoring-views om deep-links naar ADF-runs te tonen.
 **Doel:** bouwt de OAuth-1.0-`Authorization`-header (met HMAC-SHA256-signature, nonce en timestamp) voor
 NetSuite-API-aanroepen.
 
+### `[LoadManagement].[fxDeltaOrWhere]` — scalar
+
+**Doel:** bouwt het delta-`WHERE`-fragment voor dialecten zonder `CASE`/`COALESCE` (zoals SOQL): één kolom → `c1 >= v`, twee kolommen → `(c1 >= v OR c2 >= v)` — equivalent aan "grootste van de twee ≥ waarde".
+
+### `[LoadManagement].[fxGetActualTargetName]` — scalar
+
+**Doel:** lost de **fysieke** doeltabelnaam op voor een effectieve (Overwrite\*-toegepaste) bron-triple: geeft `UsedTables.ActualTableName` terug en valt alleen terug op de historische `CONCAT_WS('_', …)`-regel wanneer er geen naam is vastgelegd. Tegenhanger van `fxGetActualTablename`, dat op de rúwe bron-triple werkt.
+
+### `[LoadManagement].[fxLakeFeedColumns]` — table-valued
+
+**Doel:** lost de kolomset van de Parquet change feed op voor één lake-target — per schemageneratie of als vereniging over alle generaties; de kolomvolgorde is bindend omdat Parquet op positie mapt. Eén bron van waarheid voor de objecten die `spMaintainLakeExternal` genereert.
+
 ---
 
 ## Config (instellingen, licentie, logging)
@@ -294,6 +306,26 @@ het ondertekenen van uitgaande API-aanroepen.
 
 **Doel:** URL-encodeert een string (vervangt spaties en speciale tekens door hun `%XX`-equivalent) voor
 gebruik in API-URL's en OAuth-signatures.
+
+### `[Config].[fxAddTransactionalTryCatch]` — scalar
+
+**Doel:** wikkelt dynamische SQL in één all-or-nothing-transactie: zelfde logging als `fxAddTryCatch`, maar met `SET XACT_ABORT ON` — bij elke fout wordt het hele blok teruggerold, zodat het doelobject nooit half gewijzigd achterblijft. Gebruikt voor meerstaps-mutaties zoals de remodel in `spUpdateTablesFromDictionary`.
+
+### `[Config].[fxCheckLicenseCore]` — scalar
+
+**Doel:** bevat de volledige licentievalidatie/-afdwinging; `fxCheckLicense` is er een dunne, signatuur-ongewijzigde wrapper omheen. De extra vijfde parameter (settings-override) bestaat alleen hier, zodat bestaande vier-parameter-aanroepen bleven werken.
+
+### `[Config].[fxServiceTierLadder]` — table-valued
+
+**Doel:** de Azure SQL **DTU-tierladder als data**: één rij per Basic/Standard/Premium-tier met `LevelOrder`, zodat tiers vergelijkbaar zijn zonder string-parsing. vCore-tiers ontbreken bewust — die vallen buiten de automatische scaling.
+
+### `[Config].[fxResolveServiceTier]` — table-valued
+
+**Doel:** dé scaling-beslissing als pure functie: bepaalt uit de huidige tier, de gevraagde tier, het hoogste actieve scalingverzoek en het aantal live workloads de effectieve doeltier plus de actie (`SCALE UP`/`SCALE DOWN`/`NOTHING`/…). Leest bewust geen tabellen, zodat de beslissing testbaar is.
+
+### `[Config].[fxWorkflowHeartbeat]` — table-valued
+
+**Doel:** wanneer gaf deze workflow-run voor het laatst een teken van leven? Het nieuwste van de `LoadLog`-stempels en de `LS_Trans`-stappen van die workflow; de automatische tier-scaling onderscheidt hiermee een werkende workflow van een afgebroken run.
 
 ---
 
@@ -439,9 +471,11 @@ Algemene hulpfuncties voor string-manipulatie en type-conversie.
 
 **Signature:** `(@Temp VARCHAR(1000)) RETURNS VARCHAR(1000)`
 
-**Doel:** verwijdert alle niet-alfabetische tekens uit de invoerstring (houdt alleen `a–z` over). Er bestaat
-in de repo een tweede, identieke definitie (`fxRemoveNonAlphaCharacters_1.sql`) van dezelfde function — beide
-bevatten dezelfde logica.
+**Doel:** verwijdert alle niet-alfabetische tekens uit de invoerstring (houdt alleen `a–z` over; de
+uitgeleverde versie is accent-strikt gemaakt via een binaire collation, zodat geaccentueerde letters niet
+langer door het `[a-z]`-bereik glippen). Het repo-bestand `fxRemoveNonAlphaCharacters_1.sql` is een **oude,
+niet-gedeployde kopie** zonder die fix — hij zit niet in de build en de definities zijn dus niet meer
+identiek.
 
 ### `[dbo].[fxToProper]`
 
@@ -532,6 +566,10 @@ naar de bijbehorende OData-EDM-types volgens de OData-standaard.
 **Doel:** genereert de definities voor rapportage-objecten in het `Exposed`-schema. `@DataType` duidt de
 rapportage-rol van de kolom aan (`[None]`, `[FACT]`, `[DIM1]`, `[DIM2]`, `[DIM4]`); op basis van de
 gekoppelde Yres-bron/-tabel en surrogate-key bouwt de function de objectdefinitie.
+
+### `[Expose].[fxGetExposedViews]` — table-valued
+
+**Doel:** de enige bron van waarheid voor de naamgeving van de ontkoppelviews in het `[Exposed]`-schema: één rij per view die bij een exposed object hoort (`<Schema>__<Name>`, plus `<Schema>__<Name>_History` bij `DIM4`). Alle procedures die views aanmaken, droppen of rechten zetten lossen de naam hier op.
 
 ---
 

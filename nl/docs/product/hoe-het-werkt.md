@@ -36,7 +36,7 @@ Een bron of tabel toevoegen is metadata invoeren. Yres vertaalt die metadata naa
 :::
 
 :::note Eigen ADF-pipelines blijven werken
-Bestaande, handmatig gemaakte ADF-pipelines blijven naast Yres draaien. Voor eigen pipelines is er een map **`custom pipelines`** waarin klanten hun eigen pipelines onderhouden.
+Bestaande, handmatig gemaakte ADF-pipelines blijven naast Yres draaien. Voor eigen pipelines is er in de factory de map **`PW - Yres/Custom`** waarin klanten hun eigen pipelines onderhouden.
 :::
 
 ## 3. Automatische health checks en monitoring

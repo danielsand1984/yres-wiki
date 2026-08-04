@@ -20,7 +20,7 @@ Yres onderscheidt zich door native Nederlandse ERP-koppelingen (Exact, AFAS), pr
 ## Technisch
 
 **Hoe ontwerp ik mijn data-pipelines in Yres?**
-Je *ontwerpt* geen pipelines met de hand. Je configureert je bronnen, tabellen en laadtypes in wizards (de "Create source"- en used-table-wizards), en Yres **genereert** op basis van die metadata automatisch de bijbehorende ADF-pipelines en linked services. Er is dus geen drag-and-drop pipeline-designer — de kracht zit in de metadata-gedreven generatie.
+Je *ontwerpt* geen copy-pipelines met de hand. Je configureert je bronnen, tabellen en laadtypes in wizards (de "Create source"- en used-table-wizards), en Yres **genereert** op basis van die metadata automatisch de bijbehorende ADF-pipelines en linked services. Voor de **orkestratie** is er wél een drag-and-drop **master-pipeline-designer**, waarin je met bouwstenen de volgorde en samenstelling van een master pipeline bepaalt; een designer voor individuele copy-activiteiten is er niet — die kracht zit in de metadata-gedreven generatie.
 
 **Kan ik Yres combineren met bestaande ADF-pipelines?**
 Ja. Yres genereert en beheert zijn eigen ADF-pipelines en linked services volledig. Bestaande handmatige ADF-pipelines kunnen naast Yres blijven draaien in dezelfde Azure-omgeving.

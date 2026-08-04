@@ -26,7 +26,7 @@ Manually start a pipeline: load a table, fetch metadata, materialize a view or r
 
 (1) **Pipeline list** on the left — select the pipeline you want to run or inspect.
 (2) **Date filter** (`runEnd`) — limit the displayed runs to a period.
-(3) **Status filter** (No filter / Succeeded / InProgress / Failed / Cancelled). For the **Dynamic Workflow YRES** pipeline, three additional cascading filters appear: **Source → Schema → Table**.
+(3) **Status filter** (No filter / Succeeded / InProgress / Failed / Cancelled). Only for a pipeline with the exact name **Dynamic Workflow IRIS** or **Dynamic Workflow YRES** (a hardcoded name check, not based on parameters) do three additional cascading filters appear: **Source → Schema → Table**, which the runs table then also shows as columns. **Dynamic Archiving Workflow YRES** does not get these filters, even though it has the same parameters.
 (4) **Runs table** showing, per run, the status, `runStart`, `runEnd` and the computed `runtime` (`Xh Ym Zs`).
 (5) **Per-run actions** — link to the ADF monitoring, **view error** (red `i` icon when there is an error message) and **stop pipeline** (for InProgress/Queuing/Queued).
 (6) **Start pipeline** — if the pipeline has parameters, the button reads **Set parameters to start** and opens a form where you enter Source/Schema/Table and, optionally, the service tier.
@@ -69,9 +69,13 @@ Schedule a pipeline with a recurrence pattern (an ADF schedule trigger). For eac
 
 ### Multiple days and times in one trigger {#multiple-days-and-times-in-one-trigger}
 
-From **v1.56** you pick **several values at once** per field, as clickable tiles. A single trigger can
-therefore run "every Monday and Saturday at 01:00, 05:00 and 09:00"; previously every day/time pair was
-a separate trigger.
+:::note Next webapp release
+This multi-select functionality ships in the **next webapp release**. In older versions you pick one day
+and one time per trigger; every day/time pair is a separate trigger there.
+:::
+
+You pick **several values at once** per field, as clickable tiles. A single trigger can therefore run
+"every Monday and Saturday at 01:00, 05:00 and 09:00".
 
 | Field | Choice | Shown for |
 |---|---|---|

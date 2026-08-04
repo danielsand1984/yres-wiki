@@ -36,7 +36,7 @@ Alongside the business columns, every `HIS.<Target>` table contains a fixed set 
 
 | Column | Type | Meaning |
 |---|---|---|
-| `<table>_RowId` | `IDENTITY` (integer) | The **surrogate key** of the row version — a unique, incrementing number. The name is the target table name, forced to lowercase with non-alphanumeric characters removed, plus `_RowId` (e.g. `AX_dbo_Cust` → `axdbocust_RowId`). |
+| `<table>_RowID` | `IDENTITY` (integer) | The **surrogate key** of the row version — a unique, incrementing number. The name is the target table name with non-alphanumeric characters removed (casing is preserved), plus `_RowID` (e.g. `AX_dbo_Cust` → `AXdboCust_RowID`). |
 | `ETL_Date` | datetime | Timestamp at which this row version was loaded. One timestamp per load. |
 | `ETL_EndDate` | datetime | The moment at which this version was closed off. As long as a version is **current**, this holds the sentinel value **`2999-01-01 00:00:00`** ("open ended"). |
 | `KeyHash` | `varbinary(66)` | `HASHBYTES('SHA2_512', …)` over the **key columns**. Identifies *which* record this is. |

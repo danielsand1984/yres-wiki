@@ -24,8 +24,8 @@ De vijf stappen die een wijziging doorloopt — **alle acties voer je uit via he
 |---|---|---|---|
 | 1 | **Change aanmaken** onder een project en er werk in boeken | Create change · dev | — |
 | 2 | **release change** — change vergrendelen en vrijgeven om te installeren | ☰ → submenu **dev** · open change | `[Change].[spRelease]` |
-| 3 | **Reimport change** — change opnieuw ophalen in de doelomgeving (alleen DWH) | ☰ → submenu **prd** · gereleasede change | `[Change].[spImport]` |
-| 4 | **Reinstall change** — change installeren én de ADF-factory publiceren | ☰ → submenu **prd** · gereleasede change | `[Change].[spInstall]` + `publish-datafactory` |
+| 3 | **Install change** — de change de eerste keer importeren én installeren op de doelomgeving, inclusief ADF-publish | ☰ → submenu **prd** · gereleasede change | endpoint `/changes/install-and-import`: `[Change].[spImport]` + `[Change].[spInstall]` + `publish-datafactory` |
+| 4 | **Reimport / Reinstall change** — daarna: opnieuw importeren (alleen DWH) óf opnieuw installeren (zonder import) | ☰ → submenu **prd** · geïnstalleerde change | `[Change].[spImport]` resp. `[Change].[spInstall]` + `publish-datafactory` |
 | 5 | **publish-datafactory** — nieuwe pipelines landen in de doelfactory | doelomgeving (test/prod) | Azure DevOps-pipeline |
 
 ## Projects
@@ -68,7 +68,7 @@ De genummerde elementen in de schermafbeelding:
 4. **Status overview** — per omgeving een voortgangsindicator: **groen** wanneer die stap op de omgeving is uitgevoerd, **grijs** zolang nog niet.
 5. **NextStep** — de voorgestelde vervolgactie voor de change, bijvoorbeeld *"Release on dev"* of *"Install on prd"*.
 6. **Dependencies** — een **"N dependencies"**-link die de **dependency-graph** opent (welke changes deze change nodig heeft, en hun status).
-7. **Actions (☰)** — het acties-menu per rij; hierin zitten **Update**, **Delete**, een **submenu per omgeving** (release / reimport / reinstall), **View dependencies** en **Logs** (zie [Releasen](#een-change-releasen) en [Installeren](#een-change-installeren)).
+7. **Actions (☰)** — het acties-menu per rij; hierin zitten **Update**, **Delete**, een **submenu per omgeving** (release / install / reimport / reinstall), **View dependencies** en **Logs** (zie [Releasen](#een-change-releasen) en [Installeren](#een-change-installeren)).
 
 ### De kolommen van de changes-tabel
 
@@ -94,14 +94,14 @@ De **DueDate** van een change moet **op of vóór** de DueDate van het bovenligg
 
 ## Scripted Objects
 
-Custom SQL-objecten die niet door Yres zijn gegenereerd — je eigen tabellen, views, stored procedures en functions — beheer je vanuit **Database objects**: de database-objectboom onder **Data Engineering**. Daar blader je door je DWH-objecten en **voeg je een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change**. Er is geen apart "Scripted objects"-scherm meer; scripted/custom objecten leven in het Database objects-scherm en reizen via de change mee bij het releasen en installeren naar test en prod.
+Custom SQL-objecten die niet door Yres zijn gegenereerd — je eigen tabellen, views, stored procedures en functions — beheer je vanuit **Database objects**: de database-objectboom onder **Data Engineering**. Daar blader je door je DWH-objecten en **voeg je een eigen object — of een bestaand database-object — rechtstreeks vanuit de explorer toe aan een change**. Daarnaast bestaat er een apart **Scripted objects**-scherm (`/loadmanagement/scriptedObjects`, via de sidebar-link onder **Projects**); in beide gevallen reizen scripted/custom objecten via de change mee bij het releasen en installeren naar test en prod.
 
 - Open onder **Data Engineering** het **Database objects**-scherm en rechtsklik een object om het — met of zonder dependencies, en eventueel met content — aan een change toe te voegen. Zie [Objecten aan een change toevoegen](./data-engineering.md#objecten-aan-een-change-toevoegen).
 - Bij een **custom tabel** kies je of de inhoud van de tabel meegaat (achterliggend: `[Change].[spCopyTableContent]`).
 
 ## Het acties-menu (☰) {#het-acties-menu}
 
-Releasen, (re)importeren en (re)installeren doe je allemaal via het **acties-menu (☰)** dat elke change-rij in de tabel heeft. Er zijn **geen aparte *Release change*- of *Install change*-schermen meer** en geen DTAP-stepper of omgeving-keuzemenu's — alles zit in dit ene menu. Welke items het menu toont, hangt af van de status van de change en van de omgeving.
+Releasen, installeren, (re)importeren en (re)installeren doe je via het **acties-menu (☰)** dat elke change-rij in de tabel heeft. Daarnaast staan in de Projects-sidebar ook de aparte schermen **Release change** (`/changes/release`) en **Install change** (`/changes/install`); het acties-menu bundelt dezelfde acties per change-rij. Welke items het menu toont, hangt af van de status van de change en van de omgeving.
 
 ![Het acties-menu (☰) van een change, geopend: bovenaan Update en Delete, daaronder een submenu per omgeving (dev ▸ en prd ▸) met release / reimport / reinstall, en onderaan View dependencies en Logs.](/img/screens/changes-release-install.png)
 
@@ -111,7 +111,7 @@ Het menu bevat:
 - **Delete** — de change verwijderen.
 - **Een submenu per omgeving** (bijv. **dev ▸**, **prd ▸**):
   - Op **dev** biedt een **open** change **release change** aan — dit vergrendelt de change en geeft hem vrij om te installeren (achterliggend `[Change].[spRelease]`, met een dependency-check).
-  - Op een **doelomgeving** (bijv. **prd**) biedt een **gereleasede** change **Reimport change** (alleen DWH, `[Change].[spImport]`) en **Reinstall change** (DWH én ADF-publish, `[Change].[spInstall]` + de `publish-datafactory`-pipeline) aan.
+  - Op een **doelomgeving** (bijv. **prd**) biedt een **gereleasede** change eerst **Install change** aan — dit importeert én installeert de change en publiceert de ADF-factory (endpoint `/changes/install-and-import`). Pas nadat de change op die omgeving geïnstalleerd is, verschijnen **Reimport change** (alleen opnieuw importeren, `[Change].[spImport]`) en **Reinstall change** (opnieuw installeren zónder import: `[Change].[spInstall]` + de `publish-datafactory`-pipeline).
 - **View dependencies** — opent de **dependency-graph**: welke changes deze change nodig heeft en hun status.
 - **Logs** — opent het **stap-voor-stap import-/install-log** (zie [Logs](#logs)).
 
@@ -126,7 +126,7 @@ Releasen maakt een change beschikbaar om te installeren op een andere omgeving. 
 Wat er gebeurt:
 
 - Na het releasen kan de change **niet meer bewerkt** worden — de change wordt vergrendeld en **ReleasedDate** wordt ingevuld.
-- Yres voert eerst een **dependency-check** uit en **blokkeert** het releasen als de change inhoud bevat waar een **andere change** van afhankelijk is; de foutmelding noemt de afhankelijke change(s).
+- Yres voert eerst een **dependency-check** uit en **blokkeert** het releasen wanneer déze change zelf afhangt van changes die **nog niet gereleased** zijn; de foutmelding noemt de change(s) waarvan deze change afhangt.
 - Achterliggend draait Yres `[Change].[spRelease]` voor de betreffende `ChangeId`.
 
 ### Een change installeren
@@ -135,13 +135,14 @@ Installeren brengt een **gereleasede** change naar de volgende omgeving (bv. dev
 
 1. Open de sub-link **Changes** en zorg dat de change **gereleased** is (zie de kolom **Status overview** en de **NextStep**-suggestie, bijv. *"Install on prd"*).
 2. Open op de change het **acties-menu (☰)** en ga naar het submenu van de **doelomgeving** (bijv. **prd ▸**).
-3. Kies een van de twee acties:
-   - **Reimport change** → roept `[Change].[spImport]` aan: haalt de change- en projectdata (inclusief dependencies en content) opnieuw op in de doelomgeving. Dit is **alleen DWH** en publiceert de ADF-factory **niet**.
-   - **Reinstall change** → importeert én **installeert** de change met `[Change].[spInstall]` **en publiceert de ADF-factory** door de Azure DevOps-pipeline `publish-datafactory` te draaien, zodat nieuwe data-source-pipelines mee landen in de doelfactory.
+3. Kies de actie die bij de situatie past:
+   - **Install change** — de eerste keer op deze omgeving. Importeert de change- en projectdata (inclusief dependencies en content), **installeert** de change met `[Change].[spInstall]` **en publiceert de ADF-factory** door de Azure DevOps-pipeline `publish-datafactory` te draaien, zodat nieuwe data-source-pipelines mee landen in de doelfactory (endpoint `/changes/install-and-import`).
+   - **Reimport change** — pas zichtbaar nadat de change op deze omgeving geïnstalleerd is. Roept alleen `[Change].[spImport]` aan: haalt de change- en projectdata opnieuw op. Dit is **alleen DWH** en publiceert de ADF-factory **niet**.
+   - **Reinstall change** — eveneens pas zichtbaar ná installatie. Installeert opnieuw met `[Change].[spInstall]` en publiceert de ADF-factory, maar doet **géén** import.
 4. Volg de voortgang in de **Logs** (zie hieronder) en in het **Status overview** van de change.
 
 :::note Versies moeten overeenkomen
-(Re)importeren en (re)installeren controleren eerst of de **DWH-versies** van bron- en doelomgeving overeenkomen. Verschillen ze, dan krijg je *"Environment versions do not match, please update"* en moet je eerst de omgeving bijwerken via [Update environments](./admin.md).
+De eerste **Install change** (import-and-install) controleert eerst of de **DWH-versies** van bron- en doelomgeving overeenkomen. Verschillen ze, dan krijg je *"Environment versions do not match, please update"* en moet je eerst de omgeving bijwerken via [Update environments](./admin.md). **Reimport** en **Reinstall** voeren deze versiecheck niet uit.
 :::
 
 ### Dependencies bekijken (dependency-graph)
@@ -170,6 +171,6 @@ Selecteer een change om het **content-paneel** te openen; daarin zie je de objec
 Sinds **v1.53** kun je bij het toevoegen aan een change kiezen om **dependencies en/of content** mee te nemen, en kun je bestaande database-objecten direct vanuit de object-tree in een change opnemen.
 :::
 
-:::info Alle acties via het acties-menu (☰)
-Releasen, (re)importeren en (re)installeren voer je allemaal uit via het **acties-menu (☰)** van de change op het **Changes**-scherm: op **dev** biedt een open change **release change**, op een doelomgeving biedt een gereleasede change **Reimport change** en **Reinstall change**. Er zijn geen aparte *Release change*- of *Install change*-schermen, geen DTAP-stepper en geen omgeving-keuzemenu's meer.
+:::info Acties-menu (☰) én aparte schermen
+Releasen, installeren, (re)importeren en (re)installeren voer je uit via het **acties-menu (☰)** van de change op het **Changes**-scherm: op **dev** biedt een open change **release change**, op een doelomgeving biedt een gereleasede change **Install change** en — ná installatie — **Reimport change** en **Reinstall change**. Daarnaast staan in de Projects-sidebar ook de aparte schermen *Release change* (`/changes/release`) en *Install change* (`/changes/install`).
 :::

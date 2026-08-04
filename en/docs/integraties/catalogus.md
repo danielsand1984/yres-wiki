@@ -24,6 +24,8 @@ this is the general pattern:
 
 - **Databases** (Microsoft SQL, Azure SQL, MySQL, PostgreSQL, DB2, Oracle, Snowflake): host/account ·
   database (or *service name* for Oracle) · port · username · password. **Auth:** Basic.
+  *Exception:* the Snowflake form has **no port field** — there you enter the **account
+  (incl. region)**, username, password, database, **warehouse** and optionally a **role**.
 - **Azure storage** (Azure Blob Storage, SAP Business Data Cloud, SAP Datasphere, Azure Data Lake):
   account/container + **SAS token**. **Auth:** SAS.
 - **OData / REST**: service URL + pagination setting, with Anonymous, Basic or OAuth2.
@@ -32,8 +34,8 @@ this is the general pattern:
 - **SaaS with token** (AFAS, Monday, Simplicate, Exact Online, Salesforce): API token or OAuth2.
 
 **Integration Runtime:** cloud-reachable sources run on the cloud IR `AutoResolveIntegrationRuntime`;
-on-premises or firewalled sources (local databases, File Server, local files) require a
-**self-hosted Integration Runtime**.
+on-premises or firewalled sources (local databases, File Server — including local files you do not
+upload to Blob Storage) require a **self-hosted Integration Runtime**.
 
 **Secrets:** Yres never stores credentials in the webapp. Everything goes to the customer's **Azure Key
 Vault**, using the naming convention `adf-{sourcename}-{suffix}`; the linked service references it there.
@@ -97,9 +99,9 @@ username + password).
 | SharePoint | Azure AD app-only; permissions via `appinv.aspx` |
 | Microsoft Teams | Via **Microsoft Graph** (OData/REST under the hood) |
 | Microsoft Graph | OAuth2 (client credentials or authorization code) |
-| Dynamics 365 (Business Central) | Via **OData** + OAuth2 under the hood |
+| Dynamics 365 (Business Central) | Via **OData** (OAuth2 support in development) |
 | Topdesk | Via **OData** (reporting endpoint) + Basic auth under the hood |
-| Microsoft Intune (Intune Data Warehouse) | Via **OData** + OAuth2 under the hood |
+| Microsoft Intune (Intune Data Warehouse) | Via **OData** (OAuth2 support in development) |
 | Power BI | Azure AD service principal; consumed via the Power BI API (no ADF copy) |
 
 ## Azure storage & SAP (SAS token)
@@ -123,9 +125,9 @@ webapp; for Datasphere the same SAS input is used.
 
 | Source | Notes |
 |---|---|
-| Local files (CSV, Excel) | Self-hosted IR **required** |
-| File Server | UNC path; self-hosted IR **required** |
-| Azure Data Lake (Gen2) | SAS token (AzureBlobFS) |
+| Local files (CSV, Excel) | No dedicated source type — **upload** to an [Azure Blob Storage](bronnen/azure-blob-storage.md) source (no IR needed) or via a [File Server](bronnen/file-server.md) source with a local path (self-hosted IR) |
+| File Server | UNC/local path; self-hosted IR **required** |
+| Azure Data Lake (Gen2) | SAS token — connect as an Azure Blob Storage source (`AzureBlobStorage` linked service) |
 
 :::note Not a separate wizard choice
 **Azure Data Lake** and **SAP Datasphere** do have an ADF template (`AzureBlobFS`), but are **not a

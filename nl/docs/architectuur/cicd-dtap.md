@@ -131,7 +131,7 @@ Het pad is altijd **release → reimport → reinstall**, gestuurd vanuit het �
 ### release → reimport → reinstall — stap voor stap
 
 1. **Bewerk in dev en bundel onder een Change.** Elke data-plane-bewerking (nieuwe tabellen, scripted objects) wordt vastgelegd in `Change.ChangeContent` onder een **Change**, die hoort bij een **Project**. Scripted/custom objecten voeg je toe aan de change vanuit **Database objects** (de objectboom onder Data Engineering).
-2. **Release de change** — in het **dev ▸**-submenu van het ☰-menu draait **release change** `[Change].[spRelease]`, dat de afhankelijkheden valideert en de change vergrendelt (geen verdere bewerkingen). Yres blokkeert het releasen als de change content bevat waar een andere, nog niet-released change van afhankelijk is; de foutmelding noemt die afhankelijke change(s).
+2. **Release de change** — in het **dev ▸**-submenu van het ☰-menu draait **release change** `[Change].[spRelease]`, dat de afhankelijkheden valideert en de change vergrendelt (geen verdere bewerkingen). Yres blokkeert het releasen als de change zelf **afhangt van** changes die nog niet released zijn; de foutmelding noemt de change(s) waarvan deze change afhangt.
 3. **Reimporteer naar de volgende omgeving** — **Reimport change** in het submenu van de doelomgeving draait `[Change].[spImport]`, dat de released change (als JSON) in de doelomgeving importeert. Dit is een **DWH-only** stap.
 4. **Reinstall** — **Reinstall change** in het submenu van de doelomgeving draait `[Change].[spInstall]`, dat de change toepast (`@Execute`: `1` = uitvoeren, `0` = SQL printen, `2` = impactanalyse). De ADF-pipeline **`InstallChange`** is het automatiseringsingangspunt.
 

@@ -20,7 +20,7 @@ Yres stands out through native Dutch ERP integrations (Exact, AFAS), preset NL d
 ## Technical
 
 **How do I design my data pipelines in Yres?**
-You don't *design* pipelines by hand. You configure your sources, tables and load types in wizards (the "Create source" and used-table wizards), and based on that metadata Yres **generates** the corresponding ADF pipelines and linked services automatically. So there is no drag-and-drop pipeline designer — the power lies in the metadata-driven generation.
+You don't *design* copy pipelines by hand. You configure your sources, tables and load types in wizards (the "Create source" and used-table wizards), and based on that metadata Yres **generates** the corresponding ADF pipelines and linked services automatically. For **orchestration** there is a drag-and-drop **master pipeline designer**, in which you compose the order and contents of a master pipeline from building blocks; there is no designer for individual copy activities — that power lies in the metadata-driven generation.
 
 **Can I combine Yres with existing ADF pipelines?**
 Yes. Yres generates and manages its own ADF pipelines and linked services entirely. Existing manual ADF pipelines can keep running alongside Yres in the same Azure environment.

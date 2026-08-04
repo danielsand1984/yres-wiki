@@ -8,9 +8,10 @@ description: Connecting PostgreSQL to Yres — connection requirements.
 
 **Category:** Direct connection
 
-PostgreSQL relational database. Yres connects directly to the database via an
-ADF linked service of type `PostgreSql`. There is a single PostgreSQL source type: the same connection
-works for both on-premises and cloud-hosted PostgreSQL databases.
+PostgreSQL relational database. Yres connects directly to the database. New PostgreSQL sources are
+automatically set to **driver version 2.0** and deploy as an ADF linked service of type
+**`AzurePostgreSql`**. There is a single PostgreSQL source type; the database must be reachable from
+Azure (see *Integration runtime* below).
 
 ## Expected input
 
@@ -30,32 +31,32 @@ Then you fill in the PostgreSQL-specific connection fields:
 | **User name** | The username used to establish the connection. |
 | **Password** | The password; never stored by the frontend but written to Azure Key Vault. |
 
-**Authentication:** Basic (username + password). From these, Yres builds a single connection string of
-the form `host=…;port=5432;database=…;uid=…;encryptionmethod=0`.
+**Authentication:** Basic (username + password), with **SslMode 3** (SSL required). The wizard sets
+this automatically; you don't compose a connection string yourself.
 
-**Integration runtime:** a **self-hosted Integration Runtime** is required. The linked service
-references the self-hosted IR `pwccIntegrationRuntimeLinked` via `connectVia`. A PostgreSQL source
-therefore does not run on the cloud IR (`AutoResolveIntegrationRuntime`): select a published
-self-hosted IR that can reach the database — even when the database runs in the cloud.
+**Integration runtime:** the linked service is deployed **without `connectVia`** and therefore runs on
+the **cloud IR** (`AutoResolveIntegrationRuntime`). The IR choice you make in the wizard is currently
+**not applied** to the linked service for PostgreSQL. The PostgreSQL server must therefore be reachable
+from Azure (public endpoint or opened firewall); an on-premises database behind a closed firewall does
+not currently work without a manual adjustment of the linked service.
 
 ## Prerequisites
 
-- **Self-hosted Integration Runtime** installed and published on a machine that can reach the
-  PostgreSQL server (see [Connecting a data source](../../setup/databron-koppelen.md)).
-- **Network access** from the IR machine to `Host:Port` (default `5432`); if needed, adjust the firewall
-  or `pg_hba.conf` so the service account is allowed to connect.
+- **Reachability from Azure**: network access from the Azure cloud IR to `Host:Port` (default `5432`);
+  if needed, adjust the firewall or `pg_hba.conf` so the service account is allowed to connect. The
+  connection requires SSL (SslMode 3).
 - **Service account** with **read-only** rights on the relevant database (least privilege), rather than
   a personal or admin account.
 
-The credentials are stored by the backend in the customer's Azure Key Vault as a single secret
-following the convention `adf-{Source name}-connectionstring`; the linked service references it. You
-therefore never enter credentials in pipelines or configuration.
+The connection details are stored by the backend in the customer's Azure Key Vault as **five separate
+secrets**: `adf-{Source name}-server`, `adf-{Source name}-database`, `adf-{Source name}-port`,
+`adf-{Source name}-username` and `adf-{Source name}-password`. The linked service references the
+corresponding secret per field; you therefore never enter credentials in pipelines or configuration.
 
-:::note A single connection-string secret, self-hosted IR
-PostgreSQL uses the older deploy route with a single combined `…-connectionstring` secret. Previously a
-separate cloud variant (`AzurePostgreSql`) also existed, but that mapping is disabled (commented out) in
-the codebase and is no longer used — all PostgreSQL connections run through the single `PostgreSql`
-type with a self-hosted IR.
+:::note Historical: the legacy connection-string path
+Older PostgreSQL sources (created before driver version 2.0 was enforced) still use the old deploy
+route with a single combined `adf-{Source name}-connectionstring` secret. New sources always get the
+`AzurePostgreSql` form with the five separate secrets listed above.
 :::
 
 ## Obtaining the details

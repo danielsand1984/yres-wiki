@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Functions
-description: Complete reference of all 59 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
+description: Complete reference of all 66 scalar and table-valued functions in the IRIS_DWH database, grouped by schema.
 ---
 
 > Management is best done through the webapp; these objects are for the SQL endpoint (SSMS / Azure Data Studio).
 
-This page describes all **59 functions** in the data-plane database `IRIS_DWH`, grouped by schema.
+This page describes all **66 functions** in the data-plane database `IRIS_DWH` (as of August 2026 — the count grows with each release), grouped by schema.
 For each function you'll find the fully qualified name, the signature (as it appears in the `CREATE FUNCTION`
 header) and its purpose. The names and types are taken directly from the source code — the code is authoritative.
 
@@ -211,6 +211,18 @@ Used by the monitoring views to show deep links to ADF runs.
 **Purpose:** builds the OAuth 1.0 `Authorization` header (with HMAC-SHA256 signature, nonce and timestamp) for
 NetSuite API calls.
 
+### `[LoadManagement].[fxDeltaOrWhere]` — scalar
+
+**Purpose:** builds the delta `WHERE` fragment for dialects without `CASE`/`COALESCE` (such as SOQL): one column → `c1 >= v`, two columns → `(c1 >= v OR c2 >= v)` — equivalent to "greatest of the two ≥ value".
+
+### `[LoadManagement].[fxGetActualTargetName]` — scalar
+
+**Purpose:** resolves the **physical** target table name for an effective (Overwrite\*-applied) source triple: returns `UsedTables.ActualTableName` and only falls back to the historical `CONCAT_WS('_', …)` rule when no name is stored. Sibling of `fxGetActualTablename`, which works on the raw source triple.
+
+### `[LoadManagement].[fxLakeFeedColumns]` — table-valued
+
+**Purpose:** resolves the column set of the Parquet change feed for one lake target — per schema generation or as the union across all generations; the column order is binding because Parquet maps by position. Single source of truth for the objects `spMaintainLakeExternal` generates.
+
 ---
 
 ## Config (settings, license, logging)
@@ -293,6 +305,26 @@ signing outgoing API calls.
 
 **Purpose:** URL-encodes a string (replaces spaces and special characters with their `%XX` equivalent) for
 use in API URLs and OAuth signatures.
+
+### `[Config].[fxAddTransactionalTryCatch]` — scalar
+
+**Purpose:** wraps dynamic SQL in one all-or-nothing transaction: same logging as `fxAddTryCatch`, but with `SET XACT_ABORT ON` — on any error the whole block is rolled back, so the target object is never left half-modified. Used for multi-step mutations such as the remodel in `spUpdateTablesFromDictionary`.
+
+### `[Config].[fxCheckLicenseCore]` — scalar
+
+**Purpose:** holds the entire license validation/enforcement; `fxCheckLicense` is a thin, signature-unchanged wrapper around it. The extra fifth parameter (settings override) exists only here, so existing four-parameter call sites kept working.
+
+### `[Config].[fxServiceTierLadder]` — table-valued
+
+**Purpose:** the Azure SQL **DTU tier ladder as data**: one row per Basic/Standard/Premium tier with `LevelOrder`, so tiers can be compared without string parsing. vCore tiers are deliberately absent — they fall outside the automatic scaling.
+
+### `[Config].[fxResolveServiceTier]` — table-valued
+
+**Purpose:** THE scaling decision as a pure function: from the current tier, the requested tier, the highest live scaling request and the number of live workloads it determines the effective target tier plus the action (`SCALE UP`/`SCALE DOWN`/`NOTHING`/…). Deliberately reads no tables, so the decision is testable.
+
+### `[Config].[fxWorkflowHeartbeat]` — table-valued
+
+**Purpose:** when did this workflow run last show a sign of life? The newest of that workflow's `LoadLog` stamps and `LS_Trans` steps; the automatic tier scaling uses it to tell a working workflow from a cancelled run.
 
 ---
 
@@ -437,9 +469,10 @@ General helper functions for string manipulation and type conversion.
 
 **Signature:** `(@Temp VARCHAR(1000)) RETURNS VARCHAR(1000)`
 
-**Purpose:** removes all non-alphabetic characters from the input string (keeps only `a–z`). There is a
-second, identical definition (`fxRemoveNonAlphaCharacters_1.sql`) of the same function in the repo — both
-contain the same logic.
+**Purpose:** removes all non-alphabetic characters from the input string (keeps only `a–z`; the deployed
+version was made accent-strict via a binary collation, so accented letters no longer slip through the
+`[a-z]` range). The repo file `fxRemoveNonAlphaCharacters_1.sql` is an **old, undeployed copy** without
+that fix — it is not part of the build, so the two definitions are no longer identical.
 
 ### `[dbo].[fxToProper]`
 
@@ -529,6 +562,10 @@ types to the corresponding OData EDM types according to the OData standard.
 **Purpose:** generates the definitions for reporting objects in the `Exposed` schema. `@DataType` indicates
 the reporting role of the column (`[None]`, `[FACT]`, `[DIM1]`, `[DIM2]`, `[DIM4]`); based on the
 linked Yres source/table and surrogate key, the function builds the object definition.
+
+### `[Expose].[fxGetExposedViews]` — table-valued
+
+**Purpose:** the single source of truth for the naming of the decoupling views in the `[Exposed]` schema: one row per view belonging to an exposed object (`<Schema>__<Name>`, plus `<Schema>__<Name>_History` for `DIM4`). Every procedure that creates, drops or grants views resolves the name here.
 
 ---
 

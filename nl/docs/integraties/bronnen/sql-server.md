@@ -42,7 +42,7 @@ Staat de database achter een firewall of on-premises? Dan is een self-hosted Int
 
 ## Load types en delta
 
-Alle standaard load types zijn beschikbaar (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL). Voor SQL Server worden **twee delta-kolommen** ondersteund voor incrementeel laden — dat is de norm voor SQL-bronnen (alleen MySQL is hierop een uitzondering en ondersteunt één delta-kolom).
+Alle standaard load types zijn beschikbaar (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL). Voor SQL Server worden **twee delta-kolommen** ondersteund voor incrementeel laden — dat werkt op alle SQL-databasebronnen (ook MySQL). Uitzondering is **Snowflake**: daar is delta-filtering momenteel niet gegarandeerd (zie [Databron koppelen](../../setup/databron-koppelen.md)).
 
 > Officiële documentatie: [JDBC Driver for SQL Server — Connection URL](https://learn.microsoft.com/sql/connect/jdbc/building-the-connection-url)
 

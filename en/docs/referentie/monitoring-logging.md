@@ -191,7 +191,7 @@ Follow these steps when a load fails:
 5. Resolve the cause (e.g. a timeout → scale up the database tier or reduce `PageSize`) and start the load again via **Run pipelines**.
 
 :::tip Directly via SQL
-The same can be queried via a SQL endpoint: `SELECT * FROM [Monitoring].[vwLoads] WHERE [Status] = 'FAILED' ORDER BY [DateTime] DESC` for the failed runs, and `SELECT * FROM [Config].[vwUserlog] WHERE MessageType = 8` for the associated error messages.
+The same can be queried via a SQL endpoint: `SELECT * FROM [Monitoring].[vwLoads] WHERE [Status] = 'FAILED' ORDER BY [DateTime] DESC` for the failed runs, and `SELECT * FROM [Config].[vwUserlog] WHERE returnCode = 8` (or equivalently `WHERE MessageType = 'Error'`) for the associated error messages. Note: `returnCode` is the **numeric** level and `MessageType` the corresponding **text label** — 0 = Information, 4 = Warning, 8 = Error, 12 = System Error, 16 = Dump.
 :::
 
 ## Further reading

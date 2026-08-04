@@ -21,7 +21,7 @@ velden die voor elke bron gelden, vraagt het CBS-formulier maar één bronspecif
 
 | Veld | Toelichting |
 |---|---|
-| **Bronnaam** (`source_name`) | Verplicht, uniek per organisatie, 2–45 tekens, begint met een letter (alfanumeriek). Wordt de naam van de linked service in ADF. CBS heeft geen credentials, dus er worden geen `adf-{bronnaam}-…`-secrets in Key Vault aangemaakt. |
+| **Bronnaam** (`source_name`) | Verplicht, uniek per organisatie, 2–45 tekens, begint met een letter (alfanumeriek). Wordt de naam van de linked service in ADF. Yres maakt één Key Vault-secret aan: **`adf-{bronnaam}-http-url`** (de feed-URL); credential-secrets zijn er niet, want CBS heeft geen inloggegevens. |
 | **Type** | Kies **CBS** in de bronkiezer. |
 | **Integration runtime** | Standaard **`AutoResolveIntegrationRuntime`** (cloud). Zie [Integration runtime](#integration-runtime). |
 | **Credentials gelijk voor alle omgevingen?** | Voor CBS niet relevant — er zijn geen inloggegevens. |
@@ -47,7 +47,8 @@ De volgende instellingen worden **automatisch** ingevuld en zijn niet zichtbaar 
 ## Authenticatie
 
 **Anoniem — geen credentials.** CBS StatLine is open data, dus er zijn geen gebruikersnaam,
-wachtwoord, API-sleutel of token nodig. Er worden ook geen secrets in Azure Key Vault opgeslagen.
+wachtwoord, API-sleutel of token nodig. In Azure Key Vault wordt wél één secret aangemaakt —
+**`adf-{bronnaam}-http-url`** met de feed-URL — maar geen credential-secrets.
 
 ## Integration runtime
 
@@ -56,7 +57,7 @@ dus de standaard cloud-IR volstaat. Een self-hosted integration runtime is niet 
 
 ## Vereisten
 
-- Geen app-registratie, client secret, SAS-token of Key Vault-secret nodig.
+- Geen app-registratie, client secret of SAS-token nodig (het enige Key Vault-secret, de feed-URL, maakt Yres zelf aan).
 - Je hebt alleen de **dataset-identifier** nodig van de gewenste CBS-tabel. Zoek deze op in het
   CBS-dataportaal ([opendata.cbs.nl](https://opendata.cbs.nl/)) of via de catalogusservice.
 

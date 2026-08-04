@@ -72,7 +72,7 @@ Your own IRs that are published in ADF or via [shared integration runtimes](./ad
 
 Yres supports **21 backend source types** (`DataSourceType.php`): `MSSQL`, `AZSQL`, `DB2`, `MySql`, `PostgreSql`, `AFAS`, `Oracle`, `OData`, `ODataoAuth`, `FileServer`, `SharePoint`, `ExactOnline`, `Snowflake`, `RestService`, `Monday`, `AzureBlobStorage`, `Salesforce`, `SAC`, `SAP_BDC`, `Onestream`, `PowerBI`. `MSSQL` and `AZSQL` become the type `MSSQL_ADF` in the DWH.
 
-In addition, the picker contains **presets**: source labels that internally resolve to a generic type with a fixed URL/auth, so you only fill in a domain or token. Examples: `CBS`, `TweedeKamer`, `Topdesk`, `Graph`, `Dynamics_365` and `Intune_DWH` are stored as `OData`; `Simplicate` and `BoardEPM` as `RestService`.
+In addition, the picker contains **presets**: source labels that internally resolve to a generic type with a fixed URL/auth, so you only fill in a domain or token. Examples: `CBS`, `TweedeKamer`, `Topdesk`, `Dynamics_365` and `Intune_DWH` are stored as `OData`; `Graph` as `ODataoAuth`; `Simplicate` and `BoardEPM` as `RestService`.
 
 ### What happens when you add one
 

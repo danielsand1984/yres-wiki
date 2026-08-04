@@ -59,7 +59,7 @@ Organisaties zijn de basis van Yres: een afgeschermde ruimte met één of meer o
 (**dev**) gescheiden blijft van productie (**prod**). Elke organisatie heeft een **unieke, vrij te kiezen
 naam**; daarnaast wordt een **secundaire naam** automatisch gegenereerd met alleen toegestane tekens voor de
 naamgeving van Azure- en DevOps-resources. Organisatienamen mogen **geen niet-alfanumerieke tekens**
-bevatten (afgedwongen door `[dbo].[fxRemoveNonAlphaCharacters]`).
+bevatten.
 
 ## Gebruikers beheren
 
@@ -101,7 +101,7 @@ tiers is:
 |---|---|---|
 | **Essentials** | 2 | **1** |
 | **Advanced** | 5 | 2 |
-| **Ultimate** | Onbeperkt | Onbeperkt |
+| **Ultimate** | Onbeperkt | **max. 6** |
 
 Belangrijke gevolgen:
 

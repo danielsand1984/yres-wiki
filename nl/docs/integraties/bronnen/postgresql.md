@@ -8,9 +8,10 @@ description: PostgreSQL koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Directe koppeling
 
-PostgreSQL relationele database. Yres koppelt rechtstreeks op de database via een
-ADF-gekoppelde service van het type `PostgreSql`. Er is één PostgreSQL-brontype: dezelfde koppeling
-werkt voor zowel on-premises als in de cloud gehoste PostgreSQL-databases.
+PostgreSQL relationele database. Yres koppelt rechtstreeks op de database. Nieuwe PostgreSQL-bronnen
+worden automatisch op **driverversie 2.0** gezet en deployen als een ADF-gekoppelde service van het
+type **`AzurePostgreSql`**. Er is één PostgreSQL-brontype; de database moet vanaf Azure bereikbaar zijn
+(zie *Integration runtime* hieronder).
 
 ## Verwachte input
 
@@ -30,32 +31,32 @@ Daarna vul je de PostgreSQL-specifieke verbindingsvelden in:
 | **User name** | De gebruikersnaam waarmee verbinding wordt gemaakt. |
 | **Password** | Het wachtwoord; wordt nooit door de frontend opgeslagen maar naar Azure Key Vault geschreven. |
 
-**Authenticatie:** Basic (gebruikersnaam + wachtwoord). Yres bouwt hiervan één connection string van de
-vorm `host=…;port=5432;database=…;uid=…;encryptionmethod=0`.
+**Authenticatie:** Basic (gebruikersnaam + wachtwoord), met **SslMode 3** (SSL vereist). Dit stelt de
+wizard automatisch in; je hoeft zelf geen connection string samen te stellen.
 
-**Integration runtime:** een **self-hosted Integration Runtime** is vereist. De gekoppelde service
-verwijst via `connectVia` naar de self-hosted IR `pwccIntegrationRuntimeLinked`. Een PostgreSQL-bron
-draait dus niet op de cloud-IR (`AutoResolveIntegrationRuntime`): selecteer een gepubliceerde
-self-hosted IR die de database kan bereiken — ook wanneer de database in de cloud draait.
+**Integration runtime:** de gekoppelde service wordt **zonder `connectVia`** uitgerold en draait dus op
+de **cloud-IR** (`AutoResolveIntegrationRuntime`). De IR-keuze die je in de wizard maakt wordt bij
+PostgreSQL momenteel **niet toegepast** op de linked service. De PostgreSQL-server moet daarom vanaf
+Azure bereikbaar zijn (publiek endpoint of opengestelde firewall); een on-premises database achter een
+gesloten firewall werkt op dit moment niet zonder handmatige aanpassing van de linked service.
 
 ## Voorwaarden
 
-- **Self-hosted Integration Runtime** geïnstalleerd en gepubliceerd op een machine die de
-  PostgreSQL-server kan bereiken (zie [Databron koppelen](../../setup/databron-koppelen.md)).
-- **Netwerktoegang** vanaf de IR-machine naar `Host:Port` (standaard `5432`); pas zo nodig de firewall
-  of `pg_hba.conf` aan zodat het serviceaccount mag verbinden.
+- **Bereikbaarheid vanaf Azure**: netwerktoegang vanaf de Azure-cloud-IR naar `Host:Port` (standaard
+  `5432`); pas zo nodig de firewall of `pg_hba.conf` aan zodat het serviceaccount mag verbinden. De
+  verbinding vereist SSL (SslMode 3).
 - **Serviceaccount** met **alleen-lezen** rechten op de betreffende database (least privilege), in
   plaats van een persoonlijk of admin-account.
 
-De inloggegevens worden door de backend opgeslagen in de Azure Key Vault van de klant als één secret
-volgens de conventie `adf-{Bronnaam}-connectionstring`; de gekoppelde service verwijst daarnaar. Je
-voert dus nooit credentials in pipelines of configuratie in.
+De verbindingsgegevens worden door de backend opgeslagen in de Azure Key Vault van de klant als **vijf
+losse secrets**: `adf-{Bronnaam}-server`, `adf-{Bronnaam}-database`, `adf-{Bronnaam}-port`,
+`adf-{Bronnaam}-username` en `adf-{Bronnaam}-password`. De gekoppelde service verwijst per veld naar
+het bijbehorende secret; je voert dus nooit credentials in pipelines of configuratie in.
 
-:::note Eén connectionstring-secret, self-hosted IR
-PostgreSQL gebruikt de oudere deploy-route met één gecombineerde `…-connectionstring`-secret. Eerder
-bestond ook een aparte cloud-variant (`AzurePostgreSql`), maar die mapping is in de codebase
-uitgeschakeld (uitgecommentarieerd) en wordt niet meer gebruikt — alle PostgreSQL-koppelingen lopen via
-het ene `PostgreSql`-type met self-hosted IR.
+:::note Historisch: het legacy-connectionstring-pad
+Oudere PostgreSQL-bronnen (aangemaakt vóór het afdwingen van driverversie 2.0) gebruiken nog de oude
+deploy-route met één gecombineerd `adf-{Bronnaam}-connectionstring`-secret. Nieuwe bronnen krijgen
+altijd de `AzurePostgreSql`-vorm met de vijf losse secrets hierboven.
 :::
 
 ## Gegevens ophalen

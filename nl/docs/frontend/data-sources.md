@@ -72,7 +72,7 @@ Eigen IR's die in ADF of via [gedeelde integration runtimes](./admin.md) zijn ge
 
 Yres ondersteunt **21 backend-brontypes** (`DataSourceType.php`): `MSSQL`, `AZSQL`, `DB2`, `MySql`, `PostgreSql`, `AFAS`, `Oracle`, `OData`, `ODataoAuth`, `FileServer`, `SharePoint`, `ExactOnline`, `Snowflake`, `RestService`, `Monday`, `AzureBlobStorage`, `Salesforce`, `SAC`, `SAP_BDC`, `Onestream`, `PowerBI`. `MSSQL` en `AZSQL` worden in het DWH het type `MSSQL_ADF`.
 
-Daarnaast bevat de kiezer **presets**: bron-labels die intern op een generiek type uitkomen met vaste URL/auth, zodat je alleen een domein of token invult. Voorbeelden: `CBS`, `TweedeKamer`, `Topdesk`, `Graph`, `Dynamics_365` en `Intune_DWH` worden opgeslagen als `OData`; `Simplicate` en `BoardEPM` als `RestService`.
+Daarnaast bevat de kiezer **presets**: bron-labels die intern op een generiek type uitkomen met vaste URL/auth, zodat je alleen een domein of token invult. Voorbeelden: `CBS`, `TweedeKamer`, `Topdesk`, `Dynamics_365` en `Intune_DWH` worden opgeslagen als `OData`; `Graph` als `ODataoAuth`; `Simplicate` en `BoardEPM` als `RestService`.
 
 ### Wat er gebeurt bij het toevoegen
 

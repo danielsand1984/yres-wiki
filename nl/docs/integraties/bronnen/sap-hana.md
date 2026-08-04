@@ -8,33 +8,22 @@ description: SAP HANA koppelen aan Yres — verbindingseisen.
 
 **Categorie:** OData  ·  🏅 Official partner
 
-SAP HANA in-memory database. Official partner. Er is **geen apart invoerformulier** voor SAP HANA: je
-koppelt via een **generieke database-verbinding (ODBC)** of via een **XS OData**-service. Welke route je
-kiest bepaalt welk brontype en welke verbindingsvelden je gebruikt bij het toevoegen van de bron.
+SAP HANA in-memory database. Official partner. Er is **geen apart invoerformulier** voor SAP HANA en
+ook **geen generiek HANA-/ODBC-brontype**: je koppelt HANA-data via een **XS OData**-service, of via
+een export-route zoals **SAP_BDC**.
 
 ## Verwachte input
 
-Welke velden je invult hangt af van de gekozen route. Daarnaast vul je altijd de standaard bronvelden in
-(bronnaam, type, integration runtime, credentials-instellingen) uit de *Bron toevoegen*-wizard.
+Naast de route-specifieke velden hieronder vul je altijd de standaard bronvelden in (bronnaam, type,
+integration runtime, credentials-instellingen) uit de *Bron toevoegen*-wizard.
 
-### Route A — Directe ODBC-verbinding (generiek databasetype)
+:::caution Directe ODBC-/databaseverbinding — niet beschikbaar
+Yres heeft **geen** HANA- of ODBC-brontype: een directe databaseverbinding op de SQL-poort van de
+HANA-server is dus **niet mogelijk** — niet in de bronpicker en niet in de laadengine. Gebruik de XS
+OData-route hieronder, of de export-route via SAP_BDC.
+:::
 
-Gebruik het generieke database-invoerformulier en vul de databaseverbinding in:
-
-| Veld | Omschrijving |
-|---|---|
-| **Host** | De hostnaam (of IP) van de HANA-server. |
-| **Poort** | De SQL-poort. Deze volgt het patroon `3<instance>15` (bv. `30015` voor instance `00`); bij een tenant-database (MDC) is dit `3<instance>13` voor de system-DB of een tenant-specifieke poort. Een SAP-/HANA-beheerder bevestigt de juiste poort. |
-| **Gebruikersnaam** | Een HANA-DB-gebruiker met leesautorisatie (`SELECT`) op de betreffende schema's/objecten. |
-| **Wachtwoord** | Het wachtwoord van die DB-gebruiker. |
-
-**Authenticatie:** Basic (gebruikersnaam + wachtwoord).
-
-**Integration runtime:** **self-hosted integration runtime** (`pwccIntegrationRuntimeLinked`). Een directe
-ODBC-verbinding loopt naar een on-prem of afgeschermde HANA-server, dus de cloud-runtime
-`AutoResolveIntegrationRuntime` kan deze niet bereiken.
-
-### Route B — XS OData-service
+### XS OData-service
 
 Als data via een **XS OData**-service is gepubliceerd, koppel je die als OData-bron en vul je de
 service-URL in:
@@ -63,19 +52,14 @@ secrets.
 
 ## Gegevens ophalen
 
-SAP HANA koppelt via een **directe ODBC**-verbinding of via een **XS OData**-service.
+SAP HANA koppel je via een **XS OData**-service (of via de SAP_BDC-exportroute).
 
-- **Host en SQL-poort (ODBC)** — Bij een ODBC-verbinding heb je de hostnaam van de HANA-server en de
-  SQL-poort nodig. De SQL-poort volgt het patroon `3<instance>15` (bv. `30015` voor instance `00`); bij een
-  tenant-database (MDC) is dit `3<instance>13` voor de system-DB of een tenant-specifieke poort. Een SAP-/
-  HANA-beheerder kan deze bevestigen. Een directe ODBC-verbinding vereist een **self-hosted integration
-  runtime**.
-- **Databasegebruiker** — Een HANA-DB-gebruiker met wachtwoord en leesautorisatie (`SELECT`) op de
-  betreffende schema's/objecten.
-- **OData-alternatief** — Als data via een XS OData-service is gepubliceerd, gebruik je de service-URL
-  `https://<host>:<port>/<path>.xsodata`.
-
-Officiële docs: [Connect to SAP HANA via ODBC (SAP Help Portal)](https://help.sap.com/docs/SAP_HANA_CLIENT/f1b440ded6144a54ada97ff95dac7adf/66a4169b84b2466892e1af9781049836.html).
+- **OData-service-URL** — Als data via een XS OData-service is gepubliceerd, gebruik je de service-URL
+  `https://<host>:<port>/<path>.xsodata`. Een SAP-/HANA-beheerder kan de juiste service-URL bevestigen.
+- **Servicegebruiker** — De HANA-/XS-gebruiker (met wachtwoord) waarmee de service wordt benaderd, met
+  leesautorisatie op de betreffende objecten.
+- **Geen directe databaseverbinding** — hostnaam en SQL-poort van de HANA-server zijn voor Yres niet
+  relevant: een directe ODBC-verbinding wordt niet ondersteund (zie hierboven).
 
 ---
 

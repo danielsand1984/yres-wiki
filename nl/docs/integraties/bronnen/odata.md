@@ -41,9 +41,10 @@ vervaldatum credentials, tags) verwacht Yres voor OData:
 
 :::tip OAuth-feeds en helper-bronnen
 Voor een OData-feed met OAuth-authenticatie gebruik je niet deze bron maar
-[**OData OAuth**](odata-oauth.md). Enkele helper-bronnen (CBS, Tweede Kamer, Topdesk, Microsoft Graph,
-Dynamics 365) worden onder water ook als type `OData` opgeslagen, maar hebben hun eigen invulvelden;
-documenteer die op hun eigen pagina.
+[**OData OAuth**](odata-oauth.md). Enkele helper-bronnen (CBS, Tweede Kamer, Topdesk, Dynamics 365,
+Intune) worden onder water ook als type `OData` opgeslagen, maar hebben hun eigen invulvelden;
+documenteer die op hun eigen pagina. **Microsoft Graph** hoort niet in dit rijtje: die wordt als
+`ODataoAuth`-bron opgeslagen.
 :::
 
 ## Gegevens ophalen

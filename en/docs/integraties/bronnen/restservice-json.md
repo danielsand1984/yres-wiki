@@ -55,8 +55,8 @@ levels deep) and **ranks candidates by the name of the wrapper**. Common names g
 order:
 
 > `result` → `results` → `data` → `value` → `values` → `records` → `entries` → `rows` → `list` →
-> `elements` → `objects` → `nodes` → `children` → `resources` → `entities` → `events` → `logs` /
-> `messages` → `entity` → `documents`
+> `elements` → `objects` → `nodes` → `children` → `resources` → `objectlist` → `entities` → `events` →
+> `logs` / `messages` → `entity` → `documents`
 
 If there are several candidates, the best-known name wins; on a tie, the shallowest path. If the
 **root itself is an array** (`[ { … }, { … } ]`), the collection becomes `$`.

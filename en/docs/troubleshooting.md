@@ -155,7 +155,7 @@ fix script.
 
 | Check | Meaning | Example |
 |---|---|---|
-| **9.01** | Setting not active | an expected setting is set to `active = 0` |
+| **9.01** | **GodMode is active** (Warning) | the `GodMode` setting is set to `active = 1`; the check provides a cleanup script that removes the row |
 | **9.02** | Value falls outside `Options` | `EnvironmentType = '1'` (not a valid DTAP code) |
 | **9.03** | Expected setting is **missing** | a setting from the roster, for example `DefaultSurrogate`, is not in `[Config].[Settings]` |
 | **9.04** | **Unknown** setting present | a manually added or outdated setting that is no longer in the roster |

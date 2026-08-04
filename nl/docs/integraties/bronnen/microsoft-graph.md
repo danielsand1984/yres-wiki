@@ -44,12 +44,14 @@ bereikbaar over HTTPS, dus dit is doorgaans de juiste keuze. Een **self-hosted i
 runtime** is alleen nodig als je het verkeer via een afgeschermd of on-prem netwerk moet
 routeren.
 
-### Geheimen in Key Vault
+### Waar de gegevens terechtkomen
 
-De frontend slaat geen geheimen op. De ingevoerde waarden gaan naar de **Azure Key Vault**
-van de klant en worden vanuit de linked service gerefereerd. De geheimen worden weggeschreven
-onder de groep `adf-{bronnaam}-…` (de bronnaam die je in de wizard kiest, wordt de naam van de
-linked service én de prefix van de Key Vault-geheimen).
+De frontend slaat geen geheimen op. De **http-url, client ID, client secret en grant type**
+gaan als secrets naar de **Azure Key Vault** van de klant, onder de groep `adf-{bronnaam}-…`
+(de bronnaam die je in de wizard kiest, wordt de naam van de linked service én de prefix van
+de Key Vault-geheimen). Het **refresh token, de scope en de token-URL** staan in de tabel
+**`Config.Tokens`** in de klant-DWH-database, waar de token-flow ze gebruikt. De linked
+services zelf staan op `Anonymous` en refereren alleen het http-url-secret.
 
 ## Vereisten (prerequisites)
 

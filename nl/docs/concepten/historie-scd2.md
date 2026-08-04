@@ -36,7 +36,7 @@ Elke `HIS.<Target>`-tabel bevat naast de businesskolommen een vaste set framewor
 
 | Kolom | Type | Betekenis |
 |---|---|---|
-| `<tabel>_RowId` | `IDENTITY` (geheel getal) | De **surrogaatsleutel** van de rijversie — een uniek, oplopend nummer. De naam is de doeltabelnaam, geforceerd naar kleine letters met niet-alfanumerieke tekens verwijderd, plus `_RowId` (bijv. `AX_dbo_Cust` → `axdbocust_RowId`). |
+| `<tabel>_RowID` | `IDENTITY` (geheel getal) | De **surrogaatsleutel** van de rijversie — een uniek, oplopend nummer. De naam is de doeltabelnaam met niet-alfanumerieke tekens verwijderd (de casing blijft behouden), plus `_RowID` (bijv. `AX_dbo_Cust` → `AXdboCust_RowID`). |
 | `ETL_Date` | datum/tijd | Tijdstempel waarop deze rijversie geladen werd. Eén tijdstempel per load. |
 | `ETL_EndDate` | datum/tijd | Tijdstip waarop deze versie werd afgesloten. Zolang een versie **actueel** is, staat hier de sentinelwaarde **`2999-01-01 00:00:00`** ("open einde"). |
 | `KeyHash` | `varbinary(66)` | `HASHBYTES('SHA2_512', …)` over de **sleutelkolommen**. Identificeert *welk* record dit is. |

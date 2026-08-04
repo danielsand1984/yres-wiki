@@ -21,7 +21,7 @@ fields that apply to every source, the CBS form asks for just one source-specifi
 
 | Field | Notes |
 |---|---|
-| **Source name** (`source_name`) | Required, unique per organization, 2–45 characters, starts with a letter (alphanumeric). Becomes the name of the linked service in ADF. CBS has no credentials, so no `adf-{sourcename}-…` secrets are created in Key Vault. |
+| **Source name** (`source_name`) | Required, unique per organization, 2–45 characters, starts with a letter (alphanumeric). Becomes the name of the linked service in ADF. Yres creates one Key Vault secret: **`adf-{sourcename}-http-url`** (the feed URL); there are no credential secrets, since CBS has no login credentials. |
 | **Type** | Select **CBS** in the source picker. |
 | **Integration runtime** | Default **`AutoResolveIntegrationRuntime`** (cloud). See [Integration runtime](#integration-runtime). |
 | **Credentials the same for all environments?** | Not relevant for CBS — there are no credentials. |
@@ -47,7 +47,8 @@ The following settings are filled in **automatically** and are not visible in th
 ## Authentication
 
 **Anonymous — no credentials.** CBS StatLine is open data, so no username,
-password, API key or token is needed. No secrets are stored in Azure Key Vault either.
+password, API key or token is needed. One secret **is** created in Azure Key Vault —
+**`adf-{sourcename}-http-url`** holding the feed URL — but no credential secrets.
 
 ## Integration runtime
 
@@ -56,7 +57,7 @@ so the default cloud IR is sufficient. A self-hosted integration runtime is not 
 
 ## Requirements
 
-- No app registration, client secret, SAS token or Key Vault secret needed.
+- No app registration, client secret or SAS token needed (the only Key Vault secret, the feed URL, is created by Yres itself).
 - You only need the **dataset identifier** of the CBS table you want. Look it up in the
   CBS data portal ([opendata.cbs.nl](https://opendata.cbs.nl/)) or via the catalog service.
 

@@ -29,9 +29,10 @@ Controleer in de documentatie van de doel-API hoe die resultaten in pagina's opd
 - **No pagination**: geen extra velden; alle resultaten komen in één response.
 - **RFC5988**: paginering via `Link`-headers (RFC 5988); geen extra velden.
 - **BodyUrl**: voegt een veld **Body url** toe — het JSON-pad naar de volgende-pagina-URL in de response body (bijvoorbeeld `$['@odata.nextLink']`).
-- **Offset** / **OffsetPage** / **Paging**: voegen **Offset Object** en **Limit Object** toe — de naam van de offset- en limit-parameter die de API gebruikt.
+- **Offset** / **OffsetPage**: voegen **Offset Object** en **Limit Object** toe — de naam van de offset- en limit-parameter die de API gebruikt.
+- **Paging**: voegt alleen een **Page Object** toe — de naam van de paginanummer-parameter. Er is bij dit type géén Limit Object.
 
-Het gekozen paginatietype bepaalt ook welke dynamische pipelines Yres genereert (`Paging`/`Offset`/`OffsetPage`).
+Yres genereert overigens **altijd alle drie de paginatie-pipelines** (`Paging`/`Offset`/`OffsetPage`) plus de main-pipeline, ongeacht het gekozen paginatietype; het gekozen type bepaalt welke pipeline bij een load daadwerkelijk wordt gebruikt.
 
 ### Authenticatie — velden per type
 
@@ -99,13 +100,13 @@ Complexere combinaties, waarbij de Base URL zélf al een vaste query heeft:
 
 ### Paginatie
 
-Bij een paginatietype anders dan *No pagination* voegt de bijbehorende pipeline per pagina de pagina-parameters achteraan dezelfde querystring toe. De namen komen uit de velden **Offset Object** en **Limit Object** die je bij de bron invult; `pageSize` is de laadinstelling. Uitgaande van Base URL `https://api.example.com/v1?key=abc`, endpoint `/orders` en `pageSize = 500`:
+Bij een paginatietype anders dan *No pagination* voegt de bijbehorende pipeline per pagina de pagina-parameters achteraan dezelfde querystring toe. De namen komen uit de velden **Offset Object** en **Limit Object** (bij *Paging*: het **Page Object**) die je bij de bron invult; `pageSize` is de laadinstelling. Uitgaande van Base URL `https://api.example.com/v1?key=abc`, endpoint `/orders` en `pageSize = 500`:
 
 | Type | Velden | Pagina 1 | Pagina 2 | … |
 |---|---|---|---|---|
 | **Offset** | Offset Object `offset`, Limit Object `limit` | `…/orders?key=abc&offset=0&limit=500` | `…&offset=500&limit=500` | offset telt op met `pageSize` |
 | **OffsetPage** | Offset Object `page`, Limit Object `limit` | `…/orders?key=abc&page=0&limit=500` | `…&page=1&limit=500` | page telt op met 1, `limit` blijft `pageSize` |
-| **Paging** | Offset Object `page` | `…/orders?key=abc&page=1` | `…&page=2` | page telt op met 1, geen limit |
+| **Paging** | Page Object `page` | `…/orders?key=abc&page=1` | `…&page=2` | page telt op met 1, geen limit |
 
 De loop stopt zodra een pagina geen rijen meer teruggeeft. **BodyUrl** en **RFC5988** gebruiken géén offset/limit-velden: die volgen de volgende-pagina-link uit respectievelijk de response-body en de `Link`-header, startend vanaf de hierboven opgebouwde URL.
 

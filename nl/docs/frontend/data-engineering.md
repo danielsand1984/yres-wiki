@@ -64,7 +64,7 @@ De configuratie wordt opgeslagen via `MaintainPersistView`; het daadwerkelijke m
 
 De sub-link **Database objects** (`/dataengineering/objecthistory`) is de **objectviewer**: een boomstructuur met alle database-objecten — door een gebruiker én door Yres gemaakt — waarmee je per object de **huidige SQL-definitie** bekijkt, **versies vergelijkt** en via een **rechtsklik-menu** objecten aan een change toevoegt.
 
-Dit scherm is dé plek voor je **scripted/custom objecten** (je eigen tabellen, views, stored procedures en functions). Je bladert er door je DWH-objecten en voegt een eigen object — of een bestaand database-object — via het rechtsklik-menu (**Add to change**) rechtstreeks aan een change toe. Er is geen apart "Scripted objects"-scherm meer; scripted objecten beheer je hier in **Database objects**.
+Dit scherm is dé plek voor je **scripted/custom objecten** (je eigen tabellen, views, stored procedures en functions). Je bladert er door je DWH-objecten en voegt een eigen object — of een bestaand database-object — via het rechtsklik-menu (**Add to change**) rechtstreeks aan een change toe. Daarnaast bestaat er een apart **Scripted objects**-scherm (`/loadmanagement/scriptedObjects`, via de sidebar-link onder **Projects**); het rechtsklik-menu hier in Database objects is de snelste route om een object aan een change toe te voegen.
 
 ![Database objects-scherm: links de objectboom (schema → objecttype-map → object), in het midden het broncodepaneel met de huidige SQL-definitie (syntax highlighting), bovenaan de "No comparison"/"Compare versions"-dropdown en een rechtsklik-contextmenu met cascademenu's voor Add to change.](/img/screens/dataengineering-objecthistory.png)
 
@@ -72,7 +72,7 @@ Dit scherm is dé plek voor je **scripted/custom objecten** (je eigen tabellen, 
 
 (1) **Objectboom** — drie niveaus: **schema → objecttype-map → object**. Bijvoorbeeld `dbo → SCALAR_FUNCTION → fxToReadableSize`, of `ODS → TABLE → AzureSQL_dbo_attractions`. Klik een object aan om zijn definitie te laden.
 (2) **Broncodepaneel** — toont de **huidige SQL-definitie** van het geselecteerde object, met syntax highlighting.
-(3) **"No comparison" / "Compare versions"-dropdown** (+ layout-toggles) — bovenaan; standaard "No comparison". Kies **Compare versions** voor een diff.
+(3) **"No comparison" / "Compare versions"-dropdown** (+ layout-toggles) — bovenaan; standaard "No comparison". Kies **Compare versions** voor een diff; bij organisaties met meerdere omgevingen is er een derde optie, **Compare environments**, die de definitie tussen omgevingen vergelijkt.
 (4) **Versie-diff** — bij **Compare versions** verschijnt een rood/groen-verschil tussen de huidige versie en een vorige `ALTER` (toegevoegde/verwijderde kolommen, indexen, enzovoort).
 (5) **Rechtsklik-contextmenu** — rechtsklik op een object voor de change- en dependency-acties (zie [Objecten aan een change toevoegen](#objecten-aan-een-change-toevoegen)).
 

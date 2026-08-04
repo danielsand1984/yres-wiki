@@ -188,7 +188,7 @@ Sleutelkolommen identificeren een rij uniek en bepalen de `KeyHash` — daarmee 
 Voor incrementele loads (load type begint met `DELTA`) gebruikt Yres een **deltakolom**: een oplopende wijzigingskolom waarmee alleen nieuwe of veranderde records worden opgehaald. Voor **SQL-bronnen worden twee deltakolommen ondersteund** — komma-gescheiden in `LoadManagement.UsedTables.deltaColumn`, met hetzelfde datatype; de hoogste waarde telt.
 
 :::note Ondersteunde bronnen
-Twee deltakolommen werken op alle SQL-/databasebronnen: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake en OneStream** (de engine gebruikt een ANSI-`COALESCE`, dus ook MySQL).
+Twee deltakolommen werken op alle SQL-/databasebronnen: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase en OneStream** (de engine gebruikt een ANSI-`COALESCE`, dus ook MySQL). Voor **Snowflake** is delta-filtering momenteel **niet gegarandeerd**: de Snowflake-pipeline voert de gegenereerde delta-WHERE niet gegarandeerd uit.
 :::
 
 ## Wat er server-side gebeurt

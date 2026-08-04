@@ -24,6 +24,8 @@ dit is het patroon:
 
 - **Databases** (Microsoft SQL, Azure SQL, MySQL, PostgreSQL, DB2, Oracle, Snowflake): host/account ·
   database (of *service name* bij Oracle) · poort · gebruikersnaam · wachtwoord. **Auth:** Basic.
+  *Uitzondering:* het Snowflake-formulier heeft **geen poortveld** — daar vul je **account
+  (incl. regio)**, gebruikersnaam, wachtwoord, database, **warehouse** en optioneel **role** in.
 - **Azure-opslag** (Azure Blob Storage, SAP Business Data Cloud, SAP Datasphere, Azure Data Lake):
   account/container + **SAS-token**. **Auth:** SAS.
 - **OData / REST**: service-URL + paginatie-instelling, met Anonymous, Basic of OAuth2.
@@ -32,8 +34,8 @@ dit is het patroon:
 - **SaaS met token** (AFAS, Monday, Simplicate, Exact Online, Salesforce): API-token of OAuth2.
 
 **Integration Runtime:** cloudbereikbare bronnen draaien op de cloud-IR `AutoResolveIntegrationRuntime`;
-on-premises of afgeschermde bronnen (lokale databases, File Server, lokale bestanden) vereisen een
-**self-hosted Integration Runtime**.
+on-premises of afgeschermde bronnen (lokale databases, File Server — óók voor lokale bestanden die je
+niet naar Blob Storage uploadt) vereisen een **self-hosted Integration Runtime**.
 
 **Secrets:** Yres slaat nooit credentials in de webapp op. Alles gaat naar de **Azure Key Vault** van de
 klant, met de naamconventie `adf-{bronnaam}-{suffix}`; de linked service verwijst daarnaar.
@@ -97,9 +99,9 @@ gebruikersnaam + wachtwoord).
 | SharePoint | Azure AD app-only; rechten via `appinv.aspx` |
 | Microsoft Teams | Via **Microsoft Graph** (OData/REST onder water) |
 | Microsoft Graph | OAuth2 (client credentials of authorization code) |
-| Dynamics 365 (Business Central) | Via **OData** + OAuth2 onder water |
+| Dynamics 365 (Business Central) | Via **OData** (OAuth2-support in ontwikkeling) |
 | Topdesk | Via **OData** (reporting-endpoint) + Basic auth onder water |
-| Microsoft Intune (Intune Data Warehouse) | Via **OData** + OAuth2 onder water |
+| Microsoft Intune (Intune Data Warehouse) | Via **OData** (OAuth2-support in ontwikkeling) |
 | Power BI | Azure AD service principal; geconsumeerd via de Power BI API (geen ADF-copy) |
 
 ## Azure-opslag & SAP (SAS-token)
@@ -123,9 +125,9 @@ webapp; voor Datasphere wordt dezelfde SAS-invoer gebruikt.
 
 | Bron | Bijzonderheid |
 |---|---|
-| Lokale bestanden (CSV, Excel) | Self-hosted IR **verplicht** |
-| File Server | UNC-pad; self-hosted IR **verplicht** |
-| Azure Data Lake (Gen2) | SAS-token (AzureBlobFS) |
+| Lokale bestanden (CSV, Excel) | Geen eigen brontype — **upload** naar een [Azure Blob Storage](bronnen/azure-blob-storage.md)-bron (geen IR nodig) óf via een [File Server](bronnen/file-server.md)-bron met lokaal pad (self-hosted IR) |
+| File Server | UNC-/lokaal pad; self-hosted IR **verplicht** |
+| Azure Data Lake (Gen2) | SAS-token — koppelen als Azure Blob Storage-bron (`AzureBlobStorage`-linked service) |
 
 :::note Geen losse wizard-keuze
 **Azure Data Lake** en **SAP Datasphere** hebben wel een ADF-template (`AzureBlobFS`), maar zijn **geen

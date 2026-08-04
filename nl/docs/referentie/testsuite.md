@@ -6,7 +6,7 @@ description: De meegeleverde regressietestsuite voor de Yres-database — sinds 
 
 # Testsuite (DWH)
 
-De Yres data-plane database (`IRIS_DWH`) wordt geleverd met een **regressietestsuite** die het complete SQL-framework doorlicht: elk in-scope object (stored procedures, functions, views en triggers) heeft precies één testprocedure. Die ene procedure toetst sinds v1.56 wél meerdere scenario's: per objecttype doorloopt hij een vaste matrix — naast het happy path ook lege invoer, `NULL`, grensgevallen, ongeldige invoer, ontbrekende afhankelijkheden en meerdere rijen tegelijk. In totaal gaat het om circa **1665 controles over 194 objecten**.
+De Yres data-plane database (`IRIS_DWH`) wordt geleverd met een **regressietestsuite** die het complete SQL-framework doorlicht: elk in-scope object (stored procedures, functions, views en triggers) heeft precies één testprocedure. Die ene procedure toetst sinds v1.56 wél meerdere scenario's: per objecttype doorloopt hij een vaste matrix — naast het happy path ook lege invoer, `NULL`, grensgevallen, ongeldige invoer, ontbrekende afhankelijkheden en meerdere rijen tegelijk. In totaal gaat het om circa **1655 controles over 195 objecten** (indicatie — de suite groeit per release mee).
 
 Vanaf **v1.56** hoort de suite bij de database zelf: hij zit in de DACPAC als het schema **`[Test]`** en wordt dus **met elke Yres-versie meegeïnstalleerd**. Er valt niets te installeren — elke omgeving op de actuele versie heeft alle `Test.*`-objecten al staan. Er draait ook **niets automatisch**: de suite komt alleen in actie als je er zelf een procedure voor aanroept.
 
@@ -67,30 +67,27 @@ Daarnaast is er een zelfstandige **load-engine-suite** (`Test.spRunLoadEngineTes
 EXEC Test.spRunLoadEngineTests @Round = 'ticket-123';
 ```
 
-### Eén volledige run tegelijk — je uitslag is altijd van jouw eigen run
+### Eén volledige run tegelijk — start er zelf maar één
 
-De suite zorgt er zelf voor dat er maximaal één volledige run (`Test.spRunAll`, `Test.spRunSuite` of
-`Test.spRunLoadEngineTests`) tegelijk actief is. Dat is geen beperking maar een garantie: alle
-testfixtures leven in één gedeelde `ZZTEST`-naamruimte, dus zonder die bescherming zou een tweede,
-gelijktijdig gestarte run de fixtures van de eerste kunnen opruimen terwijl die ze nog gebruikt — met een
-**foute uitslag** als gevolg, niet met een foutmelding. Juist die stille faalmodus is wat de vergrendeling
-voorkomt: elke uitslag die je terugkrijgt komt gegarandeerd van een eigen, ongestoorde run.
+Alle testfixtures leven in één gedeelde `ZZTEST`-naamruimte. Twee volledige runs (`Test.spRunAll`,
+`Test.spRunSuite` of `Test.spRunLoadEngineTests`) die tegelijk draaien kunnen daardoor elkaars fixtures
+opruimen terwijl de ander ze nog gebruikt — met een **foute uitslag** als gevolg, niet met een
+foutmelding. Start daarom maximaal één volledige run tegelijk (let op bij bijvoorbeeld twee collega's die
+kort na elkaar op de testsuite-knop klikken); kijk bij twijfel in `Test.RunLog` of er al een run bezig is.
 
-Start je een run terwijl er al één loopt (bijvoorbeeld twee collega's die kort na elkaar op de
-testsuite-knop in de webapp klikken), dan hoor je dat direct — er wordt niet gewacht en niet stilzwijgend
-overschreven:
+Wat de suite in de huidige release zélf bewaakt, is de omgeving: elke volledige run begint met
+`Test.spPreflight`, die restanten van een eerdere (gecrashte) run opruimt en een **bezet-controle** op
+lopende loads doet. Met `@FailIfBusy = 1` breekt de run dan af (foutmelding 50100, *"active loads
+detected"*); standaard (`@FailIfBusy = 0`) is de controle alleen een advies en verschijnt hij als
+SKIP-regel in het resultaat. Losse testprocedures (`tst_*`) handmatig draaien tijdens ontwikkeling kan
+altijd.
 
-```
-Msg 50110, ...
-Test.spRunAll: another full test run is already in progress -- concurrent runs share one ZZTEST fixture
-namespace and would corrupt each other's results. Held by RunId 1160 [ALL/ticket-123], started
-2026-08-03T17:40:37 by gebruiker@host. Wait for it to finish (or check Test.RunLog), then retry.
-```
-
-Waar dat te achterhalen is, noemt de melding meteen wélke run de vergrendeling vasthoudt (`RunId`,
-suite/label, starttijd, gebruiker) — zo zie je in `Test.RunLog` in één oogopslag wanneer je opnieuw kunt
-starten, zonder te hoeven gissen. Een losse testprocedure (`tst_*`) handmatig draaien tijdens ontwikkeling
-wordt hierdoor nooit geblokkeerd: alleen een *volledige* run wacht op deze vergrendeling.
+:::note Komt in een volgende release: een harde vergrendeling
+Een volgende release voegt een echte mutual-exclusion toe: een tweede volledige run wordt dan direct
+geweigerd met een foutmelding (o.a. *"another full test run is already in progress"*, incl. wélke `RunId`
+de vergrendeling vasthoudt, met suite/label, starttijd en gebruiker). Tot die tijd is het niet starten
+van een tweede gelijktijdige run een afspraak, geen afgedwongen garantie.
+:::
 
 ## Resultaten lezen
 

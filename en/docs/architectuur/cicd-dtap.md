@@ -131,7 +131,7 @@ The path is always **release → reimport → reinstall**, driven from the ☰ m
 ### release → reimport → reinstall — step by step
 
 1. **Edit in dev and bundle under a Change.** Every data-plane edit (new tables, scripted objects) is recorded in `Change.ChangeContent` under a **Change**, which belongs to a **Project**. Scripted/custom objects are added to the change from **Database objects** (the object tree under Data Engineering).
-2. **Release the change** — in the **dev ▸** submenu of the ☰ menu, **release change** runs `[Change].[spRelease]`, which validates the dependencies and locks the change (no further edits). Yres blocks releasing if the change contains content that another, not-yet-released change depends on; the error message names that dependent change(s).
+2. **Release the change** — in the **dev ▸** submenu of the ☰ menu, **release change** runs `[Change].[spRelease]`, which validates the dependencies and locks the change (no further edits). Yres blocks releasing if the change itself **depends on** changes that have not been released yet; the error message names the change(s) this change depends on.
 3. **Reimport to the next environment** — **Reimport change** in the target environment's submenu runs `[Change].[spImport]`, which imports the released change (as JSON) into the target environment. This is a **DWH-only** step.
 4. **Reinstall** — **Reinstall change** in the target environment's submenu runs `[Change].[spInstall]`, which applies the change (`@Execute`: `1` = execute, `0` = print SQL, `2` = impact analysis). The ADF pipeline **`InstallChange`** is the automation entry point.
 

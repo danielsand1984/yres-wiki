@@ -28,7 +28,7 @@ Je koppelt Exact Online via een eigen, vooraf geregistreerde Exact-app. In het f
 
 **Credentials per omgeving:** voor Exact Online zijn de credentials **altijd verschillend per omgeving** (Yres dwingt "credentials identiek voor alle omgevingen" af op **Nee**). Je registreert dus een **aparte Exact-app voor dev én voor prod** en doorloopt de OAuth-login per omgeving los.
 
-**Secrets:** de webapp slaat geen secrets op in de frontend. Client secret en de opgehaalde tokens gaan naar de **Azure Key Vault** van de klant (`adf-{bronnaam}-…`); de linked service refereert daaraan. De tokens worden bij de uitvoering in de REST-call geïnjecteerd — de committed linked services (`ExactOnline.json` / `ExactOnline_HTTP.json`, type `RestService`/`HttpServer`) staan zelf op `Anonymous`.
+**Secrets:** de webapp slaat geen secrets op in de frontend. De **Client ID en het Client secret** gaan naar de **Azure Key Vault** van de klant (`adf-{bronnaam}-…`); de **access- en refresh-tokens** staan in de tabel **`Config.Tokens`** in de klant-DWH-database, waar Yres ze bijhoudt en ververst. De tokens worden bij de uitvoering in de REST-call geïnjecteerd — de committed linked services (`ExactOnline.json` / `ExactOnline_HTTP.json`, type `RestService`/`HttpServer`) staan zelf op `Anonymous`.
 
 ## Voorbereiding
 

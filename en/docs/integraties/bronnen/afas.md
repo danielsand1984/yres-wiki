@@ -24,16 +24,18 @@ AFAS source asks for the following fields:
 | **URL** | The REST base URL of your AFAS environment. It must end in `…afas.online/profitrestservices`. Example/placeholder: `https://12345.rest.afas.online/profitrestservices`, where `12345` is your AFAS environment number. |
 | **API token** | The full token blob that AFAS generates for the App connector: `<token><version>1</version><data>…</data></token>`. Paste the whole value, not just the `data` part. |
 
-**Authentication:** the API token is sent as an **Authorization header**
-(RestService with auth headers — `hasAuthHeaders() = true`). There is no
-username/password.
+**Authentication:** the API token is sent as an **Authorization header**.
+**Yres builds that header itself**: you paste the raw token blob (the XML exactly as
+AFAS delivers it), and the backend base64-encodes it and prepends the prefix
+`AfasToken `. There is no username/password.
 
 **Integration runtime:** **cloud** — `AutoResolveIntegrationRuntime`. AFAS Online is
 publicly reachable over HTTPS, so a self-hosted integration runtime is not needed.
 
-**Where the credentials end up:** the frontend stores no secrets. The API token
-goes into the **Azure Key Vault** of your own environment and is retrieved from the
-linked service as the secret **`adf-AFAS-connectionstring`** (the secret falls under the
+**Where the credentials end up:** the frontend stores no secrets. The backend
+writes the assembled header value (`AfasToken ` + base64 of your token) to the
+**Azure Key Vault** of your own environment; the linked service retrieves it as the
+secret **`adf-AFAS-connectionstring`** (the secret falls under the
 naming group `adf-{sourcename}-…`). The linked service (`AFAS.json`) itself is set to
 `Anonymous` and sets the token via `authHeaders.Authorization` as a reference to that
 Key Vault secret.
@@ -47,11 +49,13 @@ Key Vault secret.
    `<token>…</token>` blob that you paste into the **API token** field.
 4. Note your environment number for the **URL** (`https://<environmentnumber>.rest.afas.online/profitrestservices`).
 
-:::note Authorization header
-The exact form of the Authorization header (for example a prefix such as
-`AfasToken <token>`) and any license/subscription requirements for the App connector
-are determined by AFAS, not by Yres. Yres sends the value you provide as the
-header; check the current AFAS documentation for the precise header formatting.
+:::note Paste the token unmodified — Yres does the encoding
+Do **not add a prefix or encoding yourself**. You paste the raw
+`<token>…</token>` blob exactly as AFAS delivers it; the Yres backend performs the
+base64 encoding, prepends the `AfasToken ` prefix, and stores the result as the
+connectionstring secret in Key Vault. A token you have already base64-encoded or
+prefixed with `AfasToken ` yourself gets encoded twice and will not work.
+Any license/subscription requirements for the App connector are determined by AFAS.
 :::
 
 ## Load types & delta

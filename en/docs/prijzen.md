@@ -23,19 +23,19 @@ The license itself is tied to a **single-use invitation link** from Plainwater: 
 |---|---|---|---|
 | **Price** | €350/mo | €674/mo | €997/mo |
 | **For** | Small teams & starting environments | Most data teams | Large, complex environments |
-| **Environments** | 1 | 2 | Unlimited |
+| **Environments** | 1 | 2 | 6 |
 | **Source systems** | Max. 2 | Max. 5 | All supported sources |
 | **Tables** | Unlimited | Unlimited | Unlimited |
 | **Hosting** | Your own Azure tenant | Your own Azure tenant | Your own Azure tenant |
 | **Changes system** | — | ✅ | ✅ |
 | **Automatic database scaling** | — | ✅ | ✅ |
-| **Web application firewall** | — | ✅ | ✅ |
+| **Web application firewall** | ✅ | ✅ | ✅ |
 | **Local networks (via IR)** | ✅ | ✅ | ✅ |
 | **Site-to-site VPN** | — | — | ✅ |
 
 ⭐ Advanced = **most chosen**.
 
-The **source systems / environments** split per package (2 / 1 · 5 / 2 · unlimited / unlimited) is fixed in the license. Tables are not limited: these are configuration rows, not licensed objects.
+The **source systems / environments** split per package (2 / 1 · 5 / 2 · unlimited / 6) is fixed in the license. Tables are unlimited in all packages; technically, though, the license does include a `TABLES` limit key as well as size caps per database and table (`DBSIZE_HIS`/`MAXSIZE_HIS`) — see [License & limits](./referentie/licentie-limieten.md) for all keys.
 
 
 :::note Feature allocation per package
@@ -52,10 +52,10 @@ Yres does **not actively enforce** feature gating at this time; the allocation a
 For small teams and starting environments. One environment, a maximum of two source systems, and an unlimited number of tables. Local networks are reachable via a self-hosted integration runtime.
 
 ### Advanced ⭐
-The most chosen package. In addition to a second environment — so you can safely keep developing on `dev` without touching existing dashboards in production — you get access to the **changes system**, **automatic scaling** of databases and the **web application firewall**.
+The most chosen package. In addition to a second environment — so you can safely keep developing on `dev` without touching existing dashboards in production — you get access to the **changes system** and **automatic scaling** of databases. The **web application firewall** is included in all packages.
 
 ### Ultimate
-For large, complex environments: an unlimited number of source systems and environments, plus the option of a **site-to-site VPN** (at an additional cost) for isolated networks.
+For large, complex environments: all supported source systems, up to **six environments**, plus the option of a **site-to-site VPN** (at an additional cost) for isolated networks.
 
 ## Frequently asked pricing questions
 

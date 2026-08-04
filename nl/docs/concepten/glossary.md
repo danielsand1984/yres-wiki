@@ -77,7 +77,7 @@ De vaste dataspine is: bron → ADF Copy → `STAGE` → `spLoadDWH` → `spHIS_
 | **`ETL_EndDate`** | Einddatum van een rij-versie. Voor de huidige (open) versie is dit de sentinel **`2999-01-01 00:00:00`**. Bij sluiten van een rij wordt `ETL_EndDate` op de `ETL_Date` van de nieuwe versie gezet. |
 | **`isCurrent`** | `bit`-vlag: `1` = huidige versie, `0` = gesloten/historisch. Altijd `1` of `0`, nooit `NULL`. Er is precies één huidige rij per key. |
 | **`Delta`** | `nvarchar(1)`-vlag op de HIS-rij: `'N'` = nieuw, `'D'` = gewijzigd. |
-| **`<stripped>_RowId`** | IDENTITY-surrogaatkolom per HIS-tabel. De naam is de doeltabelnaam, lowercased met niet-alfanumerieke tekens verwijderd, plus `_RowId` (bv. `AX_dbo_Cust` → `axdbocust_RowId`). |
+| **`<stripped>_RowID`** | IDENTITY-surrogaatkolom per HIS-tabel. De naam is de doeltabelnaam met niet-alfanumerieke tekens verwijderd (de casing blijft behouden), plus `_RowID` (bv. `AX_dbo_Cust` → `AXdboCust_RowID`). |
 | **Surrogate key** | Optionele door Yres gegenereerde integer-sleutel voor de natural key, opgeslagen in `[LoadManagement].[SurrogateKeys]`. Gestuurd door `fxGetSurrogate(@Target)` en de setting `DefaultSurrogate`. |
 | **Delta (watermark)** | De wijzigingskolom-waarde die DELTA/DELTAIMAGE/ADDITIONAL als watermerk bijhouden. Na de load wordt `UsedTables.LatestRecord = MAX(<DeltaColumn>)` bijgewerkt, zodat de volgende run alleen nieuwere records ophaalt. |
 
@@ -86,7 +86,7 @@ De vaste dataspine is: bron → ADF Copy → `STAGE` → `spLoadDWH` → `spHIS_
 | Term | Betekenis |
 |---|---|
 | **Load type** | Bepaalt wat er met de bestaande HIS-data gebeurt. Er zijn **zeven** types: FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL. Ingesteld per tabel in `LoadManagement.UsedTables.LoadType`, per run overschrijfbaar. Zie [Load types](./load-types.md). |
-| **`spLoadDWH`** | Het instappunt dat ADF aanroept nadat STAGE is gevuld. Een dunne pass-through die direct `spHIS_InsertAndUpdate` aanroept (de oude `spUpdateETL_EndDate`-aanroep is uitgecommentarieerd; end-dating gebeurt nu binnen `spHIS_InsertAndUpdate`). |
+| **`spLoadDWH`** | Het instappunt dat ADF aanroept nadat STAGE is gevuld. Bevat eerst een arbitragegate die de load bewust laat falen zolang er voor het target een `RUNNING` archiveringsrun loopt (LoadType `ARCHIVING`), en roept daarna `spHIS_InsertAndUpdate` aan (de oude `spUpdateETL_EndDate`-aanroep is uitgecommentarieerd; end-dating gebeurt nu binnen `spHIS_InsertAndUpdate`). |
 | **`spHIS_InsertAndUpdate`** | De SCD2-merge-engine die STAGE → HIS verwerkt. Behandelt zes load types expliciet (`DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL`); `FULL` is het impliciete standaardpad. |
 | **`spMaterializeViews`** | Bouwt na de load de gematerialiseerde/persisted views in de Expose-laag bij. |
 | **Persisted view** | Opgeslagen resultaat van een view-query; herladen op volgorde van `level`. |

@@ -77,7 +77,7 @@ The fixed data spine is: source → ADF Copy → `STAGE` → `spLoadDWH` → `sp
 | **`ETL_EndDate`** | End date of a row version. For the current (open) version this is the sentinel **`2999-01-01 00:00:00`**. When a row is closed, `ETL_EndDate` is set to the `ETL_Date` of the new version. |
 | **`isCurrent`** | `bit` flag: `1` = current version, `0` = closed/historical. Always `1` or `0`, never `NULL`. There is exactly one current row per key. |
 | **`Delta`** | `nvarchar(1)` flag on the HIS row: `'N'` = new, `'D'` = changed. |
-| **`<stripped>_RowId`** | IDENTITY surrogate column per HIS table. The name is the target table name, lowercased with non-alphanumeric characters removed, plus `_RowId` (e.g. `AX_dbo_Cust` → `axdbocust_RowId`). |
+| **`<stripped>_RowID`** | IDENTITY surrogate column per HIS table. The name is the target table name with non-alphanumeric characters removed (casing is preserved), plus `_RowID` (e.g. `AX_dbo_Cust` → `AXdboCust_RowID`). |
 | **Surrogate key** | Optional Yres-generated integer key for the natural key, stored in `[LoadManagement].[SurrogateKeys]`. Driven by `fxGetSurrogate(@Target)` and the setting `DefaultSurrogate`. |
 | **Delta (watermark)** | The change-column value that DELTA/DELTAIMAGE/ADDITIONAL keep as a watermark. After the load, `UsedTables.LatestRecord = MAX(<DeltaColumn>)` is updated, so the next run only fetches newer records. |
 
@@ -86,7 +86,7 @@ The fixed data spine is: source → ADF Copy → `STAGE` → `spLoadDWH` → `sp
 | Term | Meaning |
 |---|---|
 | **Load type** | Determines what happens to the existing HIS data. There are **seven** types: FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL. Set per table in `LoadManagement.UsedTables.LoadType`, overridable per run. See [Load types](./load-types.md). |
-| **`spLoadDWH`** | The entry point ADF calls after STAGE is populated. A thin pass-through that calls `spHIS_InsertAndUpdate` directly (the old `spUpdateETL_EndDate` call is commented out; end-dating now happens inside `spHIS_InsertAndUpdate`). |
+| **`spLoadDWH`** | The entry point ADF calls after STAGE is populated. First runs an arbitration gate that deliberately fails the load while a `RUNNING` archiving run (LoadType `ARCHIVING`) exists for the target, then calls `spHIS_InsertAndUpdate` (the old `spUpdateETL_EndDate` call is commented out; end-dating now happens inside `spHIS_InsertAndUpdate`). |
 | **`spHIS_InsertAndUpdate`** | The SCD2 merge engine that processes STAGE → HIS. Handles six load types explicitly (`DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL`); `FULL` is the implicit default path. |
 | **`spMaterializeViews`** | After the load, refreshes the materialized/persisted views in the Expose layer. |
 | **Persisted view** | Stored result of a view query; reloaded in `level` order. |

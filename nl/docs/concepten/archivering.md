@@ -15,7 +15,7 @@ Archivering werkt in drie stappen per tabel, binnen één run van de `Dynamic Ar
 3. **Union-view verversen** — `[LoadManagement].[spArchiveMaintainView]` genereert per tabel de view `[<HIS-schema>].[<Target>_IncArchive]` die de live tabel en de gearchiveerde Parquet-bestanden als één geheel toont.
 
 :::tip Eerst proefdraaien, dan pas opschonen
-De purge staat standaard **uit** (instelling `ArchivingPurgeEnabled = 0`). In die stand kopieert de workflow alleen naar de Data Lake en wordt er niets verwijderd — ideaal om de configuratie en de Parquet-uitvoer te controleren. Zet daarna `ArchivingPurgeEnabled` op `1` (én `AllowDeletesFromDB` op `1` — een dubbele beveiliging) om echt op te schonen.
+De purge staat standaard **uit** (instelling `ArchivingPurgeEnabled = 0`). In die stand kopieert de workflow alleen naar de Data Lake en wordt er niets verwijderd — ideaal om de configuratie en de Parquet-uitvoer te controleren. Zet daarna `ArchivingPurgeEnabled` op `1` om echt op te schonen — dit is de enige schakelaar van de purge. (`AllowDeletesFromDB` speelt hier bewust geen rol: die instelling gaat over het droppen van objecten, niet over het verwijderen van data.)
 :::
 
 ## Twee archiveringsmodi per tabel
@@ -66,7 +66,7 @@ Handmatige run / trigger  (Source, Schema, Table, RunningTier, RevertToTier)
                                         → Parquet op archive/… (AzureDataLakeStorage_ARCHIVE)
         Purge archived rows          → [LoadManagement].[spArchivePurge]
                                         telt opnieuw; verwijdert alleen bij exacte match,
-                                        gefaseerd (batches), dubbel gegate door instellingen
+                                        gefaseerd (batches), gegate door ArchivingPurgeEnabled
         Maintain archive view        → [LoadManagement].[spArchiveMaintainView]
                                         ververst de <Target>_IncArchive-unionview
   → (optioneel) Set DB Tier Back     → schaal de database terug
@@ -100,11 +100,10 @@ De views lezen het Data Lake rechtstreeks vanuit SQL. Daarvoor moet eenmalig per
 
 | Instelling (`[Config].[Settings]`) | Standaard | Wat het regelt |
 |---|---|---|
-| **`ArchivingPurgeEnabled`** | `0` (Nee) | Hoofdschakelaar van de opschoonstap. `0` = alleen kopiëren (proefdraaien), `1` = na geverifieerde kopie ook verwijderen uit `HIS`. |
-| **`AllowDeletesFromDB`** | bestaand | Moet óók `1` zijn voordat de purge iets verwijdert (dubbele beveiliging). |
+| **`ArchivingPurgeEnabled`** | `0` (Nee) | Hoofdschakelaar — en enige gate — van de opschoonstap. `0` = alleen kopiëren (proefdraaien), `1` = na geverifieerde kopie ook verwijderen uit `HIS`. De bestaande instelling `AllowDeletesFromDB` speelt bewust géén rol bij de purge: die gaat over het droppen van objecten, niet over dataverwijdering. |
 | **`ArchiveLakeLocation`** | leeg | `adls://…`-locatie van de Data Lake voor de union-views; wordt door provisioning gevuld. Leeg = views worden overgeslagen. |
 
-De **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, groep 7) bewaken de configuratie: `BUSINESS` zonder datumkolom, een `ArchivingColumn` die niet in de Dictionary bestaat, een ontbrekende bewaartermijn, een clausule op `ETL_`-kolommen en een purge die aanstaat terwijl `AllowDeletesFromDB` uit staat, worden allemaal gesignaleerd.
+De **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, groep 7) bewaken de configuratie: `BUSINESS` zonder datumkolom, een `ArchivingColumn` die niet in de Dictionary bestaat, een ontbrekende bewaartermijn, een clausule op `ETL_`-kolommen en een purge die aanstaat terwijl `ArchiveLakeLocation` leeg is (check 7.14 — het archief is dan niet vanuit SQL leesbaar), worden allemaal gesignaleerd.
 
 :::note Vervallen: settings-gestuurde standaard-archivering
 Oudere versies bevatten een alternatieve opzet (`vwArchivingExtractor` met de instellingen `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) die automatisch alle DELTA-tabellen zou archiveren. Sinds v1.56 is archivering bewust een expliciete keuze per tabel; de deploy ruimt de oude view en instellingen zelf op.

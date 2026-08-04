@@ -58,7 +58,7 @@ Technically, Yres consists of a set of **Azure resources and templates**. During
 - **Load Management** — pipelines (ADF), triggers, monitoring and persisted views.
 
 :::note The number of environments depends on your license
-The **Essentials** license gives **1 environment** (so only `dev`). **Advanced** gives 2, **Ultimate** unlimited. The recommendation in the course is to work with **2 to 4 environments**. "At least dev and prod" therefore does not apply to every license — Essentials works with a single environment. See [Pricing](./prijzen.md).
+The **Essentials** license gives **1 environment** (so only `dev`). **Advanced** gives 2, **Ultimate** a maximum of **6** (enforced by the webapp). The recommendation in the course is to work with **2 to 4 environments**. "At least dev and prod" therefore does not apply to every license — Essentials works with a single environment. See [Pricing](./prijzen.md).
 :::
 
 Core features: **SSO** (Azure), **Log Management**, **Life Cycle Management** (changes via projects & changes through the DTAP chain), and **flexibility & scalability** by leveraging Azure resources (including automatic scaling of the database).

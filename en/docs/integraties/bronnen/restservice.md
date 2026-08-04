@@ -29,9 +29,10 @@ Check the target API's documentation to see how it splits results into pages, an
 - **No pagination**: no extra fields; all results come back in a single response.
 - **RFC5988**: paging via `Link` headers (RFC 5988); no extra fields.
 - **BodyUrl**: adds a **Body url** field — the JSON path to the next-page URL in the response body (for example, `$['@odata.nextLink']`).
-- **Offset** / **OffsetPage** / **Paging**: add **Offset Object** and **Limit Object** — the name of the offset and limit parameter that the API uses.
+- **Offset** / **OffsetPage**: add **Offset Object** and **Limit Object** — the name of the offset and limit parameter that the API uses.
+- **Paging**: adds only a **Page Object** — the name of the page-number parameter. There is no Limit Object for this type.
 
-The chosen pagination type also determines which dynamic pipelines Yres generates (`Paging`/`Offset`/`OffsetPage`).
+Note that Yres **always generates all three pagination pipelines** (`Paging`/`Offset`/`OffsetPage`) plus the main pipeline, regardless of the chosen pagination type; the chosen type determines which pipeline is actually used during a load.
 
 ### Authentication — fields per type
 
@@ -99,13 +100,13 @@ More complex combinations, where the Base URL itself already carries a fixed que
 
 ### Pagination
 
-For any pagination type other than *No pagination*, the matching pipeline appends the page parameters to the end of that same query string, once per page. The names come from the **Offset Object** and **Limit Object** fields you fill in on the source; `pageSize` is the load setting. Assuming Base URL `https://api.example.com/v1?key=abc`, endpoint `/orders` and `pageSize = 500`:
+For any pagination type other than *No pagination*, the matching pipeline appends the page parameters to the end of that same query string, once per page. The names come from the **Offset Object** and **Limit Object** fields (for *Paging*: the **Page Object**) you fill in on the source; `pageSize` is the load setting. Assuming Base URL `https://api.example.com/v1?key=abc`, endpoint `/orders` and `pageSize = 500`:
 
 | Type | Fields | Page 1 | Page 2 | … |
 |---|---|---|---|---|
 | **Offset** | Offset Object `offset`, Limit Object `limit` | `…/orders?key=abc&offset=0&limit=500` | `…&offset=500&limit=500` | offset increments by `pageSize` |
 | **OffsetPage** | Offset Object `page`, Limit Object `limit` | `…/orders?key=abc&page=0&limit=500` | `…&page=1&limit=500` | page increments by 1, `limit` stays `pageSize` |
-| **Paging** | Offset Object `page` | `…/orders?key=abc&page=1` | `…&page=2` | page increments by 1, no limit |
+| **Paging** | Page Object `page` | `…/orders?key=abc&page=1` | `…&page=2` | page increments by 1, no limit |
 
 The loop stops as soon as a page returns no more rows. **BodyUrl** and **RFC5988** use no offset/limit fields: they follow the next-page link from the response body and the `Link` header respectively, starting from the URL built above.
 

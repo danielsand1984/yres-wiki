@@ -8,7 +8,7 @@ description: Connect SAP Datasphere to Yres — connection requirements.
 
 **Category:** Azure storage (AzureBlobFS / SAS)  ·  🏅 Official partner
 
-SAP Datasphere. Official partner. Within Yres, Datasphere is exposed as an **AzureBlobFS / SAS** source — the same connection form as [SAP Business Data Cloud (SAP_BDC)](sap-hana.md) and [Azure Blob Storage](azure-blob-storage.md).
+SAP Datasphere. Official partner. Within Yres, Datasphere is exposed as an **AzureBlobFS / SAS** source — the same connection form as **SAP Business Data Cloud (SAP_BDC)** (the SAP_BDC form is covered on the [SAP HANA page](sap-hana.md)) and [Azure Blob Storage](azure-blob-storage.md).
 
 :::caution SAP Datasphere ≠ SAP Business Data Cloud (SAP_BDC)
 **SAP Datasphere** and **SAP Business Data Cloud (SAP_BDC)** are two **different** SAP products — not synonyms. Each has its own ADF linked-service template (`Datasphere.json` and `SAP_BDC.json` respectively), but **both** share the same form: `type: AzureBlobFS` with a SAS URI on the `dfs.core.windows.net` endpoint. SAP_BDC has its own input form in the webapp; for Datasphere the same SAS input is used.
@@ -73,4 +73,4 @@ Through this path, SAP Datasphere is a **file/storage source**: Yres reads the s
 
 ---
 
-**See also:** [SAP Business Data Cloud (SAP HANA)](sap-hana.md) · [Azure Blob Storage](azure-blob-storage.md) · [Azure Data Lake](azure-data-lake.md) · [Integration catalog](../catalogus.md) · [All data source requirements](../../referentie/databron-vereisten.md) · [Integrations — overview](../overzicht.md)
+**See also:** [SAP HANA](sap-hana.md) (also covers the SAP_BDC route) · [Azure Blob Storage](azure-blob-storage.md) · [Azure Data Lake](azure-data-lake.md) · [Integration catalog](../catalogus.md) · [All data source requirements](../../referentie/databron-vereisten.md) · [Integrations — overview](../overzicht.md)

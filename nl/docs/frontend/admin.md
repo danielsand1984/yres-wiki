@@ -80,7 +80,7 @@ homepage en zijn handig voor bijvoorbeeld gepland onderhoud of een aankomende re
 3. **Start- en einddatum** — beide optioneel. Leeg gelaten = direct zichtbaar tot de mededeling wordt
    verwijderd.
 4. **Notify Users** — toont de melding ook in de notificatie-tab bovenin de topbar.
-5. **Priority** — zet de mededeling bovenaan de lijst op de homepage.
+5. **Priority** — bepaalt de kleur van het megafoon-icoon bij de mededeling (low / medium / high); de lijst wordt er niet op gesorteerd.
 
 ## Audit Logs
 
@@ -146,7 +146,7 @@ voorzichtigheid.
 
 ## Settings (hele applicatie)
 
-Route: `/admin/settings`. Geldt voor **álle omgevingen** van de organisatie. Bevat onder andere het aantal
+Route: `/settings`. Geldt voor **álle omgevingen** van de organisatie. Bevat onder andere het aantal
 **parallelle processen** waarmee bronnen in de database en/of de Data Lake geladen worden (een geheel getal
 tussen **1 en 50**).
 
@@ -240,7 +240,8 @@ De tabel toont de geprovisionde Azure-resources voor de omgeving — **Data Fact
 
 ### Change deployment rules (Change overwrites)
 
-Route: `/admin/changeoverwrites` (alleen voor organisaties met meerdere omgevingen). Vertaal objectnamen
+Route: `/admin/changeoverwrites` (beschikbaar vanaf versie **1.54**, alleen voor organisaties met meerdere
+omgevingen en **niet op de dev-omgeving** — het scherm zit achter een NotDevEnvironment-wrapper). Vertaal objectnamen
 tussen omgevingen, bijvoorbeeld `ERP_DEV.Product` (dev) → `ERP_TST.Product` (test) → `ERP.Product` (prod).
 
 ![Change deployment rules: objectnamen mappen tussen omgevingen (OLD → NEW: source/schema/table), bijv. CRM_DEV → CRM_PRD.](/img/screens/admin-changeoverwrites.png)
@@ -313,6 +314,12 @@ staat tussen haakjes vermeld).
 | `BiDashboardUrl` / `BiDashboardHeight` _(doc: BIDashboardUrl/Height)_ | `NULL` / `400` | Embed-URL en hoogte van het PowerBI-dashboard. |
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Of gebruikers direct in de database mogen wijzigen / verwijderen / instellen / logs bewerken. |
 | `EnvironmentType` | — | DTAP-type van deze omgeving (DEV / TST / ACC / SND / PRE / PRD). |
+
+:::warning `AllowUpdatesInIrisSchemas` staat na de migratieketen vaak op 1
+De bedoelde default is `0`, maar de v1.46-migratie seedt `'1'` en de v1.47-seed met `'0'` wordt daarna
+overgeslagen (de setting bestaat dan al). Na de migratieketen staat deze setting dus vaak op **1** — dit is
+het bekende GODMODE-restant. Controleer de waarde en zet hem bewust terug op `0`.
+:::
 
 :::note Naamgeving van deze twee instellingen
 Bij deze twee instellingen is het handig de naamgeving te kennen:

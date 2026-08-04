@@ -89,13 +89,13 @@ details van elk onderwerp.
   parallel aan het laden van het datawarehouse. Aanzetten doe je per tabel met `DataPlatform = DL`.
   → [Lake feed](../concepten/lake-feed.md)
 - **De testsuite wordt meegeleverd.** De regressietestsuite die elk databaseobject doorlicht —
-  inmiddels **1665 controles over 194 objecten** — zit in de DACPAC en komt dus met elke versie mee.
+  inmiddels **±1655 controles over 195 objecten** (en groeiend per release) — zit in de DACPAC en komt dus met elke versie mee.
   Na een deploy of bij twijfel draai je hem zelf met `EXEC Test.spRunAll` — hij is veilig op
   productie, ruimt bewijsbaar op en draait nooit uit zichzelf. → [Testsuite](./testsuite.md)
 - **Bijna 1700 gedragscontroles op het dataplatform.** De meegeleverde testsuite is uitgebreid van
   objectdekking naar **gedragsdekking**: naast het happy path toetst elk objecttype nu ook lege
   invoer, `NULL`, grensgevallen, ontbrekende afhankelijkheden en meerdere rijen tegelijk. De suite
-  groeide van circa 600 naar de 1665 controles hierboven, verdeeld over 194 objecten, en draait
+  groeide van circa 600 naar de ±1655 controles hierboven, verdeeld over 195 objecten, en draait
   voortaan mee met elke release. Wat daarbij naar boven kwam is meegenomen in deze versie; de
   randgevallen die daardoor steviger zijn geworden:
 
@@ -146,7 +146,7 @@ details van elk onderwerp.
   release-historie per change (`Change.vwLogs`). → [Wijzigingsproces](../concepten/wijzigingsproces.md)
 - **DB-tier-scaling:** naast de "Default"-tier is nu ook een "High"-tier configureerbaar waarnaar
   workflows tijdens zware loads kunnen opschalen.
-- **Archivering:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (dubbel gegate, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. De archiveringsworkflow wordt bij de update automatisch aangemaakt en is vanuit de webapp te starten en in te plannen; welke tabellen archiveren stel je in deze versie nog in de database in, niet in de webapp. → [Archivering](../concepten/archivering.md)
+- **Archivering:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (gegate door de instelling `ArchivingPurgeEnabled`, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. De archiveringsworkflow wordt bij de update automatisch aangemaakt en is vanuit de webapp te starten en in te plannen; welke tabellen archiveren stel je in deze versie nog in de database in, niet in de webapp. → [Archivering](../concepten/archivering.md)
 
 ### Dataplatform — stabiliteit & performance
 

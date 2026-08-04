@@ -35,8 +35,8 @@ just disappeared from the next dump.
 | History | only the last dumped state | fully derivable from all files |
 | Growth | scales with reload volume | scales with mutation volume |
 | Path | `<Source>/<Schema>/<year>/<month>` | `lake/<Source>/<Schema>/<Table>/Year=…/Month=…` |
-| File name | `<Table>-<timestamp>` (no extension) | `<Table>-<PipelineRunId>.parquet` |
-| Restarting a run | produced an extra file | overwrites its own file |
+| File name | `<Table>-<timestamp>` (no extension) | `<Table>-g<Generation>-<PipelineRunId>.parquet` |
+| Restarting a run | produced an extra file | overwrites its own file (within the same generation) |
 
 :::caution What this means for existing consumers
 The feed writes to a **new path**. Files that landed earlier under `<Source>/<Schema>/<year>/<month>`
@@ -49,13 +49,15 @@ stay untouched — nothing is migrated or cleaned up. Reports or notebooks that 
 
 ```
 datalake-yres
-└── lake/<Source>/<Schema>/<Table>/Year=<yyyy>/Month=<mm>/<Table>-<PipelineRunId>.parquet
+└── lake/<Source>/<Schema>/<Table>/Year=<yyyy>/Month=<mm>/<Table>-g<Generation>-<PipelineRunId>.parquet
 ```
 
 - **One file per load run per table.** Runs without mutations write nothing.
 - **`Year=` / `Month=`** are hive-style partition folders, so any query engine can prune on period.
-- The file name carries the **ADF pipeline run id**: rerun the same run and it overwrites its own file.
-  Duplicate rows caused by a restart are therefore impossible.
+- The file name carries the **generation number** (`g<Generation>`, tracked in
+  `LoadManagement.LakeFeedGeneration`) and the **ADF pipeline run id**: rerun the same run within the
+  same generation and it overwrites its own file. Duplicate rows caused by a restart are therefore
+  impossible.
 
 Alongside the regular data columns and `ETL_Date`, every row carries four framework columns:
 
@@ -112,12 +114,14 @@ Source ──Copy──► STAGE.<Table>
                      │      └→ mutation query + mutation count
                      │
                      └─ Write lake feed    →  Copy → Parquet in the Data Lake  (only if there are mutations)
+                            └→ Maintain lake view  →  [LoadManagement].[spMaintainLakeExternal] (Scope=VIEW)
 ```
 
 So it is the **same, proven SCD2 merge** that builds the history in the database, here applied to a
 contentless bookkeeping table. What the merge marks as new or changed is exactly what the feed sends;
 what it closes without a counterpart in staging becomes a `D` row. If a run yields zero mutations, ADF
-skips the copy step and no empty file appears.
+skips the copy step and no empty file appears. After a successful copy, the **Maintain lake view** step
+(`spMaintainLakeExternal` with scope `VIEW`) brings the external view over the feed files up to date.
 
 The **Write lake feed** step runs **in parallel with Load DWH**, not after it: the lake output therefore
 does not slow down loading the data warehouse.

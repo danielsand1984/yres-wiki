@@ -191,7 +191,7 @@ Volg deze stappen wanneer een load faalt:
 5. Los de oorzaak op (bijv. een timeout → schaal de databasetier op of verklein `PageSize`) en start de load opnieuw via **Run pipelines**.
 
 :::tip Direct via SQL
-Hetzelfde is via een SQL-endpoint op te vragen: `SELECT * FROM [Monitoring].[vwLoads] WHERE [Status] = 'FAILED' ORDER BY [DateTime] DESC` voor de mislukte runs, en `SELECT * FROM [Config].[vwUserlog] WHERE MessageType = 8` voor de bijbehorende foutmeldingen.
+Hetzelfde is via een SQL-endpoint op te vragen: `SELECT * FROM [Monitoring].[vwLoads] WHERE [Status] = 'FAILED' ORDER BY [DateTime] DESC` voor de mislukte runs, en `SELECT * FROM [Config].[vwUserlog] WHERE returnCode = 8` (of gelijkwaardig `WHERE MessageType = 'Error'`) voor de bijbehorende foutmeldingen. Let op: `returnCode` is het **numerieke** niveau en `MessageType` het bijbehorende **tekstlabel** — 0 = Information, 4 = Warning, 8 = Error, 12 = System Error, 16 = Dump.
 :::
 
 ## Verder lezen

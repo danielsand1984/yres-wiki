@@ -58,7 +58,7 @@ Technisch bestaat Yres uit een set **Azure-resources en templates**. Bij install
 - **Load Management** — pipelines (ADF), triggers, monitoring en persisted views.
 
 :::note Aantal omgevingen hangt af van je licentie
-De **Essentials**-licentie geeft **1 omgeving** (dus alleen `dev`). **Advanced** geeft er 2, **Ultimate** onbeperkt. De aanbeveling in de cursus is om met **2 tot 4 omgevingen** te werken. "Minimaal dev én prod" geldt dus niet voor elke licentie — Essentials werkt met één omgeving. Zie [Prijzen](./prijzen.md).
+De **Essentials**-licentie geeft **1 omgeving** (dus alleen `dev`). **Advanced** geeft er 2, **Ultimate** maximaal **6** (afgedwongen door de webapp). De aanbeveling in de cursus is om met **2 tot 4 omgevingen** te werken. "Minimaal dev én prod" geldt dus niet voor elke licentie — Essentials werkt met één omgeving. Zie [Prijzen](./prijzen.md).
 :::
 
 Kernfeatures: **SSO** (Azure), **Log Management**, **Life Cycle Management** (wijzigingen via projecten & changes door de DTAP-keten), en **flexibiliteit & schaalbaarheid** door gebruik te maken van Azure-resources (waaronder automatisch schalen van de database).

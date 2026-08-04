@@ -8,7 +8,7 @@ description: Referentie van de stored procedures in de IRIS_DWH-database, per sc
 
 Deze pagina beschrijft de stored procedures in de data-plane database **`IRIS_DWH`**. De namen zijn letterlijk uit de live repository overgenomen; in code heet het product nog op veel plaatsen **IRIS**. De inhoud is geregenereerd uit de broncode (de code is leidend boven oudere documentatie).
 
-De database telt **108 stored procedures, 58 functions en 48 views** (geteld op de deploy-bron, juli 2026). Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
+De database telt **112 stored procedures, 66 functions en 51 views** (geteld op de deploy-bron, augustus 2026 — het aantal groeit per release). Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
 
 :::note Schema-overzicht
 De procedures zijn verdeeld over de schema's `LoadManagement` (de laadmachine), `Config` (instellingen, logging, DB-tuning), `Change` (DTAP-wijzigingsbeheer), `Monitoring` (laadstatus-logging), `Maintenance` (onderhoud, health checks), `Expose` (rapportage-RBAC) en `dbo` (hulpprocedures).
@@ -82,6 +82,12 @@ Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePa
 
 **Parameters:** `@Target` (leeg = alle lake-tabellen).
 
+### `[LoadManagement].[spMaintainLakeExternal]`
+
+**Doel:** Genereert en onderhoudt de leesobjecten over de Parquet change feed voor DL-only-targets (`DataPlatform` bevat `DL` maar niet `DWH`): per schemageneratie een external table `[DL].[<Target>_Feed_g<N>]`, de union-view `[DL].[<Target>_Feed]` over alle generaties en een HIS-vormige view `[DL].[<Target>]`.
+
+**Parameters:** `@Target`, `@PipelineID`, `@WorkflowID`, `@Scope` (`TABLE`/`VIEW`/`ALL`), `@Execute (BIT, 0 = dry-run: statements als result set)`.
+
 ### `[LoadManagement].[spPrepareWorkload]`
 
 **Doel:** Bereidt de werklast voor door voor élke tabel die `fxExtractor` teruggeeft een regel in `[LoadManagement].[LoadLog]` te schrijven (de duurzame status per tabel-load). Door de master-pipeline aangeroepen (Lookup "Get tables") vóórdat `vwExtractor` verder wordt gelezen.
@@ -89,12 +95,6 @@ Aanvullend gedrag: paginatie is instellingsgestuurd (`Config.fxGetSetting('UsePa
 **PLANNED/SKIPPED-logica:** Per kandidaat-tabel checkt de procedure — via `fxExtractor`'s join met `vwLatestLoad`, beperkt tot `LoadStatus IN ('PLANNED','RUNNING')` — of er al een niet-afgeronde load voor diezelfde `Source`/`SourceSchema`/`SourceTable` bestaat. Zo ja: de nieuwe rij krijgt meteen `LoadStatus = 'SKIPPED'` (gelogd, niet uitgevoerd — bedoeld als non-concurrency-guard tegen overlappende triggers). Zo nee: de rij krijgt `LoadStatus = 'PLANNED'`. Tot slot bouwt de procedure dynamisch een `SELECT` op basis van de kolommen van `vwExtractor`, gefilterd op `WorkFlow = @Workflow AND LoadStatus = 'PLANNED'` — dat is de daadwerkelijke werklijst die (bij `@execute = 1`) wordt uitgevoerd en teruggegeven aan de ADF-`ForEach`. Zie [Monitoring & logging](../monitoring-logging.md) voor de volledige statuslevenscyclus.
 
 **Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (alle `NVARCHAR(1024)`), `@execute (INT, default 1 — op 0 wordt de opgebouwde SELECT alleen ge-print, niet uitgevoerd)`.
-
-### `[LoadManagement].[spPrepareCopy]`
-
-**Doel:** Bereidt het kopiëren/laden voor: truncate't stagingtabellen, doet mapping-lookups en start het laadproces. Logt status en fouten via `[Monitoring].[spWriteLoadStatus]`.
-
-**Parameters:** `@PipelineID`, `@Process`, `@Step`, `@Status`, `@Rows (BIGINT)`, `@WorkflowID`, `@PipelineName`, `@Started_by`, `@Target`, `@Source_system`, `@Table`, `@Schema`, `@LoadType`, **`@LatestRecord`**, `@ETL_Date (DATETIME)` (de tekstparameters zijn `NVARCHAR(255)`).
 
 ### `[LoadManagement].[spMaterializeViews]`
 
@@ -233,7 +233,7 @@ Zie [Archivering](../../concepten/archivering.md) voor het volledige verhaal; di
 
 #### `[LoadManagement].[spArchivePurge]`
 
-**Doel:** de geverifieerde opschoonstap van archivering. De `Dynamic Archiving Workflow YRES` roept deze procedure per tabel aan ná een geslaagde Copy-naar-Parquet, met exact dezelfde archiveringsconditie (het `ArchivingScript`) en het aantal gekopieerde rijen. De procedure telt opnieuw hoeveel rijen aan de conditie voldoen en verwijdert **alleen bij een exacte match** — in batches, en dubbel gegate door de instellingen `ArchivingPurgeEnabled` én `AllowDeletesFromDB` (schakelaar uit = nette copy-only-run, geen fout). Wijkt de telling af, dan wordt er niets verwijderd en faalt de stap zichtbaar via `spWriteLoadStatus`.
+**Doel:** de geverifieerde opschoonstap van archivering. De `Dynamic Archiving Workflow YRES` roept deze procedure per tabel aan ná een geslaagde Copy-naar-Parquet, met exact dezelfde archiveringsconditie (het `ArchivingScript`) en het aantal gekopieerde rijen. De procedure telt opnieuw hoeveel rijen aan de conditie voldoen en verwijdert **alleen bij een exacte match** — in batches, en gegate door de instelling `ArchivingPurgeEnabled` (schakelaar uit = nette copy-only-run, geen fout). De instelling `AllowDeletesFromDB` speelt hier bewust **geen** rol: die gaat over het droppen van database-objecten, niet over het verwijderen van data. Wijkt de telling af, dan wordt er niets verwijderd en faalt de stap zichtbaar via `spWriteLoadStatus`.
 
 #### `[LoadManagement].[spArchiveMaintainView]`
 
@@ -305,6 +305,10 @@ Roep je `spSwapDictionary`/`spSwapServices` **zonder** scope-parameters aan, dan
 **Doel:** Wijzigt de Azure SQL service tier (schaalt de database op/af). Aangeroepen in de master-pipeline rond een load.
 
 **Parameters:** `@toTier (NVARCHAR(250), default 'Default')`, `@requestor (NVARCHAR(1024), default 'Unknown')`, `@AppUser (NVARCHAR(1024), default '')`, `@EXECUTE (BIT, default 1)`.
+
+### `[Config].[spRenameTarget]`
+
+**Doel:** Trekt de **fysieke** identiteit van één geregistreerd doel gelijk met de configuratie: wijkt de effectieve doelnaam (`Overwrite*`) of het doelschema af van de vastgelegde `UsedTables.Actual*`-stempel, dan hernoemt/verhuist de procedure de HIS- en STAGE-tabellen (en bij `DataPlatform = DL` de lake-boekhouding), inclusief de meeliftende referenties zoals `SurrogateKeys`, en werkt hij de `Actual*`-stempel bij. Atomisch: mislukt de hernoeming, dan blijft alles op de oude naam staan.
 
 ### `[Config].[spUpdateRefreshToken]`
 
@@ -415,7 +419,7 @@ Het schema `Change` ondersteunt het overzetten van wijzigingen tussen omgevingen
 
 **Doel:** Installeert een change in het doelsysteem, met de keuze tussen uitvoeren, SQL printen of een impactanalyse.
 
-**Parameters:** `@ChangeID (NVARCHAR(1024))`, `@Execute (INT, default 2)` (**1** = uitvoeren, **0** = SQL printen, **2** = impactanalyse), `@AppUser (NVARCHAR(4000), default 'Unknown')`, `@CommitPartial (BIT, default 0)`.
+**Parameters:** `@ChangeID (NVARCHAR(1024))`, `@Execute (INT, default 2)` (**1** = uitvoeren, **0** = SQL printen, **2** = impactanalyse), `@AppUser (NVARCHAR(4000), default 'Unknown')`, `@OnlySources (BIT, default 0)` (**1** = alleen bronsystemen + type-mappings installeren, tabellen en scripted objects overslaan).
 
 ### `[Change].[spRelease]`
 
@@ -423,9 +427,9 @@ Het schema `Change` ondersteunt het overzetten van wijzigingen tussen omgevingen
 
 **Parameters:** `@ChangeId (INT)`, `@UseLatestVersion (BIT, default 1)` (of de meest recente versie van de objecten in de change wordt gebruikt), `@AppUser (NVARCHAR(1024))`.
 
-### `[Change].[spDeleteObject]`
-
-**Doel:** Markeert/verwijdert een object binnen een change. (De live procedure is in deze release een lege stub met alleen een headercommentaar; de werkende verwijderlogica loopt via `spAddScriptedObject` met `@Delete=1`.)
+:::note `spDeleteObject` is verwijderd
+De vroegere procedure `[Change].[spDeleteObject]` bestaat niet meer: hij is verwijderd bij de hardening van het wijzigingsproces. De verwijderlogica loopt via `spAddScriptedObject` met `@Delete=1`.
+:::
 
 ---
 
@@ -534,6 +538,14 @@ Het schema `Expose` beheert de rapportageobjecten en de toegang daarop (gebruike
 **Doel:** Voegt leden toe aan of verwijdert ze uit een rapportagerol.
 
 **Parameters:** `@Action (NVARCHAR(20))` (`ADD`/`REMOVE`), `@member (NVARCHAR(1024))`, `@Role (NVARCHAR(1024))`, `@AppUser`.
+
+### `[Expose].[spMaintainRoleContent]`
+
+**Doel:** Koppelt een rapportagerol aan een exposed object in `Expose.RoleContent` én zet de bijbehorende `GRANT`/`REVOKE SELECT` op de views van dat object in het `[Exposed]`-schema — registratie en permissie in één transactie, zodat ze niet uit elkaar kunnen lopen (`@Action` = `ADD`/`DELETE`).
+
+### `[Expose].[spApplyRoleContent]`
+
+**Doel:** Idempotente reconciler van de rapportage-RBAC: brengt de `SELECT`-rechten op de `[Exposed]`-views exact in lijn met `Expose.RoleContent` (grant wat geregistreerd maar afwezig is, revoke wat niet meer geregistreerd is). Nodig omdat een rebuild van de exposure-laag (`DROP VIEW`) de rechten van een view weggooit; draait automatisch na `spMaintainObjects`/`spRebuildObjects` en is veilig los uit te voeren.
 
 ---
 

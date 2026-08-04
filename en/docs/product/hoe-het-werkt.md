@@ -36,7 +36,7 @@ Adding a source or table is a matter of entering metadata. Yres translates that 
 :::
 
 :::note Your own ADF pipelines keep working
-Existing, manually created ADF pipelines keep running alongside Yres. For your own pipelines there is a **`custom pipelines`** folder where customers maintain their own pipelines.
+Existing, manually created ADF pipelines keep running alongside Yres. For your own pipelines the factory has a **`PW - Yres/Custom`** folder where customers maintain their own pipelines.
 :::
 
 ## 3. Automatic health checks and monitoring

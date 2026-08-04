@@ -30,11 +30,11 @@ Bronspecifieke verbindingsvelden zijn er **niet**: de feed-URL, het authenticati
 
 ### Authenticatie
 
-**Anoniem.** De data van de Tweede Kamer is **open data**: er zijn geen inloggegevens, API-sleutels of tokens nodig. Er worden dan ook geen Key Vault-secrets aangemaakt voor de verbinding zelf.
+**Anoniem.** De data van de Tweede Kamer is **open data**: er zijn geen inloggegevens, API-sleutels of tokens nodig. Er worden dan ook geen **credential**-secrets aangemaakt; wel schrijft de backend de vaste feed-URL als secret `adf-{bronnaam}-http-url` naar de Key Vault — de linked service verwijst daarnaar.
 
 ### Vereisten vooraf
 
-Geen. Omdat er geen credentials zijn en de bron via de cloud-integration-runtime werkt, hoef je vooraf niets in Azure te registreren (geen app-registratie, geen client secret, geen SAS-token, geen Key Vault-secrets).
+Geen. Omdat er geen credentials zijn en de bron via de cloud-integration-runtime werkt, hoef je vooraf niets in Azure te registreren (geen app-registratie, geen client secret, geen SAS-token). Het enige Key Vault-secret — de feed-URL (`adf-{bronnaam}-http-url`) — maakt Yres zelf aan.
 
 ## Gegevens ophalen
 

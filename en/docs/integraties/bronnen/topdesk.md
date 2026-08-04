@@ -16,8 +16,8 @@ You fill in the following fields in the **Add source** form for a Topdesk source
 
 | Field (label) | Input |
 |---|---|
-| **URL** | Read-only. Built automatically from **Domain**: `https://<domain>.topdesk.net/services/reporting/v2/odata`. |
-| **Domain** | Your Topdesk subdomain, for example `myorganization` for `myorganization.topdesk.net`. Only letters, digits, dots and hyphens are allowed. |
+| **URL** | Read-only. Built automatically from **Domain**: `https://<domain>/services/reporting/v2/odata`. |
+| **Domain** | The **full** Topdesk domain, for example `myorganization.topdesk.net`. Note: the form does **not** automatically append `.topdesk.net` — if you enter only `myorganization`, the resulting URL is wrong. Only letters, digits, dots and hyphens are allowed. |
 | **Username** | The login name of the Topdesk (API) operator account. |
 | **Password** | The **application password** of that operator account (see prerequisites). |
 
@@ -36,7 +36,7 @@ The **authentication type** (`Basic`), **pagination type** (`BodyUrl`) and the p
 
 Yres retrieves data through the OData reporting endpoint of your Topdesk environment:
 
-- **Endpoint:** `https://<domain>.topdesk.net/services/reporting/v2/odata`. Yres builds this URL itself from the **Domain** you entered; you do not need to assemble the URL manually.
+- **Endpoint:** `https://<domain>/services/reporting/v2/odata`, where `<domain>` is the full domain you entered under **Domain** (for example `myorganization.topdesk.net`). Yres only prepends the `https://` prefix and appends the `/services/reporting/v2/odata` path — it does **not** append the `.topdesk.net` suffix.
 - **Pagination:** large result sets are paged through automatically via the OData `@odata.nextLink` (pagination type `BodyUrl`).
 
 See the official documentation: [Generating an application password](https://docs.topdesk.com/en/generating-an-application-password.html) and [Authorizing access to TOPdesk API](https://docs.topdesk.com/VA2023R2/en/authorizing-access-to-topdesk-api.html).

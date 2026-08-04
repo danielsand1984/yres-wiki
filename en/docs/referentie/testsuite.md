@@ -6,7 +6,7 @@ description: The bundled regression test suite for the Yres database — part of
 
 # Test suite (DWH)
 
-The Yres data-plane database (`IRIS_DWH`) ships with a **regression test suite** that exercises the complete SQL framework: every in-scope object (stored procedures, functions, views and triggers) has exactly one test procedure. Since v1.56 that single procedure exercises multiple scenarios: per object type it walks a fixed matrix — alongside the happy path also empty input, `NULL`, edge cases, invalid input, missing dependencies and multiple rows at once. In total that amounts to roughly **1665 checks across 194 objects**.
+The Yres data-plane database (`IRIS_DWH`) ships with a **regression test suite** that exercises the complete SQL framework: every in-scope object (stored procedures, functions, views and triggers) has exactly one test procedure. Since v1.56 that single procedure exercises multiple scenarios: per object type it walks a fixed matrix — alongside the happy path also empty input, `NULL`, edge cases, invalid input, missing dependencies and multiple rows at once. In total that amounts to roughly **1655 checks across 195 objects** (indicative — the suite grows with each release).
 
 From **v1.56** the suite belongs to the database itself: it sits in the DACPAC as the **`[Test]`** schema and is therefore **installed with every Yres version**. There is nothing to install — any environment on the current version already holds every `Test.*` object. Nothing runs **automatically** either: the suite only acts when you call one of its procedures yourself.
 
@@ -67,30 +67,26 @@ In addition there is a self-contained **load-engine suite** (`Test.spRunLoadEngi
 EXEC Test.spRunLoadEngineTests @Round = 'ticket-123';
 ```
 
-### Only one full run at a time — your result is always your own
+### One full run at a time — start only one yourself
 
-The suite guarantees that at most one full run (`Test.spRunAll`, `Test.spRunSuite` or
-`Test.spRunLoadEngineTests`) is active at a time. That is not a limitation but a guarantee: every test
-fixture lives in one shared `ZZTEST` namespace, so without that protection a second, concurrently started
-run could sweep away the first run's fixtures while it is still using them — producing a **wrong result**,
-not an error. Preventing exactly that silent failure mode is the point: whatever result you get back is
-guaranteed to come from your own, undisturbed run.
+Every test fixture lives in one shared `ZZTEST` namespace. Two full runs (`Test.spRunAll`,
+`Test.spRunSuite` or `Test.spRunLoadEngineTests`) running concurrently can therefore sweep away each
+other's fixtures while the other is still using them — producing a **wrong result**, not an error. So
+start at most one full run at a time (watch out for, say, two colleagues clicking the test-suite button
+moments apart); when in doubt, check `Test.RunLog` to see whether a run is already going.
 
-If you start a run while one is already active (for example two colleagues clicking the test-suite button
-in the webapp moments apart), you hear about it immediately — there is no waiting and no silent
-overwriting:
+What the suite itself guards in the current release is the environment: every full run starts with
+`Test.spPreflight`, which sweeps residue of a previously crashed run and performs a **busy check** on
+running loads. With `@FailIfBusy = 1` the run then aborts (error 50100, *"active loads detected"*); by
+default (`@FailIfBusy = 0`) the check is advisory only and appears as a SKIP row in the result. Running a
+single test procedure (`tst_*`) by hand during development is always possible.
 
-```
-Msg 50110, ...
-Test.spRunAll: another full test run is already in progress -- concurrent runs share one ZZTEST fixture
-namespace and would corrupt each other's results. Held by RunId 1160 [ALL/ticket-123], started
-2026-08-03T17:40:37 by user@host. Wait for it to finish (or check Test.RunLog), then retry.
-```
-
-Where it can be determined, the message names exactly which run holds the lock (`RunId`, suite/label,
-start time, user) — so you can see in `Test.RunLog` at a glance when you can start again, without having
-to guess. Running a single test procedure (`tst_*`) by hand during development is never blocked by this:
-only a *full* run waits on this lock.
+:::note Coming in a future release: a hard lock
+A future release adds true mutual exclusion: a second full run will then be refused immediately with an
+error (e.g. *"another full test run is already in progress"*, including which `RunId` holds the lock,
+with suite/label, start time and user). Until then, not starting a second concurrent run is a convention,
+not an enforced guarantee.
+:::
 
 ## Reading the results
 

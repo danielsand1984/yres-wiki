@@ -64,7 +64,7 @@ The configuration is stored via `MaintainPersistView`; the actual materializatio
 
 The **Database objects** sub-link (`/dataengineering/objecthistory`) is the **object viewer**: a tree of all database objects — created by a user and by Yres — where you inspect each object's **current SQL definition**, **compare versions** and use a **right-click menu** to add objects to a change.
 
-This screen is the home for your **scripted/custom objects** (your own tables, views, stored procedures and functions). You browse your DWH objects here and add a custom object — or an existing database object — to a change directly via the right-click menu (**Add to change**). There is no separate "Scripted objects" screen anymore; scripted objects are managed here in **Database objects**.
+This screen is the home for your **scripted/custom objects** (your own tables, views, stored procedures and functions). You browse your DWH objects here and add a custom object — or an existing database object — to a change directly via the right-click menu (**Add to change**). There is also a separate **Scripted objects** screen (`/loadmanagement/scriptedObjects`, via the sidebar link under **Projects**); the right-click menu here in Database objects is the quickest way to add an object to a change.
 
 ![Database objects screen: on the left the object tree (schema → object-type folder → object), in the middle the source pane with the current SQL definition (syntax-highlighted), at the top the "No comparison"/"Compare versions" dropdown, and a right-click context menu with cascading Add-to-change submenus.](/img/screens/dataengineering-objecthistory.png)
 
@@ -72,7 +72,7 @@ This screen is the home for your **scripted/custom objects** (your own tables, v
 
 (1) **Object tree** — three levels: **schema → object-type folder → object**. For example `dbo → SCALAR_FUNCTION → fxToReadableSize`, or `ODS → TABLE → AzureSQL_dbo_attractions`. Click an object to load its definition.
 (2) **Source pane** — shows the **current SQL definition** of the selected object, syntax-highlighted.
-(3) **"No comparison" / "Compare versions" dropdown** (+ layout toggles) — at the top; defaults to "No comparison". Choose **Compare versions** for a diff.
+(3) **"No comparison" / "Compare versions" dropdown** (+ layout toggles) — at the top; defaults to "No comparison". Choose **Compare versions** for a diff; for organizations with multiple environments there is a third option, **Compare environments**, which compares the definition across environments.
 (4) **Version diff** — with **Compare versions** selected, a red/green difference appears between the current version and a previous `ALTER` (added/removed columns, indexes, and so on).
 (5) **Right-click context menu** — right-click an object for the change and dependency actions (see [Adding objects to a change](#adding-objects-to-a-change)).
 

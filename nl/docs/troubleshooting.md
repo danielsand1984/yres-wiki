@@ -156,7 +156,7 @@ fix-script.
 
 | Check | Betekenis | Voorbeeld |
 |---|---|---|
-| **9.01** | Setting niet actief | een verwachte setting staat op `active = 0` |
+| **9.01** | **GodMode is actief** (Warning) | de setting `GodMode` staat op `active = 1`; de check levert een opruimscript dat de rij verwijdert |
 | **9.02** | Waarde valt buiten `Options` | `EnvironmentType = '1'` (geen geldige DTAP-code) |
 | **9.03** | Verwachte setting **ontbreekt** | een setting uit de roster, bijvoorbeeld `DefaultSurrogate`, staat niet in `[Config].[Settings]` |
 | **9.04** | **Onbekende** setting aanwezig | een handmatig toegevoegde of verouderde setting die niet (meer) in de roster staat |

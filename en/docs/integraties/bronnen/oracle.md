@@ -23,7 +23,7 @@ You add Oracle through the **Add source** wizard. In addition to the general fie
 | **Password** | Password of that account. |
 
 - **Authentication:** Basic — username + password.
-- **Integration runtime:** choose **`AutoResolveIntegrationRuntime`** (cloud) if the database is publicly reachable. If Oracle is **on-premises or behind a firewall**, choose a **self-hosted integration runtime** (in the supplied template, `pwccIntegrationRuntimeLinked`). See [Connecting a data source](../../setup/databron-koppelen.md).
+- **Integration runtime:** the wizard shows an IR selection field, but for Oracle that choice is currently **not applied** to the linked service: it is deployed without `connectVia` and therefore always runs on the **cloud IR** (`AutoResolveIntegrationRuntime`). The Oracle server must therefore be reachable from Azure. If Oracle is **on-premises or behind a firewall**, this does not currently work out of the box — it requires a manual adjustment of the linked service (a fix to actually apply the IR choice is planned). See [Connecting a data source](../../setup/databron-koppelen.md).
 - **Secrets:** the password and connection details are never stored by the frontend. They go to the customer's **Azure Key Vault** under the group **`adf-{sourcename}-…`**; the linked service references them. To do this, Yres builds the server string as **`host:port/service_name`** and stores it, together with the username and password, as separate secrets (`adf-{sourcename}-server`, `adf-{sourcename}-username`, `adf-{sourcename}-password`).
 
 :::info Driver version 2.0
@@ -33,7 +33,7 @@ For Oracle, Yres uses **driver version 2.0**. With this driver, encryption (`enc
 ### Prerequisites
 
 - A database account with **read-only** permissions (least privilege) on the relevant schemas — preferably use a dedicated service account rather than a personal or admin account.
-- For an on-prem/firewalled database: an installed and published **self-hosted integration runtime** that can reach the Oracle server.
+- **Reachability from Azure**: the database must be reachable by the cloud IR. For an on-prem/firewalled database, the limitation above applies — the IR choice is currently not applied to the linked service.
 
 ## Gathering the details
 
@@ -43,7 +43,7 @@ These values come from your database administrator (DBA) or from the existing JD
 - **Service name** — Oracle uses a **Service name** (or the older **SID**) instead of a database name. The service name is listed in the `tnsnames.ora` file on the server/client, can be obtained via `lsnrctl status` on the server, or from your DBA.
 - **Username / Password** — Preferably use a dedicated service account with **read-only** permissions (least privilege) on the relevant schemas, rather than a personal or admin account.
 
-Is the database behind a firewall or on-premises? Then an Integration Runtime is needed to establish the connection — see [Connecting a data source](../../setup/databron-koppelen.md).
+Is the database behind a firewall or on-premises? Then keep the limitation above in mind: the linked service currently always runs on the cloud IR, so the database must be reachable from Azure — see [Connecting a data source](../../setup/databron-koppelen.md).
 
 ## Load types and delta
 

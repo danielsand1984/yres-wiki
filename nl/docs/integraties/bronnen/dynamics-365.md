@@ -8,7 +8,16 @@ description: Dynamics 365 koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Directe koppeling
 
-Microsoft Dynamics 365 (Business Central / Dataverse) wordt als OData-bron gekoppeld met OAuth2-authenticatie (Azure AD / Microsoft Entra ID). Je kiest deze bron via de preset **Dynamics 365** in de wizard *Bron toevoegen*; het verbindingsadres en het token-adres worden grotendeels automatisch opgebouwd uit je tenant en bedrijf, zodat je vooral de OAuth-gegevens van een app-registratie hoeft in te vullen.
+Microsoft Dynamics 365 (Business Central / Dataverse) wordt als **OData-bron** gekoppeld. Je kiest deze bron via de preset **Dynamics 365** in de wizard *Bron toevoegen*; het verbindingsadres en het token-adres worden grotendeels automatisch opgebouwd uit je tenant en bedrijf.
+
+:::caution OAuth2-support in ontwikkeling
+De OAuth2-flow wordt op dit moment **nog niet uitgevoerd**. De bron wordt opgeslagen
+als kaal **OData**-type: bij het deployen schrijft Yres alleen de http-url (en
+eventuele basic-credentials) naar de Key Vault, en de OData-pipelines doen geen
+token-flow. Het wizard-formulier toont al OAuth-velden (tenant, client ID/secret,
+scope, grant type), maar de deploy verwerkt die nog niet. Volledige
+OAuth2-ondersteuning voor Dynamics 365 is **in ontwikkeling**.
+:::
 
 ## Verwachte input
 
@@ -27,11 +36,11 @@ Naast de gedeelde wizardvelden (**bronnaam**, **integration runtime**, **inlogge
 
 Vast ingestelde (verborgen) parameters: paginatie `paginationType=BodyUrl` met `body_url=@odata.nextLink` (Yres volgt automatisch de `@odata.nextLink`-paginering van de OData-feed).
 
-**Authenticatiemethode:** OAuth2 via een Azure AD / Microsoft Entra ID service principal — client credentials of authorization-code (met refresh token).
+**Authenticatiemethode:** het formulier vraagt OAuth2-gegevens van een Azure AD / Microsoft Entra ID service principal (client credentials of authorization-code met refresh token), maar de koppeling draait momenteel als **kale OData-verbinding zonder token-flow** — zie de waarschuwing hierboven.
 
 **Integration runtime:** standaard de cloud-runtime **`AutoResolveIntegrationRuntime`**. Een self-hosted IR is niet nodig, omdat de OData-endpoints publiek via internet bereikbaar zijn.
 
-**Opslag van geheimen:** Yres bewaart nooit zelf wachtwoorden of secrets. De ingevulde waarden worden als secrets in de **Azure Key Vault** van je eigen omgeving gezet, volgens het patroon `adf-{bronnaam}-{suffix}`; de linked service in Azure Data Factory verwijst naar die secrets.
+**Opslag van geheimen:** Yres bewaart nooit zelf wachtwoorden of secrets. Bij de huidige OData-deploy wordt alleen de **http-url** (en eventuele basic-credentials) als secret in de **Azure Key Vault** van je eigen omgeving gezet, volgens het patroon `adf-{bronnaam}-{suffix}`; de linked service in Azure Data Factory verwijst naar die secrets. De OAuth-velden uit het formulier worden nog niet naar Key Vault weggeschreven.
 
 ## Voorbereiding
 

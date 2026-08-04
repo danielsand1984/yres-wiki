@@ -11,12 +11,12 @@ description: Azure Data Lake koppelen aan Yres — verbindingseisen.
 Azure Data Lake Storage Gen2 is een Azure Storage-account met **hiërarchische naamruimte (hierarchical namespace)** ingeschakeld. Binnen Yres speelt de Data Lake vooral een rol als **opslag voor (onbewerkte) data**: naast de database kan Yres geladen data optioneel ook als **Parquet** in de Data Lake landen — sinds v1.56 als append-only [change feed](../../concepten/lake-feed.md), met per run alleen de gemuteerde rijen en de framework-kolommen `KeyHash`, `RowHash`, `YresAction` en `YresDateStart`. Daarmee is een medallion-architectuur (bronze/silver/gold) mogelijk, inclusief het incrementeel bijwerken van Delta-tabellen.
 
 :::note Koppelen via Azure Blob Storage
-Er is geen aparte **Azure Data Lake**-keuze in de "Bron toevoegen"-wizard (bronpicker `SourceField.tsx`). Wil je **data uit een Data Lake (Gen2) ophalen**, voeg die dan toe als **[Azure Blob Storage](azure-blob-storage.md)**-bron (zelfde `AzureBlobFS`/SAS-vorm). Daarnaast gebruikt Yres intern een vaste Data Lake-linked service (`AzureDataLakeStorage.json`) als **eigen staging-/uitvoeropslag** — de bestemming waar Yres optioneel Parquet wegschrijft.
+Er is geen aparte **Azure Data Lake**-keuze in de "Bron toevoegen"-wizard (bronpicker `SourceField.tsx`). Wil je **data uit een Data Lake (Gen2) ophalen**, voeg die dan toe als **[Azure Blob Storage](azure-blob-storage.md)**-bron. Die maakt een **`AzureBlobStorage`**-linked service aan (SAS op het blob-endpoint) — géén `AzureBlobFS`; dat type is voorbehouden aan de interne Data Lake-datasets en SAP_BDC. Daarnaast gebruikt Yres intern een vaste Data Lake-linked service (`AzureDataLakeStorage.json`) als **eigen staging-/uitvoeropslag** — de bestemming waar Yres optioneel Parquet wegschrijft.
 :::
 
 ## Verwachte input
 
-Wanneer de Data Lake als opslag wordt aangesproken, gebruikt Yres dezelfde verbindingsvorm als bij Azure Blob Storage en SAP Business Data Cloud: een **`AzureBlobFS`**-linked service met een **SAS-uri** op het `dfs.core.windows.net`-endpoint.
+Wanneer de Data Lake als opslag wordt aangesproken (intern, of via het SAP_BDC-formulier), gebruikt Yres een **`AzureBlobFS`**-linked service met een **SAS-uri** op het `dfs.core.windows.net`-endpoint. Koppel je een Data Lake als **bron** via Azure Blob Storage, dan ontstaat een **`AzureBlobStorage`**-linked service op het blob-endpoint.
 
 **Verbindingsvelden** (analoog aan de SAS-gebaseerde opslagbronnen):
 

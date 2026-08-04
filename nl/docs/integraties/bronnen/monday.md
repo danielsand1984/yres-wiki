@@ -8,8 +8,9 @@ description: Monday koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Directe koppeling · REST
 
-monday.com is een platform voor werk- en projectmanagement. Yres koppelt eraan via de
-monday.com REST API (API v2) en haalt de gegevens op met een persoonlijk API-token.
+monday.com is een platform voor werk- en projectmanagement. Yres bevraagt monday.com via de
+**GraphQL-API** (endpoint `https://api.monday.com/v2`) en haalt de gegevens op met een
+persoonlijk API-token; het ADF linked-service-type is technisch `RestService`.
 
 ## Verwachte input
 

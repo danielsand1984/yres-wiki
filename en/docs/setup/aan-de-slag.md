@@ -58,7 +58,7 @@ Organizations are the foundation of Yres: a partitioned space with one or more e
 development (**dev**) stays separated from production (**prod**). Each organization has a **unique, freely
 chosen name**; in addition, a **secondary name** is generated automatically using only the characters
 allowed for naming Azure and DevOps resources. Organization names may **not contain non-alphanumeric
-characters** (enforced by `[dbo].[fxRemoveNonAlphaCharacters]`).
+characters**.
 
 ## Managing users
 
@@ -99,7 +99,7 @@ tiers is:
 |---|---|---|
 | **Essentials** | 2 | **1** |
 | **Advanced** | 5 | 2 |
-| **Ultimate** | Unlimited | Unlimited |
+| **Ultimate** | Unlimited | **max. 6** |
 
 Important implications:
 

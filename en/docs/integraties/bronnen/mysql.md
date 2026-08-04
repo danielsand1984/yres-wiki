@@ -43,7 +43,7 @@ Is the database behind a firewall or on-premises? Then an Integration Runtime is
 
 ## Load types and delta
 
-MySQL supports the standard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL).
+MySQL supports the standard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL, DELTAIMAGE).
 
 :::note Two delta columns supported
 MySQL supports — like the other SQL/database sources — **two delta columns** (comma-separated, same data type; the highest value counts). See [Load types → Multiple delta columns](../../concepten/load-types.md#multiple-delta-columns).

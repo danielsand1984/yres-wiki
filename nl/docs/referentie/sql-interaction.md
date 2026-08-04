@@ -11,14 +11,14 @@ Elke Yres-database (`IRIS_DWH`) is te beheren via een **SQL-endpoint** (SSMS, Az
 :::tip Deze pagina is de catalogus
 Hieronder staan de **namen per schema** met een korte omschrijving. De volledige **purpose, inputs en outputs per object** staan op de detailpagina's:
 
-- [Stored procedures](./sql/stored-procedures.md) — alle 108 procedures
-- [Functions](./sql/functions.md) — alle 58 functions
-- [Logs & views](./sql/logs-views.md) — logtabellen + alle 48 views met output-kolommen
+- [Stored procedures](./sql/stored-procedures.md) — alle 112 procedures
+- [Functions](./sql/functions.md) — alle 66 functions
+- [Logs & views](./sql/logs-views.md) — logtabellen + alle 51 views met output-kolommen
 :::
 
 ## Overzicht: schema's en aantallen
 
-`IRIS_DWH` bevat **108 stored procedures, 58 functions en 48 views**, verdeeld over deze schema's:
+`IRIS_DWH` bevat **112 stored procedures, 66 functions en 51 views** (stand augustus 2026 — de aantallen groeien per release), verdeeld over deze schema's:
 
 | Schema | Rol |
 |---|---|
@@ -42,14 +42,14 @@ Het product heet **Yres**, maar in de database staan veel identifiers nog op `IR
 ## Stored procedures
 
 ### Schema `[LoadManagement]` — laden
-`spLoadDWH` · `spHIS_InsertAndUpdate` · `spHIS_TruncateTable` · `spPrepareCopy` · `spMaterializeViews` · `spMaterializeViewToTable` · `spMaintainPersistView` · `spCheckKeyAndRowHash` · `spRegenerateSurrogateKeys` · `spGetRowCount` · `spGetColumnMapping` · `spGenerateTypeMapping` · `spFindTablesBehindSQL` · `spFillDictionary_AFAS` · `spFillDictionary_oDATA` · `spFillTable_Json` · `spFillTable_Monday` · `spMaintainSource` · `spMaintainTable` · `spMaintainFiles` · `spMaintainFilesInDictionary` · `spMaintainRestService` · `spMaintainTrigger` · `spUpdateETL_EndDate`
+`spLoadDWH` · `spHIS_InsertAndUpdate` · `spHIS_TruncateTable` · `spMaterializeViews` · `spMaterializeViewToTable` · `spMaintainPersistView` · `spCheckKeyAndRowHash` · `spRegenerateSurrogateKeys` · `spGetRowCount` · `spGetColumnMapping` · `spGenerateTypeMapping` · `spFindTablesBehindSQL` · `spFillDictionary_AFAS` · `spFillDictionary_oDATA` · `spFillTable_Json` · `spFillTable_Monday` · `spMaintainSource` · `spMaintainTable` · `spMaintainFiles` · `spMaintainFilesInDictionary` · `spMaintainRestService` · `spMaintainTrigger` · `spMaintainLakeExternal` · `spUpdateETL_EndDate`
 
-> `spLoadDWH` is het instappunt dat ADF aanroept nadat STAGE gevuld is; het is een **pure pass-through** naar `spHIS_InsertAndUpdate` (de oude `spUpdateETL_EndDate`-aanroep is uitgecommentarieerd — end-dating gebeurt nu binnen `spHIS_InsertAndUpdate` zelf).
+> `spLoadDWH` is het instappunt dat ADF aanroept nadat STAGE gevuld is; het is een **pure pass-through** naar `spHIS_InsertAndUpdate` (de oude `spUpdateETL_EndDate`-aanroep is uitgecommentarieerd — end-dating gebeurt nu binnen `spHIS_InsertAndUpdate` zelf). `spMaintainLakeExternal` genereert en onderhoudt de leesobjecten (external tables + views in `[DL]`) over de Parquet change feed voor DL-only-targets.
 
 ### Schema `[Config]` — configuratie, logging & metadata
-`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `fxGetDependenciesSQL` · `spGenerateDbreader` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
+`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `fxGetDependenciesSQL` · `spGenerateDbreader` · `spRenameTarget` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
 
-> De vier "message-class" schrijvers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) schrijven naar `Config.ProcessLog`. `spGenerateDbreader` (geen parameters) bouwt de databaserol **`Yres_dbreader`** opnieuw op. `fxGetDependenciesSQL` is ondanks het `fx`-voorvoegsel een **stored procedure** — de variant die `spFindTablesBehindSQL` aanroept.
+> De vier "message-class" schrijvers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) schrijven naar `Config.ProcessLog`. `spGenerateDbreader` (geen parameters) bouwt de databaserol **`Yres_dbreader`** opnieuw op. `fxGetDependenciesSQL` is ondanks het `fx`-voorvoegsel een **stored procedure** — de variant die `spFindTablesBehindSQL` aanroept. `spRenameTarget` maakt een gewijzigde doelnaam of doelschema fysiek waar: HIS/STAGE (en bij `DL` de lake-boekhouding) en de surrogate keys verhuizen atomisch mee.
 
 ### Schema `[Change]` — change management
 | Procedure | Doel |
@@ -69,12 +69,14 @@ Het product heet **Yres**, maar in de database staan veel identifiers nog op `IR
 > `spWriteLoadStatus` is de centrale laadstatus-logger (16 parameters, incl. `@LatestRecord`). Hij schrijft `LS_Pipeline` (bij Start workflow/Start load) en altijd `LS_Trans`, en zet `LoadLog.LoadStatus` op RUNNING/SUCCEEDED/FAILED.
 
 ### Schema `[Maintenance]` — onderhoud & diagnostiek
-`spAdaptiveIndexDefrag` · `spImplementSolution` · `spInEachDb` · `spDatabaseRestore` · `spAllNightLog` · `spAllNightLog_Setup` · `spBlitz` · `spBlitzAnalysis` · `spBlitzBackups` · `spBlitzCache` · `spBlitzFirst` · `spBlitzIndex` · `spBlitzQueryStore` · `spBlitzWho`
+`spAdaptiveIndexDefrag` · `spApplyRetentionPolicy` · `spImplementSolution` · `spInEachDb` · `spDatabaseRestore` · `spAllNightLog` · `spAllNightLog_Setup` · `spBlitz` · `spBlitzAnalysis` · `spBlitzBackups` · `spBlitzCache` · `spBlitzFirst` · `spBlitzIndex` · `spBlitzQueryStore` · `spBlitzWho`
 
-> De `spBlitz*`-familie is de bekende open-source SQL Server-diagnostiekset; `spAdaptiveIndexDefrag` doet het index-onderhoud.
+> De `spBlitz*`-familie is de bekende open-source SQL Server-diagnostiekset; `spAdaptiveIndexDefrag` doet het index-onderhoud. `spApplyRetentionPolicy` past het retentiebeleid uit `Monitoring.RetentionPolicy` gebatcht toe op de logtabellen (aangeroepen door de ADF-pipeline `Maintenance Retention YRES`).
 
 ### Schema `[Expose]` — reporting & RBAC
-`spMaintainObjects` · `spMaintainRoles` · `spMaintainRoleAssignment` · `spMaintainUsers` · `spRebuildObjects`
+`spMaintainObjects` · `spMaintainRoles` · `spMaintainRoleAssignment` · `spMaintainRoleContent` · `spApplyRoleContent` · `spMaintainUsers` · `spRebuildObjects`
+
+> `spMaintainRoleContent` koppelt een rol aan een exposed object én zet de bijbehorende `GRANT`/`REVOKE SELECT` in één transactie; `spApplyRoleContent` is de idempotente reconciler die de rechten op de `[Exposed]`-views na elke rebuild weer exact in lijn brengt met `Expose.RoleContent`.
 
 ### Schema `[dbo]` — algemeen & onderhoud
 `spAdaptiveIndexDefrag_CurrentExecStats` · `spAdaptiveIndexDefrag_Exceptions` · `spAdaptiveIndexDefrag_PurgeLogs` · `spCopyDB` · `spJsonToTable` · `spLongPrint` · `spMSForEachTable` · `spMSForEachWorker` · `spRunSQL`
@@ -82,14 +84,14 @@ Het product heet **Yres**, maar in de database staan veel identifiers nog op `IR
 ## Functions
 
 ### `[LoadManagement]`
-`fxExtractor` · `fxGetActualTablename` · `fxGetDataType` · `fxGetKeyColumns` · `fxGetKeyHashColumns` · `fxGetRowColumns` · `fxGetRowHashColumns` · `fxGetOptimized` · `fxGetStoreType` · `fxGetSurrogate` · `fxPredictKeyColumns` · `fxPredictTableName`
+`fxExtractor` · `fxDeltaOrWhere` · `fxGetActualTablename` · `fxGetActualTargetName` · `fxGetDataType` · `fxGetKeyColumns` · `fxGetKeyHashColumns` · `fxGetRowColumns` · `fxGetRowHashColumns` · `fxGetOptimized` · `fxGetStoreType` · `fxGetSurrogate` · `fxLakeFeedColumns` · `fxPredictKeyColumns` · `fxPredictTableName`
 
-> `fxExtractor` `(@LoadFilter, @LoadType)` is de hartfunctie achter `vwExtractor`: per actieve brontabel bouwt hij het extract-commando, de doelschema's, het `DeltaScript` en de `PackageSize`. Let op: `PackageSize` is een **outputkolom**, geen parameter.
+> `fxExtractor` `(@LoadFilter, @LoadType)` is de hartfunctie achter `vwExtractor`: per actieve brontabel bouwt hij het extract-commando, de doelschema's, het `DeltaScript` en de `PackageSize`. Let op: `PackageSize` is een **outputkolom**, geen parameter. `fxDeltaOrWhere` bouwt het delta-`WHERE`-fragment voor dialecten zonder `CASE`/`COALESCE` (zoals SOQL). `fxGetActualTargetName` lost de fysieke doeltabelnaam op via `UsedTables.ActualTableName` (met de historische `CONCAT_WS`-regel als fallback). `fxLakeFeedColumns` lost de kolomset van de Parquet change feed op per generatie of over alle generaties.
 
 ### `[Config]`
-`fxAddTryCatch` · `fxGetSchemaName` · `fxGetSession` · `fxGetSetting`
+`fxAddTryCatch` · `fxAddTransactionalTryCatch` · `fxCheckLicenseCore` · `fxGetSchemaName` · `fxGetSession` · `fxGetSetting` · `fxResolveServiceTier` · `fxServiceTierLadder` · `fxWorkflowHeartbeat`
 
-> `fxGetSchemaName(@Target, 'HIS'|'STAGE')` lost het runtimeschema op (standaard `ODS` voor HIS, `STAGE` voor STAGE). `fxGetSetting(@SettingName)` leest `Config.Settings`.
+> `fxGetSchemaName(@Target, 'HIS'|'STAGE')` lost het runtimeschema op (standaard `ODS` voor HIS, `STAGE` voor STAGE). `fxGetSetting(@SettingName)` leest `Config.Settings`. `fxAddTransactionalTryCatch` wikkelt dynamische SQL in één all-or-nothing-transactie (`XACT_ABORT` + TRY/CATCH met rollback). `fxCheckLicenseCore` bevat de volledige licentievalidatie; `fxCheckLicense` is er een dunne wrapper omheen. De drie scaling-functions horen bij de automatische tier-scaling: `fxServiceTierLadder` (de DTU-tierladder als data), `fxResolveServiceTier` (de scaling-beslissing als pure functie) en `fxWorkflowHeartbeat` (laatste levensteken van een workflow-run).
 
 ### `[Change]`
 `fxGetChangeIsOpen` · `fxGetLastestChangeIdFor` · `fxGetLatestOpenChange` · `fxGetReleasedJson` · `fxGetTableDefinition` · `fxGetTableTypeDefinition` · `fxMockDelete` · `fxPossibleChanges`
@@ -103,7 +105,9 @@ Het product heet **Yres**, maar in de database staan veel identifiers nog op `IR
 `fxColumnUsage` · `fxGetDependencies` · `fxGetObjectTree` · `fxGetReferencedObjects` · `fxGetViewSources` · `fxGetViewSourcesRecursive`
 
 ### `[Expose]`
-`fxGenerateDefinitions`
+`fxGenerateDefinitions` · `fxGetExposedViews`
+
+> `fxGetExposedViews(@Schema, @Name, @DataType)` is de enige bron van waarheid voor de naamgeving van de ontkoppelviews in het `[Exposed]`-schema (`<Schema>__<Name>`, plus `_History` bij DIM4).
 
 ### `[oData]` / `[Monitoring]`
 `oData.fxBaseResponse` · `oData.fxMetadataResponse` · `Monitoring.fxGetTableLoads`
@@ -121,17 +125,30 @@ Het product heet **Yres**, maar in de database staan veel identifiers nog op `IR
 > `vwExtractor` is het contract dat ADF leest om te bepalen wat geladen moet worden: `SELECT * FROM [LoadManagement].[fxExtractor](NULL, NULL)`.
 
 ### `[Config]`
-`vwSettings` · `vwUserlog` · `vwUserLogJSON` · `vwObjectHistory` · `vwDictionaryVsHis` · `vwDictionaryVsStage`
+`vwSettings` · `vwUserlog` · `vwUserLogJSON` · `vwObjectHistory` · `vwDictionaryVsHis` · `vwDictionaryVsStage` · `vwActiveScalingRequests` · `vwLiveWorkloads`
+
+> `vwActiveScalingRequests` toont de openstaande service-tier-scalingverzoeken waarvan de aanvragende workflow nog een heartbeat geeft; `vwLiveWorkloads` toont de workflow-runs die nog werk in uitvoering hebben. Beide voeden de arbitrage in `Config.spSetDatabaseServiceTier`.
+
+### `[Change]`
+`vwLogs`
+
+> `vwLogs` is de leesbare activiteitenfeed per change: de laatste `spRelease`-/`spInstall`-logregels vertaald naar statussen als *Release succeeded* / *Installation failed*.
 
 ### `[Metadata]`
 `vwObjectTree` · `vwParameters` · `vwScriptedObjects` · `vwUserObjects` · `vwCustomSchemas`
 
 ### `[Maintenance]`
-`vwYresChecks`
+`vwYresChecks` · de modulaire subviews `vwYresChecks_*`
+
+> Naast de verzamelview bestaat er per checkgroep een subview (`vwYresChecks_Duplicates`, `_Orphaned`, `_Inactive`, `_MissingConfig`, `_SourceConfig`, `_License`, `_DbAutomation`, `_Expose`, `_Specials`); de parent-view `vwYresChecks` UNION't ze en berekent de `SolutionID`.
 
 :::note Gezondheidschecks-view
 De health-check-view is **`[Maintenance].[vwYresChecks]`**. Het bronbestand heet nog `vwIrisChecks.sql`, maar het aangemaakte object is `vwYresChecks`. Deze view bevat het verwachte roster van instellingen en checks dat de webapp uitleest.
 :::
+
+### `[dbo]` — hulpviews
+
+> Negen hulpviews bij het meegeleverde index-onderhoud en de utilities: de vijf `vwAvg*`-views (`vwAvgFragLst30Days`, `vwAvgLargestLst30Days`, `vwAvgMostUsedLst30Days`, `vwAvgSamplingLst30Days`, `vwAvgTimeLst30Days`) rapporteren over de AdaptiveIndexDefrag-historie van de laatste 30 dagen; `vwErrLst24Hrs`/`vwErrLst30Days` tonen de defragmentatiefouten; `vwLastRunLog` de laatste defrag-run; en `vwRandom` exposeert `RAND()` zodat functions er toch bij kunnen.
 
 ## Logtabellen
 

@@ -30,7 +30,7 @@ In the table below:
 | **DELTAIMAGE** | DELTA **plus** closing out missing keys *within the delta window* (`>=` watermark). | **Yes** | Closed out if they fall within the window | **yes** |
 | **IMAGE** | Full snapshot: upsert **plus** close out **all** missing keys (soft-delete). | **Yes** | **All closed out** | no |
 | **OVERWRITE** | **HIS is truncated** and all STAGE rows are re-inserted. | **No — history gone** (truncate, RowId restarts) | Gone | no |
-| **RELOAD** | **Close out all current rows** (history is retained) and then insert all STAGE rows. | **Yes** (old generation closed out) | Closed out | no |
+| **RELOAD** | **Close out all current rows** (history is retained; the close-out also re-stamps rows that were already closed — see below) and then insert all STAGE rows. | **Yes** (old generation closed out) | Closed out | no |
 | **ADDITIONAL** | Pure append — no key match, no deduplication; duplicates are allowed. | **Yes** (append only) | Stay current | **yes** |
 
 :::warning OVERWRITE vs. RELOAD — don't mix them up
@@ -78,7 +78,7 @@ Use OVERWRITE only for tables where you genuinely don't need to keep history (fo
 
 ### RELOAD — replace *with* history
 
-RELOAD first **closes out all current rows** (`IsCurrent = 0`, `ETL_EndDate` set) and then inserts the full STAGE set as a new generation. The old generation remains as history. The difference with OVERWRITE: RELOAD discards nothing.
+RELOAD first **closes out all current rows** (`IsCurrent = 0`, `ETL_EndDate` set) and then inserts the full STAGE set as a new generation. The old generation remains as history. The difference with OVERWRITE: RELOAD discards nothing. One nuance: the close-out is an `UPDATE` without a `WHERE` — rows that were already closed also get a new `ETL_EndDate`, overwriting their original close moment. No rows disappear, but keep this in mind if you reconstruct history from `ETL_EndDate`.
 
 Use RELOAD when you want to reload the full set but keep the previous state as history.
 

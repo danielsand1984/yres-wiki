@@ -8,7 +8,7 @@ description: Reference for the stored procedures in the IRIS_DWH database, per s
 
 This page describes the stored procedures in the data-plane database **`IRIS_DWH`**. The names are taken verbatim from the live repository; in code, the product is still called **IRIS** in many places. The content was regenerated from the source code (the code takes precedence over older documentation).
 
-The database contains **108 stored procedures, 58 functions, and 48 views** (counted on the deploy source, July 2026). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
+The database contains **112 stored procedures, 66 functions, and 51 views** (counted on the deploy source, August 2026 — the number grows with each release). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
 
 :::note Schema overview
 The procedures are spread across the schemas `LoadManagement` (the load engine), `Config` (settings, logging, DB tuning), `Change` (DTAP change management), `Monitoring` (load-status logging), `Maintenance` (maintenance, health checks), `Expose` (reporting RBAC), and `dbo` (helper procedures).
@@ -82,6 +82,12 @@ Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagi
 
 **Parameters:** `@Target` (empty = all lake tables).
 
+### `[LoadManagement].[spMaintainLakeExternal]`
+
+**Purpose:** Generates and maintains the read objects over the Parquet change feed for DL-only targets (`DataPlatform` contains `DL` but not `DWH`): per schema generation an external table `[DL].[<Target>_Feed_g<N>]`, the union view `[DL].[<Target>_Feed]` over all generations, and a HIS-shaped view `[DL].[<Target>]`.
+
+**Parameters:** `@Target`, `@PipelineID`, `@WorkflowID`, `@Scope` (`TABLE`/`VIEW`/`ALL`), `@Execute (BIT, 0 = dry run: statements as a result set)`.
+
 ### `[LoadManagement].[spPrepareWorkload]`
 
 **Purpose:** Prepares the workload by writing a row to `[LoadManagement].[LoadLog]` (the durable status per table load) for every table `fxExtractor` returns. Called by the master pipeline (Lookup "Get tables") before `vwExtractor` is read further.
@@ -89,12 +95,6 @@ Additional behavior: pagination is setting-driven (`Config.fxGetSetting('UsePagi
 **PLANNED/SKIPPED logic:** For each candidate table, the procedure checks — via `fxExtractor`'s join with `vwLatestLoad`, restricted to `LoadStatus IN ('PLANNED','RUNNING')` — whether a not-yet-finished load for that exact `Source`/`SourceSchema`/`SourceTable` already exists. If so: the new row is immediately given `LoadStatus = 'SKIPPED'` (logged, not executed — a non-concurrency guard against overlapping triggers). If not: the row gets `LoadStatus = 'PLANNED'`. Finally, the procedure dynamically builds a `SELECT` over `vwExtractor`'s columns, filtered to `WorkFlow = @Workflow AND LoadStatus = 'PLANNED'` — that is the actual work list which (when `@execute = 1`) is executed and returned to the ADF `ForEach`. See [Monitoring & logging](../monitoring-logging.md) for the full status lifecycle.
 
 **Parameters:** `@Source`, `@SourceSchema`, `@SourceTable`, `@TriggerName`, `@Pipeline`, `@Workflow`, `@LoadType`, `@Filter` (all `NVARCHAR(1024)`), `@execute (INT, default 1 — at 0 the built SELECT is only printed, not executed)`.
-
-### `[LoadManagement].[spPrepareCopy]`
-
-**Purpose:** Prepares the copy/load: truncates staging tables, performs mapping lookups, and starts the load process. Logs status and errors via `[Monitoring].[spWriteLoadStatus]`.
-
-**Parameters:** `@PipelineID`, `@Process`, `@Step`, `@Status`, `@Rows (BIGINT)`, `@WorkflowID`, `@PipelineName`, `@Started_by`, `@Target`, `@Source_system`, `@Table`, `@Schema`, `@LoadType`, **`@LatestRecord`**, `@ETL_Date (DATETIME)` (the text parameters are `NVARCHAR(255)`).
 
 ### `[LoadManagement].[spMaterializeViews]`
 
@@ -233,7 +233,7 @@ See [Archiving](../../concepten/archivering.md) for the full story; these are th
 
 #### `[LoadManagement].[spArchivePurge]`
 
-**Purpose:** the verified purge step of archiving. The `Dynamic Archiving Workflow YRES` calls this procedure per table after a successful Copy-to-Parquet, passing exactly the same archiving condition (the `ArchivingScript`) and the number of copied rows. The procedure recounts how many rows match the condition and deletes **only on an exact match** — in batches, and double-gated by the settings `ArchivingPurgeEnabled` and `AllowDeletesFromDB` (switch off = clean copy-only run, not an error). If the counts differ, nothing is deleted and the step fails visibly via `spWriteLoadStatus`.
+**Purpose:** the verified purge step of archiving. The `Dynamic Archiving Workflow YRES` calls this procedure per table after a successful Copy-to-Parquet, passing exactly the same archiving condition (the `ArchivingScript`) and the number of copied rows. The procedure recounts how many rows match the condition and deletes **only on an exact match** — in batches, and gated by the setting `ArchivingPurgeEnabled` (switch off = clean copy-only run, not an error). The `AllowDeletesFromDB` setting deliberately plays **no** role here: it governs dropping database objects, not deleting data. If the counts differ, nothing is deleted and the step fails visibly via `spWriteLoadStatus`.
 
 #### `[LoadManagement].[spArchiveMaintainView]`
 
@@ -305,6 +305,10 @@ Call `spSwapDictionary`/`spSwapServices` **without** scope parameters and the wh
 **Purpose:** Changes the Azure SQL service tier (scales the database up/down). Called in the master pipeline around a load.
 
 **Parameters:** `@toTier (NVARCHAR(250), default 'Default')`, `@requestor (NVARCHAR(1024), default 'Unknown')`, `@AppUser (NVARCHAR(1024), default '')`, `@EXECUTE (BIT, default 1)`.
+
+### `[Config].[spRenameTarget]`
+
+**Purpose:** Brings the **physical** identity of one registered target in line with its configuration: when the effective target name (`Overwrite*`) or the target schema no longer matches the stored `UsedTables.Actual*` stamp, the procedure renames/moves the HIS and STAGE tables (and, for `DataPlatform = DL`, the lake bookkeeping), including the references that travel along such as `SurrogateKeys`, and rewrites the `Actual*` stamp. Atomic: if the rename fails, everything stays on the old name.
 
 ### `[Config].[spUpdateRefreshToken]`
 
@@ -415,7 +419,7 @@ The `Change` schema supports promoting changes between environments (dev → tes
 
 **Purpose:** Installs a change into the target system, with a choice between executing, printing the SQL, or running an impact analysis.
 
-**Parameters:** `@ChangeID (NVARCHAR(1024))`, `@Execute (INT, default 2)` (**1** = execute, **0** = print SQL, **2** = impact analysis), `@AppUser (NVARCHAR(4000), default 'Unknown')`, `@CommitPartial (BIT, default 0)`.
+**Parameters:** `@ChangeID (NVARCHAR(1024))`, `@Execute (INT, default 2)` (**1** = execute, **0** = print SQL, **2** = impact analysis), `@AppUser (NVARCHAR(4000), default 'Unknown')`, `@OnlySources (BIT, default 0)` (**1** = install only source systems + type mappings, skipping tables and scripted objects).
 
 ### `[Change].[spRelease]`
 
@@ -423,9 +427,9 @@ The `Change` schema supports promoting changes between environments (dev → tes
 
 **Parameters:** `@ChangeId (INT)`, `@UseLatestVersion (BIT, default 1)` (whether the most recent version of the objects in the change is used), `@AppUser (NVARCHAR(1024))`.
 
-### `[Change].[spDeleteObject]`
-
-**Purpose:** Marks/removes an object within a change. (In this release the live procedure is an empty stub with only a header comment; the working delete logic runs through `spAddScriptedObject` with `@Delete=1`.)
+:::note `spDeleteObject` has been removed
+The former procedure `[Change].[spDeleteObject]` no longer exists: it was removed during the change-process hardening. The delete logic runs through `spAddScriptedObject` with `@Delete=1`.
+:::
 
 ---
 
@@ -534,6 +538,14 @@ The `Expose` schema manages the reporting objects and access to them (users, rol
 **Purpose:** Adds members to or removes them from a reporting role.
 
 **Parameters:** `@Action (NVARCHAR(20))` (`ADD`/`REMOVE`), `@member (NVARCHAR(1024))`, `@Role (NVARCHAR(1024))`, `@AppUser`.
+
+### `[Expose].[spMaintainRoleContent]`
+
+**Purpose:** Links a reporting role to an exposed object in `Expose.RoleContent` and issues the matching `GRANT`/`REVOKE SELECT` on that object's views in the `[Exposed]` schema — registration and permission in one transaction, so they cannot diverge (`@Action` = `ADD`/`DELETE`).
+
+### `[Expose].[spApplyRoleContent]`
+
+**Purpose:** Idempotent reconciler of the reporting RBAC: makes the `SELECT` permissions on the `[Exposed]` views match `Expose.RoleContent` exactly (grants what is registered but missing, revokes what is no longer registered). Needed because a rebuild of the exposure layer (`DROP VIEW`) discards a view's permissions; runs automatically after `spMaintainObjects`/`spRebuildObjects` and is safe to run standalone.
 
 ---
 

@@ -46,7 +46,7 @@ Beantwoord vooraf:
 3. **Eén resource group, één per omgeving, of gemengd?**
 
 :::info Aantal omgevingen hangt af van je licentie
-Het aantal omgevingen dat je mag uitrollen is licentie-gebonden. **Essentials** ondersteunt **één omgeving** (`dev`); **Advanced** twee; **Ultimate** onbeperkt. Voor een DTAP-straat (dev → test → prod) heb je dus minimaal Advanced of hoger nodig. Zie [Prijzen](../prijzen.md) voor de exacte tiers.
+Het aantal omgevingen dat je mag uitrollen is licentie-gebonden. **Essentials** ondersteunt **één omgeving** (`dev`); **Advanced** twee; **Ultimate** maximaal **zes** (afgedwongen door de webapp). Voor een DTAP-straat (dev → test → prod) heb je dus minimaal Advanced of hoger nodig. Zie [Prijzen](../prijzen.md) voor de exacte tiers.
 :::
 
 **Advies:** 2–4 omgevingen, elke omgeving een eigen resource group, in één abonnement (of elk een eigen abonnement).

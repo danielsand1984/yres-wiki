@@ -80,7 +80,7 @@ homepage and are handy for, for example, scheduled maintenance or an upcoming re
 3. **Start and end date** — both optional. Left empty = immediately visible until the announcement is
    deleted.
 4. **Notify Users** — also shows the announcement in the notification tab at the top of the topbar.
-5. **Priority** — puts the announcement at the top of the list on the homepage.
+5. **Priority** — sets the color of the announcement's megaphone icon (low / medium / high); the list is not sorted by it.
 
 ## Audit Logs
 
@@ -146,7 +146,7 @@ care.
 
 ## Settings (entire application)
 
-Route: `/admin/settings`. Applies to **all environments** of the organization. Includes, among other things, the number of
+Route: `/settings`. Applies to **all environments** of the organization. Includes, among other things, the number of
 **parallel processes** with which sources are loaded into the database and/or the Data Lake (an integer
 between **1 and 50**).
 
@@ -240,7 +240,8 @@ The table shows the provisioned Azure resources for the environment — **Data F
 
 ### Change deployment rules (Change overwrites)
 
-Route: `/admin/changeoverwrites` (only for organizations with multiple environments). Translate object names
+Route: `/admin/changeoverwrites` (available from version **1.54**, only for organizations with multiple
+environments and **not on the dev environment** — the screen sits behind a NotDevEnvironment wrapper). Translate object names
 between environments, for example `ERP_DEV.Product` (dev) → `ERP_TST.Product` (test) → `ERP.Product` (prod).
 
 ![Change deployment rules: map object names between environments (OLD → NEW: source/schema/table), e.g. CRM_DEV → CRM_PRD.](/img/screens/admin-changeoverwrites.png)
@@ -313,6 +314,12 @@ is noted in parentheses).
 | `BiDashboardUrl` / `BiDashboardHeight` _(doc: BIDashboardUrl/Height)_ | `NULL` / `400` | Embed URL and height of the PowerBI dashboard. |
 | `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Whether users may directly change / delete / configure / edit logs in the database. |
 | `EnvironmentType` | — | DTAP type of this environment (DEV / TST / ACC / SND / PRE / PRD). |
+
+:::warning `AllowUpdatesInIrisSchemas` is often 1 after the migration chain
+The intended default is `0`, but the v1.46 migration seeds `'1'` and the v1.47 seed with `'0'` is then
+skipped (the setting already exists). So after the migration chain this setting is often **1** — this is
+the known GODMODE remnant. Check the value and deliberately reset it to `0`.
+:::
 
 :::note Naming of these two settings
 For these two settings, it helps to know the naming:

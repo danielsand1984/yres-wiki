@@ -187,7 +187,7 @@ Key columns identify a row uniquely and determine the `KeyHash` — that is how 
 For incremental loads (load type starts with `DELTA`) Yres uses a **delta column**: an increasing change column with which only new or changed records are fetched. For **SQL sources, two delta columns are supported** — comma-separated in `LoadManagement.UsedTables.deltaColumn`, with the same data type; the highest value counts.
 
 :::note Supported sources
-Two delta columns work on all SQL/database sources: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake and OneStream** (the engine uses an ANSI `COALESCE`, so MySQL is included).
+Two delta columns work on all SQL/database sources: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase and OneStream** (the engine uses an ANSI `COALESCE`, so MySQL is included). For **Snowflake**, delta filtering is currently **not guaranteed**: the Snowflake pipeline does not reliably apply the generated delta WHERE clause.
 :::
 
 ## What happens server-side

@@ -46,7 +46,7 @@ Decide beforehand:
 3. **One resource group, one per environment, or mixed?**
 
 :::info Number of environments depends on your license
-The number of environments you may roll out is license-bound. **Essentials** supports **one environment** (`dev`); **Advanced** two; **Ultimate** unlimited. So for a DTAP pipeline (dev → test → prod) you need at least Advanced or higher. See [Pricing](../prijzen.md) for the exact tiers.
+The number of environments you may roll out is license-bound. **Essentials** supports **one environment** (`dev`); **Advanced** two; **Ultimate** a maximum of **six** (enforced by the webapp). So for a DTAP pipeline (dev → test → prod) you need at least Advanced or higher. See [Pricing](../prijzen.md) for the exact tiers.
 :::
 
 **Recommendation:** 2–4 environments, each with its own resource group, in one subscription (or each in its own subscription).
