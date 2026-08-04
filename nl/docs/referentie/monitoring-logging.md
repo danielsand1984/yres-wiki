@@ -175,8 +175,9 @@ De **DWH logs**-pagina (`/admin/dwhlogs`) toont de stap-voor-stap-acties van sto
 4. **Info** — opent de stappen-modal voor die logregel.
 5. **Mislukte stap + ADF-link** — de modal toont de stappen en de foutmelding; bij laadfouten kun je doorklikken naar ADF.
 
-:::note DWH logs niet op elke omgeving
-De DWH logs-pagina is gebonden aan een omgeving (bijv. Productie) en is **niet beschikbaar op Development**.
+:::note Per omgeving
+De DWH logs-pagina toont de logs van één omgeving tegelijk. Wissel rechtsboven met de omgevingsschakelaar
+naar de omgeving (Development, Test, Productie) waarvan je de `ProcessLog` wilt zien.
 :::
 
 ## Een mislukte load onderzoeken

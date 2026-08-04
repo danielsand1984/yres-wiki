@@ -175,8 +175,9 @@ The **DWH logs** page (`/admin/dwhlogs`) shows the step-by-step actions of store
 4. **Info** — opens the steps modal for that log line.
 5. **Failed step + ADF link** — the modal shows the steps and the error message; on load failures you can click through to ADF.
 
-:::note DWH logs not on every environment
-The DWH logs page is bound to an environment (e.g. Production) and is **not available on Development**.
+:::note Per environment
+The DWH logs page shows the logs of one environment at a time. Use the environment switcher at the top right
+to pick the environment (Development, Test, Production) whose `ProcessLog` you want to see.
 :::
 
 ## Investigating a failed load

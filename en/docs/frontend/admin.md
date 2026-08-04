@@ -270,9 +270,10 @@ in the data warehouse.
 ![DWH logs - Log Steps: the step-by-step execution of a stored procedure with timestamps.](/img/screens/admin-dwhlogs-steps.png)
 *The Log Steps modal: the status and timestamp per step; on failure a direct link to the ADF run.*
 
-:::note Not on Development
-Data Warehouse Logs are **not available on the Development environment**. On dev, use the logs under
-[Monitoring](../frontend/load-management.md) and the DWH processes.
+:::note Per environment
+Data Warehouse Logs are part of **Environment admin**: you see the logs of one environment at a time. Switch
+between Development, Test and Production with the environment switcher at the top right. For the run-oriented
+view of load failures, also see [Monitoring](../frontend/load-management.md).
 :::
 
 ### Environment Settings
