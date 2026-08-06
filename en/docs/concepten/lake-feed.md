@@ -166,13 +166,43 @@ maintains three kinds of read objects in the `[DL]` schema (configurable with th
 
 | Object | What it is |
 |---|---|
-| `[DL].[<Table>_Feed_g<N>]` | **External table per schema generation** — reads that generation's Parquet files straight from the Data Lake. |
+| `[DL].[<Table>_Feed_g<N>]` | **External table per schema generation** — reads that generation's Parquet files straight from the Data Lake. Building block; you normally don't query these yourself. |
 | `[DL].[<Table>_Feed]` | **Union view across all generations** — the complete raw change feed as one table. |
-| `[DL].[<Table>]` | **HIS-shaped view** — derives the familiar SCD2 shape from the feed (`ETL_Date`, `ETL_EndDate`, `isCurrent`), so you query a DL-only table exactly like a regular history table. |
+| `[DL].[<Table>]` | **HIS-shaped view** — derives the familiar SCD2 shape from the feed, so you query a DL-only table exactly like a regular history table. |
+
+### `_Feed` or not? Which view to use {#feed-or-his-view}
+
+The two views serve the same underlying files but answer different questions:
+
+- **`[DL].[<Table>_Feed]` — "what happened?"** One row per mutation, exactly as it landed in the lake:
+  `YresAction` (`I`/`U`/`D`), `YresDateStart`, `KeyHash`/`RowHash`. You see every version of every key,
+  including the `D` tombstones (with empty business columns). This is the input for mutation
+  processing: a `MERGE` into your own table, an incremental fold, an audit of what a run did exactly.
+- **`[DL].[<Table>]` — "what is the state (and the history)?"** The same feed, but presented as an
+  SCD2 history table: `YresDateStart` becomes `ETL_Date`, each version's end date is derived
+  (`ETL_EndDate`, open versions get 2999-01-01), and per key the newest version is `IsCurrent = 1`.
+  Tombstones do **not** show up as rows here — a deleted key is simply absent from the current state,
+  but its last version has been properly closed by it, exactly like a delete does in a real `HIS`
+  table. The current state is therefore simply `WHERE IsCurrent = 1`.
+
+Rule of thumb: **processing mutations → `_Feed`; querying the table → `[DL].[<Table>]`.** Reports and
+ad-hoc queries almost always belong on the HIS-shaped view; only consumers that build something from
+the mutation stream themselves need `_Feed`.
+
+Two details of the HIS-shaped view:
+
+- It carries extra columns **`YresYear`** and **`YresMonth`** (from the partition folders in the
+  lake), so you can see which period folder a version came from.
+- For an **ADDITIONAL** table there is no notion of versions: every row is and stays `IsCurrent = 1`
+  (pure append); only tombstones left over from an earlier load type are filtered out. For this load
+  type a filter on `YresYear`/`YresMonth` additionally prunes at the file level. For the other load
+  types it cannot: the version derivation needs the entire history per key (the tombstone that closes
+  a version may sit in a different month), so there the view always reads all files.
 
 When the source schema changes (a new generation), the objects follow automatically: the external
 tables are maintained per generation during the load and the views are refreshed after every successful
-copy — no manual work required.
+copy — no manual work required. A generation that didn't have a column yet shows `NULL` there — in
+both views.
 
 One-time setup per environment: the settings **`SchemaDL`** and **`LakeLocation`**
 (`adls://<container>@<account>.dfs.core.windows.net`), a **managed identity on the SQL server** with

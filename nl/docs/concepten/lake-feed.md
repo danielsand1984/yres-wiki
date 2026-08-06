@@ -169,13 +169,44 @@ drie soorten leesobjecten in het `[DL]`-schema (instelbaar met de setting `Schem
 
 | Object | Wat het is |
 |---|---|
-| `[DL].[<Tabel>_Feed_g<N>]` | **External table per schemageneratie** — leest de Parquet-bestanden van die generatie rechtstreeks uit de Data Lake. |
+| `[DL].[<Tabel>_Feed_g<N>]` | **External table per schemageneratie** — leest de Parquet-bestanden van die generatie rechtstreeks uit de Data Lake. Bouwsteen; normaal bevraag je deze niet zelf. |
 | `[DL].[<Tabel>_Feed]` | **Union-view over alle generaties** — de complete, ruwe change feed als één tabel. |
-| `[DL].[<Tabel>]` | **HIS-vormige view** — leidt uit de feed de vertrouwde SCD2-vorm af (`ETL_Date`, `ETL_EndDate`, `isCurrent`), zodat je een DL-only-tabel precies zo bevraagt als een gewone history-tabel. |
+| `[DL].[<Tabel>]` | **HIS-vormige view** — leidt uit de feed de vertrouwde SCD2-vorm af, zodat je een DL-only-tabel precies zo bevraagt als een gewone history-tabel. |
+
+### `_Feed` of niet? Welke view je gebruikt {#feed-of-his-view}
+
+De twee views serveren dezelfde onderliggende bestanden, maar beantwoorden een andere vraag:
+
+- **`[DL].[<Tabel>_Feed]` — "wat is er gebeurd?"** Eén rij per mutatie, precies zoals die in de lake
+  geland is: `YresAction` (`I`/`U`/`D`), `YresDateStart`, `KeyHash`/`RowHash`. Je ziet álle versies van
+  elke sleutel, inclusief de `D`-tombstones (met lege businesskolommen). Dit is de invoer voor
+  mutatieverwerking: een `MERGE` naar een eigen tabel, een incrementele fold, een audit op wat een run
+  precies deed.
+- **`[DL].[<Tabel>]` — "wat is de stand (en de historie)?"** Dezelfde feed, maar gepresenteerd als
+  SCD2-history-tabel: `YresDateStart` wordt `ETL_Date`, de einddatum van elke versie wordt afgeleid
+  (`ETL_EndDate`, open versies krijgen 2999-01-01), en per sleutel is de nieuwste versie `IsCurrent = 1`.
+  Tombstones zie je hier **niet** als rij — een verwijderde sleutel is gewoon afwezig in de actuele
+  stand, maar zijn laatste versie is er wél netjes door afgesloten, precies zoals een delete dat in een
+  echte `HIS`-tabel doet. De actuele stand is dus simpelweg `WHERE IsCurrent = 1`.
+
+Vuistregel: **verwerk je mutaties → `_Feed`; bevraag je de tabel → `[DL].[<Tabel>]`.** Rapportages en
+ad-hoc-queries horen vrijwel altijd op de HIS-vormige view; alleen consumenten die zelf iets met de
+mutatiestroom opbouwen hebben `_Feed` nodig.
+
+Twee details van de HIS-vormige view:
+
+- Ze bevat extra kolommen **`YresYear`** en **`YresMonth`** (uit de partitiemappen in de lake), zodat
+  je ziet uit welke periode-map een versie komt.
+- Voor een **ADDITIONAL**-tabel is er geen versiebegrip: elke rij is en blijft `IsCurrent = 1`
+  (pure append), alleen eventuele tombstones uit een eerder laadtype worden weggefilterd. Bij dit
+  laadtype snoeit een filter op `YresYear`/`YresMonth` bovendien op bestandsniveau. Bij de andere
+  laadtypen kan dat niet: de versie-afleiding heeft per sleutel de héle geschiedenis nodig (de
+  tombstone die een versie afsluit kan in een andere maand liggen), dus daar leest de view altijd
+  alle bestanden.
 
 Wijzigt het bronschema (een nieuwe generatie), dan komen de objecten automatisch mee: de externe tabellen
 worden per generatie bijgehouden tijdens de load en de views ververst na elke geslaagde kopie — er is
-geen handwerk nodig.
+geen handwerk nodig. Een generatie die een kolom nog niet kende, toont daar `NULL` — in beide views.
 
 Eenmalige inrichting per omgeving: de instellingen **`SchemaDL`** en **`LakeLocation`**
 (`adls://<container>@<account>.dfs.core.windows.net`), een **managed identity op de SQL-server** met
