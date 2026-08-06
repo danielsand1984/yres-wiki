@@ -36,10 +36,17 @@ The configuration columns:
 | `ArchivingRetention` + `ArchivingRetentionUnit` | The retention period: a number of `YEAR` / `MONTH` / `DAY` (e.g. `10` + `YEAR`). |
 | `ArchivingClause` | Advanced: a free-form WHERE clause that **overrides** the mode — for edge cases such as a Unix-timestamp column. With `BUSINESS`, such a clause may only reference data columns (no `ETL_*`/`isCurrent`). |
 
+The configuration is **validated right at save time** (`spMaintainTable`): an unknown mode, `BUSINESS`
+without a date column or clause, or a missing retention period immediately yields a clear error message —
+instead of archiving silently staying off.
+
 From this configuration the function **`[LoadManagement].[fxArchivingPredicate]`** builds a single archiving condition, with the cutoff date as a **fixed literal** — so the copy and the purge within one run are guaranteed to use exactly the same rule. The result appears as **`ArchivingScript`** (`FROM <HIS schema>.<Target> WHERE <condition>`) on the contract view `[LoadManagement].[vwExtractor]`; the workflow only picks up tables where this script is populated.
 
 :::note Archived data does not come back (BUSINESS)
 With `BUSINESS` archiving, a deleted row may still exist in the source system. That is why, in this mode, the load engine (`spHIS_InsertAndUpdate`) **blocks** all incoming rows that fall inside the "archived space" (business date older than the cutoff): they never reach `HIS` again, not even through a FULL or IMAGE load. The number of blocked rows is logged per load (`Blocked archived-space rows in page` in monitoring). Tip: align the table's `LoadFilter` with the archiving cutoff so the source extraction stops fetching that old data as well. `CLOSED` does not need this blocking: the current row simply stays in the database.
+
+This guarantee also holds when you later **change or disable** the configuration — see the
+[purge memory](#purge-memory) below.
 :::
 
 ## When does archiving run?
@@ -96,6 +103,25 @@ After every successful copy, `spArchiveMaintainView` refreshes the per-table vie
 The views read the Data Lake directly from SQL. This requires a one-time per-environment setup: a **system-assigned managed identity on the logical SQL server**, **Storage Blob Data Reader** for that identity on the Data Lake container, and the setting **`ArchiveLakeLocation`** (`adls://<container>@<account>.dfs.core.windows.net`). Until that is done, archiving itself works fine — only the views are skipped (with a message in monitoring). Data virtualization is a preview feature of Azure SQL Database.
 :::
 
+## Purge memory: consistent, even after configuration changes {#purge-memory}
+
+Every successful, verified purge is recorded in **`[LoadManagement].[ArchiveLog]`**: one row per
+clean-up, holding exactly the condition the rows were deleted with. On every load, the load engine
+applies **all remembered conditions** on top of the current archiving rule.
+
+That makes the behaviour predictable in situations that previously required extra care:
+
+- **Configuration changed** (longer retention, different column) — the rows purged under the old rule
+  stay blocked and do not creep back into `HIS`.
+- **Archiving disabled** — data that was already purged stays purged; the archive in the Data Lake and
+  the `_IncArchive` view remain readable as usual.
+- **Deliberate re-ingestion** — if you *do* want purged rows to be loaded again, delete that table's
+  `ArchiveLog` rows; the next load picks them up again (and the Parquet archive always remains
+  available alongside).
+
+The memory stays compact: a new purge on the same column replaces older, wider rules, leaving only a
+handful of rows per table.
+
 ## The settings
 
 | Setting (`[Config].[Settings]`) | Default | What it controls |
@@ -103,7 +129,7 @@ The views read the Data Lake directly from SQL. This requires a one-time per-env
 | **`ArchivingPurgeEnabled`** | `0` (No) | Master switch — and the only gate — of the purge step. `0` = copy only (trial mode), `1` = also delete from `HIS` after a verified copy. The existing setting `AllowDeletesFromDB` deliberately plays no role in the purge: it governs dropping objects, not deleting data. |
 | **`ArchiveLakeLocation`** | empty | `adls://…` location of the Data Lake for the union views; filled by provisioning. Empty = views are skipped. |
 
-The **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, group 7) guard the configuration: `BUSINESS` without a date column, an `ArchivingColumn` missing from the Dictionary, a missing retention period, a clause on `ETL_` columns, and a purge that is enabled while `ArchiveLakeLocation` is empty (check 7.14 — the archive is then unreadable from SQL) are all flagged.
+The **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, group 7) guard the configuration: `BUSINESS` without a date column, an `ArchivingColumn` missing from the Dictionary, a missing retention period, a clause on `ETL_` columns, and a purge that is enabled while `ArchiveLakeLocation` is empty (check 7.14 — the archive is then unreadable from SQL) are all flagged. The purge memory is guarded as well: check **7.15** warns when a remembered block references a column that is no longer part of the selection (every load would fail on it), and check **7.16** shows which tables still carry an active purge memory while the current configuration no longer sets up blocking — useful to understand why purged rows do not come back, and where to act if you actually want them to.
 
 :::note Retired: settings-driven default archiving
 Older versions contained an alternative design (`vwArchivingExtractor` with the settings `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) that would archive all DELTA tables automatically. Since v1.56, archiving is deliberately an explicit per-table choice; the deploy cleans up the old view and settings itself.

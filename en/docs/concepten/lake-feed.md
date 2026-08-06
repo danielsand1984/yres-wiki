@@ -88,6 +88,10 @@ The feed hangs off the existing **`DataPlatform`** column on the table configura
 | `DL` | the lake feed only |
 | `DWH,DL` | both |
 
+For a **DL-only table** (`DL` without `DWH`), Yres deliberately creates no history table in the
+database — the data lives entirely in the Data Lake. You can still query it from SQL: Yres automatically
+maintains read objects in the `[DL]` schema for it (see [below](#dl-schema)).
+
 Switch `DL` back off and the Parquet files already written stay put; a health check points you at the
 leftover bookkeeping in the database (see [Monitoring](#monitoring)).
 
@@ -146,7 +150,7 @@ The **full history** is simply all rows; a version's end date follows from
 |---|---|
 | **Microsoft Fabric** | `OPENROWSET(BULK '…/lake/<Source>/<Schema>/<Table>/**', FORMAT='parquet')` in a Warehouse — no Spark required. For Direct Lake, fold the feed into a Delta table with Spark. |
 | **Databricks** | `read_files(…, format => 'parquet')`, or fold incrementally into Delta with Auto Loader: `MERGE` on `KeyHash`, `D` rows as deletes. |
-| **Azure SQL Database** | Through data virtualization (`OPENROWSET` over an external data source). Requires a managed identity on the SQL server with **Storage Blob Data Reader** — the same setup as the [archive union views](./archivering.md). |
+| **Azure SQL Database** | For **DL-only tables** Yres builds this for you: ready-made views in the `[DL]` schema (see [below](#dl-schema)). Doing it by hand also works, through data virtualization (`OPENROWSET` over an external data source). Requires a managed identity on the SQL server with **Storage Blob Data Reader** — the same setup as the [archive union views](./archivering.md). |
 
 :::caution Azure SQL: data virtualization is preview
 Reading from Azure SQL works, but it is a preview feature of Azure SQL Database. Mind these: always use
@@ -154,6 +158,27 @@ an **external data source** (a bare URL in `BULK` demands a credential anyway), 
 (not `https://`), and state column types explicitly. If the path points at a folder holding **no** files,
 you get an error rather than an empty result set.
 :::
+
+## Querying DL-only tables from SQL: the `[DL]` schema {#dl-schema}
+
+For DL-only tables, **`[LoadManagement].[spMaintainLakeExternal]`** automatically generates and
+maintains three kinds of read objects in the `[DL]` schema (configurable with the `SchemaDL` setting):
+
+| Object | What it is |
+|---|---|
+| `[DL].[<Table>_Feed_g<N>]` | **External table per schema generation** — reads that generation's Parquet files straight from the Data Lake. |
+| `[DL].[<Table>_Feed]` | **Union view across all generations** — the complete raw change feed as one table. |
+| `[DL].[<Table>]` | **HIS-shaped view** — derives the familiar SCD2 shape from the feed (`ETL_Date`, `ETL_EndDate`, `isCurrent`), so you query a DL-only table exactly like a regular history table. |
+
+When the source schema changes (a new generation), the objects follow automatically: the external
+tables are maintained per generation during the load and the views are refreshed after every successful
+copy — no manual work required.
+
+One-time setup per environment: the settings **`SchemaDL`** and **`LakeLocation`**
+(`adls://<container>@<account>.dfs.core.windows.net`), a **managed identity on the SQL server** with
+**Storage Blob Data Reader** on the Data Lake, and database compatibility level **130 or higher** — the
+[health checks](#monitoring) point out anything that is missing. Data virtualization is a preview
+feature of Azure SQL Database.
 
 ## Rebuilding
 
@@ -169,12 +194,17 @@ state with the pattern above notice nothing; a Delta fold simply merges the fres
 
 ## Monitoring {#monitoring}
 
-Two [health checks](../frontend/admin.md) guard the feed:
+A series of [health checks](../frontend/admin.md) guards the feed and the read objects:
 
 | Check | Signals |
 |---|---|
 | **2.12** | A table is set to `DL` and has successful loads, but there is no bookkeeping in the `[LAKE]` schema — so no feed is being produced for it. Usually the ADF factory still runs an older version. |
 | **2.13** | A `[LAKE]` bookkeeping table remains for a table no longer set to `DL`. The check supplies a cleanup script; the Parquet files are left alone. |
+| **2.14** | A DL-only table has been loaded but is missing (part of) its read objects in the `[DL]` schema — the feed cannot be fully queried from SQL. |
+| **2.15** | `[DL]` read objects remain for a table that is no longer an active DL-only table. The check supplies a cleanup script; the Parquet files are left alone. |
+| **2.16** | There are active DL-only tables, but `SchemaDL` or `LakeLocation` has not been configured yet. |
+| **2.17** | The database compatibility level is below 130, while external tables/`OPENROWSET` require it. Comes with a ready-made fix script. |
+| **2.18** | Recent messages that maintenance of the read objects failed or was skipped — with the details in monitoring. |
 
 ## Growth
 

@@ -161,11 +161,12 @@ fix script.
 | **9.04** | **Unknown** setting present | a manually added or outdated setting that is no longer in the roster |
 
 :::note Older versions: double flag around `AllowUpdatesInIrisSchemas`
-This setting is seeded as **`AllowUpdatesInIrisSchemas`** (with "Iris"), while the `vwYresChecks` roster in
-older Yres versions expected the name **`AllowUpdatesInYresSchemas`** (with "Yres"). As a result it was
-flagged both as *missing* (9.03) and as *unknown* (9.04). The roster has since been aligned with the seeded
-name. If you still see the double flag, the database runs an older DWH version and it will disappear with
-the next deployment — it never indicated data corruption.
+This setting is nowadays called **`AllowUpdatesInYresSchemas`** (with "Yres"); older versions seeded it
+as **`AllowUpdatesInIrisSchemas`** (with "Iris"), while the `vwYresChecks` roster could expect the
+Yres name. As a result it was flagged both as *missing* (9.03) and as *unknown* (9.04). The upgrade
+renames the setting automatically to `AllowUpdatesInYresSchemas`, keeping the configured value. If you
+still see the double flag, the database runs an older DWH version and it will disappear with the next
+deployment — it never indicated data corruption.
 :::
 
 :::warning

@@ -36,10 +36,17 @@ De configuratiekolommen:
 | `ArchivingRetention` + `ArchivingRetentionUnit` | De bewaartermijn: een aantal `YEAR` / `MONTH` / `DAY` (bv. `10` + `YEAR`). |
 | `ArchivingClause` | Geavanceerd: een vrije WHERE-clausule die de modus **overstemt** — voor uitzonderingsgevallen zoals een Unix-timestampkolom. Bij `BUSINESS` mag zo'n clausule alleen datakolommen gebruiken (geen `ETL_*`/`isCurrent`). |
 
+De configuratie wordt **direct bij het opslaan gevalideerd** (`spMaintainTable`): een onbekende modus,
+`BUSINESS` zonder datumkolom of clausule, of een ontbrekende bewaartermijn levert meteen een duidelijke
+foutmelding op — in plaats van dat de archivering stilletjes uit blijft staan.
+
 Uit die configuratie bouwt de function **`[LoadManagement].[fxArchivingPredicate]`** één archiveringsconditie, met de grensdatum als **vaste literal** — zodat de kopieer- en opschoonstap binnen één run gegarandeerd exact dezelfde regel gebruiken. Het resultaat verschijnt als **`ArchivingScript`** (`FROM <HIS-schema>.<Target> WHERE <conditie>`) op de contractview `[LoadManagement].[vwExtractor]`; de workflow pakt alleen tabellen waar dit script gevuld is.
 
 :::note Gearchiveerde data komt niet terug (BUSINESS)
 Bij `BUSINESS`-archivering kan een verwijderde rij nog in het bronsysteem bestaan. Daarom **blokkeert de laadmachine** (`spHIS_InsertAndUpdate`) bij deze modus alle binnenkomende rijen die in de "gearchiveerde ruimte" vallen (businessdatum ouder dan de grens): ze bereiken `HIS` nooit meer, ook niet via een FULL- of IMAGE-load. Het aantal geblokkeerde rijen wordt per load gelogd (`Blocked archived-space rows in page` in de monitoring). Tip: zet het `LoadFilter` van zo'n tabel gelijk aan de archiveringsgrens, dan haalt de bron-extractie die oude data ook niet meer op. `CLOSED` heeft deze blokkering niet nodig: de actuele rij blijft immers gewoon in de database staan.
+
+Deze garantie blijft ook overeind als je de configuratie later **verandert of uitzet** — zie het
+[purge-geheugen](#purge-geheugen) hieronder.
 :::
 
 ## Wanneer draait archivering?
@@ -96,6 +103,25 @@ Na elke geslaagde kopie ververst `spArchiveMaintainView` per tabel de view **`[<
 De views lezen het Data Lake rechtstreeks vanuit SQL. Daarvoor moet eenmalig per omgeving zijn ingericht: een **system-assigned managed identity op de logical SQL-server**, **Storage Blob Data Reader** voor die identity op de Data Lake-container, en de instelling **`ArchiveLakeLocation`** (`adls://<container>@<account>.dfs.core.windows.net`). Zolang dat niet gebeurd is, werkt archiveren zelf gewoon — alleen de views worden overgeslagen (met een melding in de monitoring). Data virtualization is een preview-feature van Azure SQL Database.
 :::
 
+## Purge-geheugen: consistent, ook na configuratiewijzigingen {#purge-geheugen}
+
+Elke geslaagde, geverifieerde purge wordt vastgelegd in **`[LoadManagement].[ArchiveLog]`**: één rij per
+opschoning, met exact de conditie waarmee de rijen verwijderd zijn. De laadmachine past bij elke load
+**alle onthouden condities** toe, bovenop de actuele archiveringsregel.
+
+Dat maakt het gedrag voorspelbaar in situaties die voorheen om oplettendheid vroegen:
+
+- **Configuratie gewijzigd** (langere bewaartermijn, andere kolom) — de rijen die onder de oude regel
+  zijn opgeschoond, blijven geblokkeerd en sluipen niet terug in `HIS`.
+- **Archivering uitgezet** — al opgeschoonde data blijft opgeschoond; het archief in de Data Lake en de
+  `_IncArchive`-view blijven gewoon leesbaar.
+- **Bewust terughalen** — wil je opgeschoonde rijen wél opnieuw laden, verwijder dan de
+  `ArchiveLog`-rijen van die tabel; de eerstvolgende load neemt ze weer mee (het Parquet-archief blijft
+  daarnaast altijd beschikbaar).
+
+Het geheugen blijft compact: een nieuwe purge op dezelfde kolom vervangt oudere, ruimere regels, zodat
+er per tabel maar een handvol rijen staat.
+
 ## De instellingen
 
 | Instelling (`[Config].[Settings]`) | Standaard | Wat het regelt |
@@ -103,7 +129,7 @@ De views lezen het Data Lake rechtstreeks vanuit SQL. Daarvoor moet eenmalig per
 | **`ArchivingPurgeEnabled`** | `0` (Nee) | Hoofdschakelaar — en enige gate — van de opschoonstap. `0` = alleen kopiëren (proefdraaien), `1` = na geverifieerde kopie ook verwijderen uit `HIS`. De bestaande instelling `AllowDeletesFromDB` speelt bewust géén rol bij de purge: die gaat over het droppen van objecten, niet over dataverwijdering. |
 | **`ArchiveLakeLocation`** | leeg | `adls://…`-locatie van de Data Lake voor de union-views; wordt door provisioning gevuld. Leeg = views worden overgeslagen. |
 
-De **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, groep 7) bewaken de configuratie: `BUSINESS` zonder datumkolom, een `ArchivingColumn` die niet in de Dictionary bestaat, een ontbrekende bewaartermijn, een clausule op `ETL_`-kolommen en een purge die aanstaat terwijl `ArchiveLakeLocation` leeg is (check 7.14 — het archief is dan niet vanuit SQL leesbaar), worden allemaal gesignaleerd.
+De **[health checks](../referentie/monitoring-logging.md)** (`vwYresChecks`, groep 7) bewaken de configuratie: `BUSINESS` zonder datumkolom, een `ArchivingColumn` die niet in de Dictionary bestaat, een ontbrekende bewaartermijn, een clausule op `ETL_`-kolommen en een purge die aanstaat terwijl `ArchiveLakeLocation` leeg is (check 7.14 — het archief is dan niet vanuit SQL leesbaar), worden allemaal gesignaleerd. Ook het purge-geheugen wordt bewaakt: check **7.15** waarschuwt als een onthouden blokkering verwijst naar een kolom die niet meer in de selectie zit (elke load zou daarop stuklopen), en check **7.16** laat zien wélke tabellen nog een actief purge-geheugen hebben terwijl de huidige configuratie geen blokkering meer instelt — handig om te begrijpen waarom opgeschoonde rijen niet terugkomen, en waar je moet zijn als je dat wél wilt.
 
 :::note Vervallen: settings-gestuurde standaard-archivering
 Oudere versies bevatten een alternatieve opzet (`vwArchivingExtractor` met de instellingen `DefaultArchivingDate`/`DefaultArchivingLoadtypes`) die automatisch alle DELTA-tabellen zou archiveren. Sinds v1.56 is archivering bewust een expliciete keuze per tabel; de deploy ruimt de oude view en instellingen zelf op.

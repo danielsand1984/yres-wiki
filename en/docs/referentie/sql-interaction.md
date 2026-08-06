@@ -11,14 +11,14 @@ Every Yres database (`IRIS_DWH`) can be managed through a **SQL endpoint** (SSMS
 :::tip This page is the catalog
 Below are the **names per schema** with a short description. The full **purpose, inputs and outputs per object** are on the detail pages:
 
-- [Stored procedures](./sql/stored-procedures.md) — all 112 procedures
+- [Stored procedures](./sql/stored-procedures.md) — all 111 procedures
 - [Functions](./sql/functions.md) — all 66 functions
 - [Logs & views](./sql/logs-views.md) — log tables + all 51 views with output columns
 :::
 
 ## Overview: schemas and counts
 
-`IRIS_DWH` contains **112 stored procedures, 66 functions and 51 views** (as of August 2026 — the counts grow with each release), spread across these schemas:
+`IRIS_DWH` contains **111 stored procedures, 66 functions and 51 views** (as of August 2026 — the counts grow with each release), spread across these schemas:
 
 | Schema | Role |
 |---|---|
@@ -47,7 +47,7 @@ The product is called **Yres**, but in the database many identifiers still read 
 > `spLoadDWH` is the entry point that ADF calls once STAGE has been filled; it is a **pure pass-through** to `spHIS_InsertAndUpdate` (the old `spUpdateETL_EndDate` call is commented out — end-dating now happens inside `spHIS_InsertAndUpdate` itself). `spMaintainLakeExternal` generates and maintains the read objects (external tables + views in `[DL]`) over the Parquet change feed for DL-only targets.
 
 ### Schema `[Config]` — configuration, logging & metadata
-`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateExternalTablesFromDictionary` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `fxGetDependenciesSQL` · `spGenerateDbreader` · `spRenameTarget` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
+`spAddFrameWorkColumns` · `spCompareMetadata` · `spCreateTablesFromDictionary` · `spDeleteTablesFromDB` · `spEnableColumnstore` · `spEnableMemoryOptimization` · `spFillServices_SAC` · `spGetDependenciesSQL` · `fxGetDependenciesSQL` · `spGenerateDbreader` · `spRenameTarget` · `spSetDatabaseParameter` · `spSetDatabaseServiceTier` · `spUpdateRefreshToken` · `spUpdateTablesFromDictionary` · `spWriteCrash` · `spWriteDump` · `spWriteError` · `spWriteFullLog` · `spWriteLog` · `spWriteMessage` · `spWriteWarning`
 
 > The four "message-class" writers (`spWriteMessage` / `spWriteWarning` / `spWriteError` / `spWriteLog`) write to `Config.ProcessLog`. `spGenerateDbreader` (no parameters) rebuilds the database role **`Yres_dbreader`**. Despite the `fx` prefix, `fxGetDependenciesSQL` is a **stored procedure** — the variant that `spFindTablesBehindSQL` calls. `spRenameTarget` makes a changed target name or target schema physically real: HIS/STAGE (and, for `DL`, the lake bookkeeping) and the surrogate keys move along atomically.
 

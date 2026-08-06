@@ -312,10 +312,10 @@ staat tussen haakjes vermeld).
 | `SchemaHIS` / `SchemaStage` | `ODS` / `STAGE` | Namen van het HIS- en STAGE-schema. `SchemaHIS` staat standaard op `ODS`, niet op `HIS`. |
 | `storageSize` _(doc: StorageSize)_ | `5` | Maximale opslag in GiB (afhankelijk van de servicetier). |
 | `BiDashboardUrl` / `BiDashboardHeight` _(doc: BIDashboardUrl/Height)_ | `NULL` / `400` | Embed-URL en hoogte van het PowerBI-dashboard. |
-| `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Of gebruikers direct in de database mogen wijzigen / verwijderen / instellen / logs bewerken. |
+| `AllowUpdatesInYresSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Of gebruikers direct in de database mogen wijzigen / verwijderen / instellen / logs bewerken. |
 | `EnvironmentType` | — | DTAP-type van deze omgeving (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::warning `AllowUpdatesInIrisSchemas` staat na de migratieketen vaak op 1
+:::warning `AllowUpdatesInYresSchemas` staat na de migratieketen vaak op 1
 De bedoelde default is `0`, maar de v1.46-migratie seedt `'1'` en de v1.47-seed met `'0'` wordt daarna
 overgeslagen (de setting bestaat dan al). Na de migratieketen staat deze setting dus vaak op **1** — dit is
 het bekende GODMODE-restant. Controleer de waarde en zet hem bewust terug op `0`.
@@ -326,8 +326,9 @@ Bij deze twee instellingen is het handig de naamgeving te kennen:
 
 - **`DefaultOdsMemOptimized`** — de fallback-functie `fxGetOptimized` gebruikt deze setting ook voor de
   HIS-kant.
-- **`AllowUpdatesInIrisSchemas`** (met "Iris") is de geseede naam; de health-check-roster gebruikt deze
-  naam. Zie [Troubleshooting](../troubleshooting.md#veelvoorkomende-settings-checks-90x) bij
+- **`AllowUpdatesInYresSchemas`** heette in oudere versies `AllowUpdatesInIrisSchemas` (met "Iris");
+  de upgrade hernoemt de instelling automatisch, met behoud van de ingestelde waarde. Zie
+  [Troubleshooting](../troubleshooting.md#veelvoorkomende-settings-checks-90x) bij
   settings-gerelateerde checks.
 :::
 

@@ -63,6 +63,14 @@ details van elk onderwerp.
   uniciteitsregel op hun logische sleutel, zodat dezelfde kolom er maar één keer in kan staan. Komen
   er in jouw omgeving dubbele rijen voor, dan ruimt de upgrade die op en houdt de meest recent
   bijgewerkte aan.
+- **Instelling hernoemd.** De instelling `AllowUpdatesInIrisSchemas` heet voortaan
+  **`AllowUpdatesInYresSchemas`** — de laatste "Iris"-naam in de instellingen. De upgrade hernoemt haar
+  automatisch met behoud van de ingestelde waarde; alleen eigen scripts die de oude naam gebruiken,
+  moeten mee. → [Admin → Instellingen](../frontend/admin.md)
+- **Verouderde procedure verwijderd.** De oude, niet-ondersteunde procedure
+  `Config.spCreateExternalTablesFromDictionary` is uit de database verwijderd. Voor external tables over
+  de Data Lake is er nu een volwaardig, automatisch onderhouden alternatief: het `DL`-schema van de
+  lake feed. → [Lake feed](../concepten/lake-feed.md#dl-schema)
 
 ### Webapp
 
@@ -88,6 +96,13 @@ details van elk onderwerp.
   zonder wijzigingen schrijven niets, een herstart overschrijft zijn eigen bestand, en de lake-stap loopt
   parallel aan het laden van het datawarehouse. Aanzetten doe je per tabel met `DataPlatform = DL`.
   → [Lake feed](../concepten/lake-feed.md)
+- **DL-only-tabellen: de lake als cold storage, bevraagbaar vanuit SQL.** Een tabel die alléén op `DL`
+  staat, krijgt geen history-tabel meer in de database — de data leeft volledig in de Data Lake. Toch
+  bevraag je haar gewoon vanuit SQL: Yres genereert en onderhoudt automatisch external tables en views
+  in het `DL`-schema, inclusief een HIS-vormige view die de vertrouwde SCD2-kolommen
+  (`ETL_Date`/`ETL_EndDate`/`isCurrent`) uit de feed afleidt. Schemawijzigingen volgen vanzelf via
+  schemageneraties, en nieuwe health checks bewaken de hele keten — van configuratie tot
+  compatibiliteitsniveau. → [Lake feed → het DL-schema](../concepten/lake-feed.md#dl-schema)
 - **De testsuite wordt meegeleverd.** De regressietestsuite die elk databaseobject doorlicht —
   inmiddels **±1655 controles over 195 objecten** (en groeiend per release) — zit in de DACPAC en komt dus met elke versie mee.
   Na een deploy of bij twijfel draai je hem zelf met `EXEC Test.spRunAll` — hij is veilig op
@@ -145,8 +160,17 @@ details van elk onderwerp.
 - **Wijzigingsproces gehard:** veertien fouten in release/import/install opgelost, plus een leesbare
   release-historie per change (`Change.vwLogs`). → [Wijzigingsproces](../concepten/wijzigingsproces.md)
 - **DB-tier-scaling:** naast de "Default"-tier is nu ook een "High"-tier configureerbaar waarnaar
-  workflows tijdens zware loads kunnen opschalen.
+  workflows tijdens zware loads kunnen opschalen. De monitorpipeline heroverweegt de tier bovendien
+  tussentijds: een afschaling die tijdens drukte werd uitgesteld, wordt alsnog uitgevoerd zodra de
+  actieve workloads klaar zijn — je betaalt de hogere tier dus niet langer dan nodig.
 - **Archivering:** per tabel kiezen tussen `CLOSED` (afgesloten SCD2-versies) en `BUSINESS` (data ouder dan X jaar op een datumkolom); de workflow kopieert naar een eigen `archive/`-pad in de Data Lake, verifieert de rowcount en schoont pas daarna op (gegate door de instelling `ArchivingPurgeEnabled`, standaard copy-only); gearchiveerde data wordt bij het laden geblokkeerd zodat ze niet terugkeert; per tabel een automatische `_IncArchive`-unionview (live + archief); nieuwe health checks bewaken de configuratie. De archiveringsworkflow wordt bij de update automatisch aangemaakt en is vanuit de webapp te starten en in te plannen; welke tabellen archiveren stel je in deze versie nog in de database in, niet in de webapp. → [Archivering](../concepten/archivering.md)
+- **Archivering onthoudt zijn opschoningen.** Elke geverifieerde purge wordt vastgelegd in een
+  purge-geheugen (`ArchiveLog`), zodat opgeschoonde rijen ook na een configuratiewijziging — een andere
+  bewaartermijn, een andere kolom, of archivering die weer uitgaat — consistent buiten het datawarehouse
+  blijven. Bewust terughalen kan altijd. De archiveringsconfiguratie wordt bovendien direct bij het
+  opslaan gevalideerd (een onvolledige instelling geeft meteen een duidelijke melding), en twee nieuwe
+  health checks maken het purge-geheugen inzichtelijk.
+  → [Archivering → purge-geheugen](../concepten/archivering.md#purge-geheugen)
 
 ### Dataplatform — stabiliteit & performance
 
@@ -170,6 +194,28 @@ details van elk onderwerp.
   aangemaakt schrijft de merge zijn `HIS`-inserts nu met één tabellock (`TABLOCK`) in plaats van
   rij- en pagina-locks — merkbaar minder lock-overhead op grote loads. Rowstore-tabellen veranderen
   niet, en omdat loads per tabel al na elkaar draaien blokkeert dit niets extra.
+- **Live voortgang in de monitoring, ook tijdens grote loads:** de SCD2-merge schrijft zijn logregels
+  voortaan in korte, per-pagina afgesloten transacties. Je ziet de voortgang van een lopende load dus
+  meteen in de monitoringschermen, in plaats van pas na afloop — en de monitoringviews lezen zonder een
+  lopende load te hinderen.
+- **Fouten in ondersteunende stappen zijn direct zichtbaar:** waar een probleem in een ondersteunende
+  stap (zoals view-onderhoud of lake-leesobjecten) voorheen alleen als logregel te vinden was, meldt hij
+  zich nu als een zichtbare `FAILED`-status met de foutdetails erbij. Bewuste overslagen (bijvoorbeeld
+  een feature die uitstaat) blijven gewoon informatieve meldingen — je ziet dus sneller wat aandacht
+  vraagt, zonder ruis. → [Monitoring & logging](./monitoring-logging.md)
+- **Installeerbaar op elke servicetier:** de database-upgrade (inclusief meegeleverde testsuite) werkt
+  nu ook op de kleinere DTU-tiers; columnstore-functionaliteit activeert zichzelf alleen waar de tier
+  die ondersteunt.
+- **Data Lake-toegang via managed identity:** de koppeling tussen de ADF-factory en de Data Lake
+  gebruikt voortaan de managed identity van de factory in plaats van accountsleutels — geen sleutels
+  meer om te beheren of te roteren.
+- **Verdere verfijningen in het laadmechanisme:** een reeks kleinere verbeteringen die het gedrag
+  voorspelbaarder maken. Een greep: een haperende token-refresh kan een werkend OAuth-token niet meer
+  overschrijven; een licentie is de volledige einddag geldig; de keuze uit dubbele typemapping-regels is
+  nu deterministisch; een tabel die dubbel geregistreerd staat, wordt nog maar één keer geladen; het
+  omzetten van een tabel naar columnstore en het herbouwen van de leesrol gebeuren atomair; het
+  deregistreren van een tabel ruimt de volledige administratie op; en de monitor toont geen synthetische
+  plaatsvervangende regels meer.
 - **SharePoint werkt weer:** de bestandsophaal is overgezet op Microsoft Graph nu Microsoft de oude
   app-only-authenticatie heeft uitgezet. Yres zoekt het bestand nu via site → documentbibliotheek →
   bestand en haalt het op via een tijdelijke kopie in de Blob Storage van de omgeving. Let op de

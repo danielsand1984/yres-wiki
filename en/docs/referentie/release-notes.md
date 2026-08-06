@@ -61,6 +61,14 @@ topic.
 - **Uniqueness on the column administration.** During the upgrade, the tables behind the dictionary
   get a uniqueness rule on their logical key, so the same column can only appear once. If duplicate
   rows exist in your environment, the upgrade removes them and keeps the most recently updated one.
+- **Setting renamed.** The setting `AllowUpdatesInIrisSchemas` is now called
+  **`AllowUpdatesInYresSchemas`** — the last "Iris" name among the settings. The upgrade renames it
+  automatically, keeping the configured value; only your own scripts that use the old name need to
+  follow. → [Admin → Settings](../frontend/admin.md)
+- **Outdated procedure removed.** The old, unsupported procedure
+  `Config.spCreateExternalTablesFromDictionary` has been removed from the database. For external tables
+  over the Data Lake there is now a fully supported, automatically maintained alternative: the `DL`
+  schema of the lake feed. → [Lake feed](../concepten/lake-feed.md#dl-schema)
 
 ### Web app
 
@@ -86,6 +94,13 @@ topic.
   write nothing, a restart overwrites its own file, and the lake step runs in parallel with loading the
   data warehouse. You switch it on per table with `DataPlatform = DL`.
   → [Lake feed](../concepten/lake-feed.md)
+- **DL-only tables: the lake as cold storage, queryable from SQL.** A table set to `DL` only no longer
+  gets a history table in the database — the data lives entirely in the Data Lake. You still query it
+  plainly from SQL: Yres generates and maintains external tables and views in the `DL` schema
+  automatically, including a HIS-shaped view that derives the familiar SCD2 columns
+  (`ETL_Date`/`ETL_EndDate`/`isCurrent`) from the feed. Schema changes follow along through schema
+  generations, and new health checks guard the whole chain — from configuration to compatibility
+  level. → [Lake feed → the DL schema](../concepten/lake-feed.md#dl-schema)
 - **The test suite ships with the product.** The regression suite that exercises every database
   object — now **±1655 checks across 195 objects** (and growing per release) — sits in the DACPAC and therefore arrives with
   every version. After a deploy, or whenever in doubt, you run it yourself with `EXEC Test.spRunAll`
@@ -144,8 +159,17 @@ topic.
 - **Change process hardened:** fourteen defects in release/import/install fixed, plus a readable release
   history per change (`Change.vwLogs`). → [Change process](../concepten/wijzigingsproces.md)
 - **DB tier scaling:** next to the "Default" tier, a "High" tier is now configurable that workflows can
-  scale up to during heavy loads.
+  scale up to during heavy loads. The monitor pipeline also reconsiders the tier along the way: a
+  scale-down that was deferred during busy hours is still carried out once the active workloads have
+  finished — so you no longer pay for the higher tier longer than needed.
 - **Archiving:** per table, choose between `CLOSED` (closed SCD2 versions) and `BUSINESS` (data older than X years on a date column); the workflow copies to a dedicated `archive/` path in the Data Lake, verifies the row count and only then purges (gated by the `ArchivingPurgeEnabled` setting, copy-only by default); archived data is blocked at load time so it cannot return; each table gets an automatic `_IncArchive` union view (live + archive); new health checks guard the configuration. The archiving workflow is created automatically during the update and can be started and scheduled from the web app; which tables archive is still configured in the database in this version, not in the web app. → [Archiving](../concepten/archivering.md)
+- **Archiving remembers its clean-ups.** Every verified purge is recorded in a purge memory
+  (`ArchiveLog`), so purged rows stay consistently outside the data warehouse even after a
+  configuration change — a different retention period, a different column, or archiving being switched
+  off again. Deliberate re-ingestion remains possible at any time. The archiving configuration is also
+  validated right at save time (an incomplete setup immediately yields a clear message), and two new
+  health checks make the purge memory transparent.
+  → [Archiving → purge memory](../concepten/archivering.md#purge-memory)
 
 ### Data platform — stability & performance
 
@@ -168,6 +192,26 @@ topic.
   the merge now writes its `HIS` inserts with a single table lock (`TABLOCK`) instead of row and page
   locks — noticeably less lock overhead on large loads. Rowstore tables are unchanged, and since loads
   already run one at a time per table this does not introduce any extra blocking.
+- **Live progress in monitoring, even during large loads:** the SCD2 merge now writes its log lines in
+  short, per-page transactions. You see the progress of a running load in the monitoring screens right
+  away, instead of only afterwards — and the monitoring views read without hindering a running load.
+- **Errors in supporting steps are immediately visible:** where a problem in a supporting step (such as
+  view maintenance or lake read objects) could previously only be found as a log line, it now reports
+  itself as a visible `FAILED` status with the error details attached. Deliberate skips (for example a
+  feature that is switched off) remain informational messages — so you spot what needs attention
+  faster, without noise. → [Monitoring & logging](./monitoring-logging.md)
+- **Installs on every service tier:** the database upgrade (including the bundled test suite) now also
+  works on the smaller DTU tiers; columnstore functionality only activates itself where the tier
+  supports it.
+- **Data Lake access through managed identity:** the connection between the ADF factory and the Data
+  Lake now uses the factory's managed identity instead of account keys — no keys left to manage or
+  rotate.
+- **Further refinements in the load engine:** a series of smaller improvements that make behaviour more
+  predictable. A selection: a failing token refresh can no longer overwrite a working OAuth token; a
+  licence is valid for the entire end date; the choice among duplicate type-mapping rules is now
+  deterministic; a table registered twice is loaded only once; converting a table to columnstore and
+  rebuilding the read role happen atomically; deregistering a table cleans up its full administration;
+  and the monitor no longer shows synthetic placeholder rows.
 - **SharePoint works again:** file retrieval has been moved to Microsoft Graph now that Microsoft has
   switched off the old app-only authentication. Yres locates the file through site → document library →
   file and fetches it via a temporary copy in the environment's Blob Storage. Mind the changed

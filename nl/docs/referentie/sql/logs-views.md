@@ -79,6 +79,23 @@ van `vwMonitor`.
 `TriggerName`, `LoadType`, `Script`, `LoadName`, `WorkFlow`, `Pipeline`, `PlannedAt`, `StartedAt`,
 `FinishedAt`, `LoadStatus`, `Error`, `Config`, `Other`, `LastRunTime`.
 
+### `[LoadManagement].[ArchiveLog]`
+
+Het **purge-geheugen** van [archivering](../../concepten/archivering.md#purge-geheugen): één rij per
+geslaagde, geverifieerde purge, geschreven door `spArchivePurge`. De laadmachine
+(`spHIS_InsertAndUpdate`) past de onthouden condities bij elke load toe, zodat opgeschoonde rijen ook na
+een configuratiewijziging niet terugkeren; de health checks 7.15/7.16 bewaken de inhoud.
+
+**Kolommen:** `Id IDENTITY`, `Target`, `PurgePredicate NVARCHAR(MAX)`, `Blocking BIT`,
+`PurgedRows BIGINT`, `PurgedAt DATETIME2`, `PipelineID`.
+
+### `[LoadManagement].[LakeFeedGeneration]`
+
+De **schemageneratie-administratie** van de [lake feed](../../concepten/lake-feed.md): één rij per
+lake-target per generatie, bijgehouden door `spLoadLake`. Het generatienummer komt terug in de
+Parquet-bestandsnaam (`g<Generatie>`) en bepaalt welke external tables het
+[`[DL]`-schema](../../concepten/lake-feed.md#dl-schema) nodig heeft.
+
 ### `[Config].[ProcessLog]`
 
 De volledige applicatie- en procedure-log. Wordt gevuld door de `Config.spWrite*`-familie

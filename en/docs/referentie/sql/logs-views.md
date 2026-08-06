@@ -79,6 +79,23 @@ of `vwMonitor`.
 `TriggerName`, `LoadType`, `Script`, `LoadName`, `WorkFlow`, `Pipeline`, `PlannedAt`, `StartedAt`,
 `FinishedAt`, `LoadStatus`, `Error`, `Config`, `Other`, `LastRunTime`.
 
+### `[LoadManagement].[ArchiveLog]`
+
+The **purge memory** of [archiving](../../concepten/archivering.md#purge-memory): one row per
+successful, verified purge, written by `spArchivePurge`. The load engine (`spHIS_InsertAndUpdate`)
+applies the remembered conditions on every load, so purged rows do not return even after a
+configuration change; health checks 7.15/7.16 guard the contents.
+
+**Columns:** `Id IDENTITY`, `Target`, `PurgePredicate NVARCHAR(MAX)`, `Blocking BIT`,
+`PurgedRows BIGINT`, `PurgedAt DATETIME2`, `PipelineID`.
+
+### `[LoadManagement].[LakeFeedGeneration]`
+
+The **schema-generation bookkeeping** of the [lake feed](../../concepten/lake-feed.md): one row per
+lake target per generation, maintained by `spLoadLake`. The generation number returns in the Parquet
+file name (`g<Generation>`) and determines which external tables the
+[`[DL]` schema](../../concepten/lake-feed.md#dl-schema) needs.
+
 ### `[Config].[ProcessLog]`
 
 The full application and procedure log. Populated by the `Config.spWrite*` family

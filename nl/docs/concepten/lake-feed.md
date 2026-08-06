@@ -90,6 +90,10 @@ De feed hangt aan de bestaande kolom **`DataPlatform`** op de tabelconfiguratie
 | `DL` | alleen de lake feed |
 | `DWH,DL` | allebei |
 
+Bij een **DL-only-tabel** (`DL` zonder `DWH`) maakt Yres bewust géén history-tabel in de database aan —
+de data leeft volledig in de Data Lake. Bevragen vanuit SQL kan toch: Yres onderhoudt daarvoor
+automatisch leesobjecten in het `[DL]`-schema (zie [hieronder](#dl-schema)).
+
 Zet je `DL` weer uit, dan blijven de al geschreven Parquet-bestanden staan; een health check wijst je op
 de achtergebleven administratie in de database (zie [Bewaking](#bewaking)).
 
@@ -149,7 +153,7 @@ De **volledige historie** is simpelweg álle rijen; de einddatum van een versie 
 |---|---|
 | **Microsoft Fabric** | `OPENROWSET(BULK '…/lake/<Bron>/<Schema>/<Tabel>/**', FORMAT='parquet')` in een Warehouse — geen Spark nodig. Voor Direct Lake vouw je de feed met Spark naar een Delta-tabel. |
 | **Databricks** | `read_files(…, format => 'parquet')`, of met Auto Loader incrementeel vouwen naar Delta: `MERGE` op `KeyHash`, `D`-rijen als delete. |
-| **Azure SQL Database** | Via data virtualization (`OPENROWSET` over een external data source). Vereist een managed identity op de SQL-server met **Storage Blob Data Reader** — dezelfde inrichting als de [archief-unionviews](./archivering.md). |
+| **Azure SQL Database** | Voor **DL-only-tabellen** bouwt Yres dit zelf: kant-en-klare views in het `[DL]`-schema (zie [hieronder](#dl-schema)). Handmatig kan het ook, via data virtualization (`OPENROWSET` over een external data source). Vereist een managed identity op de SQL-server met **Storage Blob Data Reader** — dezelfde inrichting als de [archief-unionviews](./archivering.md). |
 
 :::caution Azure SQL: data virtualization is preview
 Lezen vanuit Azure SQL werkt, maar is een preview-feature van Azure SQL Database. Let daarbij op: gebruik
@@ -157,6 +161,27 @@ altijd een **external data source** (een kale URL in `BULK` eist alsnog een cred
 `adls://`-schema (niet `https://`), en geef kolomtypen expliciet op. Wijst het pad naar een map **zonder**
 bestanden, dan volgt een foutmelding in plaats van een lege resultaatset.
 :::
+
+## DL-only-tabellen bevragen vanuit SQL: het `[DL]`-schema {#dl-schema}
+
+Voor DL-only-tabellen genereert en onderhoudt **`[LoadManagement].[spMaintainLakeExternal]`** automatisch
+drie soorten leesobjecten in het `[DL]`-schema (instelbaar met de setting `SchemaDL`):
+
+| Object | Wat het is |
+|---|---|
+| `[DL].[<Tabel>_Feed_g<N>]` | **External table per schemageneratie** — leest de Parquet-bestanden van die generatie rechtstreeks uit de Data Lake. |
+| `[DL].[<Tabel>_Feed]` | **Union-view over alle generaties** — de complete, ruwe change feed als één tabel. |
+| `[DL].[<Tabel>]` | **HIS-vormige view** — leidt uit de feed de vertrouwde SCD2-vorm af (`ETL_Date`, `ETL_EndDate`, `isCurrent`), zodat je een DL-only-tabel precies zo bevraagt als een gewone history-tabel. |
+
+Wijzigt het bronschema (een nieuwe generatie), dan komen de objecten automatisch mee: de externe tabellen
+worden per generatie bijgehouden tijdens de load en de views ververst na elke geslaagde kopie — er is
+geen handwerk nodig.
+
+Eenmalige inrichting per omgeving: de instellingen **`SchemaDL`** en **`LakeLocation`**
+(`adls://<container>@<account>.dfs.core.windows.net`), een **managed identity op de SQL-server** met
+**Storage Blob Data Reader** op de Data Lake, en database compatibility level **130 of hoger** — de
+[health checks](#bewaking) wijzen je erop als er iets ontbreekt. Data virtualization is een
+preview-feature van Azure SQL Database.
 
 ## Opnieuw opbouwen
 
@@ -173,12 +198,17 @@ rijen gewoon overheen.
 
 ## Bewaking {#bewaking}
 
-Twee [health checks](../frontend/admin.md) bewaken de feed:
+Een reeks [health checks](../frontend/admin.md) bewaakt de feed en de leesobjecten:
 
 | Check | Signaleert |
 |---|---|
 | **2.12** | Een tabel staat op `DL` en heeft succesvolle loads, maar er is geen administratie in het `[LAKE]`-schema — er wordt voor die tabel dus geen feed geproduceerd. Meestal draait de ADF-factory nog een oudere versie. |
 | **2.13** | Er staat nog een `[LAKE]`-administratietabel voor een tabel die niet meer op `DL` staat. De check levert een opruimscript; de Parquet-bestanden blijven ongemoeid. |
+| **2.14** | Een DL-only-tabel is geladen, maar mist (een deel van) zijn leesobjecten in het `[DL]`-schema — de feed is dan niet volledig vanuit SQL te bevragen. |
+| **2.15** | Er staan nog `[DL]`-leesobjecten voor een tabel die geen actieve DL-only-tabel meer is. De check levert een opruimscript; de Parquet-bestanden blijven ongemoeid. |
+| **2.16** | Er zijn actieve DL-only-tabellen, maar `SchemaDL` of `LakeLocation` is nog niet geconfigureerd. |
+| **2.17** | Het database compatibility level is lager dan 130, terwijl external tables/`OPENROWSET` dat vereisen. Inclusief kant-en-klaar herstelscript. |
+| **2.18** | Recente meldingen dat het onderhoud van de leesobjecten is mislukt of overgeslagen — met de details in de monitoring. |
 
 ## Groei
 

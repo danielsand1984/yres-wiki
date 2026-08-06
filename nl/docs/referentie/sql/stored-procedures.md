@@ -8,7 +8,7 @@ description: Referentie van de stored procedures in de IRIS_DWH-database, per sc
 
 Deze pagina beschrijft de stored procedures in de data-plane database **`IRIS_DWH`**. De namen zijn letterlijk uit de live repository overgenomen; in code heet het product nog op veel plaatsen **IRIS**. De inhoud is geregenereerd uit de broncode (de code is leidend boven oudere documentatie).
 
-De database telt **112 stored procedures, 66 functions en 51 views** (geteld op de deploy-bron, augustus 2026 — het aantal groeit per release). Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
+De database telt **111 stored procedures, 66 functions en 51 views** (geteld op de deploy-bron, augustus 2026 — het aantal groeit per release). Functions staan op [Functions](./functions.md); logtabellen en views op [Logs & views](./logs-views.md).
 
 :::note Schema-overzicht
 De procedures zijn verdeeld over de schema's `LoadManagement` (de laadmachine), `Config` (instellingen, logging, DB-tuning), `Change` (DTAP-wijzigingsbeheer), `Monitoring` (laadstatus-logging), `Maintenance` (onderhoud, health checks), `Expose` (rapportage-RBAC) en `dbo` (hulpprocedures).
@@ -219,7 +219,7 @@ Deze procedures schrijven de metadata waarmee de laadmachine werkt (in `LoadMana
 | Procedure | Doel (kort) |
 |---|---|
 | `[LoadManagement].[spMaintainSource]` | Beheert databronnen in `SourceSystems` (`@action`, `@source`, `@sourceType`, `@AppUser`). |
-| `[LoadManagement].[spMaintainTable]` | Beheert tabellen (`UsedTables`/`UsedColumns`); veel extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …) — sinds v1.56 ook de archiveringsconfiguratie (`@ArchivingMode`, `@ArchivingColumn`, `@ArchivingRetention(+Unit)`, `@ArchivingClause`), met validatie tegen de Dictionary. |
+| `[LoadManagement].[spMaintainTable]` | Beheert tabellen (`UsedTables`/`UsedColumns`); veel extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …) — sinds v1.56 ook de archiveringsconfiguratie (`@ArchivingMode`, `@ArchivingColumn`, `@ArchivingRetention(+Unit)`, `@ArchivingClause`), met validatie tegen de Dictionary én op de configuratie zelf: een onbekende modus, `BUSINESS` zonder datumkolom of een ontbrekende bewaartermijn wordt direct bij het opslaan geweigerd met een duidelijke melding, in plaats van dat archivering stil uit blijft. |
 | `[LoadManagement].[spMaintainFiles]` | Beheert bestandsbronnen voor import. |
 | `[LoadManagement].[spMaintainRestService]` | Beheert REST-service-endpoints (`@service`, `@endpoint`, …). |
 | `[LoadManagement].[spMaintainTrigger]` | Beheert triggers per bron/schema/tabel (`@action` = `ADD`/`DELETE`; `"all"`/`"ALL"` mogelijk). |
@@ -233,7 +233,7 @@ Zie [Archivering](../../concepten/archivering.md) voor het volledige verhaal; di
 
 #### `[LoadManagement].[spArchivePurge]`
 
-**Doel:** de geverifieerde opschoonstap van archivering. De `Dynamic Archiving Workflow YRES` roept deze procedure per tabel aan ná een geslaagde Copy-naar-Parquet, met exact dezelfde archiveringsconditie (het `ArchivingScript`) en het aantal gekopieerde rijen. De procedure telt opnieuw hoeveel rijen aan de conditie voldoen en verwijdert **alleen bij een exacte match** — in batches, en gegate door de instelling `ArchivingPurgeEnabled` (schakelaar uit = nette copy-only-run, geen fout). De instelling `AllowDeletesFromDB` speelt hier bewust **geen** rol: die gaat over het droppen van database-objecten, niet over het verwijderen van data. Wijkt de telling af, dan wordt er niets verwijderd en faalt de stap zichtbaar via `spWriteLoadStatus`.
+**Doel:** de geverifieerde opschoonstap van archivering. De `Dynamic Archiving Workflow YRES` roept deze procedure per tabel aan ná een geslaagde Copy-naar-Parquet, met exact dezelfde archiveringsconditie (het `ArchivingScript`) en het aantal gekopieerde rijen. De procedure telt opnieuw hoeveel rijen aan de conditie voldoen en verwijdert **alleen bij een exacte match** — in batches, en gegate door de instelling `ArchivingPurgeEnabled` (schakelaar uit = nette copy-only-run, geen fout). De instelling `AllowDeletesFromDB` speelt hier bewust **geen** rol: die gaat over het droppen van database-objecten, niet over het verwijderen van data. Wijkt de telling af, dan wordt er niets verwijderd en faalt de stap zichtbaar via `spWriteLoadStatus`. Elke geslaagde, geverifieerde purge wordt bovendien vastgelegd in **`[LoadManagement].[ArchiveLog]`** (het purge-geheugen): de laadmachine blijft de opgeschoonde rijen ook blokkeren als de archiveringsconfiguratie later wijzigt of uit gaat — zie [Archivering](../../concepten/archivering.md#purge-geheugen).
 
 #### `[LoadManagement].[spArchiveMaintainView]`
 
@@ -266,9 +266,9 @@ Roep je `spSwapDictionary`/`spSwapServices` **zonder** scope-parameters aan, dan
 
 **Parameters:** `@Execute (BIT, default 0)`, `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
 
-### `[Config].[spCreateTablesFromDictionary]` / `[spUpdateTablesFromDictionary]` / `[spDeleteTablesFromDB]` / `[spCreateExternalTablesFromDictionary]`
+### `[Config].[spCreateTablesFromDictionary]` / `[spUpdateTablesFromDictionary]` / `[spDeleteTablesFromDB]`
 
-**Doel:** Creëren, bijwerken, verwijderen of als external table genereren van DWH-tabellen op basis van de dictionary-metadata.
+**Doel:** Creëren, bijwerken of verwijderen van DWH-tabellen op basis van de dictionary-metadata. Voor **DL-only-tabellen** (`DataPlatform = DL` zonder `DWH`) wordt bewust géén HIS/ODS-tabel aangemaakt: die data leeft alleen in de [lake feed](../../concepten/lake-feed.md) en is via het `[DL]`-schema te bevragen.
 
 **Parameters (gedeeld):** `@Execute (BIT, default 0)`, `@SelectedSource`, `@SelectedSchema`, `@SelectedTable` (alle `NVARCHAR(MAX), default 'NoneSelected'`), `@AppUser`. `spUpdateTablesFromDictionary` voegt toe: `@Methods` (`ADD`/`REMOVE`/`UPDATE`), `@Stage (BIT)`, `@HIS (BIT)`.
 

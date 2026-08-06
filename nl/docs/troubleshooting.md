@@ -162,10 +162,11 @@ fix-script.
 | **9.04** | **Onbekende** setting aanwezig | een handmatig toegevoegde of verouderde setting die niet (meer) in de roster staat |
 
 :::note Oudere versies: dubbelmelding rond `AllowUpdatesInIrisSchemas`
-Deze setting wordt geseed als **`AllowUpdatesInIrisSchemas`** (met "Iris"), terwijl de roster van
-`vwYresChecks` in oudere Yres-versies de naam **`AllowUpdatesInYresSchemas`** (met "Yres") verwachtte.
-Daardoor werd hij tegelijk als *ontbrekend* (9.03) én *onbekend* (9.04) gemeld. De roster is inmiddels
-gelijkgetrokken met de geseede naam. Zie je de dubbelmelding nog, dan draait de database op een oudere
+Deze setting heet tegenwoordig **`AllowUpdatesInYresSchemas`** (met "Yres"); oudere versies seedden
+hem als **`AllowUpdatesInIrisSchemas`** (met "Iris"), terwijl de roster van `vwYresChecks` de
+Yres-naam kon verwachten. Daardoor werd hij tegelijk als *ontbrekend* (9.03) én *onbekend* (9.04)
+gemeld. De upgrade hernoemt de instelling automatisch naar `AllowUpdatesInYresSchemas`, met behoud
+van de ingestelde waarde. Zie je de dubbelmelding nog, dan draait de database op een oudere
 DWH-versie en verdwijnt hij bij de volgende deployment — het was nooit een teken van datacorruptie.
 :::
 

@@ -8,7 +8,7 @@ description: Reference for the stored procedures in the IRIS_DWH database, per s
 
 This page describes the stored procedures in the data-plane database **`IRIS_DWH`**. The names are taken verbatim from the live repository; in code, the product is still called **IRIS** in many places. The content was regenerated from the source code (the code takes precedence over older documentation).
 
-The database contains **112 stored procedures, 66 functions, and 51 views** (counted on the deploy source, August 2026 — the number grows with each release). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
+The database contains **111 stored procedures, 66 functions, and 51 views** (counted on the deploy source, August 2026 — the number grows with each release). Functions are documented in [Functions](./functions.md); log tables and views in [Logs & views](./logs-views.md).
 
 :::note Schema overview
 The procedures are spread across the schemas `LoadManagement` (the load engine), `Config` (settings, logging, DB tuning), `Change` (DTAP change management), `Monitoring` (load-status logging), `Maintenance` (maintenance, health checks), `Expose` (reporting RBAC), and `dbo` (helper procedures).
@@ -219,7 +219,7 @@ These procedures write the metadata that drives the load engine (in `LoadManagem
 | Procedure | Purpose (short) |
 |---|---|
 | `[LoadManagement].[spMaintainSource]` | Manages data sources in `SourceSystems` (`@action`, `@source`, `@sourceType`, `@AppUser`). |
-| `[LoadManagement].[spMaintainTable]` | Manages tables (`UsedTables`/`UsedColumns`); many extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …) — since v1.56 also the archiving configuration (`@ArchivingMode`, `@ArchivingColumn`, `@ArchivingRetention(+Unit)`, `@ArchivingClause`), validated against the Dictionary. |
+| `[LoadManagement].[spMaintainTable]` | Manages tables (`UsedTables`/`UsedColumns`); many extra params (`@DataPlatform`, `@fieldList`, `@loadType`, …) — since v1.56 also the archiving configuration (`@ArchivingMode`, `@ArchivingColumn`, `@ArchivingRetention(+Unit)`, `@ArchivingClause`), validated against the Dictionary and against the configuration itself: an unknown mode, `BUSINESS` without a date column, or a missing retention period is rejected right at save time with a clear message, instead of archiving silently staying off. |
 | `[LoadManagement].[spMaintainFiles]` | Manages file sources for import. |
 | `[LoadManagement].[spMaintainRestService]` | Manages REST service endpoints (`@service`, `@endpoint`, …). |
 | `[LoadManagement].[spMaintainTrigger]` | Manages triggers per source/schema/table (`@action` = `ADD`/`DELETE`; `"all"`/`"ALL"` possible). |
@@ -233,7 +233,7 @@ See [Archiving](../../concepten/archivering.md) for the full story; these are th
 
 #### `[LoadManagement].[spArchivePurge]`
 
-**Purpose:** the verified purge step of archiving. The `Dynamic Archiving Workflow YRES` calls this procedure per table after a successful Copy-to-Parquet, passing exactly the same archiving condition (the `ArchivingScript`) and the number of copied rows. The procedure recounts how many rows match the condition and deletes **only on an exact match** — in batches, and gated by the setting `ArchivingPurgeEnabled` (switch off = clean copy-only run, not an error). The `AllowDeletesFromDB` setting deliberately plays **no** role here: it governs dropping database objects, not deleting data. If the counts differ, nothing is deleted and the step fails visibly via `spWriteLoadStatus`.
+**Purpose:** the verified purge step of archiving. The `Dynamic Archiving Workflow YRES` calls this procedure per table after a successful Copy-to-Parquet, passing exactly the same archiving condition (the `ArchivingScript`) and the number of copied rows. The procedure recounts how many rows match the condition and deletes **only on an exact match** — in batches, and gated by the setting `ArchivingPurgeEnabled` (switch off = clean copy-only run, not an error). The `AllowDeletesFromDB` setting deliberately plays **no** role here: it governs dropping database objects, not deleting data. If the counts differ, nothing is deleted and the step fails visibly via `spWriteLoadStatus`. Every successful, verified purge is also recorded in **`[LoadManagement].[ArchiveLog]`** (the purge memory): the load engine keeps blocking the purged rows even if the archiving configuration changes later or is switched off — see [Archiving](../../concepten/archivering.md#purge-memory).
 
 #### `[LoadManagement].[spArchiveMaintainView]`
 
@@ -266,9 +266,9 @@ Call `spSwapDictionary`/`spSwapServices` **without** scope parameters and the wh
 
 **Parameters:** `@Execute (BIT, default 0)`, `@SelectedTable (NVARCHAR(MAX), default 'NoneSelected')`, `@AppUser (NVARCHAR(4000), default 'Unknown')`.
 
-### `[Config].[spCreateTablesFromDictionary]` / `[spUpdateTablesFromDictionary]` / `[spDeleteTablesFromDB]` / `[spCreateExternalTablesFromDictionary]`
+### `[Config].[spCreateTablesFromDictionary]` / `[spUpdateTablesFromDictionary]` / `[spDeleteTablesFromDB]`
 
-**Purpose:** Create, update, delete, or generate as external tables the DWH tables based on the dictionary metadata.
+**Purpose:** Create, update, or delete the DWH tables based on the dictionary metadata. For **DL-only tables** (`DataPlatform = DL` without `DWH`) no HIS/ODS table is created on purpose: that data lives entirely in the [lake feed](../../concepten/lake-feed.md) and can be queried through the `[DL]` schema.
 
 **Parameters (shared):** `@Execute (BIT, default 0)`, `@SelectedSource`, `@SelectedSchema`, `@SelectedTable` (all `NVARCHAR(MAX), default 'NoneSelected'`), `@AppUser`. `spUpdateTablesFromDictionary` adds: `@Methods` (`ADD`/`REMOVE`/`UPDATE`), `@Stage (BIT)`, `@HIS (BIT)`.
 

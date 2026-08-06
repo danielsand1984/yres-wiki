@@ -312,10 +312,10 @@ is noted in parentheses).
 | `SchemaHIS` / `SchemaStage` | `ODS` / `STAGE` | Names of the HIS and STAGE schema. `SchemaHIS` defaults to `ODS`, not to `HIS`. |
 | `storageSize` _(doc: StorageSize)_ | `5` | Maximum storage in GiB (depending on the service tier). |
 | `BiDashboardUrl` / `BiDashboardHeight` _(doc: BIDashboardUrl/Height)_ | `NULL` / `400` | Embed URL and height of the PowerBI dashboard. |
-| `AllowUpdatesInIrisSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Whether users may directly change / delete / configure / edit logs in the database. |
+| `AllowUpdatesInYresSchemas`, `AllowDeletesFromDB`, `AllowSettingsUpdates`, `AllowLogManipulation` | `0` | Whether users may directly change / delete / configure / edit logs in the database. |
 | `EnvironmentType` | — | DTAP type of this environment (DEV / TST / ACC / SND / PRE / PRD). |
 
-:::warning `AllowUpdatesInIrisSchemas` is often 1 after the migration chain
+:::warning `AllowUpdatesInYresSchemas` is often 1 after the migration chain
 The intended default is `0`, but the v1.46 migration seeds `'1'` and the v1.47 seed with `'0'` is then
 skipped (the setting already exists). So after the migration chain this setting is often **1** — this is
 the known GODMODE remnant. Check the value and deliberately reset it to `0`.
@@ -326,9 +326,9 @@ For these two settings, it helps to know the naming:
 
 - **`DefaultOdsMemOptimized`** — the fallback function `fxGetOptimized` also uses this setting for the
   HIS side.
-- **`AllowUpdatesInIrisSchemas`** (with "Iris") is the seeded name; the health check roster uses this
-  name. See [Troubleshooting](../troubleshooting.md#common-settings-checks-90x) for settings-related
-  checks.
+- **`AllowUpdatesInYresSchemas`** was called `AllowUpdatesInIrisSchemas` (with "Iris") in older
+  versions; the upgrade renames the setting automatically, keeping the configured value. See
+  [Troubleshooting](../troubleshooting.md#common-settings-checks-90x) for settings-related checks.
 :::
 
 ### Health Checks
