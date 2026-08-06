@@ -117,6 +117,7 @@ Een master pipeline laat je **bestaande Yres-bouwstenen** (loads, wachten, tier-
 
 ## Verder lezen
 
+- [Onderhoud plannen met een master pipeline](./onderhouds-master-pipeline.md) — pas de master pipeline-editor toe op de periodieke onderhoudstaken (garbage collection, logretentie, archivering, index-onderhoud).
 - [Data Engineering](../frontend/data-engineering.md) — volledige velduitleg van View persistence en Object history.
 - [Load Management](../frontend/load-management.md) — Run pipelines, Triggers, Monitoring en Master pipelines per scherm.
 - [Gegevensstroom](../concepten/gegevensstroom.md) — waar de **Materialize Views**-stap en de Dynamic Workflow in de totale laad-workflow vallen.

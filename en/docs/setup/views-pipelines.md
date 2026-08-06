@@ -117,6 +117,7 @@ A master pipeline lets you tie **existing Yres building blocks** (loads, waits, 
 
 ## Further reading
 
+- [Scheduling maintenance with a master pipeline](./onderhouds-master-pipeline.md) — apply the master pipeline editor to the periodic maintenance tasks (garbage collection, log retention, archiving, index maintenance).
 - [Data Engineering](../frontend/data-engineering.md) — full field-by-field explanation of View persistence and Object history.
 - [Load Management](../frontend/load-management.md) — Run pipelines, Triggers, Monitoring and Master pipelines per screen.
 - [Data flow](../concepten/gegevensstroom.md) — where the **Materialize Views** step and the Dynamic Workflow fall within the overall load workflow.
