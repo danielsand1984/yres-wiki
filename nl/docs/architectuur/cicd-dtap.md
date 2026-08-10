@@ -43,7 +43,7 @@ IF @CURRENT_VERSION_INT <= NNNNN GOTO UPGRADE_NNNNN
 ```
 
 - De databaseversie staat in `Config.Settings` (de instelling heet `IRIS_VERSION`, op nieuwere builds `YRES_VERSION`).
-- Upgrades worden ondersteund **vanaf ongeveer v1.50**; het huidige doel ligt rond v1.56. Erg oude databases moeten dus stapsgewijs worden opgehoogd voordat ze de laatste versie halen.
+- Upgrades worden ondersteund **vanaf ongeveer v1.50**; de huidige versie is v1.56. Erg oude databases moeten dus stapsgewijs worden opgehoogd voordat ze de laatste versie halen.
 
 :::note Yres-versies sorteren als decimale breuken
 Yres-versies ordenen als decimale breuken, niet als semver: **1.9 staat ná 1.56**. Houd hier rekening mee bij het inschatten of een database de doelversie al heeft.

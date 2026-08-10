@@ -116,7 +116,7 @@ Object- en rechtenwijzigingen: `EventType, ObjectType, TimeStamp, ServerName, Da
 ## Retentie van de logtabellen
 
 :::info Vanaf v1.56
-Het retentiebeleid hieronder is onderdeel van **v1.56 (in test)**. Oudere versies hebben geen opschoonmechanisme: de logtabellen groeien daar onbegrensd.
+Het retentiebeleid hieronder is onderdeel van **v1.56**. Oudere versies hebben geen opschoonmechanisme: de logtabellen groeien daar onbegrensd.
 :::
 
 De logtabellen groeien met elke run (`LS_Trans` schrijft ~12 regels per merge-pagina; `LoadLog` één rij per tabel per workflow-run). Zonder opschoning wordt alles wat monitoring aanraakt — de planningsview `vwExtractor`, `vwMonitor`, de monitorschermen — sluipend trager. Daarom is er een **instelbaar retentiebeleid per tabel**:

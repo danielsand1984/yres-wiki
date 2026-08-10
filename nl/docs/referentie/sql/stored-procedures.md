@@ -557,7 +557,7 @@ Generieke hulpprocedures die de andere schema's gebruiken.
 |---|---|---|
 | `[dbo].[spLongPrint]` | Print lange strings in stukken (omzeilt de `PRINT`-lengtelimiet). | `@String (NVARCHAR(MAX))` |
 | `[dbo].[spRunSQL]` | Voert een willekeurig SQL-statement dynamisch uit. | `@SQL (NVARCHAR(MAX))` |
-| `[dbo].[spJsonToTable]` | Zet JSON om naar een relationele tabel. | `@Collection`, `@json (default '{}')`, `@targetSchema`, `@targetTable` |
+| `[dbo].[spJsonToTable]` | Zet JSON om naar een relationele tabel. Met `@StrictColumns = 1` worden alleen JSON-velden geland die al als kolom in de doeltabel bestaan (geen schemadrift); onbekende velden worden genegeerd. | `@Collection`, `@json (default '{}')`, `@targetSchema`, `@targetTable`, `@StrictColumns (BIT, default 0)` |
 | `[dbo].[spCopyDB]` | Maakt een kopie van een database, optioneel met drop en service-tier. | `@sourceDB`, `@targetDB`, `@targetTier (default 'GP_Gen5_2')`, `@dropIfExists (BIT, default 0)` |
 | `[dbo].[spMSForEachTable]` / `[spMSForEachWorker]` | Voert een commando uit tegen elke tabel (batch-operatie); `@replacechar` wordt door de tabelnaam vervangen. | `@command1 (NVARCHAR(2000))`, `@replacechar (NCHAR(1), default '?')`, … |
 | `[dbo].[spAdaptiveIndexDefrag_CurrentExecStats]` | Rapporteert de voortgang van de index-defragmentatie. | `@dbname (NVARCHAR(255), optioneel)` |

@@ -10,11 +10,11 @@ Version history of Yres DWH. Older versions may no longer be supported; they rem
 reference. Each version lists the new features, improvements, and any breaking changes.
 
 :::note Dates from the product documentation
-The per-version dates below come from _Yres Documentation 1.55_ (release-notes section). Yres versions
+The dates for v1.55 and older come from _Yres Documentation 1.55_ (release-notes section). Yres versions
 order as decimal fractions — so **1.9 comes after 1.55, and 1.56 before it** — not as semver.
 :::
 
-## v1.56 — in testing
+## v1.56 — August 2026
 
 The biggest release so far: alongside the web app, the entire data platform (database + ADF) was
 overhauled. Below are the highlights per theme; the linked wiki pages describe the details of each
@@ -182,6 +182,11 @@ topic.
   environments. On top of that, **log steps no longer gate the real work**: they now run alongside the
   load activities rather than ahead of them, saving queue time per table. No log row disappears; rows
   within the same load may however show up in a slightly different order in the monitoring.
+- **Monitor reconciliation made more robust:** the technical pipelines that read pipeline runs back
+  from the Azure Management API to reconcile stale RUNNING statuses now land the API responses with a
+  fixed column set (`@StrictColumns` in `spJsonToTable`). New or occasional fields in the API response
+  can therefore no longer silently change the monitor table's schema or make the reconciliation fail.
+  → [Monitoring & logging](./monitoring-logging.md)
 - **Delta watermark protected on failed loads:** if part of a DELTA load failed, the watermark
   (`UsedTables.LatestRecord`) could still advance, silently leaving the unloaded rows out of scope for
   subsequent delta runs; recovery required a one-off FULL load. The watermark now only advances when

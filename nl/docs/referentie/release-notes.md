@@ -10,11 +10,11 @@ Versiehistorie van Yres DWH. Oudere versies kunnen niet meer ondersteund zijn; z
 naslag. Per versie staan de nieuwe features, verbeteringen en eventuele breaking changes.
 
 :::note Datums uit de productdocumentatie
-De datums per versie hieronder komen uit _Yres Documentation 1.55_ (release-notes-sectie). Yres-versies
+De datums van v1.55 en ouder komen uit _Yres Documentation 1.55_ (release-notes-sectie). Yres-versies
 ordenen als decimale breuken — **1.9 staat dus na 1.55, en 1.56 ervoor** — niet als semver.
 :::
 
-## v1.56 — in test
+## v1.56 — augustus 2026
 
 De grootste release tot nu toe: naast de webapp is ook het complete dataplatform (database + ADF)
 onder handen genomen. Hieronder de hoofdlijnen per thema; de gelinkte wiki-pagina's beschrijven de
@@ -183,6 +183,11 @@ details van elk onderwerp.
   omgevingen. Daarnaast blokkeren de **logstappen het echte werk niet meer**: ze draaien voortaan naast
   de laadactiviteiten in plaats van ervoor, wat per tabel wachttijd scheelt. Er verdwijnt geen logregel;
   wel kunnen regels binnen dezelfde load in een iets andere volgorde in de monitoring verschijnen.
+- **Monitor-reconciliatie robuuster:** de technische pipelines die pipeline-runs uit de Azure
+  Management-API teruglezen om achtergebleven RUNNING-statussen te reconciliëren, landen de
+  API-antwoorden nu met een vaste kolomset (`@StrictColumns` in `spJsonToTable`). Nieuwe of
+  incidentele velden in het API-antwoord kunnen het schema van de monitortabel daardoor niet meer
+  ongemerkt wijzigen of de reconciliatie laten falen. → [Monitoring & logging](./monitoring-logging.md)
 - **Deltawatermerk beschermd bij gefaalde loads:** faalde een deel van een DELTA-load, dan kon het
   watermerk (`UsedTables.LatestRecord`) toch doorschuiven, waardoor de niet-geladen rijen bij volgende
   delta-runs stilzwijgend buiten beeld bleven; herstel vergde een eenmalige FULL load. Het watermerk

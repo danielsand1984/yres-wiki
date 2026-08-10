@@ -43,7 +43,7 @@ IF @CURRENT_VERSION_INT <= NNNNN GOTO UPGRADE_NNNNN
 ```
 
 - The database version lives in `Config.Settings` (the setting is named `IRIS_VERSION`, on newer builds `YRES_VERSION`).
-- Upgrades are supported **from roughly v1.50 onward**; the current target is around v1.56. Very old databases must therefore be upgraded step by step before they reach the latest version.
+- Upgrades are supported **from roughly v1.50 onward**; the current version is v1.56. Very old databases must therefore be upgraded step by step before they reach the latest version.
 
 :::note Yres versions sort as decimal fractions
 Yres versions order as decimal fractions, not as semver: **1.9 comes after 1.56**. Keep this in mind when judging whether a database already has the target version.

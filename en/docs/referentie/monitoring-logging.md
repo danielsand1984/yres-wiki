@@ -116,7 +116,7 @@ Object and permission changes: `EventType, ObjectType, TimeStamp, ServerName, Da
 ## Retention of the log tables
 
 :::info From v1.56
-The retention policy below is part of **v1.56 (in test)**. Older versions have no cleanup mechanism: the log tables grow without bound there.
+The retention policy below is part of **v1.56**. Older versions have no cleanup mechanism: the log tables grow without bound there.
 :::
 
 The log tables grow with every run (`LS_Trans` writes ~12 rows per merge page; `LoadLog` one row per table per workflow run). Without cleanup, everything that touches monitoring — the planning view `vwExtractor`, `vwMonitor`, the monitoring screens — gets slower over time. That is why there is a **configurable per-table retention policy**:

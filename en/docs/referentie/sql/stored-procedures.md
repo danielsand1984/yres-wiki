@@ -557,7 +557,7 @@ Generic helper procedures used by the other schemas.
 |---|---|---|
 | `[dbo].[spLongPrint]` | Prints long strings in chunks (works around the `PRINT` length limit). | `@String (NVARCHAR(MAX))` |
 | `[dbo].[spRunSQL]` | Executes an arbitrary SQL statement dynamically. | `@SQL (NVARCHAR(MAX))` |
-| `[dbo].[spJsonToTable]` | Converts JSON into a relational table. | `@Collection`, `@json (default '{}')`, `@targetSchema`, `@targetTable` |
+| `[dbo].[spJsonToTable]` | Converts JSON into a relational table. With `@StrictColumns = 1` only JSON fields that already exist as columns in the target table are landed (no schema drift); unknown fields are ignored. | `@Collection`, `@json (default '{}')`, `@targetSchema`, `@targetTable`, `@StrictColumns (BIT, default 0)` |
 | `[dbo].[spCopyDB]` | Makes a copy of a database, optionally with drop and service tier. | `@sourceDB`, `@targetDB`, `@targetTier (default 'GP_Gen5_2')`, `@dropIfExists (BIT, default 0)` |
 | `[dbo].[spMSForEachTable]` / `[spMSForEachWorker]` | Runs a command against every table (batch operation); `@replacechar` is replaced by the table name. | `@command1 (NVARCHAR(2000))`, `@replacechar (NCHAR(1), default '?')`, … |
 | `[dbo].[spAdaptiveIndexDefrag_CurrentExecStats]` | Reports the progress of the index defragmentation. | `@dbname (NVARCHAR(255), optional)` |
