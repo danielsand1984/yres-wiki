@@ -146,7 +146,7 @@ const config = {
             ],
           },
         ],
-        copyright: 'Yres — Friesestraatweg 219, 9743 AD Groningen · +31 85 130 3905.',
+        copyright: 'Yres — Friesestraatweg 219, 9743 AD Groningen · <a href="tel:+31851303905">+31 85 130 3905</a>.',
       },
       prism: {
         theme: prismThemes.github,
