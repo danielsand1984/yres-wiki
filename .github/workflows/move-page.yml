@@ -61,4 +61,4 @@ jobs:
       - name: Build and deploy
         run: bash scripts/push-to-vps.sh
         env:
-          WIKI_BASE_URL: https://oogopdata.nl
+          WIKI_BASE_URL: https://yres.eu

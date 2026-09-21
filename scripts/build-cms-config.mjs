@@ -49,7 +49,7 @@ const config = {
     name: 'github',
     repo: 'danielsand1984/yres-wiki',
     branch: 'main',
-    base_url: 'https://oogopdata.nl',
+    base_url: process.env.WIKI_SITE_URL ?? 'https://yres.eu',
     auth_endpoint: 'api/cms-auth',
     commit_messages: {
       create: 'CMS: nieuwe pagina {{slug}}',

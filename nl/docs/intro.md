@@ -43,7 +43,7 @@ Het product heette vroeger **Iris** en heet nu **Yres**. Je komt in oudere bronn
 
 - **Feedback:** mail **feedback@yres.app** — de in-app feedbackformulieren (Bug report / Feature request / Feedback) komen op hetzelfde adres uit, met antwoord op je eigen account-adres.
 - **Algemene info & contact:** **[info@yres.app](mailto:info@yres.app)**.
-- **Demo aanvragen:** via de [marketingsite](https://oogopdata.nl).
+- **Demo aanvragen:** via de [marketingsite](https://yres.eu).
 
 De **webapp draait op een eigen subdomein per organisatie**; er is dus geen vast webapp-adres dat hier hoort.
 

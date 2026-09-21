@@ -18,7 +18,7 @@ set -euo pipefail
 
 VPS="${WIKI_VPS:-root@185.88.142.48}"
 DEST="${WIKI_DEST:-/var/www/yres-wiki}"
-BASE_URL="${WIKI_BASE_URL:-https://oogopdata.nl}"
+BASE_URL="${WIKI_BASE_URL:-https://yres.eu}"
 SSH_OPTS=(-o ConnectTimeout=15 -o BatchMode=yes)
 STAGE="${DEST}.new"
 OLD="${DEST}.old"

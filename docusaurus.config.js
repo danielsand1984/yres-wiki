@@ -5,7 +5,7 @@
 //   WIKI_LANG=nl → docs/    op baseUrl /nl/wiki/   (default)
 //   WIKI_LANG=en → docs-en/ op baseUrl /en/wiki/
 // Bouw beide met `npm run build:all`. nginx serveert /nl/wiki en /en/wiki
-// als subpaden van de marketingsite (oogopdata.nl). Zie DEPLOY.md.
+// als subpaden van de marketingsite (yres.eu, voorheen oogopdata.nl). Zie DEPLOY.md.
 
 import {themes as prismThemes} from 'prism-react-renderer';
 
@@ -14,13 +14,16 @@ const isEN = LANG === 'en';
 
 const t = (nl, en) => (isEN ? en : nl);
 
+// Publieke origin van de site; enige plek in deze config. Override: WIKI_SITE_URL.
+const SITE_URL = (process.env.WIKI_SITE_URL ?? 'https://yres.eu').replace(/\/+$/, '');
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: t('Yres kennisbank', 'Yres knowledge base'),
   tagline: t('Het Azure data platform — concepten, functies, resources', 'The Azure data platform — concepts, features, resources'),
   favicon: 'img/yres-icon.png',
 
-  url: 'https://oogopdata.nl',
+  url: SITE_URL,
   baseUrl: isEN ? '/en/wiki/' : '/nl/wiki/',
 
   organizationName: 'yres',
@@ -99,7 +102,7 @@ const config = {
             // geserveerd op /academy/{taal}). Volledige URL i.p.v. een pad, anders
             // plakt Docusaurus de wiki-baseUrl (/nl/wiki/) ervoor → 404. target _self
             // houdt het in hetzelfde tabblad, net als siteHome.
-            href: isEN ? 'https://oogopdata.nl/academy/en' : 'https://oogopdata.nl/academy/nl',
+            href: `${SITE_URL}/academy/${isEN ? 'en' : 'nl'}`,
             label: 'Academy',
             position: 'right',
             target: '_self',
