@@ -17,7 +17,8 @@
     "build:en": "cross-env WIKI_LANG=en docusaurus build --out-dir build/en",
     "build:cms-config": "node scripts/build-cms-config.mjs",
     "build:cms-tree": "node scripts/build-cms-tree.mjs",
-    "build:all": "node scripts/build-cms-config.mjs && node scripts/build-cms-tree.mjs && npm run build:nl && npm run build:en",
+    "build:all": "node scripts/build-cms-config.mjs && node scripts/build-cms-tree.mjs && npm run build:nl && npm run build:en && npm run postbuild:seo",
+    "postbuild:seo": "node scripts/postbuild-seo.mjs",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",
     "typecheck": "tsc"
