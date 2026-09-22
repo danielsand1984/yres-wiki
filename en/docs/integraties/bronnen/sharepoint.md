@@ -8,8 +8,8 @@ description: Connecting SharePoint to Yres — connection requirements.
 
 **Category:** Azure
 
-Microsoft SharePoint lists and documents. SharePoint is a file source: after connecting you
-select files (there is no metadata refresh of tables).
+Files from Microsoft SharePoint **document libraries**. SharePoint is a file source: after connecting
+you select files (there is no metadata refresh of tables). SharePoint *lists* are not read.
 
 ## Expected input
 

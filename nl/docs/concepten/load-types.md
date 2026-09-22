@@ -136,7 +136,7 @@ De gevolgen:
 
 - **Maximaal twee** deltakolommen.
 - Beide kolommen moeten **hetzelfde datatype** hebben — de webapp toont bij *Additional delta column* alleen kolommen van hetzelfde type als de eerste.
-- Twee deltakolommen werken op alle bronnen die Yres met SQL bevraagt: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake en OneStream**. De engine bouwt een ANSI-`COALESCE`-uitdrukking, dus dit geldt óók voor MySQL. Zie [Databron-vereisten](../referentie/databron-vereisten.md#databases-directe-verbinding).
+- Twee deltakolommen werken op alle bronnen die Yres met SQL bevraagt: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake en OneStream**. De engine bouwt een ANSI-`COALESCE`-uitdrukking, dus dit geldt óók voor MySQL. Daarnaast ondersteunen **Salesforce, SAP SAC en AFAS** twee deltakolommen (sinds v1.56; daar wordt het filter als "kolom 1 óf kolom 2 voorbij het watermark" opgebouwd). Zie [Databron-vereisten](../referentie/databron-vereisten.md#databases-directe-verbinding).
 
 :::tip Voorbeeld
 Een tabel `Orders` stempelt `CreatedDate` bij het aanmaken en `ModifiedDate` bij elke latere wijziging. Een nieuwe order krijgt wél een `CreatedDate`, maar (nog) geen `ModifiedDate`; een bijgewerkte order krijgt een nieuwe `ModifiedDate`. Met **beide** kolommen als deltakolom vangt de load in één keer zowel nieuwe als gewijzigde orders op — een filter op alleen `ModifiedDate` zou de nog niet gewijzigde nieuwe orders missen.
@@ -209,7 +209,7 @@ In de stap **Load type** kies je een van de zeven types. De velden **Delta colum
 
 - De deltakolom komt uit de in stap 3 geselecteerde kolommen (`Loadmanagement.Dictionary`).
 - Voor brontype `SAP_BDC` wordt de deltakolom vast op `ETL_DATE` gezet.
-- Een **tweede** deltakolom is optioneel en moet hetzelfde datatype hebben als de eerste. Twee deltakolommen worden ondersteund voor alle SQL-/databasebronnen (SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake, OneStream). Zie [Meerdere deltakolommen](#meerdere-deltakolommen) voor hoe de engine ze combineert.
+- Een **tweede** deltakolom is optioneel en moet hetzelfde datatype hebben als de eerste. Twee deltakolommen worden ondersteund voor alle SQL-/databasebronnen (SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake, OneStream) en voor Salesforce, SAP SAC en AFAS. Zie [Meerdere deltakolommen](#meerdere-deltakolommen) voor hoe de engine ze combineert.
 
 ### Stap 5 — Sleutelkolommen (key columns)
 

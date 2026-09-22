@@ -49,9 +49,9 @@ Key Vault secret) and **Tags** (optional, comma-separated).
 
 ## Databases (direct connection)
 
-All database sources are **on-prem capable**: IR = `AutoResolveIntegrationRuntime` if the database
-is reachable from the cloud, otherwise a **self-hosted IR**. Authentication is always
-username/password, stored in Key Vault.
+Database sources are in principle **on-prem capable**: IR = `AutoResolveIntegrationRuntime` if the
+database is reachable from the cloud, otherwise a **self-hosted IR**. Authentication is always
+username/password, stored in Key Vault. Note the exception for PostgreSQL and Oracle below.
 
 | Source | Requirements | Auth | IR |
 |---|---|---|---|
@@ -59,9 +59,18 @@ username/password, stored in Key Vault.
 | **DB2** | Host · Port · Database name · Username · Password | Basic | AutoResolve / self-hosted |
 | **SQL Server** | Host · Port · Database name · Username · Password | Basic | AutoResolve / self-hosted |
 | **Azure SQL Database** | Host · Port · Database name · Username · Password | Basic | Cloud (AutoResolve) |
-| **Oracle** | Host · Port · **Service name** · Username · Password | Basic | AutoResolve / self-hosted |
-| **PostgreSQL** | Host · Port · Database name · Username · Password | Basic | AutoResolve / self-hosted |
+| **Oracle** | Host · Port · **Service name** · Username · Password | Basic | Cloud (AutoResolve) — IR choice currently not applied, see below |
+| **PostgreSQL** | Host · Port · Database name · Username · Password | Basic | Cloud (AutoResolve) — IR choice currently not applied, see below |
 | **Snowflake** | Account name · Username · Password · Database · Warehouse · Role *(optional)* | Basic | Cloud (AutoResolve) |
+
+:::caution PostgreSQL and Oracle: the IR choice is currently not applied
+For PostgreSQL and Oracle the wizard does show an IR selector, but that choice is currently **not**
+written to the linked service: it is deployed without `connectVia` and therefore always runs on the
+**cloud IR**. The database must therefore be reachable from Azure (public endpoint or opened firewall).
+An on-premises PostgreSQL or Oracle behind a closed firewall does not currently work without a manual
+adjustment of the linked service; a fix to apply the IR choice is planned. See
+[PostgreSQL](../integraties/bronnen/postgresql.md) and [Oracle](../integraties/bronnen/oracle.md).
+:::
 
 :::note Oracle uses a service name
 Oracle is the only database that asks for a **Service name** instead of a database name. SQL
@@ -71,21 +80,23 @@ Server and Azure SQL are stored internally as DWH source type `MSSQL_ADF`.
 :::note Two delta columns: supported sources
 Two delta columns (comma-separated, same data type — the highest value counts) work on every source Yres
 queries with SQL: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake and
-OneStream**. The engine builds an ANSI `COALESCE` expression, so **MySQL is no longer an exception**. See
+OneStream**. The engine builds an ANSI `COALESCE` expression, so **MySQL is no longer an exception**.
+In addition, **Salesforce, SAP SAC and AFAS** support two delta columns (since v1.56). See
 [Load types → Multiple delta columns](../concepten/load-types.md#multiple-delta-columns) and [MySQL](../integraties/bronnen/mysql.md).
 :::
 
 ### SAP HANA / SAP S/4HANA
 
-SAP HANA and S/4HANA have **no dedicated form**. You reach them through a generic method:
+SAP HANA and S/4HANA have **no dedicated form**, and Yres has **no HANA/ODBC source type**: a direct
+database connection to the HANA server's SQL port is not possible. You reach them through a generic
+method:
 
-- **Direct ODBC/database connection** — use the generic DB form (host + SQL port
-  `3<instance>15`, DB user + password), or
-- **OData service** — HANA via `…​.xsodata`; S/4HANA via `…/sap/opu/odata/<namespace>/<service>`
-  (activate the service in the SAP Gateway with `/IWFND/MAINT_SERVICE`), with Basic auth or OAuth.
+- **OData service** — HANA via an XS OData service (`…​.xsodata`); S/4HANA via
+  `…/sap/opu/odata/<namespace>/<service>` (activate the service in the SAP Gateway with
+  `/IWFND/MAINT_SERVICE`), with Basic auth or OAuth, or
+- **SAP Business Data Cloud** — the export route with a SAS token, see [SAP_BDC](#sap-bdc) below.
 
-For the Business Data Cloud route, see [SAP_BDC](#sap-bdc) below. See also
-[SAP HANA](../integraties/bronnen/sap-hana.md) and [SAP S/4HANA](../integraties/bronnen/sap-s4hana.md).
+See also [SAP HANA](../integraties/bronnen/sap-hana.md) and [SAP S/4HANA](../integraties/bronnen/sap-s4hana.md).
 
 ## Azure / Microsoft platform
 
@@ -111,20 +122,18 @@ Data Lake serves as internal Yres staging/output storage.
 
 ### SharePoint
 
-Register an app in Azure AD in advance, create a client secret, store App ID + secret in the Azure Key
-Vault (in your resource group) and add the app to the SharePoint site/Teams team via
-`.../_layouts/15/appinv.aspx` with this permission:
-
-```xml
-<AppPermissionRequests AllowAppOnlyPolicy="true">
-  <AppPermissionRequest Scope="http://sharepoint/content/sitecollection/web" Right="FullControl" />
-</AppPermissionRequests>
-```
+Register an app in Microsoft Entra ID (Azure AD) in advance, create a client secret and grant the app
+read access through **Microsoft Graph**: *API permissions → Microsoft Graph → Application permissions →*
+at least **`Sites.Read.All`**, followed by *Grant admin consent*. Since v1.56 Yres retrieves SharePoint
+files through Microsoft Graph; the old authorization via `.../_layouts/15/appinv.aspx` (SharePoint
+app-only via Azure ACS) has been switched off by Microsoft and no longer suffices. Yres only reads files
+from **document libraries**, not SharePoint lists.
 
 - **Fields:** SharePoint site URL · AD tenant name · Postfix (`sites`/`teams`/`personal`/empty) · AD tenant
   ID · Application ID / Service principal ID · Application secret / Service principal key
-- **Auth:** Azure AD app-only (service principal); the linked service itself is created as `HttpServer` +
-  Anonymous, while the actual authentication runs through the stored clientId/secret/tenant.
+- **Auth:** Entra ID service principal (app-only) through Microsoft Graph; the linked service itself is
+  created as `HttpServer` + Anonymous, while the actual authentication runs through the stored
+  clientId/secret/tenant. See [SharePoint](../integraties/bronnen/sharepoint.md).
 
 ### Microsoft Teams
 
@@ -154,16 +163,18 @@ Entra ID (Azure AD) app registration: Client ID, Tenant ID, Client secret and Gr
 | Tenant ID · Company name · Client ID · Client secret · Scope | From the Entra ID app registration |
 | Grant Type | `Client Credentials` or `Authorization Code` (+ Refresh token) |
 
-- **Auth:** OAuth2 service principal. **In advance:** environment URL `https://<org>.crm4.dynamics.com`; Entra
-  ID app registration with Dynamics CRM/Dataverse `user_impersonation`, client secret. See
-  [Dynamics 365](../integraties/bronnen/dynamics-365.md).
+- **Auth:** OAuth2 service principal — **the OAuth2 sign-in is still in development**: the form shows the
+  fields, but the token exchange does not work yet. **In advance:** environment URL
+  `https://<org>.crm4.dynamics.com`; Entra ID app registration with Dynamics CRM/Dataverse
+  `user_impersonation`, client secret. See [Dynamics 365](../integraties/bronnen/dynamics-365.md).
 
 ### Intune Data Warehouse
 
 - **Fields:** URL is fixed
   (`https://fef.{tenant}.manage.microsoft.com/ReportingService/DataWarehouseFEService?api-version=v1.0`) ·
   OAuth2 fields identical to Graph/D365 (Tenant ID · Client ID · Client Secret · Scope · Grant Type).
-- **Auth:** OAuth2. There is (as yet) no separate source page for Intune DWH; it works as an OData preset.
+- **Auth:** OAuth2 — as with Dynamics 365, **the OAuth2 sign-in is still in development**. There is (as
+  yet) no separate source page for Intune DWH; it works as an OData preset.
 
 ### Power BI
 
@@ -181,12 +192,12 @@ Entra ID (Azure AD) app registration: Client ID, Tenant ID, Client secret and Gr
 - **Auth:** OAuth2 client credentials (set up an OAuth client in SAC). Runs on the cloud IR. See
   [SAC](../integraties/bronnen/sac.md).
 
-### Onestream *(preview)*
+### Onestream
 
 - **Fields:** URL · Application · **AuthenticationType** (`OAUTH2` or `PAT`).
   - `OAUTH2` → Client ID · Client secret · Access token URL
   - `PAT` → Personal access token
-- **Auth:** OAuth2 client credentials or Personal Access Token. *(preview — may be unstable.)* See
+- **Auth:** OAuth2 client credentials or Personal Access Token. See
   [Onestream](../integraties/bronnen/onestream.md).
 
 ### SAP Business Data Cloud (SAP_BDC) {#sap-bdc}
@@ -194,7 +205,8 @@ Entra ID (Azure AD) app registration: Client ID, Tenant ID, Client secret and Gr
 - **Fields:** **Sas uri** (`https://<host>/`, with trailing slash, hostname only) · container · **Sas
   token** (must contain `sig, sp, se, spr, st`, without a leading `?`)
 - **Auth:** **SAS token** (the source exposes an Azure Data Lake / Blob FS endpoint). Runs on the
-  cloud IR.
+  cloud IR. The delta column is fixed to `ETL_DATE`. See
+  [SAP Business Data Cloud](../integraties/bronnen/sap-bdc.md).
 
 ### SAP Datasphere
 
@@ -216,7 +228,7 @@ Datasphere has **no picker entry of its own**; you connect it through the **SAP_
 | **Exact Online** | Client ID · Client secret · (interactive OAuth login) | OAuth2 authorization code (per environment) | Exact apps for **dev and prod**; set the redirect URL according to the webapp |
 | **Simplicate** | Domain name · Authentication key · Authentication secret | Two custom HTTP headers (key + secret) | API key + secret in Simplicate |
 | **Salesforce** | Environment URL · Client ID · Client secret | OAuth2 client credential | Consumer ID/secret from the App Manager |
-| **Topdesk** | Domain · Username · Password | Basic | Create an application password in Topdesk |
+| **Topdesk** | Domain (full, e.g. `myorganization.topdesk.net`) · Username · Password | Basic | Create an application password in Topdesk |
 | **BoardEPM** | Server · Application · Identity provider | OAuth2 client credential | Set up an OAuth client in Board |
 
 :::note Exact Online: separate app per environment
@@ -227,9 +239,11 @@ For Exact Online, **"Credentials identical for all environments?" is forced to "
 
 :::note Topdesk uses the OData reporting endpoint
 Yres connects to Topdesk via the **OData reporting endpoint**
-`https://{domain}.topdesk.net/services/reporting/v2/odata` (stored as source type `OData`, Basic auth,
-pagination `BodyUrl`) — not via the REST API `/tas/api`. The application password remains the
-Basic credential. See [Topdesk](../integraties/bronnen/topdesk.md).
+`https://<domain>/services/reporting/v2/odata` (stored as source type `OData`, Basic auth,
+pagination `BodyUrl`) — not via the REST API `/tas/api`. Under **Domain** you enter the **full** domain
+(e.g. `myorganization.topdesk.net`): Yres only prepends `https://` and appends the path — it does
+**not** append the `.topdesk.net` suffix. The application password remains the Basic credential. See
+[Topdesk](../integraties/bronnen/topdesk.md).
 :::
 
 ### Mendix
@@ -320,10 +334,14 @@ A quick look at which authentication method and which integration runtime go wit
 
 | IR requirement | Sources |
 |---|---|
-| **Self-hosted IR required** | File Server, Local files, plus any on-prem/shielded DB (MySQL, DB2, SQL Server, Oracle, PostgreSQL, SAP HANA ODBC) |
+| **Self-hosted IR required** | File Server, Local files, plus any on-prem/shielded DB (MySQL, DB2, SQL Server) |
 | **Cloud (AutoResolve) typical**, self-hosted optional | Azure SQL, Snowflake, all SaaS/OData/REST sources, SharePoint, Salesforce, SAC, SAP_BDC, Power BI |
+| **Always cloud (AutoResolve)** — IR choice currently not applied | Oracle, PostgreSQL (see the warning under [Databases](#databases-direct-connection)) |
 
 :::note PostgreSQL is one type
-All PostgreSQL connections run through the on-prem-capable `PostgreSql` type. The separate
-`AzurePostgreSql` variant is disabled in the code and is not used.
+There is a single PostgreSQL source type (`PostgreSql` in the source picker and in the DWH). The linked
+service the backend deploys for it is of ADF type **`AzurePostgreSql`** — for new sources (driver version
+2.0, five separate Key Vault secrets) as well as for older sources with a single `connectionstring`
+secret. The `PostgreSql` template in the ADF repo is not used by the webapp. See
+[PostgreSQL](../integraties/bronnen/postgresql.md).
 :::

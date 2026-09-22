@@ -49,9 +49,10 @@ Key Vault-secret) en **Tags** (optioneel, kommagescheiden).
 
 ## Databases (directe verbinding)
 
-Alle databasebronnen zijn **on-prem-geschikt**: IR = `AutoResolveIntegrationRuntime` als de database
-vanuit de cloud bereikbaar is, anders een **self-hosted IR**. Authenticatie is altijd
-gebruikersnaam/wachtwoord, opgeslagen in Key Vault.
+Databasebronnen zijn in principe **on-prem-geschikt**: IR = `AutoResolveIntegrationRuntime` als de
+database vanuit de cloud bereikbaar is, anders een **self-hosted IR**. Authenticatie is altijd
+gebruikersnaam/wachtwoord, opgeslagen in Key Vault. Let op de uitzondering voor PostgreSQL en Oracle
+hieronder.
 
 | Bron | Vereisten | Auth | IR |
 |---|---|---|---|
@@ -59,9 +60,18 @@ gebruikersnaam/wachtwoord, opgeslagen in Key Vault.
 | **DB2** | Host · Port · Database name · Username · Password | Basic | AutoResolve / self-hosted |
 | **SQL Server** | Host · Port · Database name · Username · Password | Basic | AutoResolve / self-hosted |
 | **Azure SQL Database** | Host · Port · Database name · Username · Password | Basic | Cloud (AutoResolve) |
-| **Oracle** | Host · Port · **Service name** · Username · Password | Basic | AutoResolve / self-hosted |
-| **PostgreSQL** | Host · Port · Database name · Username · Password | Basic | AutoResolve / self-hosted |
+| **Oracle** | Host · Port · **Service name** · Username · Password | Basic | Cloud (AutoResolve) — IR-keuze wordt momenteel niet toegepast, zie hieronder |
+| **PostgreSQL** | Host · Port · Database name · Username · Password | Basic | Cloud (AutoResolve) — IR-keuze wordt momenteel niet toegepast, zie hieronder |
 | **Snowflake** | Account name · Username · Password · Database · Warehouse · Role *(optioneel)* | Basic | Cloud (AutoResolve) |
+
+:::caution PostgreSQL en Oracle: IR-keuze wordt nu niet toegepast
+De wizard toont bij PostgreSQL en Oracle wel een IR-keuzeveld, maar die keuze wordt momenteel **niet**
+op de linked service gezet: die wordt zonder `connectVia` uitgerold en draait dus altijd op de
+**cloud-IR**. De database moet daarom vanaf Azure bereikbaar zijn (publiek endpoint of opengestelde
+firewall). Een on-premises PostgreSQL of Oracle achter een gesloten firewall werkt op dit moment niet
+zonder handmatige aanpassing van de linked service; een fix om de IR-keuze wél toe te passen staat op de
+rol. Zie [PostgreSQL](../integraties/bronnen/postgresql.md) en [Oracle](../integraties/bronnen/oracle.md).
+:::
 
 :::note Oracle gebruikt een service name
 Oracle is de enige database die om een **Service name** vraagt in plaats van een database-naam. SQL
@@ -71,21 +81,23 @@ Server en Azure SQL slaan intern op als DWH-brontype `MSSQL_ADF`.
 :::note Twee delta-kolommen: ondersteunde bronnen
 Twee delta-kolommen (komma-gescheiden, zelfde datatype — de hoogste waarde telt) werken op alle bronnen die
 Yres met SQL bevraagt: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake en
-OneStream**. De engine bouwt een ANSI-`COALESCE`-uitdrukking, dus **MySQL is geen uitzondering meer**. Zie
+OneStream**. De engine bouwt een ANSI-`COALESCE`-uitdrukking, dus **MySQL is geen uitzondering meer**.
+Daarnaast ondersteunen **Salesforce, SAP SAC en AFAS** twee delta-kolommen (sinds v1.56). Zie
 [Load types → Meerdere deltakolommen](../concepten/load-types.md#meerdere-deltakolommen) en [MySQL](../integraties/bronnen/mysql.md).
 :::
 
 ### SAP HANA / SAP S/4HANA
 
-SAP HANA en S/4HANA hebben **geen eigen formulier**. Je bereikt ze via een generieke methode:
+SAP HANA en S/4HANA hebben **geen eigen formulier** en er bestaat in Yres **geen HANA-/ODBC-brontype**:
+een directe databaseverbinding op de SQL-poort van de HANA-server is niet mogelijk. Je bereikt ze via
+een generieke methode:
 
-- **Directe ODBC/database-verbinding** — gebruik het generieke DB-formulier (host + SQL-poort
-  `3<instance>15`, DB-user + wachtwoord), of
-- **OData-service** — HANA via `…​.xsodata`; S/4HANA via `…/sap/opu/odata/<namespace>/<service>`
-  (activeer de service in de SAP Gateway met `/IWFND/MAINT_SERVICE`), met Basic auth of OAuth.
+- **OData-service** — HANA via een XS OData-service (`…​.xsodata`); S/4HANA via
+  `…/sap/opu/odata/<namespace>/<service>` (activeer de service in de SAP Gateway met
+  `/IWFND/MAINT_SERVICE`), met Basic auth of OAuth, of
+- **SAP Business Data Cloud** — de export-route met SAS-token, zie [SAP_BDC](#sap-bdc) hieronder.
 
-Voor de Business Data Cloud-route, zie [SAP_BDC](#sap-bdc) hieronder. Zie ook
-[SAP HANA](../integraties/bronnen/sap-hana.md) en [SAP S/4HANA](../integraties/bronnen/sap-s4hana.md).
+Zie ook [SAP HANA](../integraties/bronnen/sap-hana.md) en [SAP S/4HANA](../integraties/bronnen/sap-s4hana.md).
 
 ## Azure / Microsoft-platform
 
@@ -111,20 +123,18 @@ Data Lake als interne Yres-staging-/uitvoeropslag.
 
 ### SharePoint
 
-Registreer vooraf een app in Azure AD, maak een client secret, sla App ID + secret op in de Azure Key
-Vault (in je resource group) en voeg de app toe aan de SharePoint-site/het Teams-team via
-`.../_layouts/15/appinv.aspx` met deze permissie:
-
-```xml
-<AppPermissionRequests AllowAppOnlyPolicy="true">
-  <AppPermissionRequest Scope="http://sharepoint/content/sitecollection/web" Right="FullControl" />
-</AppPermissionRequests>
-```
+Registreer vooraf een app in Microsoft Entra ID (Azure AD), maak een client secret en geef de app
+leesrechten via **Microsoft Graph**: *API permissions → Microsoft Graph → Application permissions →*
+minimaal **`Sites.Read.All`**, gevolgd door *Grant admin consent*. Sinds v1.56 haalt Yres
+SharePoint-bestanden via Microsoft Graph op; de oude machtiging via `.../_layouts/15/appinv.aspx`
+(SharePoint app-only via Azure ACS) is door Microsoft uitgezet en volstaat niet meer. Yres leest alleen
+bestanden uit **documentbibliotheken**, geen SharePoint-lijsten.
 
 - **Velden:** SharePoint site URL · AD tenant name · Postfix (`sites`/`teams`/`personal`/leeg) · AD tenant
   ID · Application ID / Service principal ID · Application secret / Service principal key
-- **Auth:** Azure AD app-only (service principal); de linked service zelf wordt als `HttpServer` +
-  Anonymous aangemaakt, de werkelijke auth verloopt via de opgeslagen clientId/secret/tenant.
+- **Auth:** Entra ID service principal (app-only) via Microsoft Graph; de linked service zelf wordt als
+  `HttpServer` + Anonymous aangemaakt, de werkelijke auth verloopt via de opgeslagen clientId/secret/tenant.
+  Zie [SharePoint](../integraties/bronnen/sharepoint.md).
 
 ### Microsoft Teams
 
@@ -154,16 +164,18 @@ Entra ID (Azure AD) app-registratie nodig: Client ID, Tenant ID, Client secret e
 | Tenant ID · Company name · Client ID · Client secret · Scope | Uit de Entra ID app-registratie |
 | Grant Type | `Client Credentials` of `Authorization Code` (+ Refresh token) |
 
-- **Auth:** OAuth2 service principal. **Vooraf:** omgevings-URL `https://<org>.crm4.dynamics.com`; Entra
-  ID app-registratie met Dynamics CRM/Dataverse `user_impersonation`, client secret. Zie
-  [Dynamics 365](../integraties/bronnen/dynamics-365.md).
+- **Auth:** OAuth2 service principal — **de OAuth2-aanmelding is nog in ontwikkeling**: het formulier
+  toont de velden, maar de tokenuitwisseling werkt nog niet. **Vooraf:** omgevings-URL
+  `https://<org>.crm4.dynamics.com`; Entra ID app-registratie met Dynamics CRM/Dataverse
+  `user_impersonation`, client secret. Zie [Dynamics 365](../integraties/bronnen/dynamics-365.md).
 
 ### Intune Data Warehouse
 
 - **Velden:** URL is vast
   (`https://fef.{tenant}.manage.microsoft.com/ReportingService/DataWarehouseFEService?api-version=v1.0`) ·
   OAuth2-velden identiek aan Graph/D365 (Tenant ID · Client ID · Client Secret · Scope · Grant Type).
-- **Auth:** OAuth2. Er is (nog) geen aparte bronpagina voor Intune DWH; het werkt als OData-preset.
+- **Auth:** OAuth2 — net als bij Dynamics 365 is **de OAuth2-aanmelding nog in ontwikkeling**. Er is
+  (nog) geen aparte bronpagina voor Intune DWH; het werkt als OData-preset.
 
 ### Power BI
 
@@ -181,12 +193,12 @@ Entra ID (Azure AD) app-registratie nodig: Client ID, Tenant ID, Client secret e
 - **Auth:** OAuth2 client-credentials (zet een OAuth-client op in SAC). Draait op de cloud-IR. Zie
   [SAC](../integraties/bronnen/sac.md).
 
-### Onestream *(preview)*
+### Onestream
 
 - **Velden:** URL · Application · **AuthenticationType** (`OAUTH2` of `PAT`).
   - `OAUTH2` → Client ID · Client secret · Access token URL
   - `PAT` → Personal access token
-- **Auth:** OAuth2 client-credentials óf Personal Access Token. *(preview — kan instabiel zijn.)* Zie
+- **Auth:** OAuth2 client-credentials óf Personal Access Token. Zie
   [Onestream](../integraties/bronnen/onestream.md).
 
 ### SAP Business Data Cloud (SAP_BDC) {#sap-bdc}
@@ -194,7 +206,8 @@ Entra ID (Azure AD) app-registratie nodig: Client ID, Tenant ID, Client secret e
 - **Velden:** **Sas uri** (`https://<host>/`, met afsluitende slash, alleen hostname) · container · **Sas
   token** (moet `sig, sp, se, spr, st` bevatten, zonder voorloop-`?`)
 - **Auth:** **SAS-token** (de bron exposeert een Azure Data Lake / Blob FS-endpoint). Draait op de
-  cloud-IR.
+  cloud-IR. De deltakolom staat vast op `ETL_DATE`. Zie
+  [SAP Business Data Cloud](../integraties/bronnen/sap-bdc.md).
 
 ### SAP Datasphere
 
@@ -216,7 +229,7 @@ Datasphere heeft **geen eigen picker-entry**; je koppelt het via het **SAP_BDC-f
 | **Exact Online** | Client ID · Client secret · (interactieve OAuth-login) | OAuth2 authorization-code (per omgeving) | Exact-apps voor **dev én prod**; redirect-URL instellen volgens de webapp |
 | **Simplicate** | Domain name · Authentication key · Authentication secret | Twee custom HTTP-headers (key + secret) | API-key + secret in Simplicate |
 | **Salesforce** | Environment URL · Client ID · Client secret | OAuth2 client-credential | Consumer ID/secret uit de App Manager |
-| **Topdesk** | Domain · Username · Password | Basic | Applicatiewachtwoord aanmaken in Topdesk |
+| **Topdesk** | Domain (volledig, bv. `mijnorganisatie.topdesk.net`) · Username · Password | Basic | Applicatiewachtwoord aanmaken in Topdesk |
 | **BoardEPM** | Server · Application · Identity provider | OAuth2 client-credential | OAuth-client opzetten in Board |
 
 :::note Exact Online: aparte app per omgeving
@@ -227,9 +240,11 @@ Voor Exact Online staat **"Credentials identical for all environments?" geforcee
 
 :::note Topdesk gebruikt het OData-reporting-endpoint
 Yres verbindt met Topdesk via het **OData-reporting-endpoint**
-`https://{domain}.topdesk.net/services/reporting/v2/odata` (opgeslagen als brontype `OData`, Basic auth,
-paginatie `BodyUrl`) — niet via de REST-API `/tas/api`. Het applicatiewachtwoord blijft de
-Basic-credential. Zie [Topdesk](../integraties/bronnen/topdesk.md).
+`https://<domein>/services/reporting/v2/odata` (opgeslagen als brontype `OData`, Basic auth,
+paginatie `BodyUrl`) — niet via de REST-API `/tas/api`. Bij **Domain** vul je het **volledige** domein in
+(bv. `mijnorganisatie.topdesk.net`): Yres plakt alleen `https://` en het pad eraan vast, **niet** het
+achtervoegsel `.topdesk.net`. Het applicatiewachtwoord blijft de Basic-credential. Zie
+[Topdesk](../integraties/bronnen/topdesk.md).
 :::
 
 ### Mendix
@@ -320,10 +335,14 @@ Snel zien welke authenticatiemethode en welke integration runtime bij elke bron 
 
 | IR-vereiste | Bronnen |
 |---|---|
-| **Self-hosted IR verplicht** | File Server, Lokale bestanden, plus elke on-prem/afgeschermde DB (MySQL, DB2, SQL Server, Oracle, PostgreSQL, SAP HANA ODBC) |
+| **Self-hosted IR verplicht** | File Server, Lokale bestanden, plus elke on-prem/afgeschermde DB (MySQL, DB2, SQL Server) |
 | **Cloud (AutoResolve) gebruikelijk**, self-hosted optioneel | Azure SQL, Snowflake, alle SaaS/OData/REST-bronnen, SharePoint, Salesforce, SAC, SAP_BDC, Power BI |
+| **Altijd cloud (AutoResolve)** — IR-keuze wordt momenteel niet toegepast | Oracle, PostgreSQL (zie de waarschuwing bij [Databases](#databases-directe-verbinding)) |
 
 :::note PostgreSQL is één type
-Alle PostgreSQL-verbindingen lopen via het on-prem-geschikte `PostgreSql`-type. De aparte
-`AzurePostgreSql`-variant is in de code uitgeschakeld en wordt niet gebruikt.
+Er is één PostgreSQL-brontype (`PostgreSql` in de bronpicker en in de DWH). De linked service die de
+backend daarvoor uitrolt is van het ADF-type **`AzurePostgreSql`** — voor nieuwe bronnen (driverversie
+2.0, vijf losse Key Vault-secrets) én voor oudere bronnen met één `connectionstring`-secret. Het
+`PostgreSql`-template in de ADF-repo wordt door de webapp niet gebruikt. Zie
+[PostgreSQL](../integraties/bronnen/postgresql.md).
 :::

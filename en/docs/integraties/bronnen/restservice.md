@@ -69,7 +69,7 @@ Yres decides purely from how you write the **Endpoint** field:
 Further details that shape the behaviour:
 
 - **Query parameters from the Base URL are always preserved** and come before the endpoint and pagination query.
-- A **trailing `/`** on the Base URL is removed only when a path is appended; without a path it stays.
+- The wizard does **not accept a trailing `/`** on the Base URL (validation `notEndWith('/')`). The pipeline is nevertheless tolerant: if the `http-url` secret does end with a `/` (for example set by hand in the Key Vault), it is removed as soon as a path is appended; without a path it stays — see the tolerance examples below.
 - A `=` **inside a path segment** (e.g. `/path/a=b`) simply stays part of the path — the `=` rule only applies when the endpoint has no `/`.
 - Yres does **not de-duplicate query parameters**: if `key=` appears in both the Base URL and the endpoint, both end up in the URL (`?key=1&key=2`). So set a parameter in one place only.
 
@@ -85,9 +85,14 @@ Assuming the **Base URL** is stored as the `http-url` secret:
 | `https://api.example.com/v1` | `?$top=100` | `https://api.example.com/v1?$top=100` |
 | `https://api.example.com/v1` | `&$top=100` | `https://api.example.com/v1?$top=100` |
 | `https://api.example.com/v1` | `active=true` | `https://api.example.com/v1?active=true` |
+| `https://api.example.com/v1` | `/path/a=b` | `https://api.example.com/v1/path/a=b` |
+
+Pipeline tolerance — only relevant if the secret ends with `/` anyway, outside the wizard (the wizard itself does not allow it):
+
+| Base URL (secret) | Endpoint (per table) | Resulting request URL |
+|---|---|---|
 | `https://api.example.com/v1/` | `/cars` | `https://api.example.com/v1/cars` |
 | `https://api.example.com/v1/` | *(empty)* | `https://api.example.com/v1/` |
-| `https://api.example.com/v1` | `/path/a=b` | `https://api.example.com/v1/path/a=b` |
 
 More complex combinations, where the Base URL itself already carries a fixed query:
 

@@ -10,7 +10,7 @@ description: Connecting SAP HANA to Yres — connection requirements.
 
 SAP HANA in-memory database. Official partner. There is **no dedicated input form** for SAP HANA and
 also **no generic HANA/ODBC source type**: you connect HANA data through an **XS OData** service, or
-through an export route such as **SAP_BDC**.
+through an export route such as [**SAP_BDC**](sap-bdc.md).
 
 ## Expected input
 

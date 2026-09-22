@@ -136,7 +136,7 @@ The consequences:
 
 - **At most two** delta columns.
 - Both columns must have the **same data type** — for *Additional delta column* the webapp only shows columns of the same type as the first.
-- Two delta columns work on every source Yres queries with SQL: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake and OneStream**. The engine builds an ANSI `COALESCE` expression, so this includes MySQL. See [Data source requirements](../referentie/databron-vereisten.md#databases-direct-connection).
+- Two delta columns work on every source Yres queries with SQL: **SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake and OneStream**. The engine builds an ANSI `COALESCE` expression, so this includes MySQL. In addition, **Salesforce, SAP SAC and AFAS** support two delta columns (since v1.56; there the filter is built as "column 1 or column 2 past the watermark"). See [Data source requirements](../referentie/databron-vereisten.md#databases-direct-connection).
 
 :::tip Example
 A table `Orders` stamps `CreatedDate` on creation and `ModifiedDate` on every later change. A new order does get a `CreatedDate` but (not yet) a `ModifiedDate`; an updated order gets a new `ModifiedDate`. With **both** columns as delta column the load picks up new *and* changed orders in one pass — a filter on `ModifiedDate` alone would miss the new, not-yet-changed orders.
@@ -208,7 +208,7 @@ In the **Load type** step you choose one of the seven types. The **Delta column*
 
 - The delta column comes from the columns selected in step 3 (`Loadmanagement.Dictionary`).
 - For source type `SAP_BDC` the delta column is fixed to `ETL_DATE`.
-- A **second** delta column is optional and must have the same data type as the first. Two delta columns are supported for all SQL/database sources (SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake, OneStream). See [Multiple delta columns](#multiple-delta-columns) for how the engine combines them.
+- A **second** delta column is optional and must have the same data type as the first. Two delta columns are supported for all SQL/database sources (SQL Server, Azure SQL Database, MySQL, PostgreSQL, Oracle, DB2, Sybase, Snowflake, OneStream) and for Salesforce, SAP SAC and AFAS. See [Multiple delta columns](#multiple-delta-columns) for how the engine combines them.
 
 ### Step 5 — Key columns
 

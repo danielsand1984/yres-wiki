@@ -42,7 +42,7 @@ Is the database behind a firewall or on-premises? Then a self-hosted Integration
 
 ## Load types and delta
 
-All standard load types are available (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL). For SQL Server, **two delta columns** are supported for incremental loading — this works on all SQL database sources (including MySQL). The exception is **Snowflake**: delta filtering is currently not guaranteed there (see [Connecting a data source](../../setup/databron-koppelen.md)).
+All standard load types are available (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL). For SQL Server, **two delta columns** are supported for incremental loading — this works on all SQL database sources (including MySQL and Snowflake); see [Connecting a data source](../../setup/databron-koppelen.md).
 
 > Official documentation: [JDBC Driver for SQL Server — Connection URL](https://learn.microsoft.com/sql/connect/jdbc/building-the-connection-url)
 

@@ -9,9 +9,10 @@ description: SAP S/4HANA koppelen aan Yres — verbindingseisen.
 **Categorie:** OData  ·  🏅 Official partner
 
 SAP S/4HANA ERP. Official partner. SAP S/4HANA heeft in Yres **geen eigen connector met een apart
-invulformulier**: je koppelt het systeem via een van de generieke verbindingsroutes — een **OData**-service
-(de meest gebruikelijke route), of een **directe database-/ODBC-verbinding** op de onderliggende SAP HANA,
-of via de **SAP Business Data Cloud (SAP_BDC)** wanneer data daar als bestand wordt aangeboden.
+invulformulier**: je koppelt het systeem via een van twee routes — een **OData**-service via de SAP
+Gateway (de meest gebruikelijke route), of via de **SAP Business Data Cloud (SAP_BDC)** wanneer data daar
+als bestand wordt aangeboden. Een directe database-/ODBC-verbinding op de onderliggende SAP HANA bestaat
+in Yres **niet** (zie [SAP HANA](sap-hana.md)).
 
 ## Verwachte input
 
@@ -50,18 +51,12 @@ Code`; bij Authorization Code is ook een **Refresh token** verplicht).
 Zie de pagina's [OData](odata.md) en [OData OAuth](odata-oauth.md) voor het volledige veldoverzicht van deze
 twee brontypen.
 
-### Route B — Directe database-/ODBC-verbinding (SAP HANA)
-
-Wil je rechtstreeks de onderliggende SAP HANA-database benaderen, gebruik dan de generieke
-database-/HANA-route. Zie [SAP HANA](sap-hana.md) voor de velden: **Host**, **SQL-poort** (patroon
-`3<instance>15`), **databasegebruiker** en **wachtwoord**. Een directe HANA-verbinding is doorgaans
-on-premises of gefirewald en vereist daarom een **self-hosted integration runtime**.
-
-### Route C — SAP Business Data Cloud (SAS-token)
+### Route B — SAP Business Data Cloud (SAS-token)
 
 Wordt data via SAP BDC als bestand (Azure Blob FS / Data Lake) aangeboden, dan koppel je die via het
 **SAP_BDC**-formulier met een **SAS uri**, **container** en **SAS token**. Dit is een aparte route met eigen
-authenticatie (SAS) en draait op de cloud integration runtime.
+authenticatie (SAS) en draait op de cloud integration runtime. Zie
+[SAP Business Data Cloud](sap-bdc.md) voor de velden, de validatieregels en de vaste deltakolom `ETL_DATE`.
 
 :::note Geen eigen brontype — via SAP_BDC of OData
 SAP S/4HANA heeft in `CreateSource.tsx` geen eigen brontype of invulformulier. Afhankelijk van de use-case

@@ -6,9 +6,10 @@ description: OneStream koppelen aan Yres — verbindingseisen.
 
 # OneStream
 
-**Categorie:** REST  ·  🧪 Preview
+**Categorie:** REST
 
-Corporate Performance Management. **Preview** — deze connector kan instabiel zijn.
+Corporate Performance Management. Yres koppelt OneStream via de REST API met OAuth 2.0 of een Personal
+Access Token.
 
 ## Verbindingseisen
 
@@ -46,10 +47,6 @@ OneStream koppelt via de **REST API**. Je vult in het wizard-scherm de volgende 
 - Bij `OAUTH2`: een geregistreerde applicatie bij je identity provider (Azure AD / Entra ID, Okta of PingFederate) met een **client secret**, geautoriseerd voor de OneStream Web API. Laat deze door je **OneStream-beheerder** configureren en aanleveren.
 - Bij `PAT`: een **Personal Access Token** dat in OneStream is aangemaakt.
 - De ingevulde geheimen worden door Yres opgeslagen in jouw **Azure Key Vault** onder de naamgeving `adf-{bronnaam}-…`. Bij `OAUTH2` zijn dat onder meer `adf-{bronnaam}-clientId`, `adf-{bronnaam}-clientSecret`, `adf-{bronnaam}-url`, `adf-{bronnaam}-application` en `adf-{bronnaam}-authType`; bij `PAT` zijn dat `adf-{bronnaam}-token`, `adf-{bronnaam}-url`, `adf-{bronnaam}-application` en `adf-{bronnaam}-authType`. De frontend bewaart zelf nooit geheimen.
-
-:::caution Preview
-Deze connector staat als **preview** gemarkeerd en kan instabiel zijn. Reken er bij productiegebruik niet op dat het gedrag definitief vastligt.
-:::
 
 ## Gegevens ophalen
 

@@ -8,8 +8,9 @@ description: SharePoint koppelen aan Yres — verbindingseisen.
 
 **Categorie:** Azure
 
-Microsoft SharePoint-lijsten en -documenten. SharePoint is een bestandsbron: na het koppelen
-selecteer je bestanden (geen metadata-refresh van tabellen).
+Bestanden uit Microsoft SharePoint-**documentbibliotheken**. SharePoint is een bestandsbron: na het
+koppelen selecteer je bestanden (geen metadata-refresh van tabellen). SharePoint-*lijsten* worden niet
+uitgelezen.
 
 ## Verwachte input
 

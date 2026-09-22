@@ -6,9 +6,10 @@ description: Connect OneStream to Yres — connection requirements.
 
 # OneStream
 
-**Category:** REST  ·  🧪 Preview
+**Category:** REST
 
-Corporate Performance Management. **Preview** — this connector may be unstable.
+Corporate Performance Management. Yres connects to OneStream via the REST API with OAuth 2.0 or a Personal
+Access Token.
 
 ## Connection requirements
 
@@ -46,10 +47,6 @@ OneStream connects via the **REST API**. You fill in the following fields in the
 - For `OAUTH2`: an application registered with your identity provider (Azure AD / Entra ID, Okta or PingFederate) with a **client secret**, authorized for the OneStream Web API. Have your **OneStream administrator** configure and provide it.
 - For `PAT`: a **Personal Access Token** created in OneStream.
 - The secrets you enter are stored by Yres in your **Azure Key Vault** under the naming `adf-{sourcename}-…`. For `OAUTH2` these include `adf-{sourcename}-clientId`, `adf-{sourcename}-clientSecret`, `adf-{sourcename}-url`, `adf-{sourcename}-application` and `adf-{sourcename}-authType`; for `PAT` these are `adf-{sourcename}-token`, `adf-{sourcename}-url`, `adf-{sourcename}-application` and `adf-{sourcename}-authType`. The frontend itself never stores secrets.
-
-:::caution Preview
-This connector is marked as **preview** and may be unstable. For production use, do not count on the behavior being final.
-:::
 
 ## Retrieving data
 

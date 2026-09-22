@@ -65,9 +65,10 @@ Bronnen die via het OData-protocol worden ontsloten. Auth is Anonymous, Basic of
 |---|---|
 | SAP Analytics Cloud (SAC) | 🏅 Official partner — OAuth2 |
 | SAP S/4HANA | 🏅 Official partner — OData-service via SAP Gateway |
-| SAP HANA | 🏅 Official partner — `.xsodata` of directe ODBC-koppeling |
-| OData (generiek) | Elke OData v4-service; Anonymous of Basic |
+| SAP HANA | 🏅 Official partner — XS OData-service (`.xsodata`); geen directe database-/ODBC-koppeling |
+| OData (generiek) | Elke OData v2- of v4-service; Anonymous of Basic |
 | OData OAuth | OData-service met OAuth2 (client credentials / authorization code) |
+| Topdesk | Via het **OData-reporting-endpoint**; Basic (gebruikersnaam + applicatiewachtwoord) |
 | Centraal Bureau voor de Statistiek (CBS) | Vaste OData-URL, anoniem |
 | Tweede Kamer | Vaste OData-URL, anoniem |
 
@@ -84,23 +85,22 @@ Generieke REST-koppeling en SaaS-bronnen die onder water op REST draaien.
 | Exact Online | OAuth2 authorization-code; aparte app per omgeving |
 | Salesforce | OAuth2 client credentials |
 | Mendix | Via gepubliceerde OData- of REST-service in Studio Pro |
-| Onestream | *(preview)* — OAuth2 of Personal Access Token (PAT) |
+| Onestream | OAuth2 of Personal Access Token (PAT) |
 | Board (BoardEPM) | OAuth2 client credentials |
 
 ## Microsoft-platform (Entra ID / Graph)
 
-Bronnen die via een **Entra ID (Azure AD) app-registratie** worden ontsloten. Teams, Dynamics 365 en
-Topdesk koppelen niet met een eigen connector maar rijden onder water mee op **Microsoft Graph** of
-**OData**; de invoer is in alle gevallen Tenant ID, Client ID en Client secret (of, bij Topdesk,
-gebruikersnaam + wachtwoord).
+Bronnen die via een **Entra ID (Azure AD) app-registratie** worden ontsloten. Teams en Dynamics 365
+koppelen niet met een eigen connector maar rijden onder water mee op **Microsoft Graph** of **OData**;
+de invoer is in alle gevallen Tenant ID, Client ID en Client secret. (Topdesk hoort hier níét bij: dat is
+Basic-authenticatie met een applicatiewachtwoord — zie de OData-tabel hierboven.)
 
 | Bron | Bijzonderheid |
 |---|---|
-| SharePoint | Azure AD app-only; rechten via `appinv.aspx` |
+| SharePoint | Entra app-registratie met `Sites.Read.All` via Microsoft Graph (sinds v1.56) |
 | Microsoft Teams | Via **Microsoft Graph** (OData/REST onder water) |
 | Microsoft Graph | OAuth2 (client credentials of authorization code) |
 | Dynamics 365 (Business Central) | Via **OData** (OAuth2-support in ontwikkeling) |
-| Topdesk | Via **OData** (reporting-endpoint) + Basic auth onder water |
 | Microsoft Intune (Intune Data Warehouse) | Via **OData** (OAuth2-support in ontwikkeling) |
 | Power BI | Azure AD service principal; geconsumeerd via de Power BI API (geen ADF-copy) |
 
@@ -111,7 +111,7 @@ Bronnen met een Azure Blob/Data Lake-endpoint, ontsloten met een **SAS-token**.
 | Bron | Bijzonderheid |
 |---|---|
 | Azure Blob Storage | SAS-token op het storage-account |
-| SAP Business Data Cloud (SAP_BDC) | 🏅 Official partner — SAS-uri + container + SAS-token |
+| [SAP Business Data Cloud (SAP_BDC)](bronnen/sap-bdc.md) | 🏅 Official partner — SAS-uri + container + SAS-token; vaste deltakolom `ETL_DATE` |
 | SAP Datasphere | 🏅 Official partner — AzureBlobFS / SAS (apart SAP-product, zie hieronder) |
 
 :::info SAP Business Data Cloud vs. SAP Datasphere

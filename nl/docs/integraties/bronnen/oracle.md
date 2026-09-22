@@ -47,7 +47,7 @@ Staat de database achter een firewall of on-premises? Houd dan rekening met de b
 
 ## Load types en delta
 
-Oracle ondersteunt de standaard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL). Als SQL-gebaseerde bron kun je bij een delta-load twee deltakolommen instellen.
+Oracle ondersteunt de standaard load types (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL). Als SQL-gebaseerde bron kun je bij een delta-load twee deltakolommen instellen.
 
 > Officiële documentatie: [Oracle JDBC — Database URLs and Database Specifiers](https://docs.oracle.com/en/database/oracle/oracle-database/21/jjdbc/data-sources-and-URLs.html)
 
