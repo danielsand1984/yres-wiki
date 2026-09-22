@@ -9,9 +9,10 @@ description: Connect SAP S/4HANA to Yres — connection requirements.
 **Category:** OData  ·  🏅 Official partner
 
 SAP S/4HANA ERP. Official partner. In Yres, SAP S/4HANA has **no dedicated connector with its own
-form**: you connect the system through one of the generic connection routes — an **OData** service
-(the most common route), a **direct database/ODBC connection** to the underlying SAP HANA, or via the
-**SAP Business Data Cloud (SAP_BDC)** when data is delivered there as files.
+form**: you connect the system through one of two routes — an **OData** service via the SAP Gateway
+(the most common route), or via the **SAP Business Data Cloud (SAP_BDC)** when data is delivered there
+as files. A direct database/ODBC connection to the underlying SAP HANA does **not** exist in Yres (see
+[SAP HANA](sap-hana.md)).
 
 ## Expected input
 
@@ -51,18 +52,12 @@ or `Authorization Code`; with Authorization Code a **Refresh token** is also req
 See the [OData](odata.md) and [OData OAuth](odata-oauth.md) pages for the full field overview of these
 two source types.
 
-### Route B — Direct database/ODBC connection (SAP HANA)
-
-If you want to access the underlying SAP HANA database directly, use the generic database/HANA route. See
-[SAP HANA](sap-hana.md) for the fields: **Host**, **SQL port** (pattern `3<instance>15`), **database user**
-and **password**. A direct HANA connection is usually on-premises or firewalled and therefore requires a
-**self-hosted integration runtime**.
-
-### Route C — SAP Business Data Cloud (SAS token)
+### Route B — SAP Business Data Cloud (SAS token)
 
 If data is delivered via SAP BDC as files (Azure Blob FS / Data Lake), you connect it through the
 **SAP_BDC** form with a **SAS uri**, **container** and **SAS token**. This is a separate route with its own
-authentication (SAS) and runs on the cloud integration runtime.
+authentication (SAS) and runs on the cloud integration runtime. See
+[SAP Business Data Cloud](sap-bdc.md) for the fields, the validation rules and the fixed delta column `ETL_DATE`.
 
 :::note No dedicated source type — via SAP_BDC or OData
 SAP S/4HANA has no dedicated source type or form in `CreateSource.tsx`. Depending on the use case, you

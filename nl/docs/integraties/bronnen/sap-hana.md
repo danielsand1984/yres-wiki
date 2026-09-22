@@ -10,7 +10,7 @@ description: SAP HANA koppelen aan Yres — verbindingseisen.
 
 SAP HANA in-memory database. Official partner. Er is **geen apart invoerformulier** voor SAP HANA en
 ook **geen generiek HANA-/ODBC-brontype**: je koppelt HANA-data via een **XS OData**-service, of via
-een export-route zoals **SAP_BDC**.
+een export-route zoals [**SAP_BDC**](sap-bdc.md).
 
 ## Verwachte input
 
