@@ -69,7 +69,7 @@ Yres beslist puur op basis van hoe je het **Endpoint**-veld schrijft:
 Verdere details die het gedrag bepalen:
 
 - **Queryparameters uit de Base URL blijven altijd behouden** en komen vóór de endpoint- en paginatie-query te staan.
-- Een **afsluitende `/`** op de Base URL wordt alleen weggehaald wanneer er een pad wordt aangeplakt; zonder pad blijft hij staan.
+- De wizard accepteert **geen afsluitende `/`** op de Base URL (validatie `notEndWith('/')`). De pipeline is desondanks tolerant: staat er toch een afsluitende `/` in het `http-url`-secret (bijvoorbeeld handmatig in de Key Vault gezet), dan wordt die weggehaald zodra er een pad wordt aangeplakt; zonder pad blijft hij staan — zie de tolerantie-voorbeelden hieronder.
 - Een `=` **in een pad-segment** (bv. `/path/a=b`) blijft gewoon onderdeel van het pad — de `=`-regel geldt alleen als er géén `/` in het endpoint staat.
 - Yres **ontdubbelt geen queryparameters**: staat `key=` zowel in de Base URL als in het endpoint, dan komen beide in de URL (`?key=1&key=2`). Zet een parameter dus op één plek.
 
@@ -85,9 +85,14 @@ Ervan uitgaande dat de **Base URL** is opgeslagen als het `http-url`-secret:
 | `https://api.example.com/v1` | `?$top=100` | `https://api.example.com/v1?$top=100` |
 | `https://api.example.com/v1` | `&$top=100` | `https://api.example.com/v1?$top=100` |
 | `https://api.example.com/v1` | `active=true` | `https://api.example.com/v1?active=true` |
+| `https://api.example.com/v1` | `/path/a=b` | `https://api.example.com/v1/path/a=b` |
+
+Tolerantie van de pipeline — alleen relevant als het secret buiten de wizard om tóch op `/` eindigt (de wizard zelf laat dat niet toe):
+
+| Base URL (secret) | Endpoint (per tabel) | Resulterende request-URL |
+|---|---|---|
 | `https://api.example.com/v1/` | `/cars` | `https://api.example.com/v1/cars` |
 | `https://api.example.com/v1/` | *(leeg)* | `https://api.example.com/v1/` |
-| `https://api.example.com/v1` | `/path/a=b` | `https://api.example.com/v1/path/a=b` |
 
 Complexere combinaties, waarbij de Base URL zélf al een vaste query heeft:
 
