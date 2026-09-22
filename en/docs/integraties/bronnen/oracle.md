@@ -47,7 +47,7 @@ Is the database behind a firewall or on-premises? Then keep the limitation above
 
 ## Load types and delta
 
-Oracle supports the standard load types (FULL, DELTA, OVERWRITE, RELOAD, IMAGE, ADDITIONAL). As a SQL-based source, you can configure two delta columns for a delta load.
+Oracle supports the standard load types (FULL, DELTA, DELTAIMAGE, IMAGE, OVERWRITE, RELOAD, ADDITIONAL). As a SQL-based source, you can configure two delta columns for a delta load.
 
 > Official documentation: [Oracle JDBC — Database URLs and Database Specifiers](https://docs.oracle.com/en/database/oracle/oracle-database/21/jjdbc/data-sources-and-URLs.html)
 
