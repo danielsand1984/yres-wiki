@@ -47,6 +47,11 @@ const config = {
           routeBasePath: '/', // docs op de baseUrl-root → schone URL's, bv. /nl/wiki/concepten/load-types
           sidebarPath: './sidebars.js',
           editUrl: undefined,
+          // Toont "Laatst bijgewerkt op <datum>" onder elk artikel. Docusaurus
+          // leest de git-timestamp van het bestand, dus er valt niets bij te
+          // houden. De build draait lokaal uit deze repo (zie DEPLOY.md), dus
+          // de historie is beschikbaar.
+          showLastUpdateTime: true,
           // Extra admonition-keyword `:::accent` (merk-oranje blok), naast de
           // standaard note/tip/info/warning/danger. Gerenderd via
           // src/theme/Admonition/Types.js.
