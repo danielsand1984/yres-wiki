@@ -114,7 +114,7 @@ later opnieuw importeren of installeren.
 Het mooie: bij stap 5 en 6 hoef je zelf niets technisch te doen. Achter één actie in het ☰-menu regelt Yres:
 
 - **De databasestructuur** uitrollen in de doelomgeving (nieuwe/aangepaste tabellen, views, procedures).
-- **De ADF-pipelines** opnieuw publiceren zodat je bronladingen in de doelomgeving werken.
+- **De ADF-pipelines** opnieuw publiceren zodat het laden van je bronnen in de doelomgeving werkt.
 - **Namen vertalen** tussen omgevingen. Een bron die in dev `ERP_DEV.Product` heet, wordt in test
   `ERP_TST.Product` en in prod `ERP.Product` — Yres past de change automatisch aan op de juiste fysieke
   objecten per omgeving (de *change deployment rules*).

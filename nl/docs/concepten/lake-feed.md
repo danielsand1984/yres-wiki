@@ -243,7 +243,7 @@ Een reeks [health checks](../frontend/admin.md) bewaakt de feed en de leesobject
 
 ## Groei
 
-De feed groeit mee met het **aantal mutaties**, niet met het aantal herladingen: een tabel die dagelijks
+De feed groeit mee met het **aantal mutaties**, niet met het aantal keren dat er geladen wordt: een tabel die dagelijks
 volledig herladen wordt maar nauwelijks wijzigt, levert nauwelijks bestanden op. Bij hoge mutatievolumes
 is het gebruikelijk de feed aan consumentzijde periodiek te vouwen naar een Delta-tabel of een snapshot;
 Yres comprimeert de feed zelf niet.
