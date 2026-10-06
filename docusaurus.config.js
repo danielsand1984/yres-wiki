@@ -150,6 +150,7 @@ const config = {
             title: 'Yres',
             items: [
               {label: 'yres.app', href: 'https://www.yres.app'},
+              {label: t('Status van Yres', 'Yres status'), href: t('https://status.yres.eu/nl/', 'https://status.yres.eu/en/')},
               {label: 'info@yres.app', href: 'mailto:info@yres.app'},
             ],
           },

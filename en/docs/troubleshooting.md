@@ -132,6 +132,32 @@ a one-time invitation link and is enforced in the database.
 2. Remove or deactivate sources/tables you no longer need, or clean up history.
 3. If you structurally need more, upgrade to a higher tier (more sources/environments).
 
+## 7. The Yres web app is unreachable
+
+**Recognition** — `www.yres.app` does not load or shows no sign-in screen, or actions in the web app
+hang with a network error.
+
+**Cause** — an outage in the Yres application itself (web app or API).
+
+**Solution** — check the status page [status.yres.eu](https://status.yres.eu/en/) first. It checks the
+web app, the API and the Yres repositories every half hour and shows the last 60 days per half hour.
+Red means the web app or the API is unreachable. Orange means a Yres repository is unreachable; the
+web app and your data warehouse keep working. That only affects upgrading and a Rebuild, and for the
+ADF repository also adding new sources. If everything is green and
+it still doesn't work for you, contact info@yres.app.
+
+:::info
+Your data warehouse does not depend on the web app. Azure Data Factory and the IRIS_DWH database run
+in your own Azure environment, so scheduled loads keep running when Yres is briefly unreachable. Only
+managing and changing things through the web app is unavailable for that time.
+:::
+
+If you still see unexpected behaviour in your data warehouse, check Microsoft's
+[Azure status page](https://azure.status.microsoft/en-us/status#europe) for Data Factory, Storage
+Accounts and SQL Database (Europe region), and
+[Azure Service Health](https://portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues)
+for notices about your own subscription.
+
 ## Health checks
 
 For DWH issues, the [Health checks screen](./frontend/admin.md) (route `/admin/healthchecks`,
