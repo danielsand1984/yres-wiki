@@ -7,7 +7,7 @@ description: How Yres is put together technically — two planes, the Azure stac
 
 # Architecture (high-level)
 
-> This page describes the architecture at a high level. For the deeper Azure details (resources, access levels, setups, naming, firewall) see [Azure architecture](./azure-architectuur.md). The full load flow is covered in [Data flow](../concepten/gegevensstroom.md) and the history model in [History & SCD2](../concepten/historie-scd2.md).
+> This page describes the architecture at a high level. For the deeper Azure details (resources, access levels, setups, naming, firewall) see [Azure architecture](./azure-architectuur.md). The full load flow is covered in [Data flow](../concepten/gegevensstroom.md) and the history model in [History & SCD2](../concepten/historie-scd2.md). Everything together on one diagram is in the [Reference architecture](./referentie-architectuur.md).
 
 ## The two planes
 
