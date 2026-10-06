@@ -18,7 +18,7 @@ Van links naar rechts volgt de plaat de data.
 
 1. **Bronnen en connectiviteit.** Cloudbronnen lopen via de Azure Integration Runtime. Bronnen in het eigen netwerk lopen via een self-hosted integration runtime die alleen uitgaand verkeer maakt (HTTPS, poort 443). Er hoeft geen poort open naar binnen.
 2. **Control plane.** De Yres-webapp draait in de tenant van Yres. Daar richt je bronnen, tabellen en changes in. De webapp bestuurt de Azure-resources van de klant via een App Registration en bewaart zelf geen klantdata.
-3. **Azure Data Factory.** Eén workflow laadt alles in vijf stappen: run registreren, metadata lezen, per tabel laden (maximaal vijf tegelijk), rapportageviews verversen en afsluiten. Welke bron, welke tabel en welke laadwijze bepaalt de metadata.
+3. **Azure Data Factory.** Eén workflow laadt alles in vijf stappen: run registreren, metadata lezen, per tabel laden (parallel; hoeveel tegelijk is instelbaar), rapportageviews verversen en afsluiten. Welke bron, welke tabel en welke laadwijze bepaalt de metadata.
 4. **Azure SQL.** Data komt binnen in STAGE en gaat met SCD2-historie naar de HIS-laag. Rapportages lezen uit Exposed. Optioneel schrijft Yres de mutaties per tabel als Parquet naar een Data Lake.
 5. **Power BI of Fabric.** Semantische modellen lezen uit Exposed. Na de load start ADF de refresh via de Power BI REST API.
 
