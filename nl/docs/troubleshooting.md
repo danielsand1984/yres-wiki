@@ -147,7 +147,7 @@ gevolgen voor upgraden en een Rebuild, en als het om de ADF-repository gaat ook 
 nieuwe bronnen. Is alles groen en lukt het bij jou toch niet, neem dan contact op via info@yres.app.
 
 :::info
-Je datawarehouse hangt niet van de webapp af. Azure Data Factory en de IRIS_DWH-database draaien in
+Je datawarehouse hangt niet van de webapp af. Azure Data Factory en de Azure SQL-database draaien in
 je eigen Azure-omgeving, dus geplande loads lopen gewoon door als Yres even niet bereikbaar is. Alleen
 beheren en wijzigen via de webapp kan dan tijdelijk niet.
 :::

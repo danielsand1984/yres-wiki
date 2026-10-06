@@ -147,7 +147,7 @@ ADF repository also adding new sources. If everything is green and
 it still doesn't work for you, contact info@yres.app.
 
 :::info
-Your data warehouse does not depend on the web app. Azure Data Factory and the IRIS_DWH database run
+Your data warehouse does not depend on the web app. Azure Data Factory and the Azure SQL database run
 in your own Azure environment, so scheduled loads keep running when Yres is briefly unreachable. Only
 managing and changing things through the web app is unavailable for that time.
 :::
