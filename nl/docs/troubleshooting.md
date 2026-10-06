@@ -132,6 +132,32 @@ een eenmalige uitnodigingslink en wordt in de database afgedwongen.
 2. Verwijder of deactiveer bronnen/tabellen die je niet meer nodig hebt, of ruim historie op.
 3. Heb je structureel meer nodig, upgrade dan naar een hogere tier (meer bronnen/omgevingen).
 
+## 7. De Yres-webapp is niet bereikbaar
+
+**Herkenning** — `www.yres.app` laadt niet of toont geen inlogscherm, of acties in de webapp
+blijven hangen met een netwerkfout.
+
+**Oorzaak** — een storing in de Yres-applicatie zelf (webapp of API).
+
+**Oplossing** — kijk eerst op de statuspagina [status.yres.eu](https://status.yres.eu/nl/). Die
+controleert elk half uur de webapp, de API en de Yres-repositories en toont de afgelopen 60 dagen per
+half uur. Rood betekent dat de webapp of de API niet bereikbaar is. Oranje betekent dat een
+Yres-repository niet bereikbaar is; de webapp en je datawarehouse werken dan gewoon. Dat heeft alleen
+gevolgen voor upgraden en een Rebuild, en als het om de ADF-repository gaat ook voor het toevoegen van
+nieuwe bronnen. Is alles groen en lukt het bij jou toch niet, neem dan contact op via info@yres.app.
+
+:::info
+Je datawarehouse hangt niet van de webapp af. Azure Data Factory en de IRIS_DWH-database draaien in
+je eigen Azure-omgeving, dus geplande loads lopen gewoon door als Yres even niet bereikbaar is. Alleen
+beheren en wijzigen via de webapp kan dan tijdelijk niet.
+:::
+
+Zie je toch onverwacht gedrag in je datawarehouse, kijk dan op de
+[Azure-statuspagina](https://azure.status.microsoft/nl-nl/status#europe) van Microsoft bij Data Factory,
+Storage Accounts en SQL Database (regio Europa), en in
+[Azure Service Health](https://portal.azure.com/#view/Microsoft_Azure_Health/AzureHealthBrowseBlade/~/serviceIssues)
+voor meldingen over je eigen abonnement.
+
 ## Health checks
 
 Voor DWH-issues toont het [Health checks-scherm](./frontend/admin.md) (route `/admin/healthchecks`,
