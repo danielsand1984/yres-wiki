@@ -7,7 +7,7 @@ description: Hoe Yres technisch in elkaar zit — twee planes, Azure-stack, de v
 
 # Architectuur (high-level)
 
-> Deze pagina beschrijft de architectuur op hoofdlijnen. Voor de diepere Azure-details (resources, toegangsniveaus, setups, naming, firewall) zie [Azure-architectuur](./azure-architectuur.md). De volledige load-stroom staat in [Gegevensstroom](../concepten/gegevensstroom.md) en het historiemodel in [Historie & SCD2](../concepten/historie-scd2.md).
+> Deze pagina beschrijft de architectuur op hoofdlijnen. Voor de diepere Azure-details (resources, toegangsniveaus, setups, naming, firewall) zie [Azure-architectuur](./azure-architectuur.md). De volledige load-stroom staat in [Gegevensstroom](../concepten/gegevensstroom.md) en het historiemodel in [Historie & SCD2](../concepten/historie-scd2.md). Alles samen op één plaat staat in de [Referentiearchitectuur](./referentie-architectuur.md).
 
 ## De twee planes
 
