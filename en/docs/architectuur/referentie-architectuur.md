@@ -22,7 +22,7 @@ From left to right, the diagram follows the data.
 4. **Azure SQL.** Data lands in STAGE and moves to the HIS layer with SCD2 history. Reports read from Exposed. Optionally, Yres writes the mutations per table as Parquet to a Data Lake.
 5. **Power BI or Fabric.** Semantic models read from Exposed. After the load, ADF starts the refresh through the Power BI REST API.
 
-The bottom row shows the Azure resources per environment, security and identity, monitoring and the DTAP street. Each environment has its own Data Factory, SQL database and Key Vault; the self-hosted IR is shared by the three environments.
+The bottom row shows the Azure resources per environment, security and identity, monitoring and the DTAP pipeline. Each environment has its own Data Factory, SQL database and Key Vault; the self-hosted IR is shared by the three environments.
 
 :::note
 The sources on the diagram are examples. All connectors are listed under [Integrations](../integraties/overzicht.md). Resource names on the diagram are placeholders.
