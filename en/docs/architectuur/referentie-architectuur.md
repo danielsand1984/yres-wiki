@@ -18,7 +18,7 @@ From left to right, the diagram follows the data.
 
 1. **Sources and connectivity.** Cloud sources go through the Azure Integration Runtime. Sources in your own network go through a self-hosted integration runtime that only makes outbound connections (HTTPS, port 443). No inbound port needs to be opened.
 2. **Control plane.** The Yres web app runs in the Yres tenant. That is where you set up sources, tables and changes. The web app manages the customer's Azure resources through an App Registration and never stores customer data itself.
-3. **Azure Data Factory.** One workflow loads everything in five steps: register the run, read the metadata, load per table (up to five at a time), refresh the reporting views and close the run. The metadata decides which source, which table and which load type.
+3. **Azure Data Factory.** One workflow loads everything in five steps: register the run, read the metadata, load per table (in parallel; how many at once is configurable), refresh the reporting views and close the run. The metadata decides which source, which table and which load type.
 4. **Azure SQL.** Data lands in STAGE and moves to the HIS layer with SCD2 history. Reports read from Exposed. Optionally, Yres writes the mutations per table as Parquet to a Data Lake.
 5. **Power BI or Fabric.** Semantic models read from Exposed. After the load, ADF starts the refresh through the Power BI REST API.
 
